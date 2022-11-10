@@ -19,10 +19,10 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
-      '~ui-kit': path.resolve(__dirname, '../agora-scenario-ui-kit/src'),
-      '~components': path.resolve(__dirname, '../agora-scenario-ui-kit/src/components'),
-      '~styles': path.resolve(__dirname, '../agora-scenario-ui-kit/src/styles'),
-      '~utilities': path.resolve(__dirname, '../agora-scenario-ui-kit/src/utilities'),
+      '~ui-kit': path.resolve(__dirname, '../agora-classroom-sdk/src/ui-kit'),
+      '~components': path.resolve(__dirname, '../agora-classroom-sdk/src/ui-kit/components'),
+      '~styles': path.resolve(__dirname, '../agora-classroom-sdk/src/ui-kit/styles'),
+      '~utilities': path.resolve(__dirname, '../agora-classroom-sdk/src/ui-kit/utilities'),
     },
   },
   module: {

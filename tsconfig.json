@@ -40,7 +40,7 @@
       "~capabilities/*": ["../agora-classroom-sdk/src/capabilities/*"],
       "~containers": ["../agora-classroom-sdk/src/capabilities/containers"],
       "~containers/*": ["../agora-classroom-sdk/src/capabilities/containers/*"],
-      "agora-classroom-sdk": ["../agora-classroom-sdk/infra/api"],
+      "agora-classroom-sdk": ["../agora-classroom-sdk/src/infra/api"],
     }
   },
   "include": ["src"],
