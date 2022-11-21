@@ -295,10 +295,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
     if (mainWindow) {
-      const attrs = mainWindow.getAttributes();
-      await this.classroomStore.api.setWindowManagerAttributes(sessionInfo.roomUuid, {
-        attributes: JSON.stringify(attrs),
-      });
+      const attr = mainWindow.getAttributes();
+      await this.classroomStore.api.setWindowManagerAttributes(sessionInfo.roomUuid, attr);
     }
   }
 
@@ -310,11 +308,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
     if (mainWindow) {
-      const { attributes } = await this.classroomStore.api.getWindowManagerAttributes(
-        sessionInfo.roomUuid,
-      );
+      const attributes = await this.classroomStore.api.getWindowManagerAttributes(sessionInfo.roomUuid);
 
-      mainWindow.setAttributes(JSON.parse(attributes));
+      mainWindow.setAttributes(attributes);
     }
   }
 
@@ -326,8 +322,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     this.logger.info('create board client with config', config);
 
     this._boardRoom = FcrBoardFactory.createBoardRoom({
-      appId: this._initArgs?.appId!,
-      region: this._initArgs?.region!,
+      appId: this._initArgs?.appId || '',
+      region: this._initArgs?.region || FcrBoardRegion.CN,
     });
 
     const joinConfig = {

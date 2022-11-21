@@ -2,9 +2,7 @@
   "name": "agora-plugin-gallery",
   "version": "1.0.0",
   "description": "> TODO: description",
-  "author": "matrixbirds <yooobuntu@gmail.com>",
-  "homepage": "https://github.com/agoraio-community/CloudClass-Desktop#readme",
-  "license": "ISC",
+  "author": "agora.io",
   "main": "src/index.ts",
   "types": "src/index.ts",
   "directories": {
@@ -14,14 +12,7 @@
   "files": [
     "lib"
   ],
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/agoraio-community/CloudClass-Desktop.git"
-  },
   "scripts": {},
-  "bugs": {
-    "url": "https://github.com/agoraio-community/CloudClass-Desktop/issues"
-  },
   "dependencies": {
     "dayjs": "1.10.4",
     "@netless/app-slide": "0.2.22",
