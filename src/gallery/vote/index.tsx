@@ -2,12 +2,13 @@ import { Provider } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import App from './app';
 import { PluginStore } from './store';
-import './i18n/config';
 import { observable, action } from 'mobx';
-import { ThemeProvider, transI18n, WidgetModal } from '~ui-kit';
+import { WidgetModal } from '../../components/modal';
 import { AgoraEduToolWidget } from '../../common/edu-tool-widget';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core';
-import { AgoraExtensionWidgetEvent } from '@/infra/api';
+import { AgoraExtensionWidgetEvent } from 'agora-classroom-sdk';
+import { ThemeProvider, transI18n } from 'agora-common-libs';
+import { addResource } from './i18n/config';
 
 export class AgoraPolling extends AgoraEduToolWidget {
   private _store?: PluginStore;
@@ -36,6 +37,7 @@ export class AgoraPolling extends AgoraEduToolWidget {
   }
 
   onInstall(controller: AgoraWidgetController) {
+    addResource();
     if (controller.classroomConfig.sessionInfo.roomType !== EduRoomTypeEnum.Room1v1Class) {
       controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
         id: this.widgetName,

@@ -1,13 +1,14 @@
-import { ThemeProvider, transI18n, WidgetModal } from '~ui-kit';
+import { WidgetModal } from '../../components/modal';
+import { AgoraExtensionWidgetEvent } from 'agora-classroom-sdk';
 import { Provider } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import { observable, action } from 'mobx';
 import App from './app';
 import { PluginStore } from './store';
-import './i18n/config';
 import { AgoraEduToolWidget } from '../../common/edu-tool-widget';
 import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
-import { AgoraExtensionWidgetEvent } from '@/infra/api';
+import { ThemeProvider, transI18n } from 'agora-common-libs';
+import { addResource } from './i18n/config';
 export class AgoraCountdown extends AgoraEduToolWidget {
   private _store?: PluginStore;
   @observable
@@ -37,6 +38,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
   }
 
   onInstall(controller: AgoraWidgetController) {
+    addResource();
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: transI18n('widget_countdown.appName'),

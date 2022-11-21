@@ -1,17 +1,20 @@
 import React, { useEffect } from 'react';
 import { usePluginStore, useTimeCounter } from './hooks';
 import { observer } from 'mobx-react';
-import { Button, Input, transI18n } from '~ui-kit';
+import { Input } from '../../components/input';
+import { Button } from '../../components/button';
 import FlipClock, { formatDiff } from './flip-clock';
 import { MaskCountDown } from './mask-count-down';
 import { autorun } from 'mobx';
 import { AgoraCountdown } from '.';
+import { useI18n } from 'agora-common-libs';
 
 const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   const pluginStore = usePluginStore();
   const { duration, setDuration, play, reset } = useTimeCounter();
   const durationRef = React.useRef<number>(duration);
   const [caution, setCaution] = React.useState(false);
+  const transI18n = useI18n()
 
   const handleSetting = () => {
     const { x, y } = widget.track.ratioVal.ratioPosition;
@@ -95,21 +98,19 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
               }}
               suffix={
                 <span
-                  className={`${
-                    pluginStore.number != null &&
+                  className={`${pluginStore.number != null &&
                     pluginStore.number <= 3600 &&
                     pluginStore.number >= 1
-                      ? 'count-input-color-normal'
-                      : 'count-input-color-error'
-                  }`}>
+                    ? 'count-input-color-normal'
+                    : 'count-input-color-error'
+                    }`}>
                   ({transI18n('widget_countdown.seconds')})
                 </span>
               }
-              className={`${
-                pluginStore.number != null && pluginStore.number <= 3600 && pluginStore.number >= 1
-                  ? 'count-input-color-normal'
-                  : 'count-input-color-error'
-              }`}
+              className={`${pluginStore.number != null && pluginStore.number <= 3600 && pluginStore.number >= 1
+                ? 'count-input-color-normal'
+                : 'count-input-color-error'
+                }`}
               maxNumber={3600}
             />
           </div>

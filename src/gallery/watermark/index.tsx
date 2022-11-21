@@ -3,7 +3,7 @@ import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import ReactDOM from 'react-dom';
-import { WaterMark } from '~components';
+import { WaterMark } from '../../components/watermark';
 import { WidgetWatermarkUIStore } from './store';
 const App = observer(({ widget }: { widget: FcrWatermarkWidget }) => {
   const widgetStore = widget.widgetStore as WidgetWatermarkUIStore;

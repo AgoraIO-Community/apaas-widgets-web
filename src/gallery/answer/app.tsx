@@ -2,11 +2,13 @@ import React, { useState, useEffect, useCallback, FC, useContext } from 'react';
 import { observer } from 'mobx-react';
 import dayjs from 'dayjs';
 import { usePluginStore } from './hooks';
+import { Col, Row, Table, TableHeader } from '../../components/table';
+import { Button } from '../../components/button';
+import './index.css';
 import addSvg from './add.svg';
 import reduceSvg from './reduce.svg';
-import { Button, Col, Row, Table, TableHeader, themeContext, transI18n } from '~ui-kit';
-import './index.css';
 import awardSvg from './award.svg';
+import { themeContext, useI18n } from 'agora-common-libs';
 
 const App = observer(() => (
   <div className="h-full w-full overflow-hidden" style={{ padding: '21px 14px' }}>
@@ -17,6 +19,7 @@ const App = observer(() => (
 
 const Content = observer(() => {
   const pluginStore = usePluginStore();
+  const transI18n = useI18n();
   const {
     isShowSelectionSection,
     isShowResultSection,
@@ -78,6 +81,7 @@ const Content = observer(() => {
 
 const ResultDetail = observer(() => {
   const pluginStore = usePluginStore();
+  const transI18n = useI18n();
   const { safe, error, textLevel1 } = useContext(themeContext);
   useEffect(() => {
     pluginStore.setList([]);
@@ -142,6 +146,7 @@ const ResultDetail = observer(() => {
 
 const AnswerBtns = observer(() => {
   const pluginStore = usePluginStore();
+  const transI18n = useI18n();
   const { isInitinalSection } = pluginStore;
 
   return (
@@ -198,6 +203,7 @@ const AwardButton: FC<{ onAward: (type: 'winner' | 'all') => void; children: Rea
   onAward,
 }) => {
   const [listVisible, setListVisible] = useState(false);
+  const transI18n = useI18n();
 
   return (
     <div className="award-wrap">

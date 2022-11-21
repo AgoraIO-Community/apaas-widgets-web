@@ -1,15 +1,15 @@
-import { BoardConnectionState, BoardMountState } from '@/infra/protocol/type';
 import {
   AgoraExtensionRoomEvent,
   AgoraExtensionWidgetEvent,
   AgoraWidgetBase,
   AgoraWidgetLifecycle,
+  BoardConnectionState,
+  BoardMountState
 } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
 import { bound, Injectable, Log } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
-import { transI18n } from '~ui-kit';
 import { App } from './app';
 import { FcrBoardFactory } from './factory';
 import { FcrBoardRoom } from './wrapper/board-room';
@@ -23,6 +23,7 @@ import {
 } from './wrapper/type';
 import { downloadCanvasImage } from './wrapper/utils';
 import { reaction, IReactionDisposer } from 'mobx';
+import { transI18n } from 'agora-common-libs';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -142,16 +143,21 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     // 处理授权列表变更
     this._checkPrivilege(props);
     // 处理讲台隐藏/显示，重新计算白板宽高比
-    this._disposers.push(reaction(() => !!(this.classroomStore.roomStore.flexProps?.stage ?? true), () => {
-      const { _boardDom } = this;
-      if (_boardDom) {
-        setTimeout(() => {
-          const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth
+    this._disposers.push(
+      reaction(
+        () => !!(this.classroomStore.roomStore.flexProps?.stage ?? true),
+        () => {
+          const { _boardDom } = this;
+          if (_boardDom) {
+            setTimeout(() => {
+              const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
 
-          this._boardMainWindow?.setAspectRatio(aspectRatio);
-        });
-      }
-    }));
+              this._boardMainWindow?.setAspectRatio(aspectRatio);
+            });
+          }
+        },
+      ),
+    );
   }
 
   /**
@@ -163,7 +169,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     if (this._listenerDisposer) {
       this._listenerDisposer();
     }
-    this._disposers.forEach(d => d());
+    this._disposers.forEach((d) => d());
     this._disposers = [];
   }
 
@@ -234,7 +240,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         [AgoraExtensionRoomEvent.BoardLoadAttributes]: this._loadAttributes,
         [AgoraExtensionRoomEvent.BoardGetSnapshotImageList]: mainWindow.getSnapshotImage,
         [AgoraExtensionRoomEvent.BoardSetDelay]: mainWindow.setTimeDelay,
-        [AgoraExtensionRoomEvent.BoardOpenH5ResourceWindow]: mainWindow.createH5Window
+        [AgoraExtensionRoomEvent.BoardOpenH5ResourceWindow]: mainWindow.createH5Window,
       });
     }
 
@@ -255,7 +261,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
 
     if (_boardDom && _boardMainWindow) {
       this._mounted = true;
-      const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth
+      const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
       _boardMainWindow.mount(_boardDom, {
         containerSizeRatio: aspectRatio,
         collectorContainer: this._collectorDom ?? undefined,
@@ -290,7 +296,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     const { sessionInfo } = this.classroomConfig;
     if (mainWindow) {
       const attrs = mainWindow.getAttributes();
-      await this.classroomStore.api.setWindowManagerAttributes(sessionInfo.roomUuid, { attributes: JSON.stringify(attrs) });
+      await this.classroomStore.api.setWindowManagerAttributes(sessionInfo.roomUuid, {
+        attributes: JSON.stringify(attrs),
+      });
     }
   }
 
@@ -302,7 +310,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
     if (mainWindow) {
-      const { attributes } = await this.classroomStore.api.getWindowManagerAttributes(sessionInfo.roomUuid);
+      const { attributes } = await this.classroomStore.api.getWindowManagerAttributes(
+        sessionInfo.roomUuid,
+      );
 
       mainWindow.setAttributes(JSON.parse(attributes));
     }
@@ -326,7 +336,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       userId,
       userName,
       hasOperationPrivilege,
-    }
+    };
 
     const boardRoom = this._boardRoom;
 
@@ -410,7 +420,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         this.shareUIStore.addToast(transI18n('toast2.save_error'));
       }
     });
-
   }
 
   @bound

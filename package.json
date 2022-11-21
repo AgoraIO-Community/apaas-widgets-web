@@ -38,17 +38,14 @@
     "@netless/white-snapshot": "0.4.1",
     "white-web-sdk": "2.16.35",
     "plyr": "3.7.2",
-    "antd": "4.15.5",
     "classnames": "2.3.1",
     "lodash": "4.17.21",
     "redux": "4.1.0",
     "agora-chat": "^1.0.4",
     "axios": "0.27.2",
     "react": "17.0.0",
-    "react-dom": "17.0.0",
     "react-intl": "5.20.6",
     "react-redux": "7.2.4",
     "twemoji": "13.1.0"
-
   }
 }

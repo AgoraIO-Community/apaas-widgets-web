@@ -4,8 +4,7 @@ import {
   FcrBoardMediaWindowConfig,
   FcrBoardShape,
   FcrBoardTool,
-} from '@/infra/protocol/type';
-import DialogProgressApi from '@/capabilities/containers/dialog/progress';
+} from 'agora-classroom-sdk';
 import SlideApp from '@netless/app-slide';
 import Talkative from '@netless/app-talkative';
 import { snapshot } from '@netless/white-snapshot';
@@ -33,6 +32,7 @@ import {
   MountOptions,
 } from './type';
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
+import { DialogProgressApi } from '../../../components/progress';
 
 @Log.attach({ proxyMethods: true })
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
@@ -56,8 +56,16 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   }
 
   private _installPlugins() {
-    const { minFPS, maxFPS, resolution, autoResolution, autoFPS, maxResolutionLevel, debug } =
-      this._options;
+    const {
+      minFPS,
+      maxFPS,
+      resolution,
+      autoResolution,
+      autoFPS,
+      maxResolutionLevel,
+      forceCanvas,
+      debug,
+    } = this._options;
     WindowManager.register({
       kind: 'Slide',
       src: SlideApp,
@@ -69,6 +77,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         autoResolution,
         autoFPS,
         maxResolutionLevel,
+        forceCanvas
       },
     });
 
@@ -376,16 +385,16 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     this._whiteRoom.timeDelay = delay;
   }
 
-  async getSnapshotImage(background: string = '#fff') {
+  async getSnapshotImage(background = '#fff') {
     this.preCheck({ wm: false });
     const whiteRoom = this._whiteRoom;
 
     if (whiteRoom) {
       const sceneMap = whiteRoom.entireScenes();
 
-      let scenes = Object.keys(sceneMap);
+      const scenes = Object.keys(sceneMap);
       if (scenes.length) {
-        let _room = Object.create(whiteRoom);
+        const _room = Object.create(whiteRoom);
         _room.state.cameraState = { width: 2038, height: 940 }; // 创建一个宽高
 
         const cps = sceneMap['/'].map((scene) => {

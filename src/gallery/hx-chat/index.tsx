@@ -2,8 +2,8 @@ import {
   chatEmojiEnabled,
   chatMuteAllEnabled,
   chatPictureEnabled,
-} from '@/capabilities/containers/visibility/controlled';
-import * as hx from './src';
+} from 'agora-common-libs';
+import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
 import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum, Platform } from 'agora-edu-core';
 import classNames from 'classnames';
@@ -84,7 +84,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
 
     disposers.push(
       autorun(() => {
-        hx.dispatchVisibleUI({ isFullSize: widgetStore.isFullSize });
+        dispatchVisibleUI({ isFullSize: widgetStore.isFullSize });
       }),
     );
 
@@ -92,8 +92,8 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
       reaction(
         () => widgetStore.showChat,
         (value) => {
-          hx.dispatchShowChat(value);
-          hx.dispatchShowMiniIcon(!value);
+          dispatchShowChat(value);
+          dispatchShowMiniIcon(!value);
         },
       ),
     );
@@ -114,7 +114,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
 
   return (
     <div id="hx-chatroom" style={{ display: 'flex', width: '100%', height: '100%' }}>
-      <hx.HXChatRoom
+      <HXChatRoom
         theme={widget.theme}
         pluginStore={hxStore}
         agoraTokenData={{
@@ -136,7 +136,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   private _widgetStore = new WidgetChatUIStore(this);
   private _rendered = false;
 
-  onInstall(controller: AgoraWidgetController): void {}
+  onInstall(controller: AgoraWidgetController): void { }
   get widgetName(): string {
     return 'easemobIM';
   }
@@ -211,7 +211,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     this._renderApp();
   }
 
-  onDestroy(): void {}
+  onDestroy(): void { }
 
   private _renderApp() {
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
@@ -227,15 +227,12 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   render(dom: HTMLElement): void {
     this._dom = dom;
 
-    const isVocational = true;
     this.classroomConfig.sessionInfo.roomServiceType !== 0;
 
-    const cls = classNames({
-      'chat-panel': 1,
-      'vocational-chat-panel': isVocational,
-    });
+    const cls = classNames('chat-panel', 'h-full');
 
     this._dom.className = cls;
+
     this._renderApp();
   }
 
@@ -257,5 +254,5 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     }
   }
 
-  onUninstall(controller: AgoraWidgetController): void {}
+  onUninstall(controller: AgoraWidgetController): void { }
 }

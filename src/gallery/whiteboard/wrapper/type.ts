@@ -1,4 +1,4 @@
-import { FcrBoardShape, FcrBoardTool, BoardConnectionState } from '@/infra/protocol/type';
+import { FcrBoardShape, FcrBoardTool, BoardConnectionState } from 'agora-classroom-sdk';
 import type { WindowManager } from '@netless/window-manager';
 import type { FcrBoardMainWindow } from './board-window';
 
@@ -93,6 +93,7 @@ export type SlideOptions = {
   autoResolution?: boolean;
   autoFPS?: boolean;
   maxResolutionLevel?: number;
+  forceCanvas?: boolean;
 };
 
 export type MountOptions = {
