@@ -1,15 +1,11 @@
-import {
-  chatEmojiEnabled,
-  chatMuteAllEnabled,
-  chatPictureEnabled,
-} from 'agora-common-libs';
+import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs';
 import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
 import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum, Platform } from 'agora-edu-core';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
 import { observer } from 'mobx-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
 
@@ -112,6 +108,14 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
     context: { ...widget.imUIConfig, ...widget.imConfig, ...roomInfo, ...localUserInfo },
   };
 
+  const getAgoraChatToken = useCallback(async () => {
+    const { token } = await widget.classroomStore.api.getAgoraChatToken({
+      roomUuid: sessionInfo.roomUuid,
+      userUuid: sessionInfo.userUuid,
+    });
+    return token;
+  }, []);
+
   return (
     <div id="hx-chatroom" style={{ display: 'flex', width: '100%', height: '100%' }}>
       <HXChatRoom
@@ -123,6 +127,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
           roomUuid: sessionInfo.roomUuid,
           userUuid: sessionInfo.userUuid,
           token: sessionInfo.token,
+          getAgoraChatToken,
         }}
       />
     </div>
@@ -136,7 +141,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   private _widgetStore = new WidgetChatUIStore(this);
   private _rendered = false;
 
-  onInstall(controller: AgoraWidgetController): void { }
+  onInstall(controller: AgoraWidgetController): void {}
   get widgetName(): string {
     return 'easemobIM';
   }
@@ -211,7 +216,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     this._renderApp();
   }
 
-  onDestroy(): void { }
+  onDestroy(): void {}
 
   private _renderApp() {
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
@@ -254,5 +259,5 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     }
   }
 
-  onUninstall(controller: AgoraWidgetController): void { }
+  onUninstall(controller: AgoraWidgetController): void {}
 }
