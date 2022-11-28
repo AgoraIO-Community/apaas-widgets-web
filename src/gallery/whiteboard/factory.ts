@@ -1,4 +1,4 @@
-import { AgoraEduSDK } from '@/infra/api';
+import { AgoraEduSDK } from 'agora-classroom-sdk';
 import { FcrBoardRoom } from './wrapper/board-room';
 import { FcrBoardRegion } from './wrapper/type';
 

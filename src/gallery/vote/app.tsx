@@ -1,11 +1,14 @@
 import { isEmpty } from 'lodash';
 import { observer } from 'mobx-react';
 import React from 'react';
-import { Button, CheckBox, Input, transI18n } from '~ui-kit';
+import { CheckBox } from '../../components/checkbox';
+import { Input } from '../../components/input';
+import { Button } from '../../components/button';
 import addSvg from './add.svg';
 import { usePluginStore } from './hooks';
 import './index.css';
 import reduceSvg from './reduce.svg';
+import { useI18n } from 'agora-common-libs';
 
 const MAX_LENGTH = 50;
 
@@ -19,6 +22,8 @@ const App = () => (
 
 const Title = observer(() => {
   const pluginStore = usePluginStore();
+  const transI18n = useI18n();
+
   return (
     <>
       {pluginStore.isInitinalStage ? (
@@ -69,6 +74,7 @@ const Title = observer(() => {
 
 const Content = observer(() => {
   const pluginStore = usePluginStore();
+  const transI18n = useI18n();
   return (
     <div>
       {pluginStore.isInitinalStage &&
@@ -101,6 +107,7 @@ const Content = observer(() => {
 const VoteBtns = observer(() => {
   const pluginStore = usePluginStore();
   const cursorRef = React.useRef<boolean>(false);
+  const transI18n = useI18n();
 
   const handleSubmitVote = React.useCallback(() => {
     if (!cursorRef.current) {

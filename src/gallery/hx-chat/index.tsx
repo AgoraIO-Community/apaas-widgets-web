@@ -1,15 +1,11 @@
-import {
-  chatEmojiEnabled,
-  chatMuteAllEnabled,
-  chatPictureEnabled,
-} from '@/capabilities/containers/visibility/controlled';
-import * as hx from './src';
+import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs';
+import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
 import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum, Platform } from 'agora-edu-core';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
 import { observer } from 'mobx-react';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
 
@@ -84,7 +80,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
 
     disposers.push(
       autorun(() => {
-        hx.dispatchVisibleUI({ isFullSize: widgetStore.isFullSize });
+        dispatchVisibleUI({ isFullSize: widgetStore.isFullSize });
       }),
     );
 
@@ -92,8 +88,8 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
       reaction(
         () => widgetStore.showChat,
         (value) => {
-          hx.dispatchShowChat(value);
-          hx.dispatchShowMiniIcon(!value);
+          dispatchShowChat(value);
+          dispatchShowMiniIcon(!value);
         },
       ),
     );
@@ -112,9 +108,17 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
     context: { ...widget.imUIConfig, ...widget.imConfig, ...roomInfo, ...localUserInfo },
   };
 
+  const getAgoraChatToken = useCallback(async () => {
+    const { token } = await widget.classroomStore.api.getAgoraChatToken({
+      roomUuid: sessionInfo.roomUuid,
+      userUuid: sessionInfo.userUuid,
+    });
+    return token;
+  }, []);
+
   return (
     <div id="hx-chatroom" style={{ display: 'flex', width: '100%', height: '100%' }}>
-      <hx.HXChatRoom
+      <HXChatRoom
         theme={widget.theme}
         pluginStore={hxStore}
         agoraTokenData={{
@@ -123,6 +127,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
           roomUuid: sessionInfo.roomUuid,
           userUuid: sessionInfo.userUuid,
           token: sessionInfo.token,
+          getAgoraChatToken,
         }}
       />
     </div>
@@ -227,15 +232,12 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   render(dom: HTMLElement): void {
     this._dom = dom;
 
-    const isVocational = true;
     this.classroomConfig.sessionInfo.roomServiceType !== 0;
 
-    const cls = classNames({
-      'chat-panel': 1,
-      'vocational-chat-panel': isVocational,
-    });
+    const cls = classNames('chat-panel', 'h-full');
 
     this._dom.className = cls;
+
     this._renderApp();
   }
 

@@ -21,7 +21,7 @@ import {
   FcrBoardRoomEvent,
   BoardState,
 } from './type';
-import { BoardConnectionState, FcrBoardShape, FcrBoardTool } from '@/infra/protocol/type';
+import { BoardConnectionState, FcrBoardShape, FcrBoardTool } from 'agora-classroom-sdk';
 import { convertToFcrBoardToolShape, hexColorToWhiteboardColor, textColors } from './helper';
 
 @Log.attach({ proxyMethods: true })
