@@ -16,7 +16,6 @@ export const textColors = [
   '#ffc8e2',
 ];
 
-export const defaultTool = FcrBoardTool.Clicker;
 export const defaultStrokeColor = { r: 0, g: 115, b: 255 };
 export const defaultTextSize = 24;
 

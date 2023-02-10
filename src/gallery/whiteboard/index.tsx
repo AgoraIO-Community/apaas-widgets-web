@@ -4,10 +4,10 @@ import {
   AgoraWidgetBase,
   AgoraWidgetLifecycle,
   BoardConnectionState,
-  BoardMountState
+  BoardMountState,
 } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
-import { bound, Injectable, Log } from 'agora-rte-sdk';
+import { bound, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 import { App } from './app';
@@ -28,7 +28,7 @@ import { transI18n } from 'agora-common-libs';
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
   private static _installationDisposer?: CallableFunction;
-  private logger!: Injectable.Logger;
+  logger!: Logger;
   private _boardRoom?: FcrBoardRoom;
   private _boardMainWindow?: FcrBoardMainWindow;
   private _outerDom?: HTMLElement;
@@ -308,7 +308,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
     if (mainWindow) {
-      const attributes = await this.classroomStore.api.getWindowManagerAttributes(sessionInfo.roomUuid);
+      const attributes = await this.classroomStore.api.getWindowManagerAttributes(
+        sessionInfo.roomUuid,
+      );
 
       mainWindow.setAttributes(attributes);
     }

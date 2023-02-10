@@ -1,4 +1,4 @@
-import { AGEventEmitter, Injectable, Log } from 'agora-rte-sdk';
+import { AGEventEmitter, bound, Log, Logger } from 'agora-rte-sdk';
 import {
   WhiteWebSdk,
   Room,
@@ -24,9 +24,9 @@ import {
 import { BoardConnectionState, FcrBoardShape, FcrBoardTool } from 'agora-classroom-sdk';
 import { convertToFcrBoardToolShape, hexColorToWhiteboardColor, textColors } from './helper';
 
-@Log.attach({ proxyMethods: true })
+@Log.attach()
 export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
-  private logger!: Injectable.Logger;
+  logger!: Logger;
   private _client: WhiteWebSdk;
   private _room?: Room;
   private _boardView?: FcrBoardMainWindow;
@@ -129,6 +129,7 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
     }
   }
 
+  @bound
   @Log.silence
   private _handleRoomStateUpdated(state: Partial<RoomState>) {
     const { memberState } = state;
@@ -158,6 +159,7 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
     }
   }
 
+  @bound
   @Log.silence
   private _handleConnectionStateUpdated(phase: RoomPhase) {
     if (phase === RoomPhase.Connecting) {
@@ -198,10 +200,12 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
   ): void;
   on(eventName: FcrBoardRoomEvent.MemberStateChanged, cb: (state: BoardState) => void): void;
 
+  @Log.silence
   on(eventName: FcrBoardRoomEvent, cb: CallableFunction): void {
     this._eventBus.on(eventName, cb);
   }
 
+  @Log.silence
   off(eventName: FcrBoardRoomEvent, cb: CallableFunction): void {
     this._eventBus.off(eventName, cb);
   }

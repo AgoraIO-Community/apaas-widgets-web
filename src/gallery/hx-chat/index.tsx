@@ -173,10 +173,6 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
       visibleEmoji = false;
       inputBoxStatus = 'inline';
     }
-    const isVocational = this.classroomConfig.sessionInfo.roomServiceType !== 0;
-    if (isVocational) {
-      visibleEmoji = true;
-    }
 
     return {
       visibleEmoji,
@@ -231,8 +227,6 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
 
   render(dom: HTMLElement): void {
     this._dom = dom;
-
-    this.classroomConfig.sessionInfo.roomServiceType !== 0;
 
     const cls = classNames('chat-panel', 'h-full');
 
