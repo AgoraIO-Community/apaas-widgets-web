@@ -1,0 +1,48 @@
+.fcr-countdown-h5,
+.fcr-countdown-h5-landscape {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 20px -8px rgba(0, 0, 0, 0.14);
+  z-index: 1;
+}
+.fcr-countdown-h5.fcr-countdown-h5-landscape {
+  position: fixed;
+  bottom: auto;
+  left: auto;
+  top: 16px;
+  right: 30px;
+  transform-origin: right top;
+  z-index: 1;
+}
+.fcr-countdown-h5 .flip-card:nth-child(1),
+.fcr-countdown-h5 .flip-card:nth-child(4) {
+  text-align: right;
+}
+.fcr-countdown-h5 .flip-card:nth-child(2),
+.fcr-countdown-h5 .flip-card:nth-child(5) {
+  text-align: left;
+}
+.fcr-countdown-h5 .flip-card:nth-child(1) .flip-card-digital::before,
+.fcr-countdown-h5 .flip-card:nth-child(4) .flip-card-digital::before {
+  border-top-right-radius: 0;
+}
+.fcr-countdown-h5 .flip-card:nth-child(2) .flip-card-digital::before,
+.fcr-countdown-h5 .flip-card:nth-child(5) .flip-card-digital::before {
+  border-top-left-radius: 0;
+}
+.fcr-countdown-h5 .flip-card:nth-child(1) .flip-card-digital::after,
+.fcr-countdown-h5 .flip-card:nth-child(4) .flip-card-digital::after {
+  border-bottom-right-radius: 0;
+}
+.fcr-countdown-h5 .flip-card:nth-child(2) .flip-card-digital::after,
+.fcr-countdown-h5 .flip-card:nth-child(5) .flip-card-digital::after {
+  border-bottom-left-radius: 0;
+}
+.flip-card-wrap {
+  border: 1px solid #000;
+  border-radius: 8px;
+}

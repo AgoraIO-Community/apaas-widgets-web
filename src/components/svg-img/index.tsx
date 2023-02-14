@@ -13,9 +13,16 @@ export type SvgImgProps = {
   onMouseDown?: (e: MouseEvent) => void;
   onMouseUp?: (e: MouseEvent) => void;
   className?: string;
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
 };
 
+export const SvgImgMobile: FC<SvgImgProps & { landscape: boolean }> = (props) => {
+  const { landscape } = props;
+  const basicWidth = landscape && window.matchMedia('(orientation: landscape)').matches ? 667 : 375;
+  const basicWidthRatio = (((props.size || 24) / basicWidth) * 100).toFixed(3) + 'vw';
+
+  return <SvgImg {...props} size={basicWidthRatio}></SvgImg>;
+};
 export const SvgImg: FC<SvgImgProps> = ({
   type,
   size = 24,
@@ -65,7 +72,7 @@ export type SvgIconProps = {
   onClick?: any;
   canHover?: boolean;
   className?: string;
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
 };
 
 // Icon that has hoverable surroundings

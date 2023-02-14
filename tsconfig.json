@@ -26,6 +26,7 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
+      "@classroom": ["../agora-classroom-sdk/src/*"],
       "agora-classroom-sdk": ["../agora-classroom-sdk/src/infra/api"],
     }
   },

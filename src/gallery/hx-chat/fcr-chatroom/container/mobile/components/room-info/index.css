@@ -1,0 +1,284 @@
+.fcr-h5-interact-container {
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  background: #000;
+  position: relative;
+}
+.fcr-h5-interact-container-top {
+  position: relative;
+  z-index: 1;
+  transition: height 0.2s;
+  pointer-events: none;
+}
+.fcr-h5-interact-container-placeholder {
+  height: 32px;
+}
+.fcr-h5-inter-room-info {
+  width: 100%;
+  height: 91px;
+  background: #4752dd;
+  border-top-left-radius: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 12px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+.fcr-h5-inter-room-info-left,
+.fcr-h5-inter-room-info-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 32px;
+  align-items: center;
+}
+
+.fcr-h5-inter-room-info-logo {
+  width: 34px;
+  height: 34px;
+  border-radius: 34px;
+  background: #fff;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 9px;
+}
+.fcr-h5-inter-room-info-teacher-name > span:last-child {
+  color: #fff;
+  padding-left: 4px;
+}
+.fcr-h5-inter-room-info-teacher-name {
+  height: 32px;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.fcr-h5-inter-room-info-hot {
+  height: 32px;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.fcr-h5-inter-room-info-teacher-name {
+  padding-left: 7px;
+}
+.fcr-chatroom-h5-announcement {
+  z-index: 1;
+  padding-left: 55px;
+  padding-right: 15px;
+  padding-bottom: 12px;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 130%;
+  transition: height 0.2s;
+  overflow: hidden;
+  color: #ffffff;
+  word-break: break-all;
+}
+.fcr-chatroom-h5-announcement > span {
+  padding: 0 5px;
+  background: #fff;
+  border-radius: 20px;
+  color: #4262ff;
+  display: inline-block;
+  word-break: break-all;
+  font-size: 8px;
+  line-height: 12px;
+  margin-right: 5px;
+}
+
+.fcr-h5-inter-room-info-start-time {
+  line-height: 32px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.fcr-h5-inter-room-info-toggle-announcement {
+  width: 24px;
+  height: 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fcr-h5-inter-room-info-toggle-announcement > svg {
+  transition: all 0.2s;
+}
+
+/** landscape **/
+.fcr-h5-interact-container-landscape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+}
+.fcr-h5-landscape-inter-room-info {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.fcr-h5-landscape-inter-room-info-left {
+  display: flex;
+  flex-direction: row;
+  padding: 16px 0 0 30px;
+}
+.fcr-h5-landscape-inter-room-info-back {
+  background: rgba(240, 242, 248, 0.6);
+  width: 40px;
+  height: 40px;
+  backdrop-filter: blur(25px);
+
+  border-radius: 50px;
+  margin-right: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-h5-landscape-inter-room-info-back > svg {
+  transform: rotate(-90deg);
+}
+.fcr-h5-landscape-inter-room-info-room {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.fcr-h5-landscape-inter-room-info-teacher {
+  background: rgba(240, 242, 248, 0.6);
+  border-radius: 50px;
+  height: 40px;
+  padding: 3px;
+}
+.fcr-h5-landscape-inter-room-info-teacher {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-right: 12px;
+}
+.fcr-h5-landscape-inter-room-info-teacher .fcr-h5-inter-room-info-logo {
+  position: static;
+  margin-right: 7px;
+}
+.fcr-h5-landscape-inter-room-info-teacher-name {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
+}
+.fcr-h5-landscape-inter-room-info-teacher-fcr {
+  font-weight: 700;
+  font-size: 10px;
+  line-height: 100%;
+  color: #757575;
+}
+.fcr-h5-landscape-inter-room-info-hot {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  background: rgba(240, 242, 248, 0.6);
+  border-radius: 50px;
+}
+.fcr-h5-landscape-inter-room-info-hot .fcr-h5-inter-room-info-hot {
+  color: rgba(117, 117, 117, 0.8);
+  font-weight: 600;
+  font-size: 14px;
+  padding: 0 10px 0 7px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fcr-h5-landscape-inter-room-info-name {
+  color: white;
+  padding-top: 19px;
+  padding-left: 16px;
+}
+.fcr-h5-landscape-inter-room-info-name > div:first-child {
+  text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 100%;
+}
+.fcr-h5-landscape-inter-room-info-name > div:last-child {
+  text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+}
+.fcr-h5-landscape-inter-mask-top {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    360deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.0050963) 8.07%,
+    rgba(0, 0, 0, 0.019437) 15.54%,
+    rgba(0, 0, 0, 0.0416) 22.5%,
+    rgba(0, 0, 0, 0.070163) 29.04%,
+    rgba(0, 0, 0, 0.103704) 35.26%,
+    rgba(0, 0, 0, 0.1408) 41.25%,
+    rgba(0, 0, 0, 0.18003) 47.1%,
+    rgba(0, 0, 0, 0.21997) 52.9%,
+    rgba(0, 0, 0, 0.2592) 58.75%,
+    rgba(0, 0, 0, 0.296296) 64.74%,
+    rgba(0, 0, 0, 0.329837) 70.96%,
+    rgba(0, 0, 0, 0.3584) 77.5%,
+    rgba(0, 0, 0, 0.380563) 84.46%,
+    rgba(0, 0, 0, 0.394904) 91.93%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}
+.fcr-h5-landscape-inter-mask-bottom {
+  width: 100%;
+  height: 70px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.0050963) 8.07%,
+    rgba(0, 0, 0, 0.019437) 15.54%,
+    rgba(0, 0, 0, 0.0416) 22.5%,
+    rgba(0, 0, 0, 0.070163) 29.04%,
+    rgba(0, 0, 0, 0.103704) 35.26%,
+    rgba(0, 0, 0, 0.1408) 41.25%,
+    rgba(0, 0, 0, 0.18003) 47.1%,
+    rgba(0, 0, 0, 0.21997) 52.9%,
+    rgba(0, 0, 0, 0.2592) 58.75%,
+    rgba(0, 0, 0, 0.296296) 64.74%,
+    rgba(0, 0, 0, 0.329837) 70.96%,
+    rgba(0, 0, 0, 0.3584) 77.5%,
+    rgba(0, 0, 0, 0.380563) 84.46%,
+    rgba(0, 0, 0, 0.394904) 91.93%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}

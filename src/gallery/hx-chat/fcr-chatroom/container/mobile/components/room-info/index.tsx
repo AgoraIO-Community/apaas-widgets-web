@@ -1,0 +1,153 @@
+import { useI18n } from 'agora-common-libs';
+import { observer } from 'mobx-react';
+import { CSSProperties, forwardRef, ReactNode, useEffect } from 'react';
+import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-img';
+import { useStore } from '../../../../hooks/useStore';
+
+import './index.css';
+export const RoomInfoContainer = observer(
+  forwardRef<
+    HTMLDivElement | null,
+    {
+      children?: ReactNode;
+      style?: CSSProperties;
+      landscape?: boolean;
+      classNames?: string;
+    }
+  >(function Container({ children, style, landscape = false, classNames = '' }, ref) {
+    const {
+      messageStore: { announcement, showAnnouncement },
+    } = useStore();
+
+    return (
+      <div
+        ref={ref}
+        className={`fcr-h5-interact-container${landscape ? '-landscape' : ''} ${classNames}`}
+        style={{ ...style }}>
+        {landscape ? (
+          <>
+            <RoomInfo landscape />
+            {children}
+          </>
+        ) : (
+          <>
+            <div className="fcr-h5-interact-container-top">
+              <div className="fcr-h5-interact-container-placeholder"></div>
+              {
+                <div
+                  className="fcr-chatroom-h5-announcement"
+                  style={{
+                    height: announcement && showAnnouncement ? 'auto' : '0px',
+                    ...(announcement && showAnnouncement ? {} : { paddingBottom: '0px' }),
+                  }}>
+                  <span>公告</span>
+                  {announcement}
+                </div>
+              }
+            </div>
+            <RoomInfo />
+            {children}
+          </>
+        )}
+      </div>
+    );
+  }),
+);
+
+const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
+  const {
+    messageStore: { showAnnouncement, setShowAnnouncement, announcement },
+    roomStore: { classStatusText, forceLandscape, quitForceLandscape, roomName },
+    userStore: { teacherName, studentNum },
+  } = useStore();
+  const transI18n = useI18n();
+  useEffect(() => {
+    setShowAnnouncement(!!announcement);
+  }, [announcement]);
+  return landscape ? (
+    <>
+      <div className="fcr-h5-landscape-inter-mask-top"></div>
+      <div className="fcr-h5-landscape-inter-mask-bottom"></div>
+      <div className="fcr-h5-landscape-inter-room-info">
+        <div className="fcr-h5-landscape-inter-room-info-left">
+          {forceLandscape && (
+            <div className="fcr-h5-landscape-inter-room-info-back" onClick={quitForceLandscape}>
+              <SvgImgMobile
+                landscape={landscape}
+                colors={{ iconPrimary: '#fff' }}
+                type={SvgIconEnum.COLLAPSE}
+                size={24}></SvgImgMobile>
+            </div>
+          )}
+          <div className="fcr-h5-landscape-inter-room-info-room">
+            <div className="fcr-h5-landscape-inter-room-info-teacher">
+              <FcrLogo></FcrLogo>
+              <div>
+                <div className="fcr-h5-landscape-inter-room-info-teacher-name">{teacherName}</div>
+                <div className="fcr-h5-landscape-inter-room-info-teacher-fcr">灵动课堂</div>
+              </div>
+            </div>
+            <div className="fcr-h5-landscape-inter-room-info-hot">
+              <FcrHot studentNum={studentNum}></FcrHot>
+            </div>
+          </div>
+        </div>
+
+        <div className="fcr-h5-landscape-inter-room-info-name">
+          <div>{roomName}</div>
+          <div>{classStatusText}</div>
+        </div>
+      </div>
+    </>
+  ) : (
+    <div className="fcr-h5-inter-room-info">
+      <div className="fcr-h5-inter-room-info-left">
+        <FcrLogo></FcrLogo>
+        {teacherName && (
+          <div className="fcr-h5-inter-room-info-teacher-name">
+            <span>{transI18n('chat.teacher')}:</span>
+            <span>{teacherName}</span>
+          </div>
+        )}
+        <FcrHot studentNum={studentNum}></FcrHot>
+      </div>
+      <div className="fcr-h5-inter-room-info-right">
+        <div className="fcr-h5-inter-room-info-start-time">{classStatusText}</div>
+        {announcement && (
+          <div
+            className="fcr-h5-inter-room-info-toggle-announcement"
+            onClick={() => {
+              setShowAnnouncement(!showAnnouncement);
+            }}>
+            <SvgImgMobile
+              landscape={landscape}
+              style={{ transform: `rotate(${showAnnouncement ? '180deg' : '0deg'})` }}
+              type={SvgIconEnum.DOUBLE_ARROW_DOWN}
+              size={12}></SvgImgMobile>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+});
+export const FcrLogo = observer(() => {
+  const {
+    roomStore: { isLandscape },
+  } = useStore();
+  return (
+    <div className="fcr-h5-inter-room-info-logo">
+      <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.FCR_LOGO} size={30}></SvgImgMobile>
+    </div>
+  );
+});
+export const FcrHot = observer(({ studentNum }: { studentNum: number }) => {
+  const {
+    roomStore: { isLandscape },
+  } = useStore();
+  return (
+    <div className="fcr-h5-inter-room-info-hot">
+      <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.HOT} size={20}></SvgImgMobile>{' '}
+      <span>{studentNum}人</span>
+    </div>
+  );
+});

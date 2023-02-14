@@ -1,0 +1,145 @@
+.fcr-chatroom-h5-messages {
+  overflow-y: auto;
+  background: #27292f;
+  position: relative;
+  transition: height 0.2s;
+  flex: 1;
+  padding-top: 30px;
+  border-radius: 20px 20px 0 0;
+}
+.fcr-chatroom-h5-message-placeholder {
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  position: absolute;
+}
+.fcr-chatroom-h5-messages-has-new-container {
+  position: relative;
+}
+.fcr-chatroom-h5-messages-has-new-container::before {
+  content: '';
+  width: 100%;
+  height: 36px;
+  background: linear-gradient(0deg, #282a32 32.95%, rgba(40, 42, 50, 0) 100%);
+  position: absolute;
+  left: 0;
+  bottom: 0;
+}
+.fcr-chatroom-h5-messages-has-new {
+  height: 28px;
+  line-height: 28px;
+  font-weight: 500;
+  font-size: 14px;
+  text-align: center;
+  color: #f5655c;
+  padding: 0 12px;
+  border-radius: 14px;
+  position: absolute;
+  bottom: 0;
+  left: 20px;
+  background: #fff;
+}
+.fcr-chatroom-h5-messages-wrap {
+  padding: 0 20px 0;
+}
+.fcr-chatroom-h5-message-item {
+  border-radius: 12px;
+  font-weight: 500;
+  font-size: 13px;
+  word-break: break-all;
+  margin-bottom: 4px;
+  width: fit-content;
+  padding: 2px 10px;
+  color: rgba(255, 255, 255, 1);
+
+  line-height: 18px;
+  overflow: hidden;
+}
+.fcr-chatroom-h5-message-item-img {
+  padding: 10px 10px;
+}
+.fcr-chatroom-h5-message-item-img > img {
+  float: right;
+  width: 140px;
+  max-height: 220px;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.fcr-chatroom-h5-message-item-teacher {
+  background: rgba(124, 121, 255, 1);
+}
+.fcr-chatroom-h5-message-item-student {
+  background: rgba(76, 84, 98, 0.6);
+}
+
+.fcr-chatroom-h5-message-item-self {
+  background: rgba(66, 98, 255, 1);
+}
+.fcr-chatroom-h5-message-item-name {
+  color: rgba(91, 208, 245, 1);
+  margin-right: 4px;
+}
+.fcr-chatroom-h5-message-item-teacher .fcr-chatroom-h5-message-item-name {
+  margin-left: -6px;
+}
+.fcr-chatroom-h5-message-item-host {
+  position: relative;
+  display: inline-block;
+  background: #0056fd;
+  border-radius: 12px;
+  margin-right: 4px;
+  left: -8px;
+  line-height: 18px;
+  width: 30px;
+  height: 18px;
+  vertical-align: bottom;
+}
+.fcr-chatroom-h5-message-item-host > svg {
+  display: inline-block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  bottom: 0;
+  margin: auto;
+}
+.fcr-chatroom-h5-message-announcement {
+  background: rgba(76, 84, 98, 0.6);
+  color: rgba(91, 208, 245, 1);
+  font-size: 14px;
+  line-height: 100%;
+  position: relative;
+  overflow: visible;
+  margin-top: 11px;
+  padding: 8px 10px;
+  width: 100%;
+}
+.fcr-chatroom-h5-message-item-announcement-label {
+  font-weight: 700;
+  font-size: 12px;
+  line-height: 18px;
+  color: #fff;
+  background: rgba(0, 86, 253, 0.8);
+  padding: 0 10px;
+  border-radius: 50px;
+  position: absolute;
+  left: 0;
+  top: -9px;
+}
+/** landscape **/
+.fcr-chatroom-h5-messages-landscape {
+  height: 60%;
+  width: 40%;
+  overflow-y: auto;
+}
+.fcr-chatroom-h5-messages-has-new-container-landscape {
+  position: absolute;
+  bottom: 5px;
+  background: transparent;
+}
+.fcr-chatroom-h5-messages-has-new-container-landscape .fcr-chatroom-h5-messages-has-new {
+  position: relative;
+}

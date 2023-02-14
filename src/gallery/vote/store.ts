@@ -2,6 +2,11 @@ import { EduRoleTypeEnum } from 'agora-edu-core';
 import { Toast } from '../../components/toast';
 import { action, autorun, computed, observable, runInAction } from 'mobx';
 import { AgoraPolling } from '.';
+import { OrientationEnum } from '../../../../agora-classroom-sdk/src/infra/stores/common/type';
+import {
+  AgoraExtensionRoomEvent,
+  AgoraExtensionWidgetEvent,
+} from '../../../../agora-classroom-sdk/src/infra/protocol/events';
 
 // 2 为老师或者助教出题阶段 只可老师或者助教可见
 // 1 为中间答题阶段，不同为老师或者助教和学生的权限问题
@@ -24,13 +29,20 @@ export class PluginStore {
         typeof extra?.pollItems !== 'undefined' && (this.options = extra.pollItems);
       });
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this._handleOrientationChanged,
+    });
+    this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
   }
+
+  @observable minimize = true;
 
   @observable
   stagePanel: stagePanel = 2;
 
   @observable
-  title: string = ''; // 题干
+  title = ''; // 题干
 
   @observable
   options: string[] = ['', ''];
@@ -40,6 +52,24 @@ export class PluginStore {
 
   @observable
   type: optionType = 'radio';
+  @observable orientation: OrientationEnum = OrientationEnum.portrait;
+  @observable forceLandscape = false;
+  @computed
+  get isLandscape() {
+    return this.forceLandscape || this.orientation === OrientationEnum.landscape;
+  }
+  @action.bound
+  private _handleOrientationChanged(params: {
+    orientation: OrientationEnum;
+    forceLandscape: boolean;
+  }) {
+    this.orientation = params.orientation;
+    this.forceLandscape = params.forceLandscape;
+  }
+  @action.bound
+  setMinimize(minimize: boolean) {
+    this.minimize = minimize;
+  }
 
   @action.bound
   setTitle(title: string) {
@@ -52,7 +82,7 @@ export class PluginStore {
   }
 
   @action.bound
-  addOption(text: string = '') {
+  addOption(text = '') {
     this.options = [...this.options, text];
   }
   @action.bound
@@ -82,16 +112,16 @@ export class PluginStore {
    * 投票
    */
   @action.bound
-  handleSubmitVote() {
+  handleSubmitVote(selectedIndexs?: number[]) {
     const { userUuid } = this._widget.classroomConfig.sessionInfo;
     const roomId = this._widget.classroomStore.connectionStore.sceneId;
     const { extra } = this._widget.roomProperties;
 
-    const selectedIndexs = this.selectedIndexs;
+    const indexs = selectedIndexs || this.selectedIndexs;
     return new Promise((resolve, reject) => {
       this._widget.classroomStore.api
         .submitResult(roomId, extra.pollId, userUuid, {
-          selectIndex: selectedIndexs,
+          selectIndex: indexs,
         })
         .then((res) => {
           const data = res.data;
@@ -141,15 +171,19 @@ export class PluginStore {
         : this.selectedOptions.filter((option: string) => option !== value);
     }
   }
-
   @action.bound
-  resetStore() {
+  destroy() {
     this.stagePanel = 2;
     this.title = '';
     this.options = ['', ''];
     this.selectedOptions = [];
     this.type = 'radio';
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this._handleOrientationChanged,
+    });
   }
+
   /**
    * 获取时间差
    */
@@ -204,9 +238,18 @@ export class PluginStore {
   @computed
   get pollingResult() {
     const { extra } = this._widget.roomProperties;
-    return extra?.pollDetails;
+    return extra?.pollDetails as Record<number, { percentage: number; num: number }>;
   }
+  @computed
+  get pollingResultUserCount() {
+    let count = 0;
 
+    if (!this.pollingResult) return count;
+    for (const key in this.pollingResult) {
+      count += this.pollingResult[key].num;
+    }
+    return count;
+  }
   @computed
   get selectedIndexs() {
     return this.selectedOptions.map((selectedOption: string) =>
@@ -219,15 +262,22 @@ export class PluginStore {
     // 1.当前有控制权限并处于答题阶段
     // 2.已经结束答题
     const { pollId } = this._widget.userProperties;
+    const { extra } = this._widget.roomProperties;
 
     if (this.stagePanel === 1 && this.isController) {
       return true;
-    } else if (this.stagePanel === 1 && pollId) {
+    } else if (this.stagePanel === 1 && pollId === extra.pollId) {
       return true;
     } else if (this.stagePanel === 0) {
       return true;
     }
     return false;
+  }
+
+  @computed
+  get selectedIndexResult() {
+    const { selectIndex } = this._widget.userProperties as { selectIndex?: number[] };
+    return new Set(selectIndex || []);
   }
 
   @computed
