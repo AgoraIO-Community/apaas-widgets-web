@@ -1,4 +1,4 @@
-import { transI18n } from 'agora-common-libs';
+import { useI18n } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../components/svg-img';
@@ -17,12 +17,19 @@ export const PollH5 = observer(() => {
     selectedIndexResult,
     pollingResultUserCount,
     isLandscape,
+    forceLandscape,
+    addSubmitToast,
   } = usePluginStore();
+  const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const handleOptionClick = (index: number) => {
-    if (isShowResultSection) return;
+    if (isShowResultSection) {
+      return;
+    }
     if (selectedOptions.has(index)) {
       selectedOptions.delete(index);
+      setSelectedOptions(new Set([...selectedOptions]));
+      return;
     }
     let newSelectedOptions = selectedOptions;
     if (type === 'checkbox') {
@@ -37,7 +44,10 @@ export const PollH5 = observer(() => {
   const isSubmitBtnDisabled = selectedOptions.size === 0;
   const selectedIndex = isShowResultSection ? selectedIndexResult : selectedOptions;
   const handleSubmit = () => {
-    if (isSubmitBtnDisabled) return;
+    if (isSubmitBtnDisabled) {
+      addSubmitToast();
+      return;
+    }
     handleSubmitVote([...selectedOptions]);
   };
   return minimize ? (
@@ -49,11 +59,15 @@ export const PollH5 = observer(() => {
         setMinimize(false);
       }}>
       <div className="fcr-mobile-poll-widget-minimize-icon">
-        <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.POLL}></SvgImgMobile>
+        <SvgImgMobile
+          forceLandscape={forceLandscape}
+          landscape={isLandscape}
+          type={SvgIconEnum.POLL}></SvgImgMobile>
       </div>
 
       <span>{transI18n('widget_polling.appName')}</span>
       <SvgImgMobile
+        forceLandscape={forceLandscape}
         colors={{ iconPrimary: '#000' }}
         landscape={isLandscape}
         type={SvgIconEnum.COLLAPSE}
@@ -69,13 +83,19 @@ export const PollH5 = observer(() => {
         onClick={() => {
           setMinimize(true);
         }}>
-        <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.CLOSE}></SvgImgMobile>
+        <SvgImgMobile
+          forceLandscape={forceLandscape}
+          landscape={isLandscape}
+          type={SvgIconEnum.CLOSE}></SvgImgMobile>
       </div>
       <div className="fcr-mobile-poll-widget-modal-content">
-        <div className="fcr-mobile-poll-widget-content">
+        <div
+          className="fcr-mobile-poll-widget-content"
+          style={isShowResultSection ? { paddingBottom: 0 } : {}}>
           <div className="fcr-mobile-poll-widget-top">
             <div className="fcr-mobile-poll-widget-top-logo">
               <SvgImgMobile
+                forceLandscape={forceLandscape}
                 landscape={isLandscape}
                 type={SvgIconEnum.POLL}
                 size={36}></SvgImgMobile>
@@ -138,6 +158,7 @@ export const PollH5 = observer(() => {
                 isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
               }`}>
               <SvgImgMobile
+                forceLandscape={forceLandscape}
                 landscape={isLandscape}
                 type={SvgIconEnum.TICK}
                 size={48}></SvgImgMobile>

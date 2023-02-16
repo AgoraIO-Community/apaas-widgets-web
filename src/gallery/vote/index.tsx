@@ -46,6 +46,7 @@ export class AgoraPolling extends AgoraEduToolWidget {
         iconType: 'vote',
       });
     }
+    controller.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, true);
   }
 
   @action
@@ -65,6 +66,8 @@ export class AgoraPolling extends AgoraEduToolWidget {
   }
 
   onDestroy(): void {
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
+
     if (this._store) {
       this._store.destroy();
     }

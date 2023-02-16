@@ -7,6 +7,8 @@ import {
   AgoraExtensionRoomEvent,
   AgoraExtensionWidgetEvent,
 } from '../../../../agora-classroom-sdk/src/infra/protocol/events';
+import { transI18n } from 'agora-common-libs';
+import { bound } from 'agora-rte-sdk';
 
 // 2 为老师或者助教出题阶段 只可老师或者助教可见
 // 1 为中间答题阶段，不同为老师或者助教和学生的权限问题
@@ -108,6 +110,14 @@ export class PluginStore {
     const roomId = this._widget.classroomStore.connectionStore.sceneId;
     this._widget.classroomStore.api.startPolling(roomId, body);
   }
+  @bound
+  addSubmitToast() {
+    this._widget.broadcast(AgoraExtensionWidgetEvent.AddSingletonToast, {
+      desc: transI18n('widget_polling.submit-tip'),
+      type: 'normal',
+    });
+  }
+
   /**
    * 投票
    */
@@ -240,15 +250,11 @@ export class PluginStore {
     const { extra } = this._widget.roomProperties;
     return extra?.pollDetails as Record<number, { percentage: number; num: number }>;
   }
+
   @computed
   get pollingResultUserCount() {
-    let count = 0;
-
-    if (!this.pollingResult) return count;
-    for (const key in this.pollingResult) {
-      count += this.pollingResult[key].num;
-    }
-    return count;
+    const { extra } = this._widget.roomProperties;
+    return extra.userCount as number;
   }
   @computed
   get selectedIndexs() {

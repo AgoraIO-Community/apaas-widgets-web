@@ -28,7 +28,7 @@ export const MessageList = observer(() => {
       setMessageListDom,
       messageListScrollToBottom,
     },
-    roomStore: { isLandscape, messageVisible },
+    roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
   const messageContainerRef = useRef<HTMLDivElement>(null);
@@ -36,8 +36,8 @@ export const MessageList = observer(() => {
     throttle(() => {
       if (messageContainerRef.current)
         if (
-          messageContainerRef.current.scrollTop + messageContainerRef.current.clientHeight !==
-          messageContainerRef.current.scrollHeight
+          messageContainerRef.current.scrollTop + messageContainerRef.current.clientHeight <=
+          messageContainerRef.current.scrollHeight - 2
         ) {
           setIsBottom(false);
         } else {
@@ -46,7 +46,11 @@ export const MessageList = observer(() => {
     }, 200),
     [],
   );
-
+  useEffect(() => {
+    if (isLandscape) {
+      messageListScrollToBottom();
+    }
+  }, [isLandscape]);
   useEffect(() => {
     const lastMessage = messageList[messageList.length - 1];
     if (
@@ -69,12 +73,19 @@ export const MessageList = observer(() => {
     const messageContainer = messageContainerRef.current;
     const resizeObserver = new ResizeObserver(handleScroll);
     if (messageContainer) {
-      messageContainer.addEventListener('scroll', handleScroll);
+      if (/(?:Android)/.test(navigator.userAgent)) {
+        messageContainer.onscroll = handleScroll;
+      } else {
+        messageContainer.addEventListener('scroll', handleScroll);
+      }
       resizeObserver.observe(messageContainer);
       setMessageListDom(messageContainer);
     }
     return () => {
-      messageContainerRef.current?.removeEventListener('scroll', handleScroll);
+      if (messageContainerRef.current) {
+        messageContainerRef.current.onscroll = null;
+        messageContainerRef.current.removeEventListener('scroll', handleScroll);
+      }
       resizeObserver.disconnect();
     };
   }, []);
@@ -88,7 +99,9 @@ export const MessageList = observer(() => {
           <div className="fcr-chatroom-h5-messages-wrap">
             {messageList.map((message) => {
               if (typeof message === 'string') {
-                return <AnnouncementMessage announcement={message}></AnnouncementMessage>;
+                return (
+                  <AnnouncementMessage key={message} announcement={message}></AnnouncementMessage>
+                );
               } else {
                 switch (message.type) {
                   case AgoraIMMessageType.Text:
@@ -112,19 +125,23 @@ export const MessageList = observer(() => {
           </div>
         ) : !isLandscape ? (
           <SvgImgMobile
+            forceLandscape={forceLandscape}
             landscape={isLandscape}
             className="fcr-chatroom-h5-message-placeholder"
             type={SvgIconEnum.MESSAGE_PLACEHOLDER}
             size={120}></SvgImgMobile>
         ) : null}
       </div>
-      {unreadMessageCount !== 0 && (
+      {unreadMessageCount !== 0 && messageVisible && (
         <div
           className={`fcr-chatroom-h5-messages-has-new-container${
             isLandscape ? '-landscape' : ''
           }`}>
           <div onClick={messageListScrollToBottom} className="fcr-chatroom-h5-messages-has-new">
-            <span>{unreadMessageCount}条新消息</span>
+            <span>
+              {unreadMessageCount}
+              {transI18n('fcr_h5_button_newmessage')}
+            </span>
           </div>
         </div>
       )}
@@ -136,7 +153,9 @@ const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
     <div
       key={announcement}
       className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-announcement`}>
-      <span className="fcr-chatroom-h5-message-item-announcement-label">Notice</span>
+      <span className="fcr-chatroom-h5-message-item-announcement-label">
+        {transI18n('chat.announcement')}
+      </span>
       {announcement}
     </div>
   );
@@ -144,7 +163,7 @@ const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
 const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
   const {
     fcrChatRoom,
-    roomStore: { isLandscape },
+    roomStore: { isLandscape, forceLandscape },
   } = useStore();
   const { isTeacherMessage, messageFromAlias, messageStyleType } = useMessageParams({
     message,
@@ -158,7 +177,11 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
       className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-item-${messageStyleType}`}>
       {isTeacherMessage && (
         <span className="fcr-chatroom-h5-message-item-host">
-          <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.HOST} size={24}></SvgImgMobile>
+          <SvgImgMobile
+            forceLandscape={forceLandscape}
+            landscape={isLandscape}
+            type={SvgIconEnum.HOST}
+            size={24}></SvgImgMobile>
         </span>
       )}
 
@@ -174,7 +197,7 @@ const ImageMessage = observer(
   ({ message, onImgLoad }: { message: AgoraIMMessageBase; onImgLoad: () => void }) => {
     const {
       fcrChatRoom,
-      roomStore: { isLandscape },
+      roomStore: { isLandscape, forceLandscape },
     } = useStore();
     const { isTeacherMessage, messageFromAlias, messageStyleType } = useMessageParams({
       message,
@@ -195,7 +218,11 @@ const ImageMessage = observer(
         className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-item-img fcr-chatroom-h5-message-item-${messageStyleType}`}>
         {isTeacherMessage && (
           <span className="fcr-chatroom-h5-message-item-host">
-            <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.HOST} size={24}></SvgImgMobile>
+            <SvgImgMobile
+              forceLandscape={forceLandscape}
+              landscape={isLandscape}
+              type={SvgIconEnum.HOST}
+              size={24}></SvgImgMobile>
           </span>
         )}
 
@@ -235,10 +262,10 @@ const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
     case AgoraIMCmdActionEnum.AllUserUnmuted:
       return transI18n('chat.unmuted_all');
     case AgoraIMCmdActionEnum.UserMuted:
-      return transI18n('chat.mute_user_msg');
+      return transI18n('fcr_H5_mute_user_msg');
 
     case AgoraIMCmdActionEnum.UserUnmuted:
-      return transI18n('chat.unmute_user_msg');
+      return transI18n('fcr_H5_unmute_user_msg');
   }
 };
 const useMessageParams = ({
@@ -250,7 +277,11 @@ const useMessageParams = ({
 }) => {
   const isSelfMessage = message.from === fcrChatRoom.userInfo?.userId;
   const isTeacherMessage = message.ext?.role === EduRoleTypeEnum.teacher;
-  const messageFromAlias = isSelfMessage ? '(我)' : isTeacherMessage ? '(老师)' : '';
+  const messageFromAlias = isSelfMessage
+    ? `(${transI18n('chat.me')})`
+    : isTeacherMessage
+    ? `(${transI18n('chat.teacher')})`
+    : '';
   const messageStyleType = isSelfMessage ? 'self' : isTeacherMessage ? 'teacher' : 'student';
   return {
     isSelfMessage,

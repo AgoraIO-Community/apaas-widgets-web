@@ -52,7 +52,18 @@ const enUS = {
     screenshots_file: 'Screenshots_file',
     send_to_all: 'Broadcast Message',
     sentence_connector: ',',
+    me: 'me',
   },
+  fcr_h5_label_watched: '',
+  fcr_h5_label_logo: 'Flexible Classroom',
+  fcr_h5_button_newmessage: 'New messages',
+  fcr_h5_button_copyurl: 'Copy url',
+  fcr_H5_tips_arrive: 'joined',
+  fcr_H5_tips_join: 'Failed to join the room',
+  fcr_H5_tips_chat_hidden: 'The chat room has been closed',
+  fcr_H5_tips_chat_display: 'The chat room has been opened',
+  fcr_H5_mute_user_msg: 'You have been forbidden to speak by teacher',
+  fcr_H5_unmute_user_msg: 'You were forbidden to speak by teacher',
 };
 
 export default enUS;

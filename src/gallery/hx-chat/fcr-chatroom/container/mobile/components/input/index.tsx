@@ -27,7 +27,7 @@ export const FcrChatRoomH5Inputs = observer(
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {
       messageStore: { sendTextMessage, sendImageMessage },
-      roomStore: { allMuted, isLandscape, messageVisible, setMessageVisible },
+      roomStore: { allMuted, isLandscape, messageVisible, setMessageVisible, forceLandscape },
       userStore: { userMuted },
     } = useStore();
 
@@ -78,6 +78,7 @@ export const FcrChatRoomH5Inputs = observer(
               {isMuted && (
                 <div className="fcr-chatroom-h5-inputs-input-muted">
                   <SvgImgMobile
+                    forceLandscape={forceLandscape}
                     landscape={isLandscape}
                     type={SvgIconEnum.MUTE}
                     size={30}></SvgImgMobile>
@@ -112,15 +113,18 @@ export const FcrChatRoomH5Inputs = observer(
               <div className="fcr-chatroom-h5-inputs-input-emoji">
                 {showEmoji ? (
                   <SvgImgMobile
+                    forceLandscape={forceLandscape}
                     landscape={isLandscape}
                     type={SvgIconEnum.KEYBOARD}
                     onClick={() => {
                       onShowEmojiChanged(false);
+                      inputRef.current?.blur();
                       inputRef.current?.focus();
                     }}
                     size={34}></SvgImgMobile>
                 ) : (
                   <SvgImgMobile
+                    forceLandscape={forceLandscape}
                     landscape={isLandscape}
                     type={SvgIconEnum.CHAT_EMOJI}
                     onClick={() => {
@@ -134,6 +138,7 @@ export const FcrChatRoomH5Inputs = observer(
           {text ? (
             <div className="fcr-chatroom-h5-inputs-send">
               <SvgImgMobile
+                forceLandscape={forceLandscape}
                 landscape={isLandscape}
                 type={SvgIconEnum.VECTOR}
                 onClick={send}
@@ -145,11 +150,13 @@ export const FcrChatRoomH5Inputs = observer(
                 <div className="fcr-chatroom-h5-inputs-hide-message" onClick={toggleMessageVisible}>
                   {messageVisible ? (
                     <SvgImgMobile
+                      forceLandscape={forceLandscape}
                       landscape={isLandscape}
                       type={SvgIconEnum.MESSAGE_OEPNED}
                       size={30}></SvgImgMobile>
                   ) : (
                     <SvgImgMobile
+                      forceLandscape={forceLandscape}
                       landscape={isLandscape}
                       type={SvgIconEnum.MESSAGE_CLOSED}
                       size={30}></SvgImgMobile>
@@ -159,6 +166,7 @@ export const FcrChatRoomH5Inputs = observer(
               {!isMuted && (
                 <div className="fcr-chatroom-h5-inputs-image" onClick={handleImgInputClick}>
                   <SvgImgMobile
+                    forceLandscape={forceLandscape}
                     landscape={isLandscape}
                     type={SvgIconEnum.CHAT_IMAGE}
                     size={30}></SvgImgMobile>

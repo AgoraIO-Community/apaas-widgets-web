@@ -77,15 +77,9 @@ export class UserStore {
     }, this.userCarouselAnimDelay + 500);
   }
   @computed get teacherName() {
-    const { list } = iterateMap(this._widget.classroomStore.userStore.teacherList, {
-      onMap: (_, { userName }) => userName,
-    });
+    return this._widget.classroomStore.roomStore.flexProps['teacherName'];
+  }
 
-    return list.join(',');
-  }
-  @computed get studentNum() {
-    return this._widget.classroomStore.userStore.studentList.size;
-  }
   destroy() {
     this._removeEventListeners();
   }

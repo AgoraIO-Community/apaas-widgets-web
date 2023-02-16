@@ -116,13 +116,14 @@
   margin-top: 11px;
   padding: 8px 10px;
   width: 100%;
+  white-space: pre-wrap;
 }
 .fcr-chatroom-h5-message-item-announcement-label {
   font-weight: 700;
   font-size: 12px;
   line-height: 18px;
   color: #fff;
-  background: rgba(0, 86, 253, 0.8);
+  background: rgba(0, 86, 253, 1);
   padding: 0 10px;
   border-radius: 50px;
   position: absolute;

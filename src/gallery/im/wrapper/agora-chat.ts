@@ -97,6 +97,7 @@ export class FcrChatRoom extends AgoraIMBase {
       error: () => {},
     });
   }
+
   async muteAllUserList(): Promise<void> {
     await this.conn.disableSendChatRoomMsg({ chatRoomId: this.roomId });
   }
@@ -260,9 +261,10 @@ export class FcrChatRoom extends AgoraIMBase {
     const { data } = await this.conn.getChatRoomDetails({
       chatRoomId: this._connectionInfo.roomId,
     });
-
+    const res = (data as unknown as { mute: boolean; affiliations: unknown[] }[])[0];
     return {
-      mute: !!(data as unknown as { mute: boolean }[])[0]?.mute,
+      mute: !!res?.mute,
+      usersCount: res?.affiliations.length || 0,
     };
   }
   async leave(): Promise<void> {
@@ -297,6 +299,9 @@ export class FcrChatRoom extends AgoraIMBase {
         switch (msg.operation) {
           case 'memberPresence':
             this.emit(AgoraIMEvents.UserJoined, msg.from);
+            break;
+          case 'memberAbsence':
+            this.emit(AgoraIMEvents.UserLeft, msg.from);
             break;
           case 'updateAnnouncement':
             this.emit(AgoraIMEvents.AnnouncementUpdated, msg.id);

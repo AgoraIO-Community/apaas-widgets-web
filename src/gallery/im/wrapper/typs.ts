@@ -12,7 +12,7 @@ export abstract class AgoraIMBase extends AGEventEmitter {
   abstract join(joinOptions: { token: string }): Promise<void>;
   abstract leave(): Promise<void>;
   abstract sendMessage(message: AgoraIMMessageBase): Promise<AgoraIMMessageBase>;
-  abstract getUserList(params: { users: string[] }): Promise<AgoraIMUserInfo[]>;
+  abstract getUserList(params: { pageNum: number; pageSize: number }): Promise<AgoraIMUserInfo[]>;
   abstract getHistoryMessageList(params?: {
     pageSize?: number;
     msgId?: string;
@@ -44,6 +44,8 @@ export abstract class AgoraIMBase extends AGEventEmitter {
     cb: (msg: AgoraIMCustomMessage) => void,
   ): this;
   abstract on(evt: AgoraIMEvents.UserJoined, cb: (user: string) => void): this;
+  abstract on(evt: AgoraIMEvents.UserLeft, cb: (user: string) => void): this;
+
   abstract on(evt: AgoraIMEvents.AnnouncementUpdated, cb: () => void): this;
   abstract on(evt: AgoraIMEvents.AnnouncementDeleted, cb: () => void): this;
 
@@ -58,6 +60,7 @@ export abstract class AgoraIMBase extends AGEventEmitter {
 }
 export interface AgoraIMChatRoomDetails {
   mute: boolean;
+  usersCount: number;
 }
 export interface AgoraIMMessageExt {
   nickName: string;

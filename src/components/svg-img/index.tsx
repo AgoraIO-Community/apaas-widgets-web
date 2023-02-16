@@ -16,10 +16,15 @@ export type SvgImgProps = {
   style?: React.CSSProperties;
 };
 
-export const SvgImgMobile: FC<SvgImgProps & { landscape: boolean }> = (props) => {
-  const { landscape } = props;
-  const basicWidth = landscape && window.matchMedia('(orientation: landscape)').matches ? 667 : 375;
-  const basicWidthRatio = (((props.size || 24) / basicWidth) * 100).toFixed(3) + 'vw';
+export const SvgImgMobile: FC<SvgImgProps & { landscape: boolean; forceLandscape: boolean }> = (
+  props,
+) => {
+  const { landscape, forceLandscape } = props;
+  const basicWidth =
+    (forceLandscape || landscape) && window.matchMedia('(orientation: landscape)').matches
+      ? 812
+      : 375;
+  const basicWidthRatio = (((props.size || 24) / basicWidth) * 100).toFixed(5) + 'vw';
 
   return <SvgImg {...props} size={basicWidthRatio}></SvgImg>;
 };

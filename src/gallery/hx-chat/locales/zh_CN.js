@@ -53,6 +53,18 @@ const im_CN = {
     screenshots_file: '截图文件',
     send_to_all: '发送全体消息',
     sentence_connector: '，',
+    me: '我',
   },
+  fcr_h5_label_watched: '人',
+  fcr_h5_label_logo: '灵动课堂',
+  fcr_h5_button_newmessage: '条新消息',
+  fcr_h5_button_copyurl: '复制链接',
+  fcr_h5_button_clickjoin: '',
+  fcr_H5_tips_arrive: '加入',
+  fcr_H5_tips_join: '加入房间失败',
+  fcr_H5_tips_chat_hidden: '已关闭聊天显示',
+  fcr_H5_tips_chat_display: '已开启聊天显示',
+  fcr_H5_mute_user_msg: '您被老师禁止发言了',
+  fcr_H5_unmute_user_msg: '您被老师解除禁言了',
 };
 export default im_CN;

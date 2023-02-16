@@ -12,7 +12,7 @@ const thumbsupImgList: string[] = ctxRequire.keys().map((img) => {
 });
 export const Thumbsup = observer(() => {
   const {
-    roomStore: { isLandscape, thumbsupRenderCache, thumbsup, setThumbsUpAni },
+    roomStore: { isLandscape, forceLandscape, thumbsupRenderCache, thumbsup, setThumbsUpAni },
   } = useStore();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const thumbsupAniRef = useRef<ThumbsUpAni | null>(null);
@@ -48,6 +48,7 @@ export const Thumbsup = observer(() => {
         {formatCount(thumbsupRenderCache)}
       </div>
       <SvgImgMobile
+        forceLandscape={forceLandscape}
         landscape={isLandscape}
         type={SvgIconEnum.THUMBSUP}
         onClick={thumbsUp}
@@ -62,5 +63,5 @@ export const Thumbsup = observer(() => {
   );
 });
 const formatCount = (count: number) => {
-  return count >= 10000 ? `${(count / 10000).toFixed(1)}w` : count;
+  return count >= 1000 ? `${(count / 1000).toFixed(1)}k` : count;
 };

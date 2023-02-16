@@ -1,4 +1,4 @@
-import { useI18n } from 'agora-common-libs';
+import { transI18n, useI18n } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { CSSProperties, forwardRef, ReactNode, useEffect } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-img';
@@ -40,8 +40,8 @@ export const RoomInfoContainer = observer(
                     height: announcement && showAnnouncement ? 'auto' : '0px',
                     ...(announcement && showAnnouncement ? {} : { paddingBottom: '0px' }),
                   }}>
-                  <span>公告</span>
-                  {announcement}
+                  <span>{transI18n('chat.announcement')}</span>
+                  <span>{announcement}</span>
                 </div>
               }
             </div>
@@ -58,7 +58,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
   const {
     messageStore: { showAnnouncement, setShowAnnouncement, announcement },
     roomStore: { classStatusText, forceLandscape, quitForceLandscape, roomName },
-    userStore: { teacherName, studentNum },
+    userStore: { teacherName },
   } = useStore();
   const transI18n = useI18n();
   useEffect(() => {
@@ -73,6 +73,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
           {forceLandscape && (
             <div className="fcr-h5-landscape-inter-room-info-back" onClick={quitForceLandscape}>
               <SvgImgMobile
+                forceLandscape={forceLandscape}
                 landscape={landscape}
                 colors={{ iconPrimary: '#fff' }}
                 type={SvgIconEnum.COLLAPSE}
@@ -84,11 +85,13 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
               <FcrLogo></FcrLogo>
               <div>
                 <div className="fcr-h5-landscape-inter-room-info-teacher-name">{teacherName}</div>
-                <div className="fcr-h5-landscape-inter-room-info-teacher-fcr">灵动课堂</div>
+                <div className="fcr-h5-landscape-inter-room-info-teacher-fcr">
+                  {transI18n('fcr_h5_label_logo')}
+                </div>
               </div>
             </div>
             <div className="fcr-h5-landscape-inter-room-info-hot">
-              <FcrHot studentNum={studentNum}></FcrHot>
+              <FcrHot></FcrHot>
             </div>
           </div>
         </div>
@@ -109,7 +112,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
             <span>{teacherName}</span>
           </div>
         )}
-        <FcrHot studentNum={studentNum}></FcrHot>
+        <FcrHot></FcrHot>
       </div>
       <div className="fcr-h5-inter-room-info-right">
         <div className="fcr-h5-inter-room-info-start-time">{classStatusText}</div>
@@ -120,6 +123,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
               setShowAnnouncement(!showAnnouncement);
             }}>
             <SvgImgMobile
+              forceLandscape={forceLandscape}
               landscape={landscape}
               style={{ transform: `rotate(${showAnnouncement ? '180deg' : '0deg'})` }}
               type={SvgIconEnum.DOUBLE_ARROW_DOWN}
@@ -132,22 +136,33 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
 });
 export const FcrLogo = observer(() => {
   const {
-    roomStore: { isLandscape },
+    roomStore: { isLandscape, forceLandscape },
   } = useStore();
   return (
     <div className="fcr-h5-inter-room-info-logo">
-      <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.FCR_LOGO} size={30}></SvgImgMobile>
+      <SvgImgMobile
+        forceLandscape={forceLandscape}
+        landscape={isLandscape}
+        type={SvgIconEnum.FCR_LOGO}
+        size={30}></SvgImgMobile>
     </div>
   );
 });
-export const FcrHot = observer(({ studentNum }: { studentNum: number }) => {
+export const FcrHot = observer(() => {
   const {
-    roomStore: { isLandscape },
+    roomStore: { isLandscape, usersCount, forceLandscape },
   } = useStore();
+  const transI18n = useI18n();
   return (
     <div className="fcr-h5-inter-room-info-hot">
-      <SvgImgMobile landscape={isLandscape} type={SvgIconEnum.HOT} size={20}></SvgImgMobile>{' '}
-      <span>{studentNum}人</span>
+      <SvgImgMobile
+        forceLandscape={forceLandscape}
+        landscape={isLandscape}
+        type={SvgIconEnum.HOT}
+        size={20}></SvgImgMobile>{' '}
+      <span>
+        {usersCount} {transI18n('fcr_h5_label_watched')}
+      </span>
     </div>
   );
 });

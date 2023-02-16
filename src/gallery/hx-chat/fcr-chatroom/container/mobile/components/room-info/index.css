@@ -90,8 +90,9 @@
   overflow: hidden;
   color: #ffffff;
   word-break: break-all;
+  white-space: pre-wrap;
 }
-.fcr-chatroom-h5-announcement > span {
+.fcr-chatroom-h5-announcement > span:first-child {
   padding: 0 5px;
   background: #fff;
   border-radius: 20px;
@@ -144,7 +145,7 @@
 .fcr-h5-landscape-inter-room-info-left {
   display: flex;
   flex-direction: row;
-  padding: 16px 0 0 30px;
+  padding: 16px 0 0 16px;
 }
 .fcr-h5-landscape-inter-room-info-back {
   background: rgba(240, 242, 248, 0.6);
@@ -176,7 +177,7 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-right: 12px;
+  padding-right: 21px;
 }
 .fcr-h5-landscape-inter-room-info-teacher .fcr-h5-inter-room-info-logo {
   position: static;
@@ -186,6 +187,7 @@
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
+  padding-bottom: 7px;
 }
 .fcr-h5-landscape-inter-room-info-teacher-fcr {
   font-weight: 700;
@@ -221,6 +223,7 @@
   font-weight: 700;
   font-size: 18px;
   line-height: 100%;
+  padding-bottom: 4px;
 }
 .fcr-h5-landscape-inter-room-info-name > div:last-child {
   text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);

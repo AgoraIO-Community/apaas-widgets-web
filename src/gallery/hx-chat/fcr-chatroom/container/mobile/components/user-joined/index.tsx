@@ -1,3 +1,4 @@
+import { useI18n } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../../../hooks/useStore';
@@ -11,6 +12,8 @@ export const UserJoined = observer(() => {
     userStore: { userCarouselAnimDelay, joinedUser },
     roomStore: { isLandscape, messageVisible },
   } = useStore();
+  const transI18n = useI18n();
+
   useEffect(() => {
     setLeft(-(ref.current?.clientWidth || 0));
     setBgColor(backgroundColors[Math.round(Math.random())]);
@@ -27,7 +30,7 @@ export const UserJoined = observer(() => {
         left: left,
         visibility: messageVisible || !isLandscape ? 'visible' : 'hidden',
       }}>
-      {joinedUser?.nickName}&nbsp;来了👏
+      {joinedUser?.nickName}&nbsp;{transI18n('fcr_H5_tips_arrive')}
     </div>
   ) : null;
 });

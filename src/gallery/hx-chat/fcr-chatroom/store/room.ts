@@ -10,6 +10,7 @@ import {
 } from '../../../../../../agora-classroom-sdk/src/infra/protocol/events';
 import { AgoraRteEventType, bound, Scheduler } from 'agora-rte-sdk';
 import { ThumbsUpAni } from '../container/mobile/components/thumbsup/thumbsup';
+import { transI18n } from 'agora-common-libs';
 export class RoomStore {
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
   @observable messageVisible = true;
@@ -18,7 +19,7 @@ export class RoomStore {
   @observable
   allMuted = false;
   @observable thumbsupRenderCache = 0;
-
+  @observable usersCount = 0;
   private _thumbsupCache = 0;
   private _thumbsupDiffCache = 0;
   private _thumbsupRenderCount = 0;
@@ -36,6 +37,9 @@ export class RoomStore {
     });
   }
   private _addEventListeners() {
+    this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._handleUserJoined);
+    this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._handleUserLeft);
+
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.addBroadcastListener({
@@ -49,6 +53,8 @@ export class RoomStore {
     );
   }
   private _removeEventListeners() {
+    this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._handleUserJoined);
+    this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._handleUserLeft);
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.removeBroadcastListener({
@@ -142,12 +148,19 @@ export class RoomStore {
   @action.bound
   setMessageVisible(visible: boolean) {
     this._widget.broadcast(AgoraExtensionWidgetEvent.AddSingletonToast, {
-      desc: visible ? 'Chat pop-up screen has been opened' : 'Chat pop-up screen has been closed',
+      desc: visible ? transI18n('fcr_H5_tips_chat_display') : transI18n('fcr_H5_tips_chat_hidden'),
       type: 'normal',
     });
     this.messageVisible = visible;
   }
-
+  @action.bound
+  private _handleUserJoined() {
+    this.usersCount++;
+  }
+  @action.bound
+  private _handleUserLeft() {
+    this.usersCount--;
+  }
   @action.bound
   private _handleAllUserMuted() {
     this.allMuted = true;
@@ -157,9 +170,10 @@ export class RoomStore {
     this.allMuted = false;
   }
   async getChatRoomDetails() {
-    const { mute } = await this._fcrChatRoom.getChatRoomDetails();
+    const { mute, usersCount } = await this._fcrChatRoom.getChatRoomDetails();
     runInAction(() => {
       this.allMuted = mute;
+      this.usersCount = usersCount;
     });
   }
   @action.bound
