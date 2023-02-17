@@ -60,7 +60,6 @@ export abstract class AgoraIMBase extends AGEventEmitter {
 }
 export interface AgoraIMChatRoomDetails {
   mute: boolean;
-  usersCount: number;
 }
 export interface AgoraIMMessageExt {
   nickName: string;

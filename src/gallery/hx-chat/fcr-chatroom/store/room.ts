@@ -1,7 +1,7 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../im/wrapper/typs';
-import { ClassState } from 'agora-edu-core';
+import { ClassState, EduRoleTypeEnum, FetchUserType } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import { OrientationEnum } from '../../../../../../agora-classroom-sdk/src/infra/stores/common/type';
 import {
@@ -20,6 +20,8 @@ export class RoomStore {
   allMuted = false;
   @observable thumbsupRenderCache = 0;
   @observable usersCount = 0;
+  private _fetchUserCountTask: Scheduler.Task | null = null;
+
   private _thumbsupCache = 0;
   private _thumbsupDiffCache = 0;
   private _thumbsupRenderCount = 0;
@@ -36,10 +38,8 @@ export class RoomStore {
         )?.['thumbsup'] || 0;
     });
   }
-  private _addEventListeners() {
-    this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._handleUserJoined);
-    this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._handleUserLeft);
 
+  private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.addBroadcastListener({
@@ -51,10 +51,20 @@ export class RoomStore {
       AgoraRteEventType.RoomPropertyUpdated,
       this._handleClassRoomPropertiesChange,
     );
+    this._fetchUserCountTask = Scheduler.shared.addPollingTask(async () => {
+      const res = await this._widget.classroomStore.userStore.fetchUserList({
+        role: EduRoleTypeEnum.student,
+        nextId: undefined,
+        count: 1,
+        type: FetchUserType.all,
+      });
+      runInAction(() => {
+        this.usersCount = res.total || 0;
+      });
+    }, 5000);
   }
   private _removeEventListeners() {
-    this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._handleUserJoined);
-    this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._handleUserLeft);
+    this._fetchUserCountTask?.stop();
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.removeBroadcastListener({
@@ -153,14 +163,7 @@ export class RoomStore {
     });
     this.messageVisible = visible;
   }
-  @action.bound
-  private _handleUserJoined() {
-    this.usersCount++;
-  }
-  @action.bound
-  private _handleUserLeft() {
-    this.usersCount--;
-  }
+
   @action.bound
   private _handleAllUserMuted() {
     this.allMuted = true;
@@ -170,10 +173,9 @@ export class RoomStore {
     this.allMuted = false;
   }
   async getChatRoomDetails() {
-    const { mute, usersCount } = await this._fcrChatRoom.getChatRoomDetails();
+    const { mute } = await this._fcrChatRoom.getChatRoomDetails();
     runInAction(() => {
       this.allMuted = mute;
-      this.usersCount = usersCount;
     });
   }
   @action.bound
