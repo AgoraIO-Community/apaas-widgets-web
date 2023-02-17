@@ -139,7 +139,7 @@ export const MessageList = observer(() => {
           }`}>
           <div onClick={messageListScrollToBottom} className="fcr-chatroom-h5-messages-has-new">
             <span>
-              {unreadMessageCount}
+              {unreadMessageCount}&nbsp;
               {transI18n('fcr_h5_button_newmessage')}
             </span>
           </div>

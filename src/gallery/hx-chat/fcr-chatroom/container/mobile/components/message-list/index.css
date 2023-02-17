@@ -145,4 +145,5 @@
 }
 .fcr-chatroom-h5-messages-has-new-container-landscape .fcr-chatroom-h5-messages-has-new {
   position: relative;
+  pointer-events: all;
 }
