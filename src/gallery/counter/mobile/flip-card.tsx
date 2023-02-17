@@ -26,9 +26,9 @@ const FlipCard = ({ number = 0, caution = false }: { number: number; caution: bo
   }, [number]);
 
   return (
-    <div className={`flip-card down ${go}`} style={caution ? { color: 'red' } : {}}>
-      <div className={`flip-card-front flip-card-digital number${frontNum}`}></div>
-      <div className={`flip-card-back flip-card-digital number${backNum}`}></div>
+    <div className={`flip-card-mobile down ${go}`} style={caution ? { color: 'red' } : {}}>
+      <div className={`flip-card-mobile-front flip-card-mobile-digital number${frontNum}`}></div>
+      <div className={`flip-card-mobile-back flip-card-mobile-digital number${backNum}`}></div>
     </div>
   );
 };

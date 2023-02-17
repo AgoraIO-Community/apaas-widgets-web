@@ -14,6 +14,16 @@ export class PluginStore {
         this.setShowSetting(false);
       }
     });
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: this._handleMobileLandscapeToolBarStateChanged,
+    });
+    this._widget.broadcast(
+      AgoraExtensionWidgetEvent.RequestMobileLandscapeToolBarVisible,
+      undefined,
+    );
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -23,7 +33,7 @@ export class PluginStore {
 
   @observable
   number: number | null = 60;
-
+  @observable landscapeToolBarVisible = false;
   @observable
   showSetting = true;
   @observable orientation: OrientationEnum = OrientationEnum.portrait;
@@ -31,6 +41,10 @@ export class PluginStore {
   @computed
   get isLandscape() {
     return this.forceLandscape || this.orientation === OrientationEnum.landscape;
+  }
+  @action.bound
+  private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
+    this.landscapeToolBarVisible = visible;
   }
   @action.bound
   private _handleOrientationChanged(params: {

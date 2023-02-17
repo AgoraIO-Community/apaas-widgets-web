@@ -31,6 +31,16 @@ export class PluginStore {
         typeof extra?.pollItems !== 'undefined' && (this.options = extra.pollItems);
       });
     });
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: this._handleMobileLandscapeToolBarStateChanged,
+    });
+    this._widget.broadcast(
+      AgoraExtensionWidgetEvent.RequestMobileLandscapeToolBarVisible,
+      undefined,
+    );
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -56,9 +66,16 @@ export class PluginStore {
   type: optionType = 'radio';
   @observable orientation: OrientationEnum = OrientationEnum.portrait;
   @observable forceLandscape = false;
+  @observable landscapeToolBarVisible = false;
+
   @computed
   get isLandscape() {
     return this.forceLandscape || this.orientation === OrientationEnum.landscape;
+  }
+
+  @action.bound
+  private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
+    this.landscapeToolBarVisible = visible;
   }
   @action.bound
   private _handleOrientationChanged(params: {

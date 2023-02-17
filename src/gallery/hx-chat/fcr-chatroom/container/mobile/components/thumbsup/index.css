@@ -16,6 +16,7 @@
   background: rgba(238, 72, 120, 1);
   position: relative;
   z-index: 9;
+  user-select: none;
 }
 .fcr-chatroom-h5-inputs-thumbsup-count {
   width: 27px;
@@ -31,5 +32,5 @@
   margin: 0 auto;
   position: absolute;
   text-align: center;
-  pointer-events: none;
+  user-select: none;
 }

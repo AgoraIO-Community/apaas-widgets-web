@@ -110,11 +110,12 @@
   background: rgba(76, 84, 98, 0.6);
   color: rgba(91, 208, 245, 1);
   font-size: 14px;
-  line-height: 100%;
+  line-height: 130%;
   position: relative;
   overflow: visible;
   margin-top: 11px;
   padding: 8px 10px;
+  padding-top: 10px;
   width: 100%;
   white-space: pre-wrap;
 }
@@ -135,6 +136,7 @@
   height: 60%;
   width: 40%;
   overflow-y: auto;
+  pointer-events: all;
 }
 .fcr-chatroom-h5-messages-has-new-container-landscape {
   position: absolute;

@@ -133,6 +133,7 @@
   display: flex;
   flex-direction: row;
   align-items: flex-end;
+  pointer-events: none;
 }
 .fcr-h5-landscape-inter-room-info {
   position: absolute;
@@ -158,6 +159,7 @@
   display: flex;
   justify-content: center;
   align-items: center;
+  pointer-events: all;
 }
 .fcr-h5-landscape-inter-room-info-back > svg {
   transform: rotate(-90deg);
@@ -208,7 +210,7 @@
   color: rgba(117, 117, 117, 0.8);
   font-weight: 600;
   font-size: 14px;
-  padding: 0 10px 0 7px;
+  padding: 0 15px 0 10px;
   display: flex;
   align-items: center;
   justify-content: center;

@@ -27,7 +27,14 @@ export const FcrChatRoomH5Inputs = observer(
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {
       messageStore: { sendTextMessage, sendImageMessage },
-      roomStore: { allMuted, isLandscape, messageVisible, setMessageVisible, forceLandscape },
+      roomStore: {
+        allMuted,
+        isLandscape,
+        messageVisible,
+        setMessageVisible,
+        forceLandscape,
+        landscapeToolBarVisible,
+      },
       userStore: { userMuted },
     } = useStore();
 
@@ -54,12 +61,15 @@ export const FcrChatRoomH5Inputs = observer(
     const toggleMessageVisible = () => {
       setMessageVisible(!messageVisible);
     };
-
+    const inputVisible = (messageVisible && landscapeToolBarVisible) || !isLandscape;
     return (
       <>
         <div
           className="fcr-chatroom-h5-inputs"
           style={{
+            visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
+            opacity: landscapeToolBarVisible ? 1 : 0,
+            transition: 'visibility .2s, opacity .2s',
             zIndex: ComponentLevelRulesMobile.Level1,
             background:
               isLandscape && (showEmoji || inputFocus)
@@ -71,7 +81,9 @@ export const FcrChatRoomH5Inputs = observer(
           <div
             className="fcr-chatroom-h5-inputs-input"
             style={{
-              visibility: messageVisible || !isLandscape ? 'visible' : 'hidden',
+              visibility: inputVisible ? 'visible' : 'hidden',
+              opacity: inputVisible ? 1 : 0,
+              transition: 'visibility .2s, opacity .2s',
             }}>
             <div className="fcr-chatroom-h5-inputs-input-wrap">
               <div className="fcr-chatroom-h5-inputs-input-outline"></div>

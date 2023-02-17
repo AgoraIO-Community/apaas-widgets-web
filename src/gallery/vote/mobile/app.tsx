@@ -19,6 +19,7 @@ export const PollH5 = observer(() => {
     isLandscape,
     forceLandscape,
     addSubmitToast,
+    landscapeToolBarVisible,
   } = usePluginStore();
   const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
@@ -52,6 +53,11 @@ export const PollH5 = observer(() => {
   };
   return minimize ? (
     <div
+      style={{
+        visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
+        opacity: landscapeToolBarVisible ? 1 : 0,
+        transition: 'visibility .2s, opacity .2s',
+      }}
       className={`fcr-mobile-poll-widget-minimize ${
         isLandscape ? 'fcr-mobile-poll-widget-minimize-landscape' : ''
       }`}

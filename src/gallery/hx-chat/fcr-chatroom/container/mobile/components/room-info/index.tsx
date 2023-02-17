@@ -57,7 +57,13 @@ export const RoomInfoContainer = observer(
 const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
   const {
     messageStore: { showAnnouncement, setShowAnnouncement, announcement },
-    roomStore: { classStatusText, forceLandscape, quitForceLandscape, roomName },
+    roomStore: {
+      classStatusText,
+      forceLandscape,
+      quitForceLandscape,
+      roomName,
+      landscapeToolBarVisible,
+    },
     userStore: { teacherName },
   } = useStore();
   const transI18n = useI18n();
@@ -65,7 +71,12 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
     setShowAnnouncement(!!announcement);
   }, [announcement]);
   return landscape ? (
-    <>
+    <div
+      style={{
+        visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
+        opacity: landscapeToolBarVisible ? 1 : 0,
+        transition: 'visibility .2s, opacity .2s',
+      }}>
       <div className="fcr-h5-landscape-inter-mask-top"></div>
       <div className="fcr-h5-landscape-inter-mask-bottom"></div>
       <div className="fcr-h5-landscape-inter-room-info">
@@ -101,7 +112,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
           <div>{classStatusText}</div>
         </div>
       </div>
-    </>
+    </div>
   ) : (
     <div className="fcr-h5-inter-room-info">
       <div className="fcr-h5-inter-room-info-left">

@@ -19,6 +19,9 @@ export class RoomStore {
   @observable
   allMuted = false;
   @observable thumbsupRenderCache = 0;
+
+  @observable landscapeToolBarVisible = false;
+
   @observable usersCount = 0;
   private _fetchUserCountTask: Scheduler.Task | null = null;
 
@@ -39,9 +42,23 @@ export class RoomStore {
     });
   }
 
+  @action.bound
+  private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
+    this.landscapeToolBarVisible = visible;
+  }
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: this._handleMobileLandscapeToolBarStateChanged,
+    });
+    this._widget.broadcast(
+      AgoraExtensionWidgetEvent.RequestMobileLandscapeToolBarVisible,
+      undefined,
+    );
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
