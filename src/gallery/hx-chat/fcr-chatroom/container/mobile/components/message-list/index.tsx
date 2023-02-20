@@ -92,7 +92,12 @@ export const MessageList = observer(() => {
   return (
     <>
       <div
-        style={{ visibility: messageVisible || !isLandscape ? 'visible' : 'hidden' }}
+        style={{
+          visibility: messageVisible || !isLandscape ? 'visible' : 'hidden',
+          WebkitMask: isLandscape
+            ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
+            : '',
+        }}
         className={`fcr-chatroom-h5-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>
         {messageList.length > 0 ? (

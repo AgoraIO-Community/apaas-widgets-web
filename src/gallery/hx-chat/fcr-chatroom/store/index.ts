@@ -39,10 +39,10 @@ export class FcrChatRoomStore {
     await this.fcrChatRoom.join({
       token,
     });
-
-    this.messageStore.getHistoryMessageList();
-    this.messageStore.getAnnouncement();
     this.roomStore.getChatRoomDetails();
+
+    await this.messageStore.getHistoryMessageList();
+    this.messageStore.getAnnouncement();
   }
   destroy() {
     this.userStore.destroy();

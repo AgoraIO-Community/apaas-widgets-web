@@ -135,7 +135,7 @@ export class RoomStore {
     const duration = this.classTimeDuration || 0;
 
     if (duration < 0) {
-      return `-- : --`;
+      return ``;
     }
     const {
       classroomSchedule: { state },

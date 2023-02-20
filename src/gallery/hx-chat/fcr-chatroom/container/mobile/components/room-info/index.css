@@ -4,7 +4,7 @@
   left: 0;
   bottom: 0;
   height: 100%;
-  background: #000;
+  background: #f4f4ff;
   position: relative;
 }
 .fcr-h5-interact-container-top {
@@ -174,6 +174,7 @@
   border-radius: 50px;
   height: 40px;
   padding: 3px;
+  backdrop-filter: blur(25px);
 }
 .fcr-h5-landscape-inter-room-info-teacher {
   display: flex;
@@ -205,6 +206,7 @@
   height: 30px;
   background: rgba(240, 242, 248, 0.6);
   border-radius: 50px;
+  backdrop-filter: blur(25px);
 }
 .fcr-h5-landscape-inter-room-info-hot .fcr-h5-inter-room-info-hot {
   color: rgba(117, 117, 117, 0.8);

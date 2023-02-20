@@ -42,7 +42,7 @@
   background: #fff;
 }
 .fcr-chatroom-h5-messages-wrap {
-  padding: 0 20px 0;
+  padding: 10px 20px 0;
 }
 .fcr-chatroom-h5-message-item {
   border-radius: 12px;
@@ -137,6 +137,9 @@
   width: 40%;
   overflow-y: auto;
   pointer-events: all;
+}
+.fcr-chatroom-h5-messages-landscape::-webkit-scrollbar {
+  display: none;
 }
 .fcr-chatroom-h5-messages-has-new-container-landscape {
   position: absolute;
