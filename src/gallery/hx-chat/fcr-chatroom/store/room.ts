@@ -22,9 +22,6 @@ export class RoomStore {
 
   @observable landscapeToolBarVisible = false;
 
-  @observable usersCount = 0;
-  private _fetchUserCountTask: Scheduler.Task | null = null;
-
   private _thumbsupCache = 0;
   private _thumbsupDiffCache = 0;
   private _thumbsupRenderCount = 0;
@@ -68,20 +65,8 @@ export class RoomStore {
       AgoraRteEventType.RoomPropertyUpdated,
       this._handleClassRoomPropertiesChange,
     );
-    this._fetchUserCountTask = Scheduler.shared.addPollingTask(async () => {
-      const res = await this._widget.classroomStore.userStore.fetchUserList({
-        role: EduRoleTypeEnum.student,
-        nextId: undefined,
-        count: 1,
-        type: FetchUserType.all,
-      });
-      runInAction(() => {
-        this.usersCount = res.total || 0;
-      });
-    }, 5000);
   }
   private _removeEventListeners() {
-    this._fetchUserCountTask?.stop();
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.removeBroadcastListener({
@@ -91,6 +76,14 @@ export class RoomStore {
     this._widget.classroomStore.connectionStore.scene?.off(
       AgoraRteEventType.RoomPropertyUpdated,
       this._handleClassRoomPropertiesChange,
+    );
+  }
+  @computed
+  get userCount() {
+    const isTeacherInClass = this._widget.classroomStore.userStore.teacherList.size > 0;
+    return Math.max(
+      this._widget.classroomStore.userStore.userCount - (isTeacherInClass ? 1 : 0),
+      0,
     );
   }
   @computed

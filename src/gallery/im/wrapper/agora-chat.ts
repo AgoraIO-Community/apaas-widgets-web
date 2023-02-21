@@ -13,22 +13,28 @@ import {
 import websdk, { AgoraChat } from 'agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
 import { convertHXHistoryMessage, convertHXMessage } from './utils';
-
+import { Logger, Log } from 'agora-rte-sdk';
+import dayjs from 'dayjs';
+type AgoraChatLog = {
+  level: Lowercase<AgoraChat.DefaultLevel>;
+  logs: [string, unknown];
+  time?: string;
+};
+@Log.attach({ proxyMethods: true })
 export class FcrChatRoom extends AgoraIMBase {
+  private _logger = new Logger('agora-chat', { console: true, database: true });
   private _conn?: AgoraChat.Connection;
   userInfo: AgoraIMUserInfo;
   private _connectionInfo: {
     appKey: string;
     roomId: string;
   };
-  private _logger = websdk.logger;
   constructor(appKey: string, roomId: string, userInfo: AgoraIMUserInfo) {
     super();
     this._connectionInfo = { appKey, roomId };
     this.init(appKey);
     this.userInfo = userInfo;
-    this._logger.enableAll();
-    this._logger.setLevel('TRACE', true, 'agora-chat');
+    this._enableLog();
   }
   get conn() {
     if (!this._conn) throw new Error();
@@ -41,6 +47,36 @@ export class FcrChatRoom extends AgoraIMBase {
     const config = Object.assign(agoraChatConfig, { appKey });
     this._conn = new websdk.connection(config);
     this._addEventListener();
+  }
+  @Log.silence
+  private _formateLogs(log: AgoraChatLog) {
+    const [logInfo, ...args] = log.logs;
+    return `${
+      log.time
+        ? `${dayjs().format('YYYY-MM-DD')} ${log.time}`
+        : `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
+    } [Agora-Chat] ${logInfo}, args: ${args.map((arg) => `JSON.stringify(${arg}) `)}`;
+  }
+
+  private _enableLog() {
+    websdk.logger.setLevel('DEBUG', true, 'agora-chat');
+    //@ts-ignore
+    websdk.logger.onLog = (log: AgoraChatLog) => {
+      switch (log.level) {
+        case 'debug':
+          this._logger.debug(this._formateLogs(log));
+          break;
+        case 'info':
+          this._logger.info(this._formateLogs(log));
+          break;
+        case 'warn':
+          this._logger.warn(this._formateLogs(log));
+          break;
+        case 'error':
+          this._logger.error(this._formateLogs(log));
+          break;
+      }
+    };
   }
   async join(joinOptions: { token: string }): Promise<void> {
     const { token } = joinOptions;
@@ -266,6 +302,22 @@ export class FcrChatRoom extends AgoraIMBase {
       mute: !!res?.mute,
     };
   }
+  async getMutedUserList(): Promise<string[]> {
+    const { data } = await this.conn.getChatRoomMutelist({
+      chatRoomId: this._connectionInfo.roomId,
+    });
+    return data
+      ? data.map((i) => {
+          return i.user;
+        })
+      : [];
+  }
+  async getUserList(params: {
+    pageNum: number;
+    pageSize: number;
+  }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
+    return [];
+  }
   async leave(): Promise<void> {
     await this.conn.leaveChatRoom({
       roomId: this._connectionInfo.roomId,
@@ -273,14 +325,6 @@ export class FcrChatRoom extends AgoraIMBase {
     this.conn.close();
   }
   private _addEventListener() {
-    this.conn.listen({
-      onOpened: () => {
-        console.log('opened');
-      },
-      onError: (e) => {
-        console.log(e, 'imerror');
-      },
-    });
     this.conn.onTextMessage = (msg) => {
       const textMessage = convertHXMessage(msg);
       this.emit(AgoraIMEvents.TextMessageReceived, textMessage);
@@ -325,7 +369,7 @@ export class FcrChatRoom extends AgoraIMBase {
     });
     this.conn.addEventHandler('connection', {
       onError: (e) => {
-        console.log(e, 'connection error');
+        this._logger.error(this._formateLogs({ level: 'error', logs: ['connection error', e] }));
       },
       onConnected: () => {
         this.setConnectionState(AgoraIMConnectionState.Connected);

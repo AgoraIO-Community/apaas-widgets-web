@@ -163,7 +163,7 @@ export const FcrLogo = observer(() => {
 });
 export const FcrHot = observer(() => {
   const {
-    roomStore: { isLandscape, usersCount, forceLandscape },
+    roomStore: { isLandscape, userCount, forceLandscape },
   } = useStore();
   const transI18n = useI18n();
   return (
@@ -174,7 +174,7 @@ export const FcrHot = observer(() => {
         type={SvgIconEnum.HOT}
         size={20}></SvgImgMobile>{' '}
       <span>
-        {usersCount} {transI18n('fcr_h5_label_watched')}
+        {userCount} {transI18n('fcr_h5_label_watched')}
       </span>
     </div>
   );

@@ -24,7 +24,7 @@ export abstract class AgoraIMBase extends AGEventEmitter {
   abstract unmuteAllUserList(): Promise<void>;
   abstract muteUserList(params: { userList: string[]; duration?: number }): Promise<void>;
   abstract unmuteUserList(params: { userList: string[] }): Promise<void>;
-  abstract getMutedUserList(): Promise<void>;
+  abstract getMutedUserList(): Promise<string[]>;
   abstract getUserInfoList(userIdList: string[]): Promise<AgoraIMUserInfo[]>;
   abstract setSelfUserInfo(userInfo: AgoraIMUserInfo): Promise<AgoraIMUserInfo>;
   abstract createTextMessage(msg: string): AgoraIMTextMessage;
