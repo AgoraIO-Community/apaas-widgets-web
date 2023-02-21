@@ -35,6 +35,7 @@ export const FcrChatRoomH5Inputs = observer(
         setMessageVisible,
         forceLandscape,
         landscapeToolBarVisible,
+        quitForceLandscape,
       },
       userStore: { userMuted },
     } = useStore();
@@ -106,6 +107,10 @@ export const FcrChatRoomH5Inputs = observer(
 
               <input
                 onFocus={() => {
+                  if (forceLandscape) {
+                    quitForceLandscape();
+                    inputRef.current?.focus();
+                  }
                   setInputFocus(true);
                 }}
                 onBlur={() => {
@@ -131,9 +136,8 @@ export const FcrChatRoomH5Inputs = observer(
                     landscape={isLandscape}
                     type={SvgIconEnum.KEYBOARD}
                     onClick={() => {
-                      onShowEmojiChanged(false);
-                      inputRef.current?.blur();
                       inputRef.current?.focus();
+                      onShowEmojiChanged(false);
                     }}
                     size={34}></SvgImgMobile>
                 ) : (
@@ -225,7 +229,7 @@ const EmojiContainer = ({
     <div
       ref={ref}
       className="fcr-chatroom-mobile-input-emoji-container"
-      style={{ zIndex: ComponentLevelRulesMobile.Level2 }}>
+      style={{ zIndex: ComponentLevelRulesMobile.Level3 }}>
       {emojis.map((emoji) => {
         return (
           <div

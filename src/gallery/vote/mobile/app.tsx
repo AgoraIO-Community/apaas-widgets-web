@@ -53,11 +53,6 @@ export const PollH5 = observer(() => {
   };
   return minimize ? (
     <div
-      style={{
-        visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
-        opacity: landscapeToolBarVisible ? 1 : 0,
-        transition: 'visibility .2s, opacity .2s',
-      }}
       className={`fcr-mobile-poll-widget-minimize ${
         isLandscape ? 'fcr-mobile-poll-widget-minimize-landscape' : ''
       }`}

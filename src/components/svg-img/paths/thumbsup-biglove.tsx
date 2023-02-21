@@ -53,7 +53,7 @@ export const path = (props: PathOptions) => (
       </g>
       <mask
         id="mask0_2467_44189"
-        style="mask-type:alpha"
+        style={{ maskType: 'alpha' }}
         maskUnits="userSpaceOnUse"
         x="26"
         y="57"

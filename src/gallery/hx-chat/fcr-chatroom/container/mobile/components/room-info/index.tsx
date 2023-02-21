@@ -24,13 +24,8 @@ export const RoomInfoContainer = observer(
         ref={ref}
         className={`fcr-mobile-interact-container${landscape ? '-landscape' : ''} ${classNames}`}
         style={{ ...style }}>
-        {landscape ? (
-          <>
-            <RoomInfo landscape />
-            {children}
-          </>
-        ) : (
-          <>
+        <>
+          {!landscape && (
             <div className="fcr-mobile-interact-container-top">
               <div className="fcr-mobile-interact-container-placeholder"></div>
               {
@@ -45,10 +40,10 @@ export const RoomInfoContainer = observer(
                 </div>
               }
             </div>
-            <RoomInfo />
-            {children}
-          </>
-        )}
+          )}
+          <RoomInfo landscape={landscape} />
+          {children}
+        </>
       </div>
     );
   }),
@@ -157,7 +152,7 @@ export const FcrLogo = observer(() => {
         forceLandscape={forceLandscape}
         landscape={isLandscape}
         type={SvgIconEnum.FCR_LOGO}
-        size={30}></SvgImgMobile>
+        size={34}></SvgImgMobile>
     </div>
   );
 });

@@ -9,6 +9,7 @@
   box-shadow: 0px 0px 20px -8px rgba(0, 0, 0, 0.14);
   z-index: 1;
 }
+
 .fcr-countdown-mobile.fcr-countdown-mobile-landscape {
   position: fixed;
   bottom: auto;
@@ -17,6 +18,9 @@
   right: 63px;
   transform-origin: right top;
   z-index: 1;
+}
+.fcr-countdown-mobile.fcr-countdown-mobile-landscape.fcr-countdown-mobile-landscape-right {
+  right: 16px;
 }
 .fcr-countdown-mobile .flip-card-mobile:nth-child(1),
 .fcr-countdown-mobile .flip-card-mobile:nth-child(4) {

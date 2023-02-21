@@ -45,6 +45,7 @@
 }
 
 .flip-card-mobile.down .flip-card-mobile-front:before {
+  transform: translateZ(1px);
   z-index: 3;
 }
 

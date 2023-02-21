@@ -42,14 +42,12 @@
 .fcr-mobile-inter-room-info-logo {
   width: 34px;
   height: 34px;
-  border-radius: 34px;
-  background: #fff;
   z-index: 2;
   display: flex;
   justify-content: center;
   align-items: center;
   position: relative;
-  top: 9px;
+  top: 8px;
 }
 .fcr-mobile-inter-room-info-teacher-name > span:last-child {
   color: #fff;
@@ -221,6 +219,8 @@
   color: white;
   padding-top: 19px;
   padding-left: 16px;
+  padding-right: 190px;
+  flex: 1;
 }
 .fcr-mobile-landscape-inter-room-info-name > div:first-child {
   text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);

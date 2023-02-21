@@ -39,14 +39,9 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   }, [duration]);
   return (
     <div
-      style={{
-        visibility: pluginStore.landscapeToolBarVisible ? 'visible' : 'hidden',
-        opacity: pluginStore.landscapeToolBarVisible ? 1 : 0,
-        transition: 'visibility .2s, opacity .2s',
-      }}
-      className={`fcr-countdown-mobile ${
+      className={`fcr-countdown-mobile  ${
         pluginStore.isLandscape ? 'fcr-countdown-mobile-landscape' : ''
-      }`}>
+      } ${pluginStore.landscapeToolBarVisible ? '' : 'fcr-countdown-mobile-landscape-right'}`}>
       <FlipClock duration={duration} caution={!pluginStore.showSetting && caution} />
     </div>
   );

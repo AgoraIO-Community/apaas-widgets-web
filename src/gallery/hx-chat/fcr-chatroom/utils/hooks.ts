@@ -6,11 +6,10 @@ export const clickAnywhere = (el: HTMLElement, cb: () => void) => {
   };
 
   const callbackHandler = () => {
-    cb();
+    setTimeout(cb, 300);
   };
 
   el.addEventListener('mousedown', propaHandler);
-
   window.addEventListener('mousedown', callbackHandler);
 
   return () => {

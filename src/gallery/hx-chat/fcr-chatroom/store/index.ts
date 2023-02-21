@@ -30,7 +30,7 @@ export class FcrChatRoomStore {
     this.userStore = new UserStore(this._widget, this.fcrChatRoom);
     this.roomStore = new RoomStore(this._widget, this.fcrChatRoom);
     this._addListeners();
-    this._joinChatRoom();
+    this._init();
   }
   private _addListeners() {
     this.fcrChatRoom.on(
@@ -61,9 +61,11 @@ export class FcrChatRoomStore {
     await this.fcrChatRoom.join({
       token,
     });
-
+  }
+  @bound
+  private async _init() {
+    await this._joinChatRoom();
     this.roomStore.getChatRoomDetails();
-
     await this.messageStore.getHistoryMessageList();
     this.messageStore.getAnnouncement();
   }
