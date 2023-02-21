@@ -9,6 +9,7 @@ import { emojis } from '../../../../utils/emoji';
 import './index.css';
 import { ComponentLevelRulesMobile } from '../../../../../../../../../agora-classroom-sdk/src/infra/capabilities/config';
 import { useI18n } from 'agora-common-libs';
+import { useClickAnywhere } from '../../../../utils/hooks';
 export const FcrChatRoomH5Inputs = observer(
   ({
     showEmoji,
@@ -61,11 +62,12 @@ export const FcrChatRoomH5Inputs = observer(
     const toggleMessageVisible = () => {
       setMessageVisible(!messageVisible);
     };
+
     const inputVisible = (messageVisible && landscapeToolBarVisible) || !isLandscape;
     return (
       <>
         <div
-          className="fcr-chatroom-h5-inputs"
+          className="fcr-chatroom-mobile-inputs"
           style={{
             visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
             opacity: landscapeToolBarVisible ? 1 : 0,
@@ -79,16 +81,16 @@ export const FcrChatRoomH5Inputs = observer(
                 : '#27292f',
           }}>
           <div
-            className="fcr-chatroom-h5-inputs-input"
+            className="fcr-chatroom-mobile-inputs-input"
             style={{
               visibility: inputVisible ? 'visible' : 'hidden',
               opacity: inputVisible ? 1 : 0,
               transition: 'visibility .2s, opacity .2s',
             }}>
-            <div className="fcr-chatroom-h5-inputs-input-wrap">
-              <div className="fcr-chatroom-h5-inputs-input-outline"></div>
+            <div className="fcr-chatroom-mobile-inputs-input-wrap">
+              <div className="fcr-chatroom-mobile-inputs-input-outline"></div>
               {isMuted && (
-                <div className="fcr-chatroom-h5-inputs-input-muted">
+                <div className="fcr-chatroom-mobile-inputs-input-muted">
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
                     landscape={isLandscape}
@@ -122,7 +124,7 @@ export const FcrChatRoomH5Inputs = observer(
             </div>
 
             {!isMuted && (
-              <div className="fcr-chatroom-h5-inputs-input-emoji">
+              <div className="fcr-chatroom-mobile-inputs-input-emoji">
                 {showEmoji ? (
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
@@ -148,7 +150,7 @@ export const FcrChatRoomH5Inputs = observer(
             )}
           </div>
           {text ? (
-            <div className="fcr-chatroom-h5-inputs-send">
+            <div className="fcr-chatroom-mobile-inputs-send">
               <SvgImgMobile
                 forceLandscape={forceLandscape}
                 landscape={isLandscape}
@@ -159,7 +161,9 @@ export const FcrChatRoomH5Inputs = observer(
           ) : (
             <>
               {isLandscape && (
-                <div className="fcr-chatroom-h5-inputs-hide-message" onClick={toggleMessageVisible}>
+                <div
+                  className="fcr-chatroom-mobile-inputs-hide-message"
+                  onClick={toggleMessageVisible}>
                   {messageVisible ? (
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
@@ -176,7 +180,7 @@ export const FcrChatRoomH5Inputs = observer(
                 </div>
               )}
               {!isMuted && (
-                <div className="fcr-chatroom-h5-inputs-image" onClick={handleImgInputClick}>
+                <div className="fcr-chatroom-mobile-inputs-image" onClick={handleImgInputClick}>
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
                     landscape={isLandscape}
@@ -196,7 +200,10 @@ export const FcrChatRoomH5Inputs = observer(
           )}
         </div>
         {showEmoji && emojiContainer && (
-          <EmojiContainer portal={emojiContainer} onClick={handleEmojiClick}></EmojiContainer>
+          <EmojiContainer
+            onOuterClick={() => onShowEmojiChanged(false)}
+            portal={emojiContainer}
+            onClick={handleEmojiClick}></EmojiContainer>
         )}
       </>
     );
@@ -205,13 +212,19 @@ export const FcrChatRoomH5Inputs = observer(
 const EmojiContainer = ({
   onClick,
   portal,
+  onOuterClick,
 }: {
   onClick: (emoji: string) => void;
   portal: HTMLDivElement;
+  onOuterClick: () => void;
 }) => {
+  const ref = useClickAnywhere(() => {
+    onOuterClick();
+  });
   return createPortal(
     <div
-      className="fcr-chatroom-h5-input-emoji-container"
+      ref={ref}
+      className="fcr-chatroom-mobile-input-emoji-container"
       style={{ zIndex: ComponentLevelRulesMobile.Level2 }}>
       {emojis.map((emoji) => {
         return (

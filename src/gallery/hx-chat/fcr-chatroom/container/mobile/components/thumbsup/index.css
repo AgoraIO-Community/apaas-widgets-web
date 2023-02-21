@@ -1,4 +1,4 @@
-.fcr-chatroom-h5-inputs-thumbsup-canvas {
+.fcr-chatroom-mobile-inputs-thumbsup-canvas {
   width: 76px;
   height: 200px;
   position: absolute;
@@ -6,7 +6,7 @@
   left: -20px;
   pointer-events: none;
 }
-.fcr-chatroom-h5-inputs-thumbsup {
+.fcr-chatroom-mobile-inputs-thumbsup {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -18,7 +18,7 @@
   z-index: 9;
   user-select: none;
 }
-.fcr-chatroom-h5-inputs-thumbsup-count {
+.fcr-chatroom-mobile-inputs-thumbsup-count {
   width: 27px;
   height: 14px;
   border-radius: 15px;

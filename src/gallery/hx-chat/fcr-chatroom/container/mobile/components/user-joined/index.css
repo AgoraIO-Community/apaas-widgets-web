@@ -20,7 +20,7 @@
   }
 }
 
-.fcr-chatroom-h5-user-joined {
+.fcr-chatroom-mobile-user-joined {
   height: 24px;
   border-radius: 16px;
   font-weight: 400;
@@ -34,7 +34,7 @@
   animation-name: fadeLeft;
   z-index: 2;
 }
-.fcr-chatroom-h5-user-joined.fcr-chatroom-h5-user-joined-landscape {
+.fcr-chatroom-mobile-user-joined.fcr-chatroom-mobile-user-joined-landscape {
   top: calc(40% - 30px);
   color: #000;
 }

@@ -15,8 +15,8 @@
 .fcr-mobile-poll-widget-minimize.fcr-mobile-poll-widget-minimize-landscape {
   left: auto;
   bottom: auto;
-  right: 30px;
-  top: 62px;
+  right: 16px;
+  top: 64px;
 }
 .fcr-mobile-poll-widget-minimize-landscape > svg {
   transform: rotate(-90deg);

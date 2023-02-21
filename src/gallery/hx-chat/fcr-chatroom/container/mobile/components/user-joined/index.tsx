@@ -21,8 +21,8 @@ export const UserJoined = observer(() => {
   return joinedUser ? (
     <div
       ref={ref}
-      className={`fcr-chatroom-h5-user-joined ${
-        isLandscape ? 'fcr-chatroom-h5-user-joined-landscape' : ''
+      className={`fcr-chatroom-mobile-user-joined ${
+        isLandscape ? 'fcr-chatroom-mobile-user-joined-landscape' : ''
       }`}
       style={{
         background: bgColor,

@@ -1,4 +1,4 @@
-.fcr-h5-interact-container {
+.fcr-mobile-interact-container {
   display: flex;
   flex-direction: column;
   left: 0;
@@ -7,16 +7,16 @@
   background: #f4f4ff;
   position: relative;
 }
-.fcr-h5-interact-container-top {
+.fcr-mobile-interact-container-top {
   position: relative;
   z-index: 1;
   transition: height 0.2s;
   pointer-events: none;
 }
-.fcr-h5-interact-container-placeholder {
+.fcr-mobile-interact-container-placeholder {
   height: 32px;
 }
-.fcr-h5-inter-room-info {
+.fcr-mobile-inter-room-info {
   width: 100%;
   height: 91px;
   background: #4752dd;
@@ -30,8 +30,8 @@
   top: 0;
   height: 100%;
 }
-.fcr-h5-inter-room-info-left,
-.fcr-h5-inter-room-info-right {
+.fcr-mobile-inter-room-info-left,
+.fcr-mobile-inter-room-info-right {
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -39,7 +39,7 @@
   align-items: center;
 }
 
-.fcr-h5-inter-room-info-logo {
+.fcr-mobile-inter-room-info-logo {
   width: 34px;
   height: 34px;
   border-radius: 34px;
@@ -51,11 +51,11 @@
   position: relative;
   top: 9px;
 }
-.fcr-h5-inter-room-info-teacher-name > span:last-child {
+.fcr-mobile-inter-room-info-teacher-name > span:last-child {
   color: #fff;
   padding-left: 4px;
 }
-.fcr-h5-inter-room-info-teacher-name {
+.fcr-mobile-inter-room-info-teacher-name {
   height: 32px;
   line-height: 32px;
   display: flex;
@@ -65,7 +65,7 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
 }
-.fcr-h5-inter-room-info-hot {
+.fcr-mobile-inter-room-info-hot {
   height: 32px;
   line-height: 32px;
   display: flex;
@@ -75,10 +75,10 @@
   font-size: 12px;
   color: rgba(255, 255, 255, 0.8);
 }
-.fcr-h5-inter-room-info-teacher-name {
+.fcr-mobile-inter-room-info-teacher-name {
   padding-left: 7px;
 }
-.fcr-chatroom-h5-announcement {
+.fcr-chatroom-mobile-announcement {
   z-index: 1;
   padding-left: 55px;
   padding-right: 15px;
@@ -92,7 +92,7 @@
   word-break: break-all;
   white-space: pre-wrap;
 }
-.fcr-chatroom-h5-announcement > span:first-child {
+.fcr-chatroom-mobile-announcement > span:first-child {
   padding: 0 5px;
   background: #fff;
   border-radius: 20px;
@@ -104,11 +104,11 @@
   margin-right: 5px;
 }
 
-.fcr-h5-inter-room-info-start-time {
+.fcr-mobile-inter-room-info-start-time {
   line-height: 32px;
   color: rgba(255, 255, 255, 0.8);
 }
-.fcr-h5-inter-room-info-toggle-announcement {
+.fcr-mobile-inter-room-info-toggle-announcement {
   width: 24px;
   height: 14px;
   border-radius: 6px;
@@ -118,12 +118,12 @@
   align-items: center;
   justify-content: center;
 }
-.fcr-h5-inter-room-info-toggle-announcement > svg {
+.fcr-mobile-inter-room-info-toggle-announcement > svg {
   transition: all 0.2s;
 }
 
 /** landscape **/
-.fcr-h5-interact-container-landscape {
+.fcr-mobile-interact-container-landscape {
   position: absolute;
   bottom: 0;
   left: 0;
@@ -135,7 +135,7 @@
   align-items: flex-end;
   pointer-events: none;
 }
-.fcr-h5-landscape-inter-room-info {
+.fcr-mobile-landscape-inter-room-info {
   position: absolute;
   left: 0;
   top: 0;
@@ -143,12 +143,12 @@
   display: flex;
   flex-direction: row;
 }
-.fcr-h5-landscape-inter-room-info-left {
+.fcr-mobile-landscape-inter-room-info-left {
   display: flex;
   flex-direction: row;
   padding: 16px 0 0 16px;
 }
-.fcr-h5-landscape-inter-room-info-back {
+.fcr-mobile-landscape-inter-room-info-back {
   background: rgba(240, 242, 248, 0.6);
   width: 40px;
   height: 40px;
@@ -161,44 +161,44 @@
   align-items: center;
   pointer-events: all;
 }
-.fcr-h5-landscape-inter-room-info-back > svg {
+.fcr-mobile-landscape-inter-room-info-back > svg {
   transform: rotate(-90deg);
 }
-.fcr-h5-landscape-inter-room-info-room {
+.fcr-mobile-landscape-inter-room-info-room {
   display: flex;
   flex-direction: column;
   gap: 10px;
 }
-.fcr-h5-landscape-inter-room-info-teacher {
+.fcr-mobile-landscape-inter-room-info-teacher {
   background: rgba(240, 242, 248, 0.6);
   border-radius: 50px;
   height: 40px;
   padding: 3px;
   backdrop-filter: blur(25px);
 }
-.fcr-h5-landscape-inter-room-info-teacher {
+.fcr-mobile-landscape-inter-room-info-teacher {
   display: flex;
   flex-direction: row;
   align-items: center;
   padding-right: 21px;
 }
-.fcr-h5-landscape-inter-room-info-teacher .fcr-h5-inter-room-info-logo {
+.fcr-mobile-landscape-inter-room-info-teacher .fcr-mobile-inter-room-info-logo {
   position: static;
   margin-right: 7px;
 }
-.fcr-h5-landscape-inter-room-info-teacher-name {
+.fcr-mobile-landscape-inter-room-info-teacher-name {
   font-weight: 700;
   font-size: 14px;
   line-height: 100%;
   padding-bottom: 7px;
 }
-.fcr-h5-landscape-inter-room-info-teacher-fcr {
-  font-weight: 700;
+.fcr-mobile-landscape-inter-room-info-teacher-fcr {
+  font-weight: 400;
   font-size: 10px;
   line-height: 100%;
-  color: #757575;
+  color: #555555;
 }
-.fcr-h5-landscape-inter-room-info-hot {
+.fcr-mobile-landscape-inter-room-info-hot {
   width: fit-content;
   display: flex;
   align-items: center;
@@ -208,34 +208,34 @@
   border-radius: 50px;
   backdrop-filter: blur(25px);
 }
-.fcr-h5-landscape-inter-room-info-hot .fcr-h5-inter-room-info-hot {
-  color: rgba(117, 117, 117, 0.8);
-  font-weight: 600;
+.fcr-mobile-landscape-inter-room-info-hot .fcr-mobile-inter-room-info-hot {
+  color: #555555;
+  font-weight: 400;
   font-size: 14px;
   padding: 0 15px 0 10px;
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.fcr-h5-landscape-inter-room-info-name {
+.fcr-mobile-landscape-inter-room-info-name {
   color: white;
   padding-top: 19px;
   padding-left: 16px;
 }
-.fcr-h5-landscape-inter-room-info-name > div:first-child {
+.fcr-mobile-landscape-inter-room-info-name > div:first-child {
   text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   font-weight: 700;
   font-size: 18px;
   line-height: 100%;
   padding-bottom: 4px;
 }
-.fcr-h5-landscape-inter-room-info-name > div:last-child {
+.fcr-mobile-landscape-inter-room-info-name > div:last-child {
   text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
   font-weight: 400;
   font-size: 12px;
   line-height: 100%;
 }
-.fcr-h5-landscape-inter-mask-top {
+.fcr-mobile-landscape-inter-mask-top {
   width: 100%;
   height: 100px;
   position: fixed;
@@ -262,7 +262,7 @@
   );
   pointer-events: none;
 }
-.fcr-h5-landscape-inter-mask-bottom {
+.fcr-mobile-landscape-inter-mask-bottom {
   width: 100%;
   height: 70px;
   position: fixed;

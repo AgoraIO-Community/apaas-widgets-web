@@ -1,4 +1,5 @@
-import { useI18n, transI18n } from 'agora-common-libs';
+import { ImageViewer } from 'antd-mobile';
+import { useI18n } from 'agora-common-libs';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
@@ -15,6 +16,7 @@ import {
 } from '../../../../../../im/wrapper/typs';
 import { useStore } from '../../../../hooks/useStore';
 import './index.css';
+import { Scheduler } from 'agora-rte-sdk';
 export const MessageList = observer(() => {
   const {
     messageStore: {
@@ -31,6 +33,7 @@ export const MessageList = observer(() => {
     roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
+  const transI18n = useI18n();
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const handleScroll = useCallback(
     throttle(() => {
@@ -98,10 +101,10 @@ export const MessageList = observer(() => {
             ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
             : '',
         }}
-        className={`fcr-chatroom-h5-messages${isLandscape ? '-landscape' : ''}`}
+        className={`fcr-chatroom-mobile-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>
         {messageList.length > 0 ? (
-          <div className="fcr-chatroom-h5-messages-wrap">
+          <div className="fcr-chatroom-mobile-messages-wrap">
             {messageList.map((message) => {
               if (typeof message === 'string') {
                 return (
@@ -132,17 +135,17 @@ export const MessageList = observer(() => {
           <SvgImgMobile
             forceLandscape={forceLandscape}
             landscape={isLandscape}
-            className="fcr-chatroom-h5-message-placeholder"
+            className="fcr-chatroom-mobile-message-placeholder"
             type={SvgIconEnum.MESSAGE_PLACEHOLDER}
             size={120}></SvgImgMobile>
         ) : null}
       </div>
       {unreadMessageCount !== 0 && messageVisible && (
         <div
-          className={`fcr-chatroom-h5-messages-has-new-container${
+          className={`fcr-chatroom-mobile-messages-has-new-container${
             isLandscape ? '-landscape' : ''
           }`}>
-          <div onClick={messageListScrollToBottom} className="fcr-chatroom-h5-messages-has-new">
+          <div onClick={messageListScrollToBottom} className="fcr-chatroom-mobile-messages-has-new">
             <span>
               {unreadMessageCount}&nbsp;
               {transI18n('fcr_h5_button_newmessage')}
@@ -154,11 +157,12 @@ export const MessageList = observer(() => {
   );
 });
 const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
+  const transI18n = useI18n();
   return (
     <div
       key={announcement}
-      className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-announcement`}>
-      <span className="fcr-chatroom-h5-message-item-announcement-label">
+      className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-announcement`}>
+      <span className="fcr-chatroom-mobile-message-item-announcement-label">
         {transI18n('chat.announcement')}
       </span>
       {announcement}
@@ -179,9 +183,9 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
   return (
     <div
       key={textMessage.id}
-      className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-item-${messageStyleType}`}>
+      className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-${messageStyleType}`}>
       {isTeacherMessage && (
-        <span className="fcr-chatroom-h5-message-item-host">
+        <span className="fcr-chatroom-mobile-message-item-host">
           <SvgImgMobile
             forceLandscape={forceLandscape}
             landscape={isLandscape}
@@ -190,7 +194,7 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
         </span>
       )}
 
-      <span className="fcr-chatroom-h5-message-item-name">
+      <span className="fcr-chatroom-mobile-message-item-name">
         {textMessage.ext?.nickName}
         {messageFromAlias}:
       </span>
@@ -217,26 +221,43 @@ const ImageMessage = observer(
       },
       [],
     );
-    return (
-      <div
-        key={imageMessage.id}
-        className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-item-img fcr-chatroom-h5-message-item-${messageStyleType}`}>
-        {isTeacherMessage && (
-          <span className="fcr-chatroom-h5-message-item-host">
-            <SvgImgMobile
-              forceLandscape={forceLandscape}
-              landscape={isLandscape}
-              type={SvgIconEnum.HOST}
-              size={24}></SvgImgMobile>
-          </span>
-        )}
+    const previewImage = () => {
+      ImageViewer.show({ image: imageUrl });
+      if (forceLandscape) {
+        Scheduler.shared.addDelayTask(() => {
+          const previewImage = document.querySelector(
+            '.adm-image-viewer-image-wrapper img',
+          ) as HTMLImageElement;
+          if (previewImage) {
+            previewImage.style.transform = 'rotate(90deg)';
+          }
+        }, 10);
+      }
+    };
 
-        <span className="fcr-chatroom-h5-message-item-name">
-          {imageMessage.ext?.nickName}
-          {messageFromAlias}:
-        </span>
-        <img onLoad={onImgLoad} src={imageUrl}></img>
-      </div>
+    return (
+      <>
+        <div
+          onClick={previewImage}
+          key={imageMessage.id}
+          className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-img fcr-chatroom-mobile-message-item-${messageStyleType}`}>
+          {isTeacherMessage && (
+            <span className="fcr-chatroom-mobile-message-item-host">
+              <SvgImgMobile
+                forceLandscape={forceLandscape}
+                landscape={isLandscape}
+                type={SvgIconEnum.HOST}
+                size={24}></SvgImgMobile>
+            </span>
+          )}
+
+          <span className="fcr-chatroom-mobile-message-item-name">
+            {imageMessage.ext?.nickName}
+            {messageFromAlias}:
+          </span>
+          <img onLoad={onImgLoad} src={imageUrl}></img>
+        </div>
+      </>
     );
   },
 );
@@ -251,8 +272,8 @@ const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) =>
   return (
     <div
       key={cmdMessage.id}
-      className={`fcr-chatroom-h5-message-item fcr-chatroom-h5-message-item-student`}>
-      <span className="fcr-chatroom-h5-message-item-name">
+      className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-student`}>
+      <span className="fcr-chatroom-mobile-message-item-name">
         {cmdMessage.ext?.nickName}
         {messageFromAlias}&nbsp;
       </span>
@@ -261,6 +282,8 @@ const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) =>
   );
 });
 const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
+  const transI18n = useI18n();
+
   switch (action) {
     case AgoraIMCmdActionEnum.AllUserMuted:
       return transI18n('chat.muted_all');
@@ -280,6 +303,8 @@ const useMessageParams = ({
   message: AgoraIMMessageBase;
   fcrChatRoom: AgoraIMBase;
 }) => {
+  const transI18n = useI18n();
+
   const isSelfMessage = message.from === fcrChatRoom.userInfo?.userId;
   const isTeacherMessage = message.ext?.role === EduRoleTypeEnum.teacher;
   const messageFromAlias = isSelfMessage

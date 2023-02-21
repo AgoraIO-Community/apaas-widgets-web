@@ -1,4 +1,4 @@
-.fcr-chatroom-h5-messages {
+.fcr-chatroom-mobile-messages {
   overflow-y: auto;
   background: #27292f;
   position: relative;
@@ -7,7 +7,7 @@
   padding-top: 30px;
   border-radius: 20px 20px 0 0;
 }
-.fcr-chatroom-h5-message-placeholder {
+.fcr-chatroom-mobile-message-placeholder {
   top: 0;
   bottom: 0;
   left: 0;
@@ -15,10 +15,10 @@
   margin: auto;
   position: absolute;
 }
-.fcr-chatroom-h5-messages-has-new-container {
+.fcr-chatroom-mobile-messages-has-new-container {
   position: relative;
 }
-.fcr-chatroom-h5-messages-has-new-container::before {
+.fcr-chatroom-mobile-messages-has-new-container::before {
   content: '';
   width: 100%;
   height: 36px;
@@ -27,7 +27,7 @@
   left: 0;
   bottom: 0;
 }
-.fcr-chatroom-h5-messages-has-new {
+.fcr-chatroom-mobile-messages-has-new {
   height: 28px;
   line-height: 28px;
   font-weight: 500;
@@ -41,10 +41,10 @@
   left: 20px;
   background: #fff;
 }
-.fcr-chatroom-h5-messages-wrap {
+.fcr-chatroom-mobile-messages-wrap {
   padding: 10px 20px 0;
 }
-.fcr-chatroom-h5-message-item {
+.fcr-chatroom-mobile-message-item {
   border-radius: 12px;
   font-weight: 500;
   font-size: 13px;
@@ -57,10 +57,10 @@
   line-height: 18px;
   overflow: hidden;
 }
-.fcr-chatroom-h5-message-item-img {
+.fcr-chatroom-mobile-message-item-img {
   padding: 10px 10px;
 }
-.fcr-chatroom-h5-message-item-img > img {
+.fcr-chatroom-mobile-message-item-img > img {
   float: right;
   width: 140px;
   max-height: 220px;
@@ -68,24 +68,24 @@
   border-radius: 8px;
 }
 
-.fcr-chatroom-h5-message-item-teacher {
+.fcr-chatroom-mobile-message-item-teacher {
   background: rgba(124, 121, 255, 1);
 }
-.fcr-chatroom-h5-message-item-student {
+.fcr-chatroom-mobile-message-item-student {
   background: rgba(76, 84, 98, 0.6);
 }
 
-.fcr-chatroom-h5-message-item-self {
+.fcr-chatroom-mobile-message-item-self {
   background: rgba(66, 98, 255, 1);
 }
-.fcr-chatroom-h5-message-item-name {
+.fcr-chatroom-mobile-message-item-name {
   color: rgba(91, 208, 245, 1);
   margin-right: 4px;
 }
-.fcr-chatroom-h5-message-item-teacher .fcr-chatroom-h5-message-item-name {
+.fcr-chatroom-mobile-message-item-teacher .fcr-chatroom-mobile-message-item-name {
   margin-left: -6px;
 }
-.fcr-chatroom-h5-message-item-host {
+.fcr-chatroom-mobile-message-item-host {
   position: relative;
   display: inline-block;
   background: #0056fd;
@@ -97,7 +97,7 @@
   height: 18px;
   vertical-align: bottom;
 }
-.fcr-chatroom-h5-message-item-host > svg {
+.fcr-chatroom-mobile-message-item-host > svg {
   display: inline-block;
   position: absolute;
   left: 0;
@@ -106,7 +106,7 @@
   bottom: 0;
   margin: auto;
 }
-.fcr-chatroom-h5-message-announcement {
+.fcr-chatroom-mobile-message-announcement {
   background: rgba(76, 84, 98, 0.6);
   color: rgba(91, 208, 245, 1);
   font-size: 14px;
@@ -119,7 +119,7 @@
   width: 100%;
   white-space: pre-wrap;
 }
-.fcr-chatroom-h5-message-item-announcement-label {
+.fcr-chatroom-mobile-message-item-announcement-label {
   font-weight: 700;
   font-size: 12px;
   line-height: 18px;
@@ -132,21 +132,21 @@
   top: -9px;
 }
 /** landscape **/
-.fcr-chatroom-h5-messages-landscape {
+.fcr-chatroom-mobile-messages-landscape {
   height: 60%;
   width: 40%;
   overflow-y: auto;
   pointer-events: all;
 }
-.fcr-chatroom-h5-messages-landscape::-webkit-scrollbar {
+.fcr-chatroom-mobile-messages-landscape::-webkit-scrollbar {
   display: none;
 }
-.fcr-chatroom-h5-messages-has-new-container-landscape {
+.fcr-chatroom-mobile-messages-has-new-container-landscape {
   position: absolute;
   bottom: 5px;
   background: transparent;
 }
-.fcr-chatroom-h5-messages-has-new-container-landscape .fcr-chatroom-h5-messages-has-new {
+.fcr-chatroom-mobile-messages-has-new-container-landscape .fcr-chatroom-mobile-messages-has-new {
   position: relative;
   pointer-events: all;
 }

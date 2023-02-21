@@ -43,8 +43,8 @@ export const Thumbsup = observer(() => {
   };
 
   return (
-    <div className="fcr-chatroom-h5-inputs-thumbsup">
-      <div className="fcr-chatroom-h5-inputs-thumbsup-count">
+    <div className="fcr-chatroom-mobile-inputs-thumbsup">
+      <div className="fcr-chatroom-mobile-inputs-thumbsup-count">
         {formatCount(thumbsupRenderCache)}
       </div>
       <SvgImgMobile
@@ -58,7 +58,7 @@ export const Thumbsup = observer(() => {
           zIndex: ComponentLevelRulesMobile.Level2,
         }}
         ref={canvasRef}
-        className="fcr-chatroom-h5-inputs-thumbsup-canvas"></canvas>
+        className="fcr-chatroom-mobile-inputs-thumbsup-canvas"></canvas>
     </div>
   );
 });

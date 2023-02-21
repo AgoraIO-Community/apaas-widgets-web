@@ -21,8 +21,8 @@ export const FcrChatRoomH5 = observer(() => {
         <UserJoined></UserJoined>
         <MessageList></MessageList>
         <div
-          className={`fcr-chatroom-h5-landscape-input-container ${
-            showEmoji ? 'fcr-chatroom-h5-landscape-input-container-emoji-open' : ''
+          className={`fcr-chatroom-mobile-landscape-input-container ${
+            showEmoji ? 'fcr-chatroom-mobile-landscape-input-container-emoji-open' : ''
           }`}>
           <FcrChatRoomH5Inputs
             emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
@@ -34,11 +34,11 @@ export const FcrChatRoomH5 = observer(() => {
   ) : (
     <RoomInfoContainer
       ref={containerRef}
-      classNames={showEmoji ? 'fcr-chatroom-h5-room-info-emoji-open' : ''}>
+      classNames={showEmoji ? 'fcr-chatroom-mobile-room-info-emoji-open' : ''}>
       <>
-        <div className="fcr-chatroom-h5-container">
+        <div className="fcr-chatroom-mobile-container">
           <UserJoined></UserJoined>
-          <div className="fcr-chatroom-h5-mask"></div>
+          <div className="fcr-chatroom-mobile-mask"></div>
           <MessageList></MessageList>
         </div>
         <FcrChatRoomH5Inputs

@@ -75,7 +75,7 @@ export class AgoraPolling extends AgoraEduToolWidget {
   locate(): HTMLElement | null | undefined {
     const { platform } = this.classroomConfig;
     if (platform === Platform.H5)
-      return document.querySelector('.fcr-poll-h5-widget') as HTMLElement;
+      return document.querySelector('.fcr-poll-mobile-widget') as HTMLElement;
   }
   render(dom: HTMLElement) {
     this._dom = dom;

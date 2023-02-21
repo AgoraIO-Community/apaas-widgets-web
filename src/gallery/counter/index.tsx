@@ -81,7 +81,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
   locate(): HTMLElement | null | undefined {
     const { platform } = this.classroomConfig;
     if (platform === Platform.H5)
-      return document.querySelector('.fcr-countdown-h5-widget') as HTMLElement;
+      return document.querySelector('.fcr-countdown-mobile-widget') as HTMLElement;
   }
   render(dom: HTMLElement) {
     this._dom = dom;

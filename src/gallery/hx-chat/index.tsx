@@ -233,7 +233,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   locate() {
     const { platform } = this.classroomConfig;
     if (platform === Platform.H5) {
-      return document.querySelector('.widget-slot-chat-h5') as HTMLElement;
+      return document.querySelector('.widget-slot-chat-mobile') as HTMLElement;
     }
     return document.querySelector('.widget-slot-chat') as HTMLElement;
   }

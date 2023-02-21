@@ -22,7 +22,7 @@ export const RoomInfoContainer = observer(
     return (
       <div
         ref={ref}
-        className={`fcr-h5-interact-container${landscape ? '-landscape' : ''} ${classNames}`}
+        className={`fcr-mobile-interact-container${landscape ? '-landscape' : ''} ${classNames}`}
         style={{ ...style }}>
         {landscape ? (
           <>
@@ -31,11 +31,11 @@ export const RoomInfoContainer = observer(
           </>
         ) : (
           <>
-            <div className="fcr-h5-interact-container-top">
-              <div className="fcr-h5-interact-container-placeholder"></div>
+            <div className="fcr-mobile-interact-container-top">
+              <div className="fcr-mobile-interact-container-placeholder"></div>
               {
                 <div
-                  className="fcr-chatroom-h5-announcement"
+                  className="fcr-chatroom-mobile-announcement"
                   style={{
                     height: announcement && showAnnouncement ? 'auto' : '0px',
                     ...(announcement && showAnnouncement ? {} : { paddingBottom: '0px' }),
@@ -77,12 +77,12 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
         opacity: landscapeToolBarVisible ? 1 : 0,
         transition: 'visibility .2s, opacity .2s',
       }}>
-      <div className="fcr-h5-landscape-inter-mask-top"></div>
-      <div className="fcr-h5-landscape-inter-mask-bottom"></div>
-      <div className="fcr-h5-landscape-inter-room-info">
-        <div className="fcr-h5-landscape-inter-room-info-left">
+      <div className="fcr-mobile-landscape-inter-mask-top"></div>
+      <div className="fcr-mobile-landscape-inter-mask-bottom"></div>
+      <div className="fcr-mobile-landscape-inter-room-info">
+        <div className="fcr-mobile-landscape-inter-room-info-left">
           {forceLandscape && (
-            <div className="fcr-h5-landscape-inter-room-info-back" onClick={quitForceLandscape}>
+            <div className="fcr-mobile-landscape-inter-room-info-back" onClick={quitForceLandscape}>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
                 landscape={landscape}
@@ -91,45 +91,47 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
                 size={24}></SvgImgMobile>
             </div>
           )}
-          <div className="fcr-h5-landscape-inter-room-info-room">
-            <div className="fcr-h5-landscape-inter-room-info-teacher">
+          <div className="fcr-mobile-landscape-inter-room-info-room">
+            <div className="fcr-mobile-landscape-inter-room-info-teacher">
               <FcrLogo></FcrLogo>
               <div>
-                <div className="fcr-h5-landscape-inter-room-info-teacher-name">{teacherName}</div>
-                <div className="fcr-h5-landscape-inter-room-info-teacher-fcr">
+                <div className="fcr-mobile-landscape-inter-room-info-teacher-name">
+                  {teacherName}
+                </div>
+                <div className="fcr-mobile-landscape-inter-room-info-teacher-fcr">
                   {transI18n('fcr_h5_label_logo')}
                 </div>
               </div>
             </div>
-            <div className="fcr-h5-landscape-inter-room-info-hot">
+            <div className="fcr-mobile-landscape-inter-room-info-hot">
               <FcrHot></FcrHot>
             </div>
           </div>
         </div>
 
-        <div className="fcr-h5-landscape-inter-room-info-name">
+        <div className="fcr-mobile-landscape-inter-room-info-name">
           <div>{roomName}</div>
           <div>{classStatusText}</div>
         </div>
       </div>
     </div>
   ) : (
-    <div className="fcr-h5-inter-room-info">
-      <div className="fcr-h5-inter-room-info-left">
+    <div className="fcr-mobile-inter-room-info">
+      <div className="fcr-mobile-inter-room-info-left">
         <FcrLogo></FcrLogo>
         {teacherName && (
-          <div className="fcr-h5-inter-room-info-teacher-name">
+          <div className="fcr-mobile-inter-room-info-teacher-name">
             <span>{transI18n('chat.teacher')}:</span>
             <span>{teacherName}</span>
           </div>
         )}
         <FcrHot></FcrHot>
       </div>
-      <div className="fcr-h5-inter-room-info-right">
-        <div className="fcr-h5-inter-room-info-start-time">{classStatusText}</div>
+      <div className="fcr-mobile-inter-room-info-right">
+        <div className="fcr-mobile-inter-room-info-start-time">{classStatusText}</div>
         {announcement && (
           <div
-            className="fcr-h5-inter-room-info-toggle-announcement"
+            className="fcr-mobile-inter-room-info-toggle-announcement"
             onClick={() => {
               setShowAnnouncement(!showAnnouncement);
             }}>
@@ -150,7 +152,7 @@ export const FcrLogo = observer(() => {
     roomStore: { isLandscape, forceLandscape },
   } = useStore();
   return (
-    <div className="fcr-h5-inter-room-info-logo">
+    <div className="fcr-mobile-inter-room-info-logo">
       <SvgImgMobile
         forceLandscape={forceLandscape}
         landscape={isLandscape}
@@ -165,7 +167,7 @@ export const FcrHot = observer(() => {
   } = useStore();
   const transI18n = useI18n();
   return (
-    <div className="fcr-h5-inter-room-info-hot">
+    <div className="fcr-mobile-inter-room-info-hot">
       <SvgImgMobile
         forceLandscape={forceLandscape}
         landscape={isLandscape}
