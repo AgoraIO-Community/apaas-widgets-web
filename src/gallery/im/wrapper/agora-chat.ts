@@ -55,20 +55,14 @@ export class FcrChatRoom extends AgoraIMBase {
       log.time
         ? `${dayjs().format('YYYY-MM-DD')} ${log.time}`
         : `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
-    } [Agora-Chat] ${logInfo}, args: ${args.map((arg) => `JSON.stringify(${arg}) `)}`;
+    } [Agora-Chat] ${logInfo}, args: ${args.map((arg) => `${JSON.stringify(arg)} `)}`;
   }
 
   private _enableLog() {
-    websdk.logger.setLevel('DEBUG', true, 'agora-chat');
+    websdk.logger.setLevel('WARN', true, 'agora-chat');
     //@ts-ignore
     websdk.logger.onLog = (log: AgoraChatLog) => {
       switch (log.level) {
-        case 'debug':
-          this._logger.debug(this._formateLogs(log));
-          break;
-        case 'info':
-          this._logger.info(this._formateLogs(log));
-          break;
         case 'warn':
           this._logger.warn(this._formateLogs(log));
           break;
@@ -107,6 +101,7 @@ export class FcrChatRoom extends AgoraIMBase {
       console.error(e);
     }
   }
+  @Log.silence
   async getAnnouncement(): Promise<string> {
     try {
       const res = await this.conn.fetchChatRoomAnnouncement({
@@ -117,6 +112,7 @@ export class FcrChatRoom extends AgoraIMBase {
       return '';
     }
   }
+  @Log.silence
   async setAnnouncement(announcement: string): Promise<void> {
     await this.conn.updateChatRoomAnnouncement({
       roomId: this.roomId,
@@ -125,6 +121,7 @@ export class FcrChatRoom extends AgoraIMBase {
       error: () => {},
     });
   }
+  @Log.silence
   async deleteAnnouncement(): Promise<void> {
     await this.conn.updateChatRoomAnnouncement({
       roomId: this.roomId,
@@ -190,6 +187,7 @@ export class FcrChatRoom extends AgoraIMBase {
       ext: JSON.parse(data?.ext as unknown as string) as AgoraIMUserInfoExt,
     };
   }
+  @Log.silence
   async getHistoryMessageList(params?: {
     pageSize?: number | undefined;
     msgId?: string | number | undefined;
@@ -203,6 +201,7 @@ export class FcrChatRoom extends AgoraIMBase {
     });
     return messages.map(convertHXHistoryMessage);
   }
+  @Log.silence
   createTextMessage(msg: string) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
@@ -216,6 +215,7 @@ export class FcrChatRoom extends AgoraIMBase {
       id: websdk.utils.getUniqueId(),
     });
   }
+  @Log.silence
   async createImageMessage(params: Partial<AgoraIMImageMessage>) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
@@ -244,6 +244,7 @@ export class FcrChatRoom extends AgoraIMBase {
       ext: { ...params.ext, ...messageExt },
     });
   }
+  @Log.silence
   async sendMessage(message: AgoraIMMessageBase): Promise<AgoraIMMessageBase> {
     let newMsg: AgoraChat.MessageBody | null = null;
     switch (message.type) {
@@ -324,6 +325,7 @@ export class FcrChatRoom extends AgoraIMBase {
     });
     this.conn.close();
   }
+  @Log.silence
   private _addEventListener() {
     this.conn.onTextMessage = (msg) => {
       const textMessage = convertHXMessage(msg);
