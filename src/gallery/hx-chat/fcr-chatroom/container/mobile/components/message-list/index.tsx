@@ -1,4 +1,4 @@
-import { ImageViewer } from 'antd-mobile';
+import ImageViewer from '../image-viewer';
 import { useI18n } from 'agora-common-libs';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { throttle } from 'lodash';
