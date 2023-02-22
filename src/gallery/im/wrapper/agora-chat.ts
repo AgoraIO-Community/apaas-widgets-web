@@ -192,7 +192,7 @@ export class FcrChatRoom extends AgoraIMBase {
   }
   async getHistoryMessageList(params?: {
     pageSize?: number | undefined;
-    msgId?: string | undefined;
+    msgId?: string | number | undefined;
   }): Promise<AgoraIMMessageBase[]> {
     const { messages } = await this.conn.getHistoryMessages({
       targetId: this.roomId,

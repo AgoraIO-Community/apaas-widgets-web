@@ -1,7 +1,7 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../im/wrapper/typs';
-import { ClassState, EduRoleTypeEnum, FetchUserType } from 'agora-edu-core';
+import { ClassState } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import { OrientationEnum } from '../../../../../../agora-classroom-sdk/src/infra/stores/common/type';
 import {
@@ -33,8 +33,10 @@ export class RoomStore {
     this._addEventListeners();
     runInAction(() => {
       this.thumbsupRenderCache =
-        this._widget.classroomStore.connectionStore.scene?.dataStore.roomProperties.get(
-          'flexProps',
+        (
+          this._widget.classroomStore.connectionStore.scene?.dataStore.roomProperties.get(
+            'flexProps',
+          ) as { thumbsup: number }
         )?.['thumbsup'] || 0;
     });
   }

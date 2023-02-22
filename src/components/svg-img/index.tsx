@@ -8,6 +8,16 @@ import { themeContext } from 'agora-common-libs';
 export type SvgImgProps = {
   type: SvgIconEnum;
   colors?: Partial<PathOptions>;
+  size?: number | string;
+  onClick?: (e: MouseEvent) => void;
+  onMouseDown?: (e: MouseEvent) => void;
+  onMouseUp?: (e: MouseEvent) => void;
+  className?: string;
+  style?: React.CSSProperties;
+};
+export type SvgImgMobileProps = {
+  type: SvgIconEnum;
+  colors?: Partial<PathOptions>;
   size?: number;
   onClick?: (e: MouseEvent) => void;
   onMouseDown?: (e: MouseEvent) => void;
@@ -15,19 +25,17 @@ export type SvgImgProps = {
   className?: string;
   style?: React.CSSProperties;
 };
+export const SvgImgMobile: FC<SvgImgMobileProps & { landscape: boolean; forceLandscape: boolean }> =
+  (props) => {
+    const { landscape, forceLandscape } = props;
+    const basicWidth =
+      (forceLandscape || landscape) && window.matchMedia('(orientation: landscape)').matches
+        ? 812
+        : 375;
+    const basicWidthRatio = (((props.size || 24) / basicWidth) * 100).toFixed(5) + 'vw';
 
-export const SvgImgMobile: FC<SvgImgProps & { landscape: boolean; forceLandscape: boolean }> = (
-  props,
-) => {
-  const { landscape, forceLandscape } = props;
-  const basicWidth =
-    (forceLandscape || landscape) && window.matchMedia('(orientation: landscape)').matches
-      ? 812
-      : 375;
-  const basicWidthRatio = (((props.size || 24) / basicWidth) * 100).toFixed(5) + 'vw';
-
-  return <SvgImg {...props} size={basicWidthRatio}></SvgImg>;
-};
+    return <SvgImg {...props} size={basicWidthRatio}></SvgImg>;
+  };
 export const SvgImg: FC<SvgImgProps> = ({
   type,
   size = 24,

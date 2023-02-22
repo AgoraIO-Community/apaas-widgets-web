@@ -1,7 +1,7 @@
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { AGEventEmitter } from 'agora-rte-sdk';
 
-export abstract class AgoraIMBase extends AGEventEmitter {
+export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEventEmitter {
   connectionState: AgoraIMConnectionState = AgoraIMConnectionState.DisConnected;
   abstract userInfo?: AgoraIMUserInfo;
   protected setConnectionState(connectionState: AgoraIMConnectionState) {
@@ -15,7 +15,7 @@ export abstract class AgoraIMBase extends AGEventEmitter {
   abstract getUserList(params: { pageNum: number; pageSize: number }): Promise<AgoraIMUserInfo[]>;
   abstract getHistoryMessageList(params?: {
     pageSize?: number;
-    msgId?: string;
+    msgId?: string | number;
   }): Promise<AgoraIMMessageBase[]>;
   abstract getAnnouncement(): Promise<string>;
   abstract setAnnouncement(announcement: string): Promise<void>;
@@ -30,33 +30,30 @@ export abstract class AgoraIMBase extends AGEventEmitter {
   abstract createTextMessage(msg: string): AgoraIMTextMessage;
   abstract createImageMessage(params: Partial<AgoraIMImageMessage>): Promise<AgoraIMImageMessage>;
   abstract getChatRoomDetails(): Promise<AgoraIMChatRoomDetails>;
-  abstract on(
+}
+
+export interface AgoraIMEventEmitter {
+  on(
     evt: AgoraIMEvents.ConnectionStateChanged,
     cb: (connectionState: AgoraIMConnectionState) => void,
   ): this;
-  abstract on(evt: AgoraIMEvents.TextMessageReceived, cb: (msg: AgoraIMTextMessage) => void): this;
-  abstract on(
-    evt: AgoraIMEvents.ImageMessageReceived,
-    cb: (msg: AgoraIMImageMessage) => void,
-  ): this;
-  abstract on(
-    evt: AgoraIMEvents.CustomMessageReceived,
-    cb: (msg: AgoraIMCustomMessage) => void,
-  ): this;
-  abstract on(evt: AgoraIMEvents.UserJoined, cb: (user: string) => void): this;
-  abstract on(evt: AgoraIMEvents.UserLeft, cb: (user: string) => void): this;
+  on(evt: AgoraIMEvents.TextMessageReceived, cb: (msg: AgoraIMTextMessage) => void): this;
+  on(evt: AgoraIMEvents.ImageMessageReceived, cb: (msg: AgoraIMImageMessage) => void): this;
+  on(evt: AgoraIMEvents.CustomMessageReceived, cb: (msg: AgoraIMCustomMessage) => void): this;
+  on(evt: AgoraIMEvents.UserJoined, cb: (user: string) => void): this;
+  on(evt: AgoraIMEvents.UserLeft, cb: (user: string) => void): this;
 
-  abstract on(evt: AgoraIMEvents.AnnouncementUpdated, cb: () => void): this;
-  abstract on(evt: AgoraIMEvents.AnnouncementDeleted, cb: () => void): this;
+  on(evt: AgoraIMEvents.AnnouncementUpdated, cb: () => void): this;
+  on(evt: AgoraIMEvents.AnnouncementDeleted, cb: () => void): this;
 
-  abstract on(evt: AgoraIMEvents.UserMuted, cb: () => void): this;
-  abstract on(evt: AgoraIMEvents.UserUnmuted, cb: () => void): this;
+  on(evt: AgoraIMEvents.UserMuted, cb: () => void): this;
+  on(evt: AgoraIMEvents.UserUnmuted, cb: () => void): this;
 
-  abstract on(evt: AgoraIMEvents.AllUserMuted, cb: () => void): this;
-  abstract on(evt: AgoraIMEvents.AllUserUnmuted, cb: () => void): this;
+  on(evt: AgoraIMEvents.AllUserMuted, cb: () => void): this;
+  on(evt: AgoraIMEvents.AllUserUnmuted, cb: () => void): this;
 
-  abstract on(evt: AgoraIMEvents.UserMuted, cb: () => void): this;
-  abstract on(evt: AgoraIMEvents.UserUnmuted, cb: () => void): this;
+  on(evt: AgoraIMEvents.UserMuted, cb: () => void): this;
+  on(evt: AgoraIMEvents.UserUnmuted, cb: () => void): this;
 }
 export interface AgoraIMChatRoomDetails {
   mute: boolean;
