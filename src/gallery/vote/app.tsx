@@ -203,7 +203,7 @@ const SelectionSection = observer(() => {
   return (
     <>
       {options.map((option: string) => (
-        <label className="selection-item-container" htmlFor={option}>
+        <label key={option} className="selection-item-container" htmlFor={option}>
           <div className="selection-check">
             {type === 'radio' ? (
               <input

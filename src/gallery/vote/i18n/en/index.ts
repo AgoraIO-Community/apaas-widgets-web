@@ -10,6 +10,7 @@ const polling_en = {
     'item-tip': 'Please input choices',
     'single-sel': 'Single select',
     'mul-sel': 'Multi-select',
+    'submit-tip': 'Please select an option before submitting',
   },
 };
 

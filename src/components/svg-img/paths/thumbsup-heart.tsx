@@ -1,0 +1,74 @@
+import React from 'react';
+
+import { PathOptions } from '../svg-dict';
+
+export const path = (props: PathOptions) => (
+  <>
+    <g clipPath="url(#clip0_2467_44200)">
+      <g filter="url(#filter0_d_2467_44200)">
+        <path
+          d="M12.346 38.4549C21.6295 20.8464 38.8927 24.5148 48.8782 23.7811C55.2105 17.1779 71.9668 6.75944 88.3332 17.9116C108.791 31.8517 100.024 58.2646 92.7171 69.27C86.8719 78.0743 75.1816 90.7917 69.3364 96.4167C64.709 94.9493 49.9011 90.9873 33.5347 83.9439C13.0766 75.1396 5.77012 50.9277 12.346 38.4549Z"
+          fill="url(#paint0_radial_2467_44200)"
+        />
+      </g>
+      <path
+        d="M12.346 38.4549C21.6295 20.8464 38.8927 24.5148 48.8782 23.7811C55.2105 17.1779 71.9668 6.75944 88.3332 17.9116C108.791 31.8517 100.024 58.2646 92.7171 69.27C86.8719 78.0743 75.1816 90.7917 69.3364 96.4167C64.709 94.9493 49.9011 90.9873 33.5347 83.9439C13.0766 75.1396 5.77012 50.9277 12.346 38.4549Z"
+        fill="url(#paint1_radial_2467_44200)"
+      />
+    </g>
+    <defs>
+      <filter
+        id="filter0_d_2467_44200"
+        x="-1.375"
+        y="1.625"
+        width="128.917"
+        height="121.333"
+        filterUnits="userSpaceOnUse"
+        colorInterpolationFilters="sRGB">
+        <feFlood floodOpacity="0" result="BackgroundImageFix" />
+        <feColorMatrix
+          in="SourceAlpha"
+          type="matrix"
+          values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0"
+          result="hardAlpha"
+        />
+        <feOffset dx="7.58333" dy="7.58333" />
+        <feGaussianBlur stdDeviation="9.47917" />
+        <feComposite in2="hardAlpha" operator="out" />
+        <feColorMatrix type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.15 0" />
+        <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_2467_44200" />
+        <feBlend
+          mode="normal"
+          in="SourceGraphic"
+          in2="effect1_dropShadow_2467_44200"
+          result="shape"
+        />
+      </filter>
+      <radialGradient
+        id="paint0_radial_2467_44200"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="translate(45.071 49.6846) rotate(16.4542) scale(51.8055 56.9495)">
+        <stop stopColor="#FFA298" />
+        <stop offset="0.823638" stopColor="#FE0F0C" />
+        <stop offset="1" stopColor="#FF7D93" />
+      </radialGradient>
+      <radialGradient
+        id="paint1_radial_2467_44200"
+        cx="0"
+        cy="0"
+        r="1"
+        gradientUnits="userSpaceOnUse"
+        gradientTransform="translate(55.3 42.3477) rotate(116.47) scale(45.8983 50.154)">
+        <stop offset="0.58764" stopColor="#FE0F0C" stopOpacity="0" />
+        <stop offset="1" stopColor="#FF7D93" />
+      </radialGradient>
+      <clipPath id="clip0_2467_44200">
+        <rect width="110" height="110" fill="white" />
+      </clipPath>
+    </defs>
+  </>
+);
+export const viewBox = '0 0 110 110';

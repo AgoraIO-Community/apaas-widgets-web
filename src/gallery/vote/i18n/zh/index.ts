@@ -10,6 +10,7 @@ const polling_zh = {
     'item-tip': '请输入选项内容',
     'single-sel': '单选',
     'mul-sel': '多选',
+    'submit-tip': '请先选择选项再提交',
   },
 };
 

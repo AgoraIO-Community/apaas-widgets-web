@@ -1,0 +1,53 @@
+.fcr-countdown-mobile,
+.fcr-countdown-mobile-landscape {
+  position: absolute;
+  bottom: 8px;
+  left: 16px;
+  padding: 5px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.5);
+  box-shadow: 0px 0px 20px -8px rgba(0, 0, 0, 0.14);
+  z-index: 1;
+}
+
+.fcr-countdown-mobile.fcr-countdown-mobile-landscape {
+  position: fixed;
+  bottom: auto;
+  left: auto;
+  top: 13px;
+  right: 63px;
+  transform-origin: right top;
+  z-index: 1;
+}
+.fcr-countdown-mobile.fcr-countdown-mobile-landscape.fcr-countdown-mobile-landscape-right {
+  right: 16px;
+}
+.fcr-countdown-mobile .flip-card-mobile:nth-child(1),
+.fcr-countdown-mobile .flip-card-mobile:nth-child(4) {
+  text-align: right;
+}
+.fcr-countdown-mobile .flip-card-mobile:nth-child(2),
+.fcr-countdown-mobile .flip-card-mobile:nth-child(5) {
+  text-align: left;
+}
+.fcr-countdown-mobile .flip-card-mobile:nth-child(1) .flip-card-mobile-digital::before,
+.fcr-countdown-mobile .flip-card-mobile:nth-child(4) .flip-card-mobile-digital::before {
+  border-top-right-radius: 0;
+}
+.fcr-countdown-mobile .flip-card-mobile:nth-child(2) .flip-card-mobile-digital::before,
+.fcr-countdown-mobile .flip-card-mobile:nth-child(5) .flip-card-mobile-digital::before {
+  border-top-left-radius: 0;
+}
+.fcr-countdown-mobile .flip-card-mobile:nth-child(1) .flip-card-mobile-digital::after,
+.fcr-countdown-mobile .flip-card-mobile:nth-child(4) .flip-card-mobile-digital::after {
+  border-bottom-right-radius: 0;
+}
+.fcr-countdown-mobile .flip-card-mobile:nth-child(2) .flip-card-mobile-digital::after,
+.fcr-countdown-mobile .flip-card-mobile:nth-child(5) .flip-card-mobile-digital::after {
+  border-bottom-left-radius: 0;
+}
+.flip-card-mobile-wrap {
+  border: 1px solid #000;
+  border-radius: 8px;
+  overflow: auto;
+}

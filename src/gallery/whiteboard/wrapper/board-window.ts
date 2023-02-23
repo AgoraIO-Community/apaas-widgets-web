@@ -10,14 +10,13 @@ import Talkative from '@netless/app-talkative';
 import { snapshot } from '@netless/white-snapshot';
 import { BuiltinApps, WindowManager, WindowMangerAttributes } from '@netless/window-manager';
 import '@netless/window-manager/dist/style.css';
-import { AGEventEmitter, Injectable, Log } from 'agora-rte-sdk';
+import { AGEventEmitter, bound, Log, Logger } from 'agora-rte-sdk';
 import { ApplianceNames, MemberState, Room, ShapeType } from 'white-web-sdk';
 import {
   convertToNetlessBoardShape,
   convertToNetlessBoardTool,
   defaultStrokeColor,
   defaultTextSize,
-  defaultTool,
   src2DataURL,
 } from './helper';
 import {
@@ -34,9 +33,9 @@ import {
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
 import { DialogProgressApi } from '../../../components/progress';
 
-@Log.attach({ proxyMethods: true })
+@Log.attach()
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
-  private logger!: Injectable.Logger;
+  logger!: Logger;
   private _whiteRoom: Room;
   private _hasOperationPrivilege = false;
   private _currentScenePath = '/';
@@ -77,7 +76,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         autoResolution,
         autoFPS,
         maxResolutionLevel,
-        forceCanvas
+        forceCanvas,
       },
     });
 
@@ -138,6 +137,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  @bound
   async addPage(options: { after: boolean }) {
     this.preCheck();
     if (this._windowManager) {
@@ -146,6 +146,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  @bound
   removePage() {
     this.preCheck();
     if (this._windowManager) {
@@ -153,6 +154,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  @bound
   setPageIndex(index: number) {
     this.preCheck({ wm: false });
 
@@ -167,21 +169,25 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  @bound
   undo() {
     this.preCheck({ wm: false });
     this._whiteRoom.undo();
   }
 
+  @bound
   redo() {
     this.preCheck({ wm: false });
     this._whiteRoom.redo();
   }
 
+  @bound
   clean(retainPpt?: boolean) {
     this.preCheck({ wm: false });
     this._whiteRoom.cleanCurrentScene(retainPpt);
   }
 
+  @bound
   async putImageResource(
     resourceUrl: string,
     options?: { x: number; y: number; width: number; height: number },
@@ -227,10 +233,12 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  @bound
   putImageResourceIntoWindow() {
     this.preCheck();
   }
 
+  @bound
   createMaterialResourceWindow(config: FcrBoardMaterialWindowConfig<FcrBoardPage>) {
     this.preCheck();
 
@@ -264,6 +272,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  @bound
   createMediaResourceWindow(config: FcrBoardMediaWindowConfig) {
     this.preCheck();
 
@@ -285,6 +294,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     });
   }
 
+  @bound
   createH5Window(config: FcrBoardH5WindowConfig) {
     this.preCheck();
 
@@ -319,6 +329,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     return true;
   }
 
+  @bound
   selectTool(type: FcrBoardTool) {
     this.preCheck();
     this._localState.tool = type;
@@ -328,6 +339,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     });
   }
 
+  @bound
   drawShape(type: FcrBoardShape, lineWidth: number, color: Color) {
     this.preCheck();
     this._localState.shape = type;
@@ -355,6 +367,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     await this._setBoardWritable(hasOperationPrivilege);
   }
 
+  @bound
   async changeStrokeWidth(strokeWidth: number) {
     this.preCheck();
     this._whiteRoom.setMemberState({
@@ -362,6 +375,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     });
   }
 
+  @bound
   async changeStrokeColor(color: { r: number; g: number; b: number }) {
     this.preCheck();
     this._whiteRoom.setMemberState({
@@ -381,10 +395,12 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     windowManager?.refresh();
   }
 
+  @bound
   setTimeDelay(delay: number) {
     this._whiteRoom.timeDelay = delay;
   }
 
+  @bound
   async getSnapshotImage(background = '#fff') {
     this.preCheck({ wm: false });
     const whiteRoom = this._whiteRoom;
@@ -534,11 +550,11 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     eventName: FcrBoardMainWindowEvent.Failure,
     cb: (reason: FcrBoardMainWindowFailureReason) => void,
   ): void;
-
+  @Log.silence
   on(eventName: FcrBoardMainWindowEvent, cb: CallableFunction): void {
     this._eventBus.on(eventName, cb);
   }
-
+  @Log.silence
   off(eventName: FcrBoardMainWindowEvent, cb: CallableFunction): void {
     this._eventBus.off(eventName, cb);
   }

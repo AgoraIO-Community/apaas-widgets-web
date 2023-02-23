@@ -4,9 +4,11 @@ import { Provider } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import { observable, action } from 'mobx';
 import App from './app';
+import AppH5 from './mobile/app';
+
 import { PluginStore } from './store';
 import { AgoraEduToolWidget } from '../../common/edu-tool-widget';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
+import { AgoraWidgetController, EduRoleTypeEnum, Platform } from 'agora-edu-core';
 import { ThemeProvider, transI18n } from 'agora-common-libs';
 import { addResource } from './i18n/config';
 export class AgoraCountdown extends AgoraEduToolWidget {
@@ -76,19 +78,29 @@ export class AgoraCountdown extends AgoraEduToolWidget {
       this.setVisibility(true);
     }
   }
-
+  locate(): HTMLElement | null | undefined {
+    const { platform } = this.classroomConfig;
+    if (platform === Platform.H5)
+      return document.querySelector('.fcr-countdown-mobile-widget') as HTMLElement;
+  }
   render(dom: HTMLElement) {
     this._dom = dom;
+    const { platform } = this.classroomConfig;
+
     ReactDOM.render(
       <Provider store={this._store}>
         <ThemeProvider value={this.theme}>
-          <WidgetModal
-            title={transI18n('widget_countdown.appName')}
-            closable={this.controlled}
-            onCancel={this.handleClose}
-            onResize={this.handleResize}>
-            <App widget={this} />
-          </WidgetModal>
+          {platform === Platform.H5 ? (
+            <AppH5 widget={this} />
+          ) : (
+            <WidgetModal
+              title={transI18n('widget_countdown.appName')}
+              closable={this.controlled}
+              onCancel={this.handleClose}
+              onResize={this.handleResize}>
+              <App widget={this} />
+            </WidgetModal>
+          )}
         </ThemeProvider>
       </Provider>,
       dom,
@@ -104,7 +116,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
 
   onDestroy() {
     if (this._store) {
-      this._store.resetStore();
+      this._store.destroy();
     }
   }
 }

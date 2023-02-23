@@ -1,5 +1,5 @@
 import { EduRoleTypeEnum } from 'agora-edu-core';
-import { Lodash } from 'agora-rte-sdk';
+import { bound, Lodash } from 'agora-rte-sdk';
 import { action, autorun, computed, observable, reaction, runInAction } from 'mobx';
 import { computedFn } from 'mobx-utils';
 import { AgoraSelector } from '.';
@@ -11,7 +11,7 @@ const minOptionsLength = 2; // 最小选项长度
 type answerState = 0 | 1 | 2; // 0 答题结束 1 答题中 2 本地状态只为有控制权限提供
 
 export class PluginStore {
-  clock: string = '';
+  clock = '';
 
   constructor(private _widget: AgoraSelector) {
     autorun(() => {
@@ -48,10 +48,10 @@ export class PluginStore {
   selectedAnswers: string[] = [];
 
   @observable
-  visibleSubmitBtn: boolean = false; // for student
+  visibleSubmitBtn = false; // for student
 
   @observable
-  localOptionPermission: boolean = false;
+  localOptionPermission = false;
 
   @action.bound
   addOption() {
@@ -343,13 +343,14 @@ export class PluginStore {
   private _nextId = 0;
 
   private _extractPerson(arr: any) {
-    var tempMap = new Map();
+    const tempMap = new Map();
     arr.forEach((value: any) => {
       tempMap.set(value.ownerUserUuid, value);
     });
     return [...tempMap.values()];
   }
 
+  @bound
   @Lodash.throttled(1000)
   async fetchList() {
     try {

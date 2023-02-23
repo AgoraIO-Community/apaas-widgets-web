@@ -2,7 +2,7 @@ import { EduRoomTypeEnum, Platform } from 'agora-edu-core';
 import { action, autorun, observable, runInAction } from 'mobx';
 import { AgoraHXChatWidget } from '.';
 
-enum orientationEnum {
+enum OrientationEnum {
   portrait = 'portrait',
   landscape = 'landscape',
 }
@@ -11,13 +11,13 @@ export class WidgetChatUIStore {
   private _matchMedia = window.matchMedia('(orientation: portrait)');
 
   @observable
-  orientation: orientationEnum = orientationEnum.portrait;
+  orientation: OrientationEnum = OrientationEnum.portrait;
 
   @observable
-  isFullSize: boolean = false;
+  isFullSize = false;
 
   @observable
-  showChat: boolean = false;
+  showChat = false;
 
   constructor(private _widget: AgoraHXChatWidget) {
     const { sessionInfo, platform } = _widget.classroomConfig;
@@ -25,11 +25,7 @@ export class WidgetChatUIStore {
     this.handleOrientationchange();
     autorun(() => {
       let isFullSize = false;
-      if (
-        sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass &&
-        isH5 &&
-        sessionInfo.roomServiceType !== 0
-      ) {
+      if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
         isFullSize = true;
       } else if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
         isFullSize = this.orientation === 'portrait' ? false : true;
@@ -44,11 +40,7 @@ export class WidgetChatUIStore {
     autorun(() => {
       let isShowChat = isH5 ? true : false;
 
-      if (
-        sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass &&
-        isH5 &&
-        sessionInfo.roomServiceType !== 0
-      ) {
+      if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
         isShowChat = true;
       } else if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
         isShowChat = this.orientation === 'portrait' ? false : true;
@@ -66,10 +58,10 @@ export class WidgetChatUIStore {
     // If there are matches, we're in portrait
     if (this._matchMedia.matches) {
       // Portrait orientation
-      this.orientation = orientationEnum.portrait;
+      this.orientation = OrientationEnum.portrait;
     } else {
       // Landscape orientation
-      this.orientation = orientationEnum.landscape;
+      this.orientation = OrientationEnum.landscape;
     }
   }
 

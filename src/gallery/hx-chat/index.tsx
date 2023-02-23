@@ -8,6 +8,7 @@ import { observer } from 'mobx-react';
 import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
+import { FcrChatRoomApp } from './fcr-chatroom';
 
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;
@@ -142,6 +143,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   private _rendered = false;
 
   onInstall(controller: AgoraWidgetController): void {}
+
   get widgetName(): string {
     return 'easemobIM';
   }
@@ -172,10 +174,6 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
       visibleBtnSend = false;
       visibleEmoji = false;
       inputBoxStatus = 'inline';
-    }
-    const isVocational = this.classroomConfig.sessionInfo.roomServiceType !== 0;
-    if (isVocational) {
-      visibleEmoji = true;
     }
 
     return {
@@ -219,20 +217,29 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   onDestroy(): void {}
 
   private _renderApp() {
+    const { platform } = this.classroomConfig;
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
+      if (platform === Platform.H5) {
+        this._dom.classList.remove('chat-panel');
+        ReactDOM.render(<FcrChatRoomApp widget={this} />, this._dom);
+      } else {
+        ReactDOM.render(<App widget={this} />, this._dom);
+      }
+
       this._rendered = true;
-      ReactDOM.render(<App widget={this} />, this._dom);
     }
   }
 
   locate() {
+    const { platform } = this.classroomConfig;
+    if (platform === Platform.H5) {
+      return document.querySelector('.widget-slot-chat-mobile') as HTMLElement;
+    }
     return document.querySelector('.widget-slot-chat') as HTMLElement;
   }
 
   render(dom: HTMLElement): void {
     this._dom = dom;
-
-    this.classroomConfig.sessionInfo.roomServiceType !== 0;
 
     const cls = classNames('chat-panel', 'h-full');
 

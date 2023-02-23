@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useRef } from 'react';
-import i18n from 'i18next';
 import { useSelector, useStore } from 'react-redux';
 import { initIMSDK } from './utils/WebIM';
 import {
@@ -12,11 +11,12 @@ import { showRedNotification } from './redux/actions/messageAction';
 import { setVisibleUI } from './redux/actions/roomAction';
 import { Chat } from './components/Chat';
 import { SvgIconEnum, SvgImg } from '../../../components/svg-img';
-import im_CN from './locales/zh_CN';
-import im_US from './locales/en_US';
+import im_CN from '../locales/zh_CN';
+import im_US from '../locales/en_US';
 import { createListener } from './utils/listeners';
 import './App.css';
 import 'antd/dist/antd.css';
+import { addResourceBundle } from 'agora-common-libs';
 
 const App = function (props) {
   const store = useStore();
@@ -44,8 +44,8 @@ const App = function (props) {
     store.dispatch(isShowMiniIcon(miniIconStatus));
     store.dispatch(setVisibleUI(config));
     store.dispatch(setAgoraTokenConfig(agoraTokenData));
-    i18n.addResourceBundle('zh', 'translation', im_CN);
-    i18n.addResourceBundle('en', 'translation', im_US);
+    addResourceBundle('zh', im_CN);
+    addResourceBundle('en', im_US);
   }, []);
 
   const loggedIn = useRef();

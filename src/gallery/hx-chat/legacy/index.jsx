@@ -13,6 +13,7 @@ import { MessageAPI } from './api/message';
 import { MuteAPI } from './api/mute';
 import { UserInfoAPI } from './api/userInfo';
 import { PresenceAPI } from './api/presence';
+import { setCredential } from './api/base';
 
 let store = null;
 
@@ -20,6 +21,7 @@ export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
   const chatStore = React.useMemo(() => (store = createStore()), []);
 
   const chatAPIs = React.useMemo(() => {
+    setCredential(agoraTokenData.userUuid, agoraTokenData.token);
     const loginAPI = new LoginAPI(chatStore);
     const messageAPI = new MessageAPI(chatStore);
     const chatHistoryAPI = new ChatHistoryAPI(chatStore, messageAPI);

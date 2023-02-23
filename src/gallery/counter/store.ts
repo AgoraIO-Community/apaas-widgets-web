@@ -1,6 +1,11 @@
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { action, autorun, computed, observable } from 'mobx';
 import { AgoraCountdown } from '.';
+import {
+  AgoraExtensionRoomEvent,
+  AgoraExtensionWidgetEvent,
+} from '../../../../agora-classroom-sdk/src/infra/protocol/events';
+import { OrientationEnum } from '../../../../agora-classroom-sdk/src/infra/stores/common/type';
 
 export class PluginStore {
   constructor(private _widget: AgoraCountdown) {
@@ -9,14 +14,46 @@ export class PluginStore {
         this.setShowSetting(false);
       }
     });
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: this._handleMobileLandscapeToolBarStateChanged,
+    });
+    this._widget.broadcast(
+      AgoraExtensionWidgetEvent.RequestMobileLandscapeToolBarVisible,
+      undefined,
+    );
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this._handleOrientationChanged,
+    });
+    this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
   }
 
   @observable
   number: number | null = 60;
-
+  @observable landscapeToolBarVisible = false;
   @observable
   showSetting = true;
-
+  @observable orientation: OrientationEnum = OrientationEnum.portrait;
+  @observable forceLandscape = false;
+  @computed
+  get isLandscape() {
+    return this.forceLandscape || this.orientation === OrientationEnum.landscape;
+  }
+  @action.bound
+  private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
+    this.landscapeToolBarVisible = visible;
+  }
+  @action.bound
+  private _handleOrientationChanged(params: {
+    orientation: OrientationEnum;
+    forceLandscape: boolean;
+  }) {
+    this.orientation = params.orientation;
+    this.forceLandscape = params.forceLandscape;
+  }
   @action.bound
   setNumber(number: number | null) {
     this.number = number;
@@ -37,9 +74,13 @@ export class PluginStore {
    */
 
   @action.bound
-  resetStore() {
+  destroy() {
     this.setShowSetting(this.isController);
     this.number = 60;
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this._handleOrientationChanged,
+    });
   }
 
   @computed

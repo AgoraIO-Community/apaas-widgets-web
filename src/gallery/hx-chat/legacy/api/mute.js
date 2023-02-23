@@ -1,7 +1,7 @@
 import WebIM from '../utils/WebIM';
 import { roomAllMute, roomUserMute, isUserMute } from '../redux/actions/roomAction';
 import { SET_ALL_MUTE, REMOVE_ALL_MUTE, MUTE_USER, UNMUTE_USER, MUTE_CONFIG } from '../contants';
-import axios from 'axios';
+import http from './base';
 
 export class MuteAPI {
   store = null;
@@ -16,8 +16,7 @@ export class MuteAPI {
     const { host, appId, roomUuid, userUuid } = this.store.getState().agoraTokenConfig;
     const url = `${host}/edu/apps/${appId}/v2/rooms/${roomUuid}/users/${userUuid}`;
     try {
-      const resp = await axios
-        .get(url);
+      const resp = await http.get(url);
       const { userProperties } = resp.data.data;
       if (userProperties?.flexProps?.mute) {
         this.store.dispatch(isUserMute(true));
@@ -25,56 +24,49 @@ export class MuteAPI {
     } catch (err) {
       console.log('err>>>', err);
     }
-  }
-
+  };
 
   // 禁言后，设置 properties
   setUserProperties = () => {
     const { host, appId, roomUuid, userUuid } = this.store.getState().agoraTokenConfig;
     const url = `${host}/edu/apps/${appId}/v2/rooms/${roomUuid}/users/properties/batch`;
     const requestData = {
-      users: [{
-        userUuid,
-        properties: {
-          mute: MUTE_CONFIG.mute
+      users: [
+        {
+          userUuid,
+          properties: {
+            mute: MUTE_CONFIG.mute,
+          },
+          cause: {
+            mute: MUTE_USER,
+          },
         },
-        cause: {
-          mute: MUTE_USER
-        }
-      }]
+      ],
     };
-    axios({
-      method: 'put',
-      url: url,
-      headers: {
-        "Content-Type": "application/json"
-      },
-      data: requestData
-    })
-  }
+    http.put(url, {
+      data: requestData,
+    });
+  };
 
   // 解除禁言后，删除 properties
   removeUserProperties = () => {
     const { host, appId, roomUuid, userUuid } = this.store.getState().agoraTokenConfig;
     const url = `${host}/edu/apps/${appId}/v2/rooms/${roomUuid}/users/properties/batch`;
     const requestData = {
-      users: [{
-        userUuid,
-        properties: ["mute"],
-        cause: {
-          "mute": UNMUTE_USER
-        }
-      }]
+      users: [
+        {
+          userUuid,
+          properties: ['mute'],
+          cause: {
+            mute: UNMUTE_USER,
+          },
+        },
+      ],
     };
-    axios({
-      method: 'delete',
-      url: url,
-      headers: {
-        "Content-Type": "application/json"
-      },
-      data: requestData
-    })
-  }
+    http.delete(url, {
+      data: requestData,
+    });
+  };
 
   // 单人禁言
   setUserMute = (userId) => {
@@ -87,7 +79,7 @@ export class MuteAPI {
     WebIM.conn.muteChatRoomMember(options).then((res) => {
       console.log('setUserMute success>>>', res);
       this.messageAPI.sendCmdMsg(MUTE_USER, res.data[0]?.user);
-      this.store.dispatch(roomUserMute(userId, MUTE_CONFIG.mute))
+      this.store.dispatch(roomUserMute(userId, MUTE_CONFIG.mute));
     });
   };
 
@@ -101,7 +93,7 @@ export class MuteAPI {
     WebIM.conn.unmuteChatRoomMember(options).then((res) => {
       console.log('removeUserMute success>>>', res);
       this.messageAPI.sendCmdMsg(UNMUTE_USER, res.data[0]?.user);
-      this.store.dispatch(roomUserMute(userId, MUTE_CONFIG.unMute))
+      this.store.dispatch(roomUserMute(userId, MUTE_CONFIG.unMute));
     });
   };
 

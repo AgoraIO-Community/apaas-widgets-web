@@ -14,7 +14,7 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   const { duration, setDuration, play, reset } = useTimeCounter();
   const durationRef = React.useRef<number>(duration);
   const [caution, setCaution] = React.useState(false);
-  const transI18n = useI18n()
+  const transI18n = useI18n();
 
   const handleSetting = () => {
     const { x, y } = widget.track.ratioVal.ratioPosition;
@@ -98,19 +98,21 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
               }}
               suffix={
                 <span
-                  className={`${pluginStore.number != null &&
+                  className={`${
+                    pluginStore.number != null &&
                     pluginStore.number <= 3600 &&
                     pluginStore.number >= 1
-                    ? 'count-input-color-normal'
-                    : 'count-input-color-error'
-                    }`}>
+                      ? 'count-input-color-normal'
+                      : 'count-input-color-error'
+                  }`}>
                   ({transI18n('widget_countdown.seconds')})
                 </span>
               }
-              className={`${pluginStore.number != null && pluginStore.number <= 3600 && pluginStore.number >= 1
-                ? 'count-input-color-normal'
-                : 'count-input-color-error'
-                }`}
+              className={`${
+                pluginStore.number != null && pluginStore.number <= 3600 && pluginStore.number >= 1
+                  ? 'count-input-color-normal'
+                  : 'count-input-color-error'
+              }`}
               maxNumber={3600}
             />
           </div>
