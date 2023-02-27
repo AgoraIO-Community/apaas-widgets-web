@@ -1,6 +1,6 @@
 import React, { forwardRef, useImperativeHandle, useRef } from 'react';
 import { useDrag } from '@use-gesture/react';
-import { useSpring, animated } from '@react-spring/web';
+import { useSpring, animated } from 'react-spring';
 import { Slide } from './slide';
 import { convertPx } from './utils/convert-px';
 import { bound } from './utils/bound';

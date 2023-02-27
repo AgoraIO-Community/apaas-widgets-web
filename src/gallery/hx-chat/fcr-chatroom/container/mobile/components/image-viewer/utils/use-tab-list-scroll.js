@@ -1,4 +1,4 @@
-import { useSpring } from '@react-spring/web';
+import { useSpring } from 'react-spring';
 import { useMutationEffect } from './use-mutation-effect';
 import { bound } from './bound';
 import { useIsomorphicLayoutEffect } from 'ahooks';

@@ -2,7 +2,7 @@ import { withNativeProps } from '../utils/native-props';
 import React, { useMemo, useRef, useState } from 'react';
 import { useUnmountedRef } from 'ahooks';
 import { useLockScroll } from '../utils/use-lock-scroll';
-import { useSpring, animated } from '@react-spring/web';
+import { useSpring, animated } from 'react-spring';
 import { renderToContainer } from '../utils/render-to-container';
 import { mergeProps } from '../utils/with-default-props';
 import { ShouldRender } from '../utils/should-render';

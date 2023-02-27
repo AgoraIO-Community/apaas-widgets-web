@@ -1,4 +1,4 @@
-import { Globals } from '@react-spring/web';
+import { Globals } from 'react-spring';
 import { useSyncExternalStore } from 'use-sync-external-store/shim';
 let reduced = false;
 const subscribers = new Set();
