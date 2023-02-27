@@ -1,5 +1,5 @@
 import React, { useRef } from 'react';
-import { useSpring, animated } from '@react-spring/web';
+import { useSpring, animated } from 'react-spring';
 import { useSize } from 'ahooks';
 import { rubberbandIfOutOfBounds } from './utils/rubberband';
 import { useDragAndPinch } from './utils/use-drag-and-pinch';
