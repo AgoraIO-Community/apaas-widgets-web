@@ -155,14 +155,10 @@ export enum SvgIconEnum {
   MARK = 'mark',
   ADD = 'add',
   CLOCK = 'clock',
-  THUMBSUP = 'thumbsup',
+  THUMBS_UP = 'thumbs-up',
   CHAT_EMOJI = 'chat-emoji',
   CHAT_IMAGE = 'chat-image',
-  THUMBSUP_BIGLOVE = 'thumbsup-biglove',
-  THUMBSUP_BIGSMILE = 'thumbsup-bigsmile',
-  THUMBSUP_HEART = 'thumbsup-heart',
-  THUMBSUP_MUSIC = 'thumbsup-music',
-  THUMBSUP_WORDHARD = 'thumbsup-wordhard',
+
   KEYBOARD = 'keyboard',
   VECTOR = 'vector',
   HOST = 'host',
@@ -176,4 +172,5 @@ export enum SvgIconEnum {
   MUTE = 'mute',
   MESSAGE_OEPNED = 'message-opened',
   MESSAGE_CLOSED = 'message-closed',
+  QUIT_LANDSCAPE = 'quit-landscape',
 }

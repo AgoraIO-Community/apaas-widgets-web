@@ -1,5 +1,5 @@
-import { bound, Scheduler } from 'agora-rte-sdk';
-import { observable, action, runInAction } from 'mobx';
+import { bound, Lodash, Scheduler } from 'agora-rte-sdk';
+import { observable, action, runInAction, reaction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {
   AgoraIMBase,
@@ -10,6 +10,7 @@ import {
   AgoraIMTextMessage,
 } from '../../../im/wrapper/typs';
 export class MessageStore {
+  private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListDom: HTMLDivElement | null = null;
@@ -29,6 +30,9 @@ export class MessageStore {
 
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
+    this._disposers.push(
+      reaction(() => this._widget.shareUIStore.isLandscape, this.messageListScrollToBottom),
+    );
   }
   private async _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.TextMessageReceived, this._onTextMessageReceived);
@@ -59,6 +63,7 @@ export class MessageStore {
     this._messageListDom = dom;
   }
   @bound
+  @Lodash.debounced(100)
   messageListScrollToBottom() {
     if (this._messageListDom) {
       this._messageListDom.scrollTop = this._messageListDom.scrollHeight;

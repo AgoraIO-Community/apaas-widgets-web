@@ -100,6 +100,7 @@ export const MessageList = observer(() => {
           WebkitMask: isLandscape
             ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
             : '',
+          pointerEvents: messageList.length > 0 ? 'all' : 'none',
         }}
         className={`fcr-chatroom-mobile-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>

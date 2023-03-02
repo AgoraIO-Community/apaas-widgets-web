@@ -9,7 +9,7 @@ import {
   AgoraExtensionWidgetEvent,
 } from '../../../../../../agora-classroom-sdk/src/infra/protocol/events';
 import { AgoraRteEventType, bound, Scheduler } from 'agora-rte-sdk';
-import { ThumbsUpAni } from '../container/mobile/components/thumbsup/thumbsup';
+import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
 import { transI18n } from 'agora-common-libs';
 export class RoomStore {
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
@@ -18,27 +18,40 @@ export class RoomStore {
   @observable forceLandscape = false;
   @observable
   allMuted = false;
-  @observable thumbsupRenderCache = 0;
 
   @observable landscapeToolBarVisible = false;
 
-  private _thumbsupCache = 0;
-  private _thumbsupDiffCache = 0;
-  private _thumbsupRenderCount = 0;
-  private _thumbsupUpdateTask: Scheduler.Task | undefined = undefined;
-  private _thumbsupRenderTask: Scheduler.Task | undefined = undefined;
+  //用于本地展示点赞数
+  @observable thumbsUpRenderCache = 0;
+  //缓存本地点赞要上报的个数
+  private _thumbsUpCache = 0;
+  //缓存本地点赞了多少次，用于和服务端下发的总数进行diff，判断远端用户点赞多少次
+  private _thumbsUpDiffCache = 0;
+  //缓存上一次服务端下发的点赞总数
+  private _thumbsUpCountCache = 0;
+  //远端用户点赞数渲染缓存
+  private _thumbsUpRenderCount = 0;
+  private _thumbsUpUpdateTask: Scheduler.Task | undefined = undefined;
+  private _thumbsUpRenderTask: Scheduler.Task | undefined = undefined;
   private _thumbsUpAni: ThumbsUpAni | undefined;
 
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
+    this._initializeThumbsCount();
+  }
+
+  @action.bound
+  private _initializeThumbsCount() {
+    const thumbsUpCount =
+      (
+        this._widget.classroomStore.connectionStore.scene?.dataStore.roomProperties.get(
+          'flexProps',
+        ) as { thumbsUp: number }
+      )?.['thumbsUp'] || 0;
     runInAction(() => {
-      this.thumbsupRenderCache =
-        (
-          this._widget.classroomStore.connectionStore.scene?.dataStore.roomProperties.get(
-            'flexProps',
-          ) as { thumbsup: number }
-        )?.['thumbsup'] || 0;
+      this.thumbsUpRenderCache = thumbsUpCount;
     });
+    this._thumbsUpCountCache = thumbsUpCount;
   }
 
   @action.bound
@@ -203,72 +216,70 @@ export class RoomStore {
     this._widget.broadcast(AgoraExtensionWidgetEvent.QuitForceLandscape, undefined);
   }
   @action.bound
-  thumbsup() {
-    this._thumbsupCache += 1;
-    this.thumbsupRenderCache += 1;
-    this._thumbsupDiffCache += 1;
-    this._updateThumbsupCount();
+  thumbsUp() {
+    this._thumbsUpCache += 1;
+    this.thumbsUpRenderCache += 1;
+    this._thumbsUpDiffCache += 1;
+    this._updateThumbsUpCount();
   }
   @bound
-  _updateThumbsupCount() {
-    if (!this._thumbsupUpdateTask) {
-      this._thumbsupUpdateTask = Scheduler.shared.addIntervalTask(async () => {
-        if (this._thumbsupCache <= 0) {
-          this._thumbsupUpdateTask?.stop();
-          this._thumbsupUpdateTask = undefined;
+  _updateThumbsUpCount() {
+    if (!this._thumbsUpUpdateTask) {
+      this._thumbsUpUpdateTask = Scheduler.shared.addIntervalTask(async () => {
+        if (this._thumbsUpCache <= 0) {
+          this._thumbsUpUpdateTask?.stop();
+          this._thumbsUpUpdateTask = undefined;
           return;
         }
         this._widget.classroomStore.roomStore.updateFlexProperties({
-          increments: { thumbsup: this._thumbsupCache },
+          increments: { thumbsUp: this._thumbsUpCache },
           cause: {
-            thumbsup: 'thumbsup',
+            thumbsUp: 'thumbsUp',
           },
           throttleTime: 2000,
         });
-        this._thumbsupCache = 0;
+        this._thumbsUpCache = 0;
       }, 2000);
     }
   }
-  @bound
+  @action.bound
   private _handleClassRoomPropertiesChange(
     changedRoomProperties: string[],
     roomProperties: any,
     operator: any,
     cause: any,
   ) {
-    if (cause.data?.thumbsup) {
-      const count = roomProperties['flexProps']['thumbsup'];
-      const diffCount = count - (this.thumbsupRenderCache - this._thumbsupDiffCache);
+    if (cause.data?.thumbsUp) {
+      const count = roomProperties['flexProps']['thumbsUp'];
 
+      //远端用户点赞个数 = 服务端点赞总数 - 上一次服务端点赞总数 - 本地点赞个数
+      const diffCount = count - this._thumbsUpCountCache - this._thumbsUpDiffCache;
       if (diffCount > 0) {
-        const renderCount = diffCount - this._thumbsupDiffCache;
-
-        if (renderCount > 0) {
-          this._handleRemoteThumbsupChanged(renderCount);
-          this._thumbsupDiffCache = 0;
-        } else {
-          this._thumbsupDiffCache = this._thumbsupDiffCache - diffCount;
-        }
-        runInAction(() => {
-          this.thumbsupRenderCache = count;
-        });
+        //除去本地点赞个数后，如果还有剩余，说明有远端用户点赞，渲染动画
+        this._handleRemoteThumbsupChanged(diffCount);
       }
+      this._thumbsUpDiffCache = Math.max(
+        this._thumbsUpDiffCache - Math.abs(count - this._thumbsUpCountCache),
+        0,
+      );
+      this.thumbsUpRenderCache = Math.max(count, this.thumbsUpRenderCache);
+      this._thumbsUpCountCache = count;
     }
   }
   @action.bound
   private _handleRemoteThumbsupChanged(count: number) {
     if (count <= 0) return;
-    this._thumbsupRenderCount += count;
-    if (!this._thumbsupRenderTask) {
-      this._thumbsupRenderTask = Scheduler.shared.addPollingTask(
+    this._thumbsUpRenderCount += count;
+    if (!this._thumbsUpRenderTask) {
+      this._thumbsUpRenderTask = Scheduler.shared.addPollingTask(
         () => {
-          if (this._thumbsupRenderCount <= 0) {
-            this._thumbsupRenderTask?.stop();
-            this._thumbsupRenderTask = undefined;
+          if (this._thumbsUpRenderCount <= 0) {
+            this._thumbsUpRenderTask?.stop();
+            this._thumbsUpRenderTask = undefined;
             return;
           }
           this._thumbsUpAni?.start();
-          this._thumbsupRenderCount -= 1;
+          this._thumbsUpRenderCount -= 1;
         },
         100,
         false,

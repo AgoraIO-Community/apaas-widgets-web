@@ -12,14 +12,6 @@ if (canUseDom) {
     tester = document.createElement('div');
     tester.className = 'adm-px-tester';
     document.body.appendChild(tester);
-    if (isDev) {
-      if (window.getComputedStyle(tester).position !== 'fixed') {
-        devError(
-          'Global',
-          'The px tester is not rendering properly. Please make sure you have imported `antd-mobile/es/global`.',
-        );
-      }
-    }
   };
 }
 export function convertPx(px) {

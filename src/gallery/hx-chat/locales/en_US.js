@@ -64,6 +64,7 @@ const enUS = {
   fcr_H5_tips_chat_display: 'The chat room has been opened',
   fcr_H5_mute_user_msg: 'You have been forbidden to speak by teacher',
   fcr_H5_unmute_user_msg: 'You were forbidden to speak by teacher',
+  fcr_H5_button_chat: 'Chat',
 };
 
 export default enUS;

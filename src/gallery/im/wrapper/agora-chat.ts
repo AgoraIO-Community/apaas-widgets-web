@@ -83,7 +83,9 @@ export class FcrChatRoom extends AgoraIMBase {
         user: this.userInfo.userId,
       });
     } catch (e) {
-      console.error(e);
+      this._logger.error(this._formateLogs({ level: 'error', logs: ['connection open error', e] }));
+      this.setConnectionState(AgoraIMConnectionState.DisConnected);
+      throw e;
     }
     const { nickName, avatarUrl, ext } = this.userInfo;
     try {
@@ -93,12 +95,18 @@ export class FcrChatRoom extends AgoraIMBase {
         ext,
       });
     } catch (e) {
-      console.error(e);
+      this._logger.error(
+        this._formateLogs({ level: 'error', logs: ['set self user info error', e] }),
+      );
+      this.setConnectionState(AgoraIMConnectionState.DisConnected);
+      throw e;
     }
     try {
       await this.conn.joinChatRoom({ roomId: this.roomId });
     } catch (e) {
-      console.error(e);
+      this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
+      this.setConnectionState(AgoraIMConnectionState.DisConnected);
+      throw e;
     }
   }
   @Log.silence
@@ -372,6 +380,7 @@ export class FcrChatRoom extends AgoraIMBase {
     this.conn.addEventHandler('connection', {
       onError: (e) => {
         this._logger.error(this._formateLogs({ level: 'error', logs: ['connection error', e] }));
+        this.emit(AgoraIMEvents.ErrorOccurred, e);
       },
       onConnected: () => {
         this.setConnectionState(AgoraIMConnectionState.Connected);

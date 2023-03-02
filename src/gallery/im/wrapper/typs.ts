@@ -54,6 +54,8 @@ export interface AgoraIMEventEmitter {
 
   on(evt: AgoraIMEvents.UserMuted, cb: () => void): this;
   on(evt: AgoraIMEvents.UserUnmuted, cb: () => void): this;
+
+  on(evt: AgoraIMEvents.ErrorOccurred, cb: (e: unknown) => void): this;
 }
 export interface AgoraIMChatRoomDetails {
   mute: boolean;
