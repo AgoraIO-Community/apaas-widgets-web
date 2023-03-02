@@ -109,7 +109,7 @@ export const FcrChatRoomH5Inputs = observer(
               )}
               {forceLandscape && (
                 <div className="fcr-chatroom-mobile-inputs-input-quit-landscape">
-                  {transI18n('chat.fcr_H5_button_chat')}
+                  {transI18n('fcr_H5_button_chat')}
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
                     type={SvgIconEnum.QUIT_LANDSCAPE}
