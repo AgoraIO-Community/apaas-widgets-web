@@ -3,10 +3,12 @@ import { observable, action, runInAction, reaction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {
   AgoraIMBase,
+  AgoraIMCmdActionEnum,
   AgoraIMCustomMessage,
   AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
+  AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../im/wrapper/typs';
 export class MessageStore {
@@ -46,8 +48,20 @@ export class MessageStore {
     if (!this._pollingMessageTask) {
       this._pollingMessageTask = Scheduler.shared.addIntervalTask(() => {
         if (this._messageQueue.length) {
+          const deletedMessageIds = new Map();
+          this._messageQueue.forEach((msg) => {
+            if (
+              msg.type === AgoraIMMessageType.Custom &&
+              (msg as AgoraIMCustomMessage).action === AgoraIMCmdActionEnum.MsgDeleted
+            ) {
+              const deletedMessageId = (msg.ext as unknown as { msgId: string }).msgId;
+              deletedMessageIds.set(deletedMessageId, true);
+            }
+          });
           runInAction(() => {
-            this.messageList = this.messageList.concat(this._messageQueue);
+            this.messageList = this.messageList
+              .concat(this._messageQueue)
+              .filter((msg) => typeof msg === 'string' || !deletedMessageIds.has(msg.id));
             if (!this.isBottom) this.unreadMessageCount += this._messageQueue.length;
           });
           this._messageQueue = [];

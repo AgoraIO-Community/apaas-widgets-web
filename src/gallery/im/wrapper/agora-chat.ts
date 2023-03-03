@@ -1,5 +1,6 @@
 import {
   AgoraIMBase,
+  AgoraIMCmdActionEnum,
   AgoraIMConnectionState,
   AgoraIMEvents,
   AgoraIMImageMessage,
@@ -205,9 +206,17 @@ export class FcrChatRoom extends AgoraIMBase {
       pageSize: params?.pageSize || 50,
       chatType: 'chatRoom',
       cursor: params?.msgId,
-      searchDirection: 'down',
     });
-    return messages.map(convertHXHistoryMessage);
+    const deletedMessageIds = new Map();
+    const msgList: AgoraIMMessageBase[] = [];
+    messages.forEach((msg) => {
+      if (deletedMessageIds.has(msg.id)) return;
+      if (msg.type === 'cmd' && msg.action === AgoraIMCmdActionEnum.MsgDeleted) {
+        deletedMessageIds.set((msg.ext as { msgId: string }).msgId, true);
+      }
+      msgList.push(convertHXHistoryMessage(msg));
+    });
+    return msgList.reverse();
   }
   @Log.silence
   createTextMessage(msg: string) {

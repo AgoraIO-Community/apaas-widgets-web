@@ -295,6 +295,8 @@ const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
 
     case AgoraIMCmdActionEnum.UserUnmuted:
       return transI18n('fcr_H5_unmute_user_msg');
+    case AgoraIMCmdActionEnum.MsgDeleted:
+      return transI18n('chat.remove_message_notify');
   }
 };
 const useMessageParams = ({
