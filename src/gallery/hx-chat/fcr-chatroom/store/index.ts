@@ -53,12 +53,12 @@ export class FcrChatRoomStore {
   }
   @bound
   private _handleFcrChatRoomErrorOccurred(error: unknown) {
-    this._widget.shareUIStore.addSingletonToast(transI18n(error), 'error');
+    this._widget.shareUIStore.addSingletonToast(JSON.stringify(error), 'error');
   }
   @bound
   private _handleFcrChatRoomConnectionStateChanged(connectionState: AgoraIMConnectionState) {
     if (connectionState === AgoraIMConnectionState.DisConnected) {
-      this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
+      Logger.error('[FcrChatRoom] connection disConnected');
     }
   }
   @bound

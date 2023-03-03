@@ -231,13 +231,13 @@ export class RoomStore {
           this._thumbsUpUpdateTask = undefined;
           return;
         }
-        this._widget.classroomStore.roomStore.updateFlexProperties({
-          increments: { thumbsUp: this._thumbsUpCache },
-          cause: {
+        this._widget.classroomStore.roomStore.updateIncrementProperties(
+          { thumbsUp: this._thumbsUpCache },
+          {
             thumbsUp: 'thumbsUp',
           },
-          throttleTime: 2000,
-        });
+          2000,
+        );
         this._thumbsUpCache = 0;
       }, 2000);
     }

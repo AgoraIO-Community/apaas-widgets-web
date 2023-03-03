@@ -21,8 +21,8 @@ const enUS = {
     single_muted: 'You are muted by teacher',
     mute_msg: 'has been muted by {0}',
     unmute_msg: 'has been unmuted by {0}',
-    mute_user_msg: 'You have been forbidden to speak by {0} teacher',
-    unmute_user_msg: 'You were forbidden to speak by {0} teacher',
+    mute_user_msg: 'You have been muted by {0} teacher',
+    unmute_user_msg: 'You have been unmuted by {0} teacher',
     send: 'Send',
     enter_contents: 'Please enter message',
     enter_content_is_empty: 'The message cannot be empty',
@@ -62,8 +62,8 @@ const enUS = {
   fcr_H5_tips_join: 'Failed to join the room',
   fcr_H5_tips_chat_hidden: 'The chat room has been closed',
   fcr_H5_tips_chat_display: 'The chat room has been opened',
-  fcr_H5_mute_user_msg: 'You have been forbidden to speak by teacher',
-  fcr_H5_unmute_user_msg: 'You were forbidden to speak by teacher',
+  fcr_H5_mute_user_msg: 'You have been muted by teacher',
+  fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
   fcr_H5_button_chat: 'Chat',
 };
 
