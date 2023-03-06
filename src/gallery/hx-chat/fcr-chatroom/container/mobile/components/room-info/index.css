@@ -6,6 +6,7 @@
   height: 100%;
   background: #f4f4ff;
   position: relative;
+  min-height: 100px;
 }
 .fcr-mobile-interact-container-top {
   position: relative;
