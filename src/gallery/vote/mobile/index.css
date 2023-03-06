@@ -127,7 +127,9 @@
 .fcr-mobile-poll-widget-options {
   display: flex;
   flex-direction: column;
-  gap: 11px;
+}
+.fcr-mobile-poll-widget-options > div:not(:last-child) {
+  margin-bottom: 11px;
 }
 
 .fcr-mobile-poll-widget-option {

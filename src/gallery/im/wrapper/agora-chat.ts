@@ -35,6 +35,7 @@ export class FcrChatRoom extends AgoraIMBase {
     this._connectionInfo = { appKey, roomId };
     this.init(appKey);
     this.userInfo = userInfo;
+
     this._enableLog();
   }
   get conn() {
@@ -182,19 +183,15 @@ export class FcrChatRoom extends AgoraIMBase {
     userInfo: Partial<Exclude<AgoraIMUserInfo, 'userId'>>,
   ): Promise<AgoraIMUserInfo> {
     this.userInfo = Object.assign(this.userInfo, userInfo);
+
     const { data } = await this.conn.updateUserInfo({
       nickname: this.userInfo.nickName,
+      avatarurl: this.userInfo.avatarUrl,
       //兼容老版本
       //@ts-ignore
-      ext: JSON.stringify({ ...userInfo.ext }),
+      ext: JSON.stringify({ ...this.userInfo.ext }),
     });
-
-    return {
-      nickName: data?.nickname || '',
-      userId: this.userInfo.userId,
-      avatarUrl: data?.avatarurl || '',
-      ext: JSON.parse(data?.ext as unknown as string) as AgoraIMUserInfoExt,
-    };
+    return this.userInfo;
   }
   @Log.silence
   async getHistoryMessageList(params?: {

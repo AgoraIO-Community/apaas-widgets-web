@@ -227,35 +227,42 @@ export const FcrChatRoomH5Inputs = observer(
     );
   },
 );
-const EmojiContainer = ({
-  onClick,
-  portal,
-  onOuterClick,
-}: {
-  onClick: (emoji: string) => void;
-  portal: HTMLDivElement;
-  onOuterClick: () => void;
-}) => {
-  const ref = useClickAnywhere(() => {
-    onOuterClick();
-  });
-  return createPortal(
-    <div
-      ref={ref}
-      className="fcr-chatroom-mobile-input-emoji-container"
-      style={{ zIndex: ComponentLevelRulesMobile.Level3 }}>
-      {emojis.map((emoji) => {
-        return (
-          <div
-            key={emoji}
-            onClick={() => {
-              onClick(emoji);
-            }}>
-            {emoji}
-          </div>
-        );
-      })}
-    </div>,
+const EmojiContainer = observer(
+  ({
+    onClick,
     portal,
-  );
-};
+    onOuterClick,
+  }: {
+    onClick: (emoji: string) => void;
+    portal: HTMLDivElement;
+    onOuterClick: () => void;
+  }) => {
+    const ref = useClickAnywhere(() => {
+      onOuterClick();
+    });
+    const {
+      roomStore: { isLandscape },
+    } = useStore();
+    return createPortal(
+      <div
+        ref={ref}
+        className={classNames('fcr-chatroom-mobile-input-emoji-container', {
+          'fcr-chatroom-mobile-input-emoji-container-landscape': isLandscape,
+        })}
+        style={{ zIndex: ComponentLevelRulesMobile.Level3 }}>
+        {emojis.map((emoji) => {
+          return (
+            <div
+              key={emoji}
+              onClick={() => {
+                onClick(emoji);
+              }}>
+              {emoji}
+            </div>
+          );
+        })}
+      </div>,
+      portal,
+    );
+  },
+);

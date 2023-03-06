@@ -134,7 +134,7 @@
   pointer-events: none;
 }
 .fcr-mobile-landscape-inter-room-info {
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   width: 100%;
@@ -165,7 +165,9 @@
 .fcr-mobile-landscape-inter-room-info-room {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+}
+.fcr-mobile-landscape-inter-room-info-room > div:not(:last-child) {
+  margin-bottom: 10px;
 }
 .fcr-mobile-landscape-inter-room-info-teacher {
   background: rgba(240, 242, 248, 0.6);
