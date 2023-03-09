@@ -59,9 +59,27 @@ export class MessageStore {
             }
           });
           runInAction(() => {
-            this.messageList = this.messageList
-              .concat(this._messageQueue)
-              .filter((msg) => typeof msg === 'string' || !deletedMessageIds.has(msg.id));
+            this.messageList = this.messageList.concat(this._messageQueue).filter((msg) => {
+              if (typeof msg !== 'string') {
+                //过滤被删除消息
+                if (deletedMessageIds.has(msg.id)) return false;
+                //如果是自定义消息
+                if (msg.type === AgoraIMMessageType.Custom) {
+                  const customMessage = msg as AgoraIMCustomMessage;
+                  //如果是单个禁言消息
+                  if (
+                    customMessage.action === AgoraIMCmdActionEnum.UserMuted ||
+                    customMessage.action === AgoraIMCmdActionEnum.UserUnmuted
+                  ) {
+                    //如果不是自己的单个禁言消息，过滤
+                    if (customMessage.ext?.muteMember !== this._fcrChatRoom.userInfo?.userId) {
+                      return false;
+                    }
+                  }
+                }
+              }
+              return true;
+            });
             if (!this.isBottom) this.unreadMessageCount += this._messageQueue.length;
           });
           this._messageQueue = [];

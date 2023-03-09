@@ -65,6 +65,7 @@ export interface AgoraIMMessageExt {
   roomUuid: string;
   role: EduRoleTypeEnum;
   avatarUrl: string;
+  muteMember?: string;
 }
 export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = AgoraIMMessageExt> {
   id: string;
