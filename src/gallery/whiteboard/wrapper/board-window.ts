@@ -65,6 +65,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
       maxResolutionLevel,
       forceCanvas,
       debug,
+      urlDelegate,
     } = this._options;
     WindowManager.register({
       kind: 'Slide',
@@ -77,7 +78,8 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         autoResolution,
         autoFPS,
         maxResolutionLevel,
-        forceCanvas
+        forceCanvas,
+        urlInterrupter: async (url: string) => (await urlDelegate([url]))[url],
       },
     });
 
@@ -231,7 +233,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     this.preCheck();
   }
 
-  createMaterialResourceWindow(config: FcrBoardMaterialWindowConfig<FcrBoardPage>) {
+  async createMaterialResourceWindow(config: FcrBoardMaterialWindowConfig<FcrBoardPage>) {
     this.preCheck();
 
     if (!this._checkRepeatWindow(config.title)) {
@@ -253,6 +255,23 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         },
       });
     } else {
+      const urls: string[] = [];
+      config.pageList.forEach(({ contentUrl, previewUrl }) => {
+        if (contentUrl) {
+          urls.push(contentUrl);
+        }
+        if (previewUrl) {
+          urls.push(previewUrl);
+        }
+      });
+
+      const presignedUrls = await this._options.urlDelegate(urls);
+
+      config.pageList.forEach((item) => {
+        item.contentUrl = presignedUrls[item.contentUrl];
+        item.previewUrl = presignedUrls[item.previewUrl];
+      });
+
       windowManager?.addApp({
         kind: BuiltinApps.DocsViewer,
         options: {
@@ -264,10 +283,10 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
-  createMediaResourceWindow(config: FcrBoardMediaWindowConfig) {
+  async createMediaResourceWindow({ title, resourceUrl, mimeType }: FcrBoardMediaWindowConfig) {
     this.preCheck();
 
-    if (!this._checkRepeatWindow(config.title)) {
+    if (!this._checkRepeatWindow(title)) {
       return;
     }
 
@@ -276,11 +295,11 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     windowManager?.addApp({
       kind: BuiltinApps.MediaPlayer,
       options: {
-        title: config.title, // 可选
+        title, // 可选
       },
       attributes: {
-        src: config.resourceUrl, // 音视频 url
-        type: config.mimeType,
+        src: resourceUrl, // 音视频 url
+        type: mimeType,
       },
     });
   }

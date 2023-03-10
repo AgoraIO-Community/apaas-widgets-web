@@ -14,8 +14,8 @@
   ],
   "scripts": {},
   "dependencies": {
-    "dayjs": "1.10.4",
-    "@netless/app-slide": "0.2.22",
+    "@netless/app-slide": "0.2.35",
+    "@netless/app-talkative": "0.1.0",
     "@netless/combine-player": "1.1.4",
     "@netless/cursor-tool": "0.0.7",
     "@netless/react-seek-slider": "1.0.4",
@@ -25,7 +25,6 @@
     "@netless/white-video-plugin": "1.2.23",
     "@netless/white-video-plugin2": "2.0.5",
     "@netless/window-manager": "0.4.49",
-    "@netless/app-talkative": "0.1.0",
     "@netless/white-snapshot": "0.4.1",
     "white-web-sdk": "2.16.35",
     "plyr": "3.7.2",
@@ -37,6 +36,7 @@
     "react": "17.0.0",
     "react-intl": "5.20.6",
     "react-redux": "7.2.4",
-    "twemoji": "13.1.0"
+    "twemoji": "13.1.0",
+    "jspdf": "2.5.1"
   }
 }

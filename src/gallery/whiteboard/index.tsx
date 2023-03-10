@@ -7,7 +7,7 @@ import {
   BoardMountState
 } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
-import { bound, Injectable, Log } from 'agora-rte-sdk';
+import { bound, Log, Injectable } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 import { App } from './app';
@@ -24,6 +24,7 @@ import {
 import { downloadCanvasImage } from './wrapper/utils';
 import { reaction, IReactionDisposer } from 'mobx';
 import { transI18n } from 'agora-common-libs';
+import { isEmpty } from 'lodash';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -45,6 +46,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   };
   private _grantedUsers = new Set<string>();
   private _disposers: IReactionDisposer[] = [];
+  private _presignCache: Map<string, { expired: number; url: string }> = new Map();
 
   get widgetName() {
     return 'netlessBoard';
@@ -314,6 +316,74 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     }
   }
 
+  @bound
+  async fetchPresignedUrls(urls: string[]) {
+    const signMap = {};
+    const getOssKey = (url: string) => {
+      return url.replaceAll(/https?:\/\/(.+?)\//gi, '');
+    };
+
+    let requestData = urls.map((url) => ({
+      ossKey: getOssKey(url),
+      method: 'GET',
+    }));
+
+    const excludes: string[] = [];
+    for (const i in urls) {
+      const { ossKey } = requestData[i];
+      const entry = this._presignCache.get(ossKey);
+
+      if (entry && entry.expired >= Date.now()) {
+        excludes.push(ossKey);
+      }
+    }
+    requestData = requestData.filter((d) => !excludes.includes(d.ossKey));
+
+    if (requestData.length > 0) {
+      /**
+       * fetch presigned url through backend API
+       */
+      const { userUuid } = this.classroomConfig.sessionInfo;
+
+      await new Promise((r) => {
+        const delay = Math.random() * 100;
+        setTimeout(r, delay);
+        this.logger.info(`sign request will start in ${delay} ms`);
+      });
+
+      const { data } = await this.classroomStore.api.fetch({
+        path: `/v3/users/${userUuid}/presignedUrls`,
+        method: 'POST',
+        data: requestData,
+      });
+
+      if (!data || isEmpty(data[0])) {
+        this.logger.warn('failed to get pre-signed URL', data);
+        return urls;
+      }
+
+      requestData.forEach(({ ossKey }, index) => {
+        const { preSignedUrl, expire } = data[index];
+        this._presignCache.set(ossKey, {
+          url: preSignedUrl,
+          expired: Date.now() + expire * 1000,
+        });
+      });
+    }
+
+    urls.forEach((url) => {
+      const ossKey = getOssKey(url);
+      if (!this._presignCache.has(ossKey)) {
+        this.logger.warn('cannot get presign cache:', url, ossKey);
+        signMap[url] = url;
+      } else {
+        signMap[url] = this._presignCache.get(ossKey)?.url;
+      }
+    });
+
+    return signMap;
+  }
+
   private _join(config: FcrBoardRoomJoinConfig) {
     this._joined = true;
 
@@ -324,6 +394,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     this._boardRoom = FcrBoardFactory.createBoardRoom({
       appId: this._initArgs?.appId || '',
       region: this._initArgs?.region || FcrBoardRegion.CN,
+      urlDelegate: this.fetchPresignedUrls,
     });
 
     const joinConfig = {

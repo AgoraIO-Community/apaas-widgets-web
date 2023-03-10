@@ -109,9 +109,9 @@ export type BoardState = {
   shape: FcrBoardShape;
 };
 
-export type FcrBoardRoomOptions = SlideOptions & { debug: boolean };
+export type FcrBoardRoomOptions = SlideOptions & { debug: boolean; urlDelegate: URLDelegate };
 
-export type FcrBoardWindowOptions = SlideOptions & { debug: boolean };
+export type FcrBoardWindowOptions = SlideOptions & { debug: boolean; urlDelegate: URLDelegate };
 
 /** Misc types */
 
@@ -129,3 +129,5 @@ export type BaseImageSize = {
 };
 
 export type Color = { r: number; g: number; b: number };
+
+export type URLDelegate = (urls: string[]) => Promise<Record<string, string>>;
