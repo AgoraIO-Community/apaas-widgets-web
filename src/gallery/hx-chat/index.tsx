@@ -220,7 +220,6 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     const { platform } = this.classroomConfig;
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
       if (platform === Platform.H5) {
-        this._dom.classList.remove('chat-panel');
         ReactDOM.render(<FcrChatRoomApp widget={this} />, this._dom);
       } else {
         ReactDOM.render(<App widget={this} />, this._dom);
@@ -239,9 +238,11 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   }
 
   render(dom: HTMLElement): void {
+    const { platform } = this.classroomConfig;
+
     this._dom = dom;
 
-    const cls = classNames('chat-panel', 'h-full');
+    const cls = classNames({ 'chat-panel': platform !== Platform.H5 }, 'h-full');
 
     this._dom.className = cls;
 

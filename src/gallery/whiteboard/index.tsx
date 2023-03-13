@@ -69,6 +69,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   render(dom: HTMLElement) {
     dom.classList.add('netless-whiteboard-wrapper');
     this._outerDom = dom;
+    this._setBackgourndImage();
     ReactDOM.render(<App widget={this} />, dom);
   }
 
@@ -158,6 +159,12 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         },
       ),
     );
+    this._disposers.push(
+      reaction(
+        () => this.classroomStore.roomStore.flexProps?.backgroundImage,
+        this._setBackgourndImage,
+      ),
+    );
   }
 
   /**
@@ -195,6 +202,13 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       this._initialized = true;
     }
   }
+
+  private _setBackgourndImage = () => {
+    const imageUrl = this.classroomStore.roomStore.flexProps?.backgroundImage;
+    if (imageUrl && this._outerDom) {
+      this._outerDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
+    }
+  };
 
   private _extractMessage(event: AgoraExtensionRoomEvent) {
     return (args: unknown[]) => this._handleMessage({ command: event, args });

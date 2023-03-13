@@ -4,7 +4,9 @@ import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
 import { RoomStore } from './room';
-import { bound } from 'agora-rte-sdk';
+import { bound, Logger, retryAttempt } from 'agora-rte-sdk';
+import to from 'await-to-js';
+import { transI18n } from 'agora-common-libs';
 
 export class FcrChatRoomStore {
   fcrChatRoom: AgoraIMBase;
@@ -37,17 +39,26 @@ export class FcrChatRoomStore {
       AgoraIMEvents.ConnectionStateChanged,
       this._handleFcrChatRoomConnectionStateChanged,
     );
+    this.fcrChatRoom.on(AgoraIMEvents.ErrorOccurred, this._handleFcrChatRoomErrorOccurred);
   }
   private _removeListeners() {
     this.fcrChatRoom.off(
       AgoraIMEvents.ConnectionStateChanged,
       this._handleFcrChatRoomConnectionStateChanged,
     );
+    this.fcrChatRoom.off(
+      AgoraIMEvents.ErrorOccurred,
+      this._handleFcrChatRoomConnectionStateChanged,
+    );
+  }
+  @bound
+  private _handleFcrChatRoomErrorOccurred(error: unknown) {
+    this._widget.shareUIStore.addSingletonToast(JSON.stringify(error), 'error');
   }
   @bound
   private _handleFcrChatRoomConnectionStateChanged(connectionState: AgoraIMConnectionState) {
     if (connectionState === AgoraIMConnectionState.DisConnected) {
-      this._joinChatRoom();
+      Logger.error('[FcrChatRoom] connection disConnected');
     }
   }
   @bound
@@ -57,14 +68,26 @@ export class FcrChatRoomStore {
       roomUuid,
       userUuid,
     })) as { token: string };
-
     await this.fcrChatRoom.join({
       token,
     });
   }
   @bound
   private async _init() {
-    await this._joinChatRoom();
+    const [error] = await to(
+      retryAttempt(async () => {
+        await this._joinChatRoom();
+      }, [])
+        .fail(({ error }: { error: Error }) => {
+          Logger.error(error.message);
+          return true;
+        })
+        .exec(),
+    );
+
+    if (error) {
+      return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
+    }
     this.roomStore.getChatRoomDetails();
     await this.messageStore.getHistoryMessageList();
     this.messageStore.getAnnouncement();

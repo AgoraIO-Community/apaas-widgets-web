@@ -159,9 +159,9 @@ const reducer = (state = defaultState, action) => {
       let muteAry = [];
       let muteList = state.room.muteList;
       if (action.option === MUTE_CONFIG.mute) {
-        muteAry = muteAry.concat(data);
+        muteAry = muteList.concat(data);
       } else if (action.option === MUTE_CONFIG.unMute) {
-        muteAry = muteList.filter(item => item !== data)
+        muteAry = muteList.filter((item) => item !== data);
       } else {
         muteAry = data;
       }

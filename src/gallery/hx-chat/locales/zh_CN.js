@@ -66,5 +66,6 @@ const im_CN = {
   fcr_H5_tips_chat_display: '已开启聊天显示',
   fcr_H5_mute_user_msg: '您被老师禁止发言了',
   fcr_H5_unmute_user_msg: '您被老师解除禁言了',
+  fcr_H5_button_chat: '去讨论',
 };
 export default im_CN;

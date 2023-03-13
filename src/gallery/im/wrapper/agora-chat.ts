@@ -1,5 +1,6 @@
 import {
   AgoraIMBase,
+  AgoraIMCmdActionEnum,
   AgoraIMConnectionState,
   AgoraIMEvents,
   AgoraIMImageMessage,
@@ -34,6 +35,7 @@ export class FcrChatRoom extends AgoraIMBase {
     this._connectionInfo = { appKey, roomId };
     this.init(appKey);
     this.userInfo = userInfo;
+
     this._enableLog();
   }
   get conn() {
@@ -83,7 +85,9 @@ export class FcrChatRoom extends AgoraIMBase {
         user: this.userInfo.userId,
       });
     } catch (e) {
-      console.error(e);
+      this._logger.error(this._formateLogs({ level: 'error', logs: ['connection open error', e] }));
+      this.setConnectionState(AgoraIMConnectionState.DisConnected);
+      throw e;
     }
     const { nickName, avatarUrl, ext } = this.userInfo;
     try {
@@ -93,12 +97,18 @@ export class FcrChatRoom extends AgoraIMBase {
         ext,
       });
     } catch (e) {
-      console.error(e);
+      this._logger.error(
+        this._formateLogs({ level: 'error', logs: ['set self user info error', e] }),
+      );
+      this.setConnectionState(AgoraIMConnectionState.DisConnected);
+      throw e;
     }
     try {
       await this.conn.joinChatRoom({ roomId: this.roomId });
     } catch (e) {
-      console.error(e);
+      this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
+      this.setConnectionState(AgoraIMConnectionState.DisConnected);
+      throw e;
     }
   }
   @Log.silence
@@ -173,19 +183,15 @@ export class FcrChatRoom extends AgoraIMBase {
     userInfo: Partial<Exclude<AgoraIMUserInfo, 'userId'>>,
   ): Promise<AgoraIMUserInfo> {
     this.userInfo = Object.assign(this.userInfo, userInfo);
+
     const { data } = await this.conn.updateUserInfo({
       nickname: this.userInfo.nickName,
+      avatarurl: this.userInfo.avatarUrl,
       //兼容老版本
       //@ts-ignore
-      ext: JSON.stringify({ ...userInfo.ext }),
+      ext: JSON.stringify({ ...this.userInfo.ext }),
     });
-
-    return {
-      nickName: data?.nickname || '',
-      userId: this.userInfo.userId,
-      avatarUrl: data?.avatarurl || '',
-      ext: JSON.parse(data?.ext as unknown as string) as AgoraIMUserInfoExt,
-    };
+    return this.userInfo;
   }
   @Log.silence
   async getHistoryMessageList(params?: {
@@ -197,9 +203,17 @@ export class FcrChatRoom extends AgoraIMBase {
       pageSize: params?.pageSize || 50,
       chatType: 'chatRoom',
       cursor: params?.msgId,
-      searchDirection: 'down',
     });
-    return messages.map(convertHXHistoryMessage);
+    const deletedMessageIds = new Map();
+    const msgList: AgoraIMMessageBase[] = [];
+    messages.forEach((msg) => {
+      if (deletedMessageIds.has(msg.id)) return;
+      if (msg.type === 'cmd' && msg.action === AgoraIMCmdActionEnum.MsgDeleted) {
+        deletedMessageIds.set((msg.ext as { msgId: string }).msgId, true);
+      }
+      msgList.push(convertHXHistoryMessage(msg));
+    });
+    return msgList.reverse();
   }
   @Log.silence
   createTextMessage(msg: string) {
@@ -372,6 +386,7 @@ export class FcrChatRoom extends AgoraIMBase {
     this.conn.addEventHandler('connection', {
       onError: (e) => {
         this._logger.error(this._formateLogs({ level: 'error', logs: ['connection error', e] }));
+        this.emit(AgoraIMEvents.ErrorOccurred, e);
       },
       onConnected: () => {
         this.setConnectionState(AgoraIMConnectionState.Connected);

@@ -3,13 +3,14 @@ import { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
-import { Thumbsup } from '../thumbsup';
+import { ThumbsUp } from '../thumbs-up';
 import { emojis } from '../../../../utils/emoji';
 
 import './index.css';
 import { ComponentLevelRulesMobile } from '../../../../../../../../../agora-classroom-sdk/src/infra/capabilities/config';
 import { useI18n } from 'agora-common-libs';
 import { useClickAnywhere } from '../../../../utils/hooks';
+import classNames from 'classnames';
 export const FcrChatRoomH5Inputs = observer(
   ({
     showEmoji,
@@ -82,11 +83,13 @@ export const FcrChatRoomH5Inputs = observer(
                 : '#27292f',
           }}>
           <div
-            className="fcr-chatroom-mobile-inputs-input"
+            className={classNames('fcr-chatroom-mobile-inputs-input', {
+              'fcr-chatroom-mobile-inputs-input-force-landscape': forceLandscape,
+            })}
             style={{
               visibility: inputVisible ? 'visible' : 'hidden',
               opacity: inputVisible ? 1 : 0,
-              transition: 'visibility .2s, opacity .2s',
+              transition: 'opacity .2s',
             }}>
             <div className="fcr-chatroom-mobile-inputs-input-wrap">
               <div className="fcr-chatroom-mobile-inputs-input-outline"></div>
@@ -104,6 +107,16 @@ export const FcrChatRoomH5Inputs = observer(
                   )}
                 </div>
               )}
+              {forceLandscape && (
+                <div className="fcr-chatroom-mobile-inputs-input-quit-landscape">
+                  {transI18n('fcr_H5_button_chat')}
+                  <SvgImgMobile
+                    forceLandscape={forceLandscape}
+                    type={SvgIconEnum.QUIT_LANDSCAPE}
+                    size={30}
+                    landscape={isLandscape}></SvgImgMobile>
+                </div>
+              )}
 
               <input
                 onFocus={() => {
@@ -119,16 +132,17 @@ export const FcrChatRoomH5Inputs = observer(
                 disabled={isMuted}
                 ref={inputRef}
                 onSubmit={send}
-                value={text}
+                value={forceLandscape ? '' : text}
                 onChange={(e) => {
                   setText(e.target.value);
                 }}
                 multiple={false}
                 type={'text'}
-                placeholder={isMuted ? '' : `${transI18n('chat.enter_contents')}...`}></input>
+                placeholder={
+                  isMuted || forceLandscape ? '' : `${transI18n('chat.enter_contents')}...`
+                }></input>
             </div>
-
-            {!isMuted && (
+            {!isMuted && !forceLandscape && (
               <div className="fcr-chatroom-mobile-inputs-input-emoji">
                 {showEmoji ? (
                   <SvgImgMobile
@@ -183,7 +197,7 @@ export const FcrChatRoomH5Inputs = observer(
                   )}
                 </div>
               )}
-              {!isMuted && (
+              {!isMuted && !forceLandscape && (
                 <div className="fcr-chatroom-mobile-inputs-image" onClick={handleImgInputClick}>
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
@@ -199,7 +213,7 @@ export const FcrChatRoomH5Inputs = observer(
                 type="file"
                 style={{ display: 'none' }}></input>
 
-              <Thumbsup></Thumbsup>
+              <ThumbsUp></ThumbsUp>
             </>
           )}
         </div>
@@ -213,35 +227,42 @@ export const FcrChatRoomH5Inputs = observer(
     );
   },
 );
-const EmojiContainer = ({
-  onClick,
-  portal,
-  onOuterClick,
-}: {
-  onClick: (emoji: string) => void;
-  portal: HTMLDivElement;
-  onOuterClick: () => void;
-}) => {
-  const ref = useClickAnywhere(() => {
-    onOuterClick();
-  });
-  return createPortal(
-    <div
-      ref={ref}
-      className="fcr-chatroom-mobile-input-emoji-container"
-      style={{ zIndex: ComponentLevelRulesMobile.Level3 }}>
-      {emojis.map((emoji) => {
-        return (
-          <div
-            key={emoji}
-            onClick={() => {
-              onClick(emoji);
-            }}>
-            {emoji}
-          </div>
-        );
-      })}
-    </div>,
+const EmojiContainer = observer(
+  ({
+    onClick,
     portal,
-  );
-};
+    onOuterClick,
+  }: {
+    onClick: (emoji: string) => void;
+    portal: HTMLDivElement;
+    onOuterClick: () => void;
+  }) => {
+    const ref = useClickAnywhere(() => {
+      onOuterClick();
+    });
+    const {
+      roomStore: { isLandscape },
+    } = useStore();
+    return createPortal(
+      <div
+        ref={ref}
+        className={classNames('fcr-chatroom-mobile-input-emoji-container', {
+          'fcr-chatroom-mobile-input-emoji-container-landscape': isLandscape,
+        })}
+        style={{ zIndex: ComponentLevelRulesMobile.Level3 }}>
+        {emojis.map((emoji) => {
+          return (
+            <div
+              key={emoji}
+              onClick={() => {
+                onClick(emoji);
+              }}>
+              {emoji}
+            </div>
+          );
+        })}
+      </div>,
+      portal,
+    );
+  },
+);

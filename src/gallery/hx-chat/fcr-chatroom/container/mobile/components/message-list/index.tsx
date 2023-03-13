@@ -3,7 +3,7 @@ import { useI18n } from 'agora-common-libs';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';
-import { useEffect, useRef, useCallback } from 'react';
+import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-img';
 import {
   AgoraIMBase,
@@ -33,6 +33,8 @@ export const MessageList = observer(() => {
     roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
+  const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
+
   const transI18n = useI18n();
   const messageContainerRef = useRef<HTMLDivElement>(null);
   const handleScroll = useCallback(
@@ -76,7 +78,7 @@ export const MessageList = observer(() => {
     const messageContainer = messageContainerRef.current;
     const resizeObserver = new ResizeObserver(handleScroll);
     if (messageContainer) {
-      if (/(?:Android)/.test(navigator.userAgent)) {
+      if (isAndroid) {
         messageContainer.onscroll = handleScroll;
       } else {
         messageContainer.addEventListener('scroll', handleScroll);
@@ -100,6 +102,8 @@ export const MessageList = observer(() => {
           WebkitMask: isLandscape
             ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
             : '',
+          pointerEvents:
+            messageList.length > 0 ? (isAndroid && forceLandscape ? 'none' : 'all') : 'none',
         }}
         className={`fcr-chatroom-mobile-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>
@@ -294,6 +298,8 @@ const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
 
     case AgoraIMCmdActionEnum.UserUnmuted:
       return transI18n('fcr_H5_unmute_user_msg');
+    case AgoraIMCmdActionEnum.MsgDeleted:
+      return transI18n('chat.remove_message_notify');
   }
 };
 const useMessageParams = ({

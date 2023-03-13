@@ -1,15 +1,18 @@
-import { bound, Scheduler } from 'agora-rte-sdk';
-import { observable, action, runInAction } from 'mobx';
+import { bound, Lodash, Scheduler } from 'agora-rte-sdk';
+import { observable, action, runInAction, reaction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {
   AgoraIMBase,
+  AgoraIMCmdActionEnum,
   AgoraIMCustomMessage,
   AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
+  AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../im/wrapper/typs';
 export class MessageStore {
+  private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListDom: HTMLDivElement | null = null;
@@ -29,6 +32,9 @@ export class MessageStore {
 
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
+    this._disposers.push(
+      reaction(() => this._widget.shareUIStore.isLandscape, this.messageListScrollToBottom),
+    );
   }
   private async _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.TextMessageReceived, this._onTextMessageReceived);
@@ -42,8 +48,38 @@ export class MessageStore {
     if (!this._pollingMessageTask) {
       this._pollingMessageTask = Scheduler.shared.addIntervalTask(() => {
         if (this._messageQueue.length) {
+          const deletedMessageIds = new Map();
+          this._messageQueue.forEach((msg) => {
+            if (
+              msg.type === AgoraIMMessageType.Custom &&
+              (msg as AgoraIMCustomMessage).action === AgoraIMCmdActionEnum.MsgDeleted
+            ) {
+              const deletedMessageId = (msg.ext as unknown as { msgId: string }).msgId;
+              deletedMessageIds.set(deletedMessageId, true);
+            }
+          });
           runInAction(() => {
-            this.messageList = this.messageList.concat(this._messageQueue);
+            this.messageList = this.messageList.concat(this._messageQueue).filter((msg) => {
+              if (typeof msg !== 'string') {
+                //过滤被删除消息
+                if (deletedMessageIds.has(msg.id)) return false;
+                //如果是自定义消息
+                if (msg.type === AgoraIMMessageType.Custom) {
+                  const customMessage = msg as AgoraIMCustomMessage;
+                  //如果是单个禁言消息
+                  if (
+                    customMessage.action === AgoraIMCmdActionEnum.UserMuted ||
+                    customMessage.action === AgoraIMCmdActionEnum.UserUnmuted
+                  ) {
+                    //如果不是自己的单个禁言消息，过滤
+                    if (customMessage.ext?.muteMember !== this._fcrChatRoom.userInfo?.userId) {
+                      return false;
+                    }
+                  }
+                }
+              }
+              return true;
+            });
             if (!this.isBottom) this.unreadMessageCount += this._messageQueue.length;
           });
           this._messageQueue = [];
@@ -59,6 +95,7 @@ export class MessageStore {
     this._messageListDom = dom;
   }
   @bound
+  @Lodash.debounced(100)
   messageListScrollToBottom() {
     if (this._messageListDom) {
       this._messageListDom.scrollTop = this._messageListDom.scrollHeight;
