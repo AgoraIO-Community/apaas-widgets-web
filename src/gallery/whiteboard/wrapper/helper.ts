@@ -1,5 +1,5 @@
-import { FcrBoardShape, FcrBoardTool } from 'agora-classroom-sdk';
 import { ApplianceNames, ShapeType } from 'white-web-sdk';
+import { FcrBoardShape, FcrBoardTool } from './type';
 
 export const textColors = [
   '#ffffff',

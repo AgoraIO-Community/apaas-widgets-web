@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { Tag, Tooltip } from 'antd';
 import { ROLE } from '../../contants';
-import { transI18n } from 'agora-common-libs';
+import { transI18n } from 'agora-common-libs/lib/i18n';
 import avatarUrl from '../../themes/img/avatar-big@2x.png';
 import muteNo from '../../themes/img/muteNo.png';
 import muteOff from '../../themes/img/muteOff.png';

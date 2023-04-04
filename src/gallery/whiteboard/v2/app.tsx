@@ -1,6 +1,8 @@
 import React, { useContext, useEffect } from 'react';
-import { BoardUIContext } from './ui-context';
+import { BoardUIContext } from '../ui-context';
 import './style.css';
+import { Toolbar } from './toolbar';
+import { ScenePagination } from './scene-pagination';
 
 export const App = () => {
   const { mount, unmount, handleDragOver, handleDrop, handleBoardDomLoad, handleCollectorDomLoad } =
@@ -29,6 +31,11 @@ export const App = () => {
           handleCollectorDomLoad(ref);
         }}
       />
+      {/* toolbar */}
+      <Toolbar />
+      {/* scenes  */}
+      <ScenePagination />
+      {/*  */}
     </React.Fragment>
   );
 };

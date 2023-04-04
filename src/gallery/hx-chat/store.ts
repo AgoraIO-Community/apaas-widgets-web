@@ -1,11 +1,7 @@
 import { EduRoomTypeEnum, Platform } from 'agora-edu-core';
 import { action, autorun, observable, runInAction } from 'mobx';
 import { AgoraHXChatWidget } from '.';
-
-enum OrientationEnum {
-  portrait = 'portrait',
-  landscape = 'landscape',
-}
+import { OrientationEnum } from './type';
 
 export class WidgetChatUIStore {
   private _matchMedia = window.matchMedia('(orientation: portrait)');

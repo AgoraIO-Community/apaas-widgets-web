@@ -15,7 +15,6 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "forceConsistentCasingInFileNames": true,
-    "suppressImplicitAnyIndexErrors": true,
     "noEmitHelpers": true,
     "noEmitOnError": false,
     "emitDeclarationOnly": true,
@@ -26,8 +25,8 @@
     "noFallthroughCasesInSwitch": true,
     "baseUrl": ".",
     "paths": {
-      "@classroom": ["../agora-classroom-sdk/src/*"],
-      "agora-classroom-sdk": ["../agora-classroom-sdk/src/infra/api"],
+      "@components/*": ["../agora-scenario-ui-kit/src/components/*"],
+      "@ui-kit-utils/*": ["../agora-scenario-ui-kit/src/utils/*"]
     }
   },
   "include": ["src"],

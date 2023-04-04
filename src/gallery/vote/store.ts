@@ -7,7 +7,7 @@ import {
   AgoraExtensionRoomEvent,
   AgoraExtensionWidgetEvent,
 } from '../../../../agora-classroom-sdk/src/infra/protocol/events';
-import { transI18n } from 'agora-common-libs';
+import { transI18n } from 'agora-common-libs/lib/i18n';
 import { bound } from 'agora-rte-sdk';
 
 // 2 为老师或者助教出题阶段 只可老师或者助教可见

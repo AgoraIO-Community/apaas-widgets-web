@@ -6,3 +6,13 @@ export type BoardConfig = {
   defaultState: BoardState;
   mountOptions: MountOptions;
 } & FcrBoardRoomJoinConfig;
+
+export type BoardWindowAnimationOptions = {
+  minFPS?: number;
+  maxFPS?: number;
+  resolution?: number;
+  autoResolution?: boolean;
+  autoFPS?: boolean;
+  maxResolutionLevel?: number;
+  forceCanvas?: boolean;
+};

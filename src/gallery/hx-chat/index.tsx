@@ -1,6 +1,5 @@
-import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs';
+import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs/lib/ui';
 import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum, Platform } from 'agora-edu-core';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
@@ -9,6 +8,7 @@ import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
 import { FcrChatRoomApp } from './fcr-chatroom';
+import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
 
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;

@@ -3,14 +3,12 @@ import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../im/wrapper/typs';
 import { ClassState } from 'agora-edu-core';
 import dayjs from 'dayjs';
-import { OrientationEnum } from '../../../../../../agora-classroom-sdk/src/infra/stores/common/type';
-import {
-  AgoraExtensionRoomEvent,
-  AgoraExtensionWidgetEvent,
-} from '../../../../../../agora-classroom-sdk/src/infra/protocol/events';
+
 import { AgoraRteEventType, bound, Scheduler } from 'agora-rte-sdk';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
-import { transI18n } from 'agora-common-libs';
+import { transI18n } from 'agora-common-libs/lib/i18n';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../events';
+import { OrientationEnum } from '../../type';
 export class RoomStore {
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
   @observable messageVisible = true;

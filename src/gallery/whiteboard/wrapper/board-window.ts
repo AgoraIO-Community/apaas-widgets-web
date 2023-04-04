@@ -1,10 +1,3 @@
-import {
-  FcrBoardH5WindowConfig,
-  FcrBoardMaterialWindowConfig,
-  FcrBoardMediaWindowConfig,
-  FcrBoardShape,
-  FcrBoardTool,
-} from 'agora-classroom-sdk';
 import SlideApp from '@netless/app-slide';
 import Talkative from '@netless/app-talkative';
 import { snapshot } from '@netless/white-snapshot';
@@ -29,6 +22,11 @@ import {
   FcrBoardPageInfo,
   FcrBoardWindowOptions,
   MountOptions,
+  FcrBoardShape,
+  FcrBoardTool,
+  FcrBoardH5WindowConfig,
+  FcrBoardMaterialWindowConfig,
+  FcrBoardMediaWindowConfig,
 } from './type';
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
 import { DialogProgressApi } from '../../../components/progress';

@@ -1,4 +1,5 @@
-import { AGEventEmitter, bound, Log, Logger } from 'agora-rte-sdk';
+import { bound, Log, Logger } from 'agora-common-libs/lib/annotation';
+import { AGEventEmitter } from 'agora-common-libs/lib/emitter';
 import {
   WhiteWebSdk,
   Room,
@@ -20,8 +21,10 @@ import {
   FcrBoardRoomJoinConfig,
   FcrBoardRoomEvent,
   BoardState,
+  BoardConnectionState,
+  FcrBoardTool,
+  FcrBoardShape,
 } from './type';
-import { BoardConnectionState, FcrBoardShape, FcrBoardTool } from 'agora-classroom-sdk';
 import { convertToFcrBoardToolShape, hexColorToWhiteboardColor, textColors } from './helper';
 
 @Log.attach()

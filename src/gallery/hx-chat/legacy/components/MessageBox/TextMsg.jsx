@@ -1,7 +1,7 @@
 import { useSelector, useStore } from 'react-redux';
 import { Tag, Menu, Dropdown } from 'antd';
 import { ROLE, MSG_TYPE } from '../../contants';
-import { transI18n } from 'agora-common-libs';
+import { transI18n } from 'agora-common-libs/lib/i18n';
 import { messageAction } from '../../redux/actions/messageAction';
 import delete_icon from '../../themes/img/delete.png';
 import './index.css';

@@ -1,10 +1,10 @@
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-classroom-sdk';
 import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import { WaterMark } from '../../components/watermark';
 import { WidgetWatermarkUIStore } from './store';
+import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
 const App = observer(({ widget }: { widget: FcrWatermarkWidget }) => {
   const widgetStore = widget.widgetStore as WidgetWatermarkUIStore;
   return widgetStore.visible ? (

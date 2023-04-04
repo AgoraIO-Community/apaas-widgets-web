@@ -13,7 +13,7 @@ export const getImageSize = (
 ): BaseImageSize => {
   const windowSize = containerSize;
   const widthHeightProportion: number = imageInnerSize.width / imageInnerSize.height;
-  const maxSize: number = 960;
+  const maxSize = 960;
   if (
     (imageInnerSize.width > maxSize && windowSize.width > maxSize) ||
     (imageInnerSize.height > maxSize && windowSize.height > maxSize)

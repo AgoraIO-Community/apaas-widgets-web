@@ -6,10 +6,10 @@ import { observable, action } from 'mobx';
 import { WidgetModal } from '../../components/modal';
 import { AgoraEduToolWidget } from '../../common/edu-tool-widget';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum, Platform } from 'agora-edu-core';
-import { AgoraExtensionWidgetEvent } from 'agora-classroom-sdk';
 import { ThemeProvider, transI18n } from 'agora-common-libs';
 import { addResource } from './i18n/config';
 import { PollH5 } from './mobile/app';
+import { AgoraExtensionWidgetEvent } from '../../events';
 
 export class AgoraPolling extends AgoraEduToolWidget {
   private _store?: PluginStore;
