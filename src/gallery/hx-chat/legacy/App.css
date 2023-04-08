@@ -1,5 +1,5 @@
 .fcr-hx-app {
-  @apply bg-component border-divider border border-solid;
+  @apply fcr-bg-component fcr-border-divider fcr-border  fcr-border-solid;
 
   /* 宽度自定义 */
   position: relative;
@@ -10,8 +10,8 @@
 }
 
 .fcr-hx-show-chat-icon {
-  @apply bg-component;
-  @apply hover:bg-brand;
+  @apply fcr-bg-component;
+  @apply fcr-hover:fcr-bg-brand;
   right: 2px;
   bottom: 48px;
   width: 40px;

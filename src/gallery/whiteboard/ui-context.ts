@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { createContext } from 'react';
+import { FcrBoardShape, FcrBoardTool } from './wrapper/type';
 
 export const BoardUIContext = createContext({
   mount: () => {},
@@ -12,10 +13,17 @@ export const BoardUIContext = createContext({
 
 export const ToolbarUIContext = createContext({
   observables: {
-    visible: true,
+    currentTool: FcrBoardTool.Clicker,
+    currentColor: '',
+    currentShape: FcrBoardShape.Straight,
   },
-  show: () => {},
-  hide: () => {},
+  redo: () => {},
+  undo: () => {},
+  setTool: () => {},
+  setShape: () => {},
+  setStrokeColor: () => {},
+  setStrokeWith: () => {},
+  clickExpansionTool: () => {},
 });
 
 export const ScenePaginationUIContext = createContext({

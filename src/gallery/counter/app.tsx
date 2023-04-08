@@ -7,7 +7,7 @@ import FlipClock, { formatDiff } from './flip-clock';
 import { MaskCountDown } from './mask-count-down';
 import { autorun } from 'mobx';
 import { AgoraCountdown } from '.';
-import { useI18n } from 'agora-common-libs';
+import { useI18n } from 'agora-common-libs/lib/i18n';
 
 const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   const pluginStore = usePluginStore();

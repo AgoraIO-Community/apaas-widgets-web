@@ -1,12 +1,357 @@
 import { observer } from 'mobx-react';
+import { FcrBoardTool, FcrBoardShape } from '../wrapper/type';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
+import { ToolTip } from '@components/tooltip';
+import { Popover, PopoverWithTooltip } from '@components/popover';
+import { HorizontalSlider } from '@components/slider';
+import React, { FC, useContext, useState } from 'react';
+import { ToolbarUIContext } from '../ui-context';
 
 export const Toolbar = observer(() => {
-  const tools = [];
+  const {
+    observables: {},
+    redo,
+    undo,
+  } = useContext(ToolbarUIContext);
+
+  const currentColor = '';
+  const handleToolChange = (tool: FcrBoardTool) => {
+    return () => {};
+  };
+
+  const handleColorChange = (color: string) => {
+    return () => {};
+  };
+
+  const tools = [
+    {
+      renderItem: () => (
+        <ToolbarItem
+          tooltip="Clicker"
+          // tooltipPlacement="right"
+          icon={SvgIconEnum.FCR_WHITEBOARD_MOUSE}
+          onClick={handleToolChange(FcrBoardTool.Clicker)}
+        />
+      ),
+    },
+    {
+      renderItem: () => (
+        <ToolbarItem
+          tooltip="Selector"
+          // tooltipPlacement
+          icon={SvgIconEnum.FCR_WHITECHOOSE}
+          onClick={handleToolChange(FcrBoardTool.Selector)}
+        />
+      ),
+    },
+    {
+      renderItem: () => <PenPickerItem />,
+    },
+    {
+      renderItem: () => <ShapePickerItem />,
+    },
+    {
+      renderItem: () => (
+        <ToolbarItem
+          tooltip="Text"
+          // tooltipPlacement=""
+          icon={SvgIconEnum.FCR_WHITEBOARD_TEXT}
+          onClick={handleToolChange(FcrBoardTool.Text)}
+        />
+      ),
+    },
+    {
+      renderItem: () => <EraserPickerItem />,
+    },
+    {
+      renderItem: () => {
+        return (
+          <ToolbarItem
+            tooltip="Hand"
+            // tooltipPlacement=""
+            icon={SvgIconEnum.FCR_WHITEBOARD_MOVESUBJECTS}
+            onClick={handleToolChange(FcrBoardTool.Hand)}
+          />
+        );
+      },
+    },
+    {
+      renderItem: () => {
+        return <div className="fcr-divider-vertical"></div>;
+      },
+    },
+    {
+      renderItem: () => <ColorPickerItem />,
+    },
+    {
+      renderItem: () => {
+        return <div className="fcr-divider-vertical"></div>;
+      },
+    },
+    {
+      renderItem: () => {
+        return (
+          <ToolbarItem
+            tooltip="Undo"
+            tooltipPlacement=""
+            icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_UNDO}
+            onClick={undo}
+          />
+        );
+      },
+    },
+    {
+      renderItem: () => {
+        return (
+          <ToolbarItem
+            tooltip="Redo"
+            tooltipPlacement=""
+            icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_REDO}
+            onClick={redo}
+          />
+        );
+      },
+    },
+  ];
+
+  const extraTools = [
+    {
+      renderItem: () => (
+        <ToolbarItem
+          tooltip="Cloud"
+          tooltipPlacement=""
+          icon={SvgIconEnum.FCR_WHITEBOARD_CLOUD}
+          onClick={handleToolChange(FcrBoardTool.Clicker)}
+        />
+      ),
+    },
+    {
+      renderItem: () => (
+        <ToolbarItem
+          tooltip="Laser Pen"
+          tooltipPlacement=""
+          icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
+          onClick={handleToolChange(FcrBoardTool.Clicker)}
+        />
+      ),
+    },
+    {
+      renderItem: () => <ScreenCapturePickerItem />,
+    },
+    {
+      renderItem: () => (
+        <ToolbarItem
+          tooltip="Save"
+          tooltipPlacement=""
+          icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
+          onClick={handleToolChange(FcrBoardTool.Clicker)}
+        />
+      ),
+    },
+    {
+      renderItem: () => {
+        return (
+          <ToolbarItem tooltip="Move" tooltipPlacement="" icon={SvgIconEnum.FCR_WHITEBOARD_MOVE} />
+        );
+      },
+    },
+  ];
+
   return (
     <div className="fcr-board-toolbar">
-      <ul className="fcr-board-toolbar-list">
-        <li></li>
-      </ul>
+      <div className="fcr-board-toolbar-main">
+        <ul className="fcr-board-toolbar-list">
+          {tools.map(({ renderItem }, i) => {
+            return <li key={i.toString()}>{renderItem()}</li>;
+          })}
+        </ul>
+      </div>
+      <div className="fcr-board-toolbar-extra">
+        <ul className="fcr-board-toolbar-list">
+          {extraTools.map(({ renderItem }, i) => {
+            return <li key={i.toString()}>{renderItem()}</li>;
+          })}
+        </ul>
+      </div>
     </div>
   );
 });
+
+const ToolbarItem: FC<{
+  tooltip: string;
+  icon: SvgIconEnum;
+  tooltipPlacement?: string;
+  onClick?: () => void;
+}> = ({ tooltipPlacement, tooltip, icon, onClick }) => {
+  return (
+    <ToolTip placement={tooltipPlacement} content={tooltip}>
+      <div className="fcr-board-toolbar-item-surrounding" onClick={onClick}>
+        <SvgImg type={icon} size={30} />
+      </div>
+    </ToolTip>
+  );
+};
+
+const ExpansionToolbarItem: FC<{
+  tooltip: string;
+  popoverContent: React.ReactNode;
+  icon: SvgIconEnum;
+  tooltipPlacement?: string;
+  popoverPlacement?: string;
+  popoverOverlayClassName?: string;
+  onClick?: () => void;
+}> = ({
+  tooltip,
+  tooltipPlacement,
+  popoverContent,
+  popoverPlacement,
+  icon,
+  onClick,
+  popoverOverlayClassName,
+}) => {
+  return (
+    <PopoverWithTooltip
+      toolTipProps={{ placement: tooltipPlacement, content: tooltip }}
+      popoverProps={{
+        placement: popoverPlacement,
+        content: popoverContent,
+        overlayClassName: popoverOverlayClassName,
+      }}>
+      <div className="fcr-board-toolbar-item-surrounding" onClick={onClick}>
+        <SvgImg type={icon} size={30} />
+        <SvgImg
+          type={SvgIconEnum.FCR_WHITEBOARD_LOWERRIGHTARROW}
+          size={4}
+          className="fcr-board-toolbar-expansion-icon"
+        />
+      </div>
+    </PopoverWithTooltip>
+  );
+};
+
+const ColorPickerItem: FC = observer(() => {
+  const isActive = 'fcr-board-toolbar__color-item--active';
+  const {
+    observables: { currentColor },
+    setStrokeColor,
+  } = useContext(ToolbarUIContext);
+
+  const handleClickColor = () => {
+    setStrokeColor();
+  };
+
+  return (
+    <div className="fcr-board-toolbar__color-picker">
+      <div className="fcr-board-toolbar__color-items">
+        <div className="fcr-board-toolbar__color-item" onClick={handleClickColor} />
+        <div className="fcr-board-toolbar__color-item" onClick={handleClickColor} />
+        <div className="fcr-board-toolbar__color-item" onClick={handleClickColor} />
+        <Popover content={<ColorPickerPanel />} placement="right" trigger="click">
+          <div className="fcr-board-toolbar__color-item" />
+        </Popover>
+      </div>
+    </div>
+  );
+});
+
+const ShapePickerItem: FC = observer(() => {
+  const handleShapeToolChange = (shapeTool: FcrBoardShape) => {
+    return () => {};
+  };
+
+  return (
+    <ExpansionToolbarItem
+      tooltip="Shape"
+      icon={SvgIconEnum.FCR_WHITEBOARD_SHAP_CIRCLE}
+      onClick={handleShapeToolChange(FcrBoardShape.Straight)}
+      popoverPlacement="right"
+      popoverContent={<ShapePickerPanel />}
+    />
+  );
+});
+
+const PenPickerItem: FC = observer(() => {
+  const {
+    observables: {},
+    setStrokeColor,
+    setShape,
+    setTool,
+  } = useContext(ToolbarUIContext);
+
+  return (
+    <ExpansionToolbarItem
+      tooltip="Pen"
+      icon={SvgIconEnum.FCR_WHITEBOARD_PED_CURVE}
+      popoverPlacement="right"
+      popoverOverlayClassName="fcr-board-toolbar__pen-picker__overlay"
+      popoverContent={<PenPickerPanel />}
+    />
+  );
+});
+
+const EraserPickerItem: FC = observer(() => {
+  return (
+    <ExpansionToolbarItem
+      tooltip="Eraser"
+      popoverPlacement="right"
+      icon={SvgIconEnum.FCR_WHITEBOARD_ERASER}
+      popoverContent={<EraserPickerPanel />}
+    />
+  );
+});
+
+const ScreenCapturePickerItem: FC = observer(() => {
+  return (
+    <ExpansionToolbarItem
+      tooltip="Screen"
+      popoverPlacement="right"
+      icon={SvgIconEnum.FCR_WHITEBOARD_SHAP_REHUMBUS}
+      popoverContent={<ScreenCapturePickerPanel />}
+    />
+  );
+});
+
+const ColorPickerPanel = () => {
+  const colors = [''];
+  return (
+    <div>
+      {colors.map((color) => {
+        return <div key={color} />;
+      })}
+    </div>
+  );
+};
+
+const PenPickerPanel = observer(() => {
+  const [value, setValue] = useState(0);
+  // const { setStrokeWith } = useContext(ToolbarUIContext);
+  const handleChange = (value: number) => {
+    // console.log(value);
+    setValue(value);
+  };
+
+  return (
+    <div>
+      <HorizontalSlider value={value} onChange={handleChange} />
+      <div />
+      <div>
+        <div>
+          <SvgImg type={SvgIconEnum.FCR_PEN_LINE_3SIZE} />
+        </div>
+        <div>
+          <SvgImg type={SvgIconEnum.FCR_PEN_CURVE_3SIZE} />
+        </div>
+      </div>
+    </div>
+  );
+});
+
+const ShapePickerPanel = () => {
+  return <div />;
+};
+const EraserPickerPanel = () => {
+  return <div />;
+};
+const ScreenCapturePickerPanel = () => {
+  return <div />;
+};

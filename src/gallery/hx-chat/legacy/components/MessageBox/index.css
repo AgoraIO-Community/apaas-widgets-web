@@ -25,7 +25,7 @@
 }
 
 .fcr-hx-msg-user-name {
-  @apply text-level1;
+  @apply fcr-text-level1;
   max-width: 100px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -55,7 +55,7 @@
 }
 
 .fcr-hx-msg-text {
-  @apply text-level1;
+  @apply fcr-text-level1;
 
   margin: 8px 8px 0 0;
   max-width: 60%;
@@ -67,7 +67,7 @@
 }
 
 .fcr-hx-msg-data {
-  @apply text-level1;
+  @apply fcr-text-level1;
   /* width: 200px; */
   min-height: 20px;
   font-size: 13px;
@@ -77,11 +77,11 @@
 }
 
 .fcr-hx-msg-text-me {
-  @apply bg-background;
+  @apply fcr-bg-background;
 }
 
 .fcr-hx-msg-text-other {
-  @apply bg-background border border-solid border-divider;
+  @apply bg-background fcr-border  fcr-border-solid fcr-border-divider;
 
   display: inline-block;
 }
@@ -94,7 +94,7 @@
 }
 
 .fcr-hx-no-msgs-text {
-  @apply text-level3;
+  @apply fcr-text-level3;
 
   width: 89px;
   height: 18px;
@@ -105,7 +105,7 @@
 }
 
 .fcr-hx-mute-msg {
-  @apply bg-background text-level2;
+  @apply fcr-bg-background fcr-text-level2;
   display: flex;
   justify-content: center;
   align-items: center;

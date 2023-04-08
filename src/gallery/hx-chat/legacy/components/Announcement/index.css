@@ -60,10 +60,10 @@
 }
 .fcr-hx-edit-content textarea,
 .fcr-hx-edit-content textarea:focus {
-  @apply border border-solid border-divider text-level1 bg-component !important;
+  @apply fcr-border fcr-border-solid fcr-border-divider fcr-text-level1 fcr-bg-component !important;
 }
 .fcr-hx-edit-content textarea::-webkit-input-placeholder {
-  @apply text-level3;
+  @apply fcr-text-level3;
 }
 .fcr-hx-input-content {
   width: 308px !important;
@@ -107,7 +107,7 @@
 }
 
 .fcr-hx-announcement-content {
-  @apply text-level1;
+  @apply fcr-text-level1;
   /* width: 307px; */
   /* height: 235px; */
   font-size: 13px;
@@ -140,14 +140,14 @@
 }
 
 .fcr-hx-ok-btn {
-  @apply bg-brand;
+  @apply fcr-bg-brand;
   width: 94px;
   height: 30px;
   border-radius: 15px !important;
 }
 
 .fcr-hx-cancel-btn {
-  @apply bg-white  border border-solid border-divider !important;
+  @apply fcr-bg-white fcr-border  fcr-border-solid fcr-border-divider !important;
   width: 94px;
   height: 30px;
   border-radius: 15px !important;
@@ -167,25 +167,25 @@
 }
 
 .fcr-hx-cancel-btn-text {
-  @apply text-brand;
+  @apply fcr-text-brand;
 }
 
 /* 修改antd 默认样式 */
 .fcr-hx-delete-modal .ant-modal-content {
-  @apply bg-component;
+  @apply fcr-bg-component;
   height: 175px;
   width: 280px;
 }
 
 .fcr-hx-delete-modal .ant-modal-header {
-  @apply border border-solid border-divider bg-icon-selected-color !important;
+  @apply fcr-border fcr-border-solid fcr-border-divider fcr-bg-icon-selected-color !important;
   height: 40px !important;
   padding: 8px 24px !important;
   border-radius: 4px 4px 0px 0px !important;
 }
 
 .fcr-hx-delete-modal .ant-modal-title {
-  @apply text-level1 !important;
+  @apply fcr-text-level1 !important;
   font-size: 14px !important;
   font-family: 'PingFangSC-Regular', 'PingFang SC' !important;
   font-weight: 400 !important;
@@ -204,7 +204,7 @@
 }
 
 .fcr-hx-delete-modal .ant-modal-body {
-  @apply text-level1 bg-component !important;
+  @apply fcr-text-level1 fcr-bg-component !important;
   text-align: center;
   /* width: 104px; */
   /* height: 18px; */
@@ -224,7 +224,7 @@
 }
 
 .fcr-hx-delete-modal .ant-btn {
-  @apply text-brand !important;
+  @apply fcr-text-brand !important;
   border-radius: 15px !important;
   border: 1px solid #d2d2e2;
   width: 90px;
@@ -232,5 +232,5 @@
   margin: 0 8px !important;
 }
 .fcr-hx-delete-modal .ant-btn-primary {
-  @apply border border-solid border-brand text-white !important;
+  @apply fcr-border  fcr-border-solid fcr-border-brand text-white !important;
 }

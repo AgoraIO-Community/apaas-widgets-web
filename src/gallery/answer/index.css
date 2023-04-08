@@ -4,11 +4,11 @@
   border-radius: 4px;
   flex-wrap: wrap;
   padding: 9px 12px;
-  @apply border border-solid border-divider;
+  @apply fcr-border  fcr-border-solid fcr-border-divider;
 }
 
 .answer-option {
-  @apply border border-solid border-divider text-level2;
+  @apply fcr-border  fcr-border-solid fcr-border-divider fcr-text-level2;
   border-radius: 18px;
   box-shadow: 0 -1px 3px 0 hsl(0deg 0% 100% / 50%);
   font-size: 24px;
@@ -21,10 +21,10 @@
 }
 
 .answer-checked {
-  @apply text-level1 bg-brand;
+  @apply fcr-text-level1 fcr-bg-brand;
 }
 .answer-result-info {
-  @apply text-level1;
+  @apply fcr-text-level1;
   margin-top: 30px;
   font-size: 13px;
 }
@@ -34,7 +34,7 @@
   line-height: 1.1;
 }
 .answer-result-info span {
-  @apply text-level2;
+  @apply fcr-text-level2;
 }
 .answer-btns-container {
   margin-top: 30px;
@@ -52,7 +52,7 @@
   height: 275px;
 }
 .border-bottom-width-1 {
-  @apply border-divider;
+  @apply fcr-border-divider;
   border-bottom-width: 1px;
   margin: 0px 0px -1px -1px;
 }
@@ -74,7 +74,7 @@
 }
 
 .answer-table {
-  @apply border border-solid border-divider;
+  @apply fcr-border  fcr-border-solid fcr-border-divider;
   height: 200px;
   border-radius: 4px;
   overflow: hidden;
@@ -105,8 +105,8 @@
 }
 
 .award-list {
-  @apply bg-component;
-  @apply border border-solid border-divider;
+  @apply fcr-bg-component;
+  @apply fcr-border  fcr-border-solid fcr-border-divider;
 
   position: absolute;
   bottom: calc(100% + 6px);
@@ -128,5 +128,5 @@
   cursor: pointer;
 }
 .award-list ul li:hover {
-  @apply bg-icon-selected-color;
+  @apply fcr-bg-icon-selected-color;
 }

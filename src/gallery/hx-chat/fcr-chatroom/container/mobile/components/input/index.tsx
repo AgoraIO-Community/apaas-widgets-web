@@ -8,7 +8,7 @@ import { emojis } from '../../../../utils/emoji';
 
 import './index.css';
 import { ComponentLevelRulesMobile } from '../../../../../../../../../agora-classroom-sdk/src/infra/capabilities/config';
-import { useI18n } from 'agora-common-libs';
+import { useI18n } from 'agora-common-libs/lib/i18n';
 import { useClickAnywhere } from '../../../../utils/hooks';
 import classNames from 'classnames';
 export const FcrChatRoomH5Inputs = observer(

@@ -1,0 +1,130 @@
+.fcr-board-toolbar {
+  position: absolute;
+  top: 50%;
+  left: 10px;
+  transform: translateY(-50%);
+  width: 50px;
+}
+
+.fcr-board-toolbar-list {
+}
+.fcr-board-toolbar-list .fcr-popover-trigger-opened {
+  background-color: unset;
+}
+
+.fcr-board-toolbar-list li {
+  padding: 2px 0;
+}
+
+.fcr-board-toolbar-list li .fcr-divider-vertical {
+  width: 32px;
+  margin: 0 auto;
+}
+
+.fcr-board-toolbar-list .fcr-board-toolbar-item-surrounding:hover {
+  @apply fcr-bg-brand-6 fcr-rounded-full;
+}
+
+.fcr-board-toolbar-item-surrounding {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  margin: 0 auto;
+}
+
+.fcr-board-toolbar-expansion-icon {
+  position: absolute;
+  right: 2px;
+  bottom: 2px;
+}
+
+.fcr-board-toolbar__color-picker {
+}
+
+.fcr-board-toolbar__color-items {
+  display: flex;
+  flex-wrap: wrap;
+  width: 42px;
+  margin: 0 auto;
+  padding: 14px 0;
+}
+
+.fcr-board-toolbar__color-panel {
+}
+
+.fcr-board-toolbar__color-item {
+  @apply fcr-rounded-full;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+
+.fcr-board-toolbar__color-item::after {
+  @apply fcr-rounded-full;
+  content: '';
+  width: 12px;
+  height: 12px;
+  border: 2px solid theme(colors.block-2);
+}
+
+.fcr-board-toolbar__color-item:nth-child(1) {
+  background: #fed130;
+  margin-right: 6px;
+  margin-bottom: 6px;
+}
+.fcr-board-toolbar__color-item:nth-child(2) {
+  background: #4262ff;
+}
+.fcr-board-toolbar__color-item:nth-child(3) {
+  background: #fc3141;
+  margin-right: 6px;
+}
+
+.fcr-board-toolbar__color-item:nth-child(4) {
+  background-image: conic-gradient(
+    from 180deg at 50% 50%,
+    #ff7171 0deg,
+    #ffa471 30deg,
+    #ffe37f 63.75deg,
+    #e3ff75 91.88deg,
+    #a9ff75 125.63deg,
+    #79ff8f 163.12deg,
+    #72ffe6 189.38deg,
+    #70cff8 210deg,
+    #6880ff 232.5deg,
+    #7856ff 260.62deg,
+    #dd56ff 277.5deg,
+    #ff56da 303.75deg,
+    #ff3797 327.96deg,
+    #ff6464 340.25deg,
+    #ff5656 359.93deg,
+    #ff7171 360deg
+  );
+}
+
+.fcr-board-toolbar-main,
+.fcr-board-toolbar-extra {
+  @apply fcr-bg-2;
+}
+.fcr-board-toolbar-main {
+  padding: 10px 0;
+  margin-bottom: 7px;
+  border-radius: 16px 16px 4px 4px;
+}
+
+.fcr-board-toolbar-extra {
+  padding: 10px;
+  border-radius: 4px 4px 16px 16px;
+}
+
+.fcr-board-toolbar__pen-picker__overlay .fcr-tooltip-inner {
+  overflow: unset !important;
+}

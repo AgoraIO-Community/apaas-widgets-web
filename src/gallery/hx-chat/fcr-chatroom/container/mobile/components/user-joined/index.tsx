@@ -1,4 +1,4 @@
-import { useI18n } from 'agora-common-libs';
+import { useI18n } from 'agora-common-libs/lib/i18n';
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../../../hooks/useStore';

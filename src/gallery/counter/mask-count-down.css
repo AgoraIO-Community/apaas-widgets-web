@@ -24,8 +24,8 @@
   color: #fff !important;
 }
 .count-input-color-normal {
-  @apply text-level1;
+  @apply fcr-text-level1;
 }
 .count-input-color-error {
-  @apply text-error;
+  @apply fcr-text-error;
 }

@@ -13,6 +13,7 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
     }
     this.logger.info('Cannot find a proper DOM to render the FCR board widget');
   }
+
   render(dom: HTMLElement): void {
     super.render(dom);
 
