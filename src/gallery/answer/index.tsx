@@ -8,7 +8,8 @@ import { addResource } from './i18n/config';
 import { AgoraEduToolWidget } from '../../common/edu-tool-widget';
 import { WidgetModal } from '../../components/modal';
 import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core';
-import { ThemeProvider, transI18n } from 'agora-common-libs';
+import { transI18n } from 'agora-common-libs/lib/i18n';
+import { ThemeProvider } from 'agora-common-libs/lib/ui';
 import { AgoraExtensionWidgetEvent } from '../../events';
 
 export class AgoraSelector extends AgoraEduToolWidget {

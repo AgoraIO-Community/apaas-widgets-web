@@ -3,8 +3,7 @@
 }
 
 .fcr-btn-primary {
-  @apply fcr-text-white fcr-bg-brand;
-  @apply fcr-active:fcr-bg-brand;
+  @apply fcr-text-white fcr-bg-brand fcr-bg-brand;
 }
 
 .fcr-btn-danger {

@@ -6,7 +6,7 @@ import { FcrChatRoomH5 } from './container/mobile';
 import { FcrChatRoomStore } from './store';
 import im_CN from '../locales/zh_CN';
 import im_US from '../locales/en_US';
-import { addResourceBundle } from 'agora-common-libs';
+import { addResourceBundle } from 'agora-common-libs/lib/i18n';
 
 export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {
   const { platform } = widget.classroomConfig;

@@ -8,7 +8,8 @@ import './index.css';
 import addSvg from './add.svg';
 import reduceSvg from './reduce.svg';
 import awardSvg from './award.svg';
-import { themeContext, useI18n } from 'agora-common-libs';
+import { useI18n } from 'agora-common-libs/lib/i18n';
+import { themeContext } from 'agora-common-libs/lib/ui';
 
 const App = observer(() => (
   <div className="h-full w-full overflow-hidden" style={{ padding: '21px 14px' }}>
@@ -45,9 +46,10 @@ const Content = observer(() => {
           {answerList.map((value: string, index: number) => (
             <span
               key={index}
-              className={`answer-option ${optionPermissions} ${isSelectedAnswer(value) ? 'answer-checked' : ''
-                }`}
-              onClick={!btnDisabled ? (_) => handleOptionClick(value) : () => { }}>
+              className={`answer-option ${optionPermissions} ${
+                isSelectedAnswer(value) ? 'answer-checked' : ''
+              }`}
+              onClick={!btnDisabled ? (_) => handleOptionClick(value) : () => {}}>
               {value}
             </span>
           ))}

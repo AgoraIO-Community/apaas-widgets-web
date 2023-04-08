@@ -81,7 +81,7 @@
 }
 
 .fcr-hx-msg-text-other {
-  @apply bg-background fcr-border  fcr-border-solid fcr-border-divider;
+  @apply fcr-bg-background fcr-border fcr-border-solid fcr-border-divider;
 
   display: inline-block;
 }

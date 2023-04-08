@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useMemo, useRef } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { initIMSDK } from './utils/WebIM';
@@ -16,7 +17,7 @@ import im_US from '../locales/en_US';
 import { createListener } from './utils/listeners';
 import './App.css';
 import 'antd/dist/antd.css';
-import { addResourceBundle } from 'agora-common-libs';
+import { addResourceBundle } from 'agora-common-libs/lib/i18n';
 
 const App = function (props) {
   const store = useStore();

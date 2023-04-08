@@ -1,4 +1,4 @@
-import { transI18n, useI18n } from 'agora-common-libs';
+import { transI18n, useI18n } from 'agora-common-libs/lib/i18n';
 import { observer } from 'mobx-react';
 import { CSSProperties, forwardRef, ReactNode, useEffect } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-img';

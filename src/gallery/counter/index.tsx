@@ -8,7 +8,8 @@ import AppH5 from './mobile/app';
 import { PluginStore } from './store';
 import { AgoraEduToolWidget } from '../../common/edu-tool-widget';
 import { AgoraWidgetController, EduRoleTypeEnum, Platform } from 'agora-edu-core';
-import { ThemeProvider, transI18n } from 'agora-common-libs';
+import { transI18n } from 'agora-common-libs/lib/i18n';
+import { ThemeProvider } from 'agora-common-libs/lib/ui';
 import { addResource } from './i18n/config';
 import { AgoraExtensionWidgetEvent } from '../../events';
 export class AgoraCountdown extends AgoraEduToolWidget {

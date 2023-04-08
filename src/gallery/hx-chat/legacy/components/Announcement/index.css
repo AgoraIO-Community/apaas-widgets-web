@@ -232,5 +232,5 @@
   margin: 0 8px !important;
 }
 .fcr-hx-delete-modal .ant-btn-primary {
-  @apply fcr-border  fcr-border-solid fcr-border-brand text-white !important;
+  @apply fcr-border  fcr-border-solid fcr-border-brand fcr-text-white !important;
 }

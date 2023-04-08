@@ -10,8 +10,7 @@
 }
 
 .fcr-hx-show-chat-icon {
-  @apply fcr-bg-component;
-  @apply fcr-hover:fcr-bg-brand;
+  @apply fcr-bg-component fcr-bg-brand;
   right: 2px;
   bottom: 48px;
   width: 40px;
