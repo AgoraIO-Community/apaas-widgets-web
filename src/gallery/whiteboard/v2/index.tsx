@@ -3,6 +3,8 @@ import { FcrBoardWidgetBase } from '../board-widget-base';
 import ReactDOM from 'react-dom';
 import { BoardUIContext, ScenePaginationUIContext, ToolbarUIContext } from '../ui-context';
 import { App } from './app';
+import { FcrBoardShape, FcrBoardTool } from '../wrapper/type';
+import { observable, action, runInAction } from 'mobx';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends FcrBoardWidgetBase {
@@ -45,12 +47,35 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
   }
 
   createToolbarUIContext() {
+    const observables = observable({
+      currentTool: FcrBoardTool.Clicker,
+      currentColor: '',
+      currentShape: FcrBoardShape.Straight,
+      toolbarPosition: { x: 0, y: 0 },
+      toolbarDockPosition: { x: 0, y: 0 },
+      toolbarReleased: true,
+    });
     return {
-      observables: {
-        visible: true,
-      },
-      show: () => {},
-      hide: () => {},
+      observables,
+      redo: () => {},
+      undo: () => {},
+      setTool: () => {},
+      setShape: () => {},
+      setStrokeColor: () => {},
+      setStrokeWith: () => {},
+      clickExpansionTool: () => {},
+      setToolbarPosition: action((pos: { x: number; y: number }) => {
+        observables.toolbarPosition = pos;
+      }),
+      setToolbarDockPosition: action((pos: { x: number; y: number }) => {
+        observables.toolbarDockPosition = pos;
+      }),
+      dragToolbar: action(() => {
+        observables.toolbarReleased = false;
+      }),
+      releaseToolbar: action(() => {
+        observables.toolbarReleased = true;
+      }),
     };
   }
 

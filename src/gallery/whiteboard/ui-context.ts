@@ -16,6 +16,9 @@ export const ToolbarUIContext = createContext({
     currentTool: FcrBoardTool.Clicker,
     currentColor: '',
     currentShape: FcrBoardShape.Straight,
+    toolbarPosition: { x: 0, y: 0 },
+    toolbarReleased: true,
+    toolbarDockPosition: { x: 0, y: 0 },
   },
   redo: () => {},
   undo: () => {},
@@ -24,6 +27,10 @@ export const ToolbarUIContext = createContext({
   setStrokeColor: () => {},
   setStrokeWith: () => {},
   clickExpansionTool: () => {},
+  setToolbarPosition: (pos: { x: number; y: number }) => {},
+  setToolbarDockPosition: (pos: { x: number; y: number }) => {},
+  dragToolbar: () => {},
+  releaseToolbar: () => {},
 });
 
 export const ScenePaginationUIContext = createContext({

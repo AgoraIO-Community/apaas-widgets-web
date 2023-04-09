@@ -4,8 +4,11 @@ import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import { Popover, PopoverWithTooltip } from '@components/popover';
 import { HorizontalSlider } from '@components/slider';
-import React, { FC, useContext, useState } from 'react';
+import React, { FC, PropsWithChildren, useCallback, useContext, useEffect, useState } from 'react';
 import { ToolbarUIContext } from '../ui-context';
+import classNames from 'classnames';
+import { useDrag } from '@use-gesture/react';
+import { useSpring, animated } from '@react-spring/web';
 
 export const Toolbar = observer(() => {
   const {
@@ -93,7 +96,7 @@ export const Toolbar = observer(() => {
         return (
           <ToolbarItem
             tooltip="Undo"
-            tooltipPlacement=""
+            // tooltipPlacement=""
             icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_UNDO}
             onClick={undo}
           />
@@ -105,7 +108,7 @@ export const Toolbar = observer(() => {
         return (
           <ToolbarItem
             tooltip="Redo"
-            tooltipPlacement=""
+            // tooltipPlacement=""
             icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_REDO}
             onClick={redo}
           />
@@ -119,7 +122,7 @@ export const Toolbar = observer(() => {
       renderItem: () => (
         <ToolbarItem
           tooltip="Cloud"
-          tooltipPlacement=""
+          // tooltipPlacement=""
           icon={SvgIconEnum.FCR_WHITEBOARD_CLOUD}
           onClick={handleToolChange(FcrBoardTool.Clicker)}
         />
@@ -129,7 +132,7 @@ export const Toolbar = observer(() => {
       renderItem: () => (
         <ToolbarItem
           tooltip="Laser Pen"
-          tooltipPlacement=""
+          // tooltipPlacement=""
           icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
           onClick={handleToolChange(FcrBoardTool.Clicker)}
         />
@@ -142,7 +145,7 @@ export const Toolbar = observer(() => {
       renderItem: () => (
         <ToolbarItem
           tooltip="Save"
-          tooltipPlacement=""
+          // tooltipPlacement=""
           icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
           onClick={handleToolChange(FcrBoardTool.Clicker)}
         />
@@ -150,31 +153,60 @@ export const Toolbar = observer(() => {
     },
     {
       renderItem: () => {
-        return (
-          <ToolbarItem tooltip="Move" tooltipPlacement="" icon={SvgIconEnum.FCR_WHITEBOARD_MOVE} />
-        );
+        return <MoveHandleItem />;
       },
     },
   ];
 
   return (
-    <div className="fcr-board-toolbar">
-      <div className="fcr-board-toolbar-main">
-        <ul className="fcr-board-toolbar-list">
-          {tools.map(({ renderItem }, i) => {
-            return <li key={i.toString()}>{renderItem()}</li>;
-          })}
-        </ul>
+    <DraggableWrapper>
+      <div className="fcr-board-toolbar">
+        <div className="fcr-board-toolbar-main">
+          <ul className="fcr-board-toolbar-list">
+            {tools.map(({ renderItem }, i) => {
+              return <li key={i.toString()}>{renderItem()}</li>;
+            })}
+          </ul>
+        </div>
+        <div className="fcr-board-toolbar-extra">
+          <ul className="fcr-board-toolbar-list">
+            {extraTools.map(({ renderItem }, i) => {
+              return <li key={i.toString()}>{renderItem()}</li>;
+            })}
+          </ul>
+        </div>
       </div>
-      <div className="fcr-board-toolbar-extra">
-        <ul className="fcr-board-toolbar-list">
-          {extraTools.map(({ renderItem }, i) => {
-            return <li key={i.toString()}>{renderItem()}</li>;
-          })}
-        </ul>
-      </div>
-    </div>
+    </DraggableWrapper>
   );
+});
+
+const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) => {
+  const { observables, dragToolbar, releaseToolbar } = useContext(ToolbarUIContext);
+  const { toolbarPosition, toolbarReleased, toolbarDockPosition } = observables;
+  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
+  useEffect(() => {
+    const mouseReleaseHandler = () => {
+      releaseToolbar();
+    };
+    window.addEventListener('mouseup', mouseReleaseHandler);
+
+    return () => {
+      window.removeEventListener('mouseup', mouseReleaseHandler);
+    };
+  }, []);
+
+  useEffect(() => {
+    if (toolbarReleased) {
+      api.start({ ...toolbarDockPosition, immediate: false });
+    }
+  }, [toolbarReleased]);
+
+  useEffect(() => {
+    dragToolbar();
+    api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: false });
+  }, [toolbarPosition.x, toolbarPosition.y]);
+
+  return <animated.div style={{ x, y }}>{children}</animated.div>;
 });
 
 const ToolbarItem: FC<{
@@ -182,10 +214,12 @@ const ToolbarItem: FC<{
   icon: SvgIconEnum;
   tooltipPlacement?: string;
   onClick?: () => void;
-}> = ({ tooltipPlacement, tooltip, icon, onClick }) => {
+  className?: string;
+}> = ({ tooltipPlacement, tooltip, icon, onClick, className }) => {
+  const cls = classNames('fcr-board-toolbar-item-surrounding', className);
   return (
     <ToolTip placement={tooltipPlacement} content={tooltip}>
-      <div className="fcr-board-toolbar-item-surrounding" onClick={onClick}>
+      <div className={cls} onClick={onClick}>
         <SvgImg type={icon} size={30} />
       </div>
     </ToolTip>
@@ -289,6 +323,29 @@ const PenPickerItem: FC = observer(() => {
   );
 });
 
+const MoveHandleItem = () => {
+  const { setToolbarPosition, setToolbarDockPosition } = useContext(ToolbarUIContext);
+  const bind = useDrag(({ movement: [mx, my] }) => {
+    if (mx > window.innerWidth / 2) {
+      setToolbarDockPosition({ x: window.innerWidth - 50, y: 0 });
+    } else {
+      setToolbarDockPosition({ x: 0, y: 0 });
+    }
+    setToolbarPosition({ x: mx, y: my });
+  });
+
+  return (
+    <div {...bind()}>
+      <ToolbarItem
+        tooltip="Move"
+        // tooltipPlacement=""
+        icon={SvgIconEnum.FCR_WHITEBOARD_MOVE}
+        className="fcr-board-toolbar-handle"
+      />
+    </div>
+  );
+};
+
 const EraserPickerItem: FC = observer(() => {
   return (
     <ExpansionToolbarItem
@@ -326,7 +383,6 @@ const PenPickerPanel = observer(() => {
   const [value, setValue] = useState(0);
   // const { setStrokeWith } = useContext(ToolbarUIContext);
   const handleChange = (value: number) => {
-    // console.log(value);
     setValue(value);
   };
 
