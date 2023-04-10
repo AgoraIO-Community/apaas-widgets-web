@@ -39,9 +39,6 @@
   bottom: 2px;
 }
 
-.fcr-board-toolbar__color-picker {
-}
-
 .fcr-board-toolbar__color-items {
   display: flex;
   flex-wrap: wrap;
@@ -50,7 +47,8 @@
   padding: 14px 0;
 }
 
-.fcr-board-toolbar__color-panel {
+.fcr-board-toolba-panel {
+  padding: 20px 12px;
 }
 
 .fcr-board-toolbar__color-item {

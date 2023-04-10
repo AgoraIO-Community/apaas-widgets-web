@@ -270,21 +270,20 @@ const ColorPickerItem: FC = observer(() => {
     setStrokeColor,
   } = useContext(ToolbarUIContext);
 
-  const handleClickColor = () => {
-    setStrokeColor();
+  const handleClickColor = (color: string) => {
+    return () => {
+      setStrokeColor();
+    };
   };
 
   return (
-    <div className="fcr-board-toolbar__color-picker">
-      <div className="fcr-board-toolbar__color-items">
-        <div className="fcr-board-toolbar__color-item" onClick={handleClickColor} />
-        <div className="fcr-board-toolbar__color-item" onClick={handleClickColor} />
-        <div className="fcr-board-toolbar__color-item" onClick={handleClickColor} />
-        <Popover content={<ColorPickerPanel />} placement="right" trigger="click">
-          <div className="fcr-board-toolbar__color-item" />
-        </Popover>
-      </div>
-    </div>
+    <ExpansionToolbarItem
+      tooltip="Shape"
+      icon={SvgIconEnum.FCR_WHITEBOARD_SHAP_CIRCLE}
+      onClick={handleClickColor('')}
+      popoverPlacement="right"
+      popoverContent={<ColorPickerPanel />}
+    />
   );
 });
 
@@ -371,7 +370,7 @@ const ScreenCapturePickerItem: FC = observer(() => {
 const ColorPickerPanel = () => {
   const colors = [''];
   return (
-    <div>
+    <div className="fcr-board-toolba-panel">
       {colors.map((color) => {
         return <div key={color} />;
       })}
@@ -387,7 +386,7 @@ const PenPickerPanel = observer(() => {
   };
 
   return (
-    <div>
+    <div className="fcr-board-toolba-panel">
       <HorizontalSlider value={value} onChange={handleChange} />
       <div />
       <div>
