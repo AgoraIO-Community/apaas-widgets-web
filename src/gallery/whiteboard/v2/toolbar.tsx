@@ -386,15 +386,66 @@ const PenPickerPanel = observer(() => {
   };
 
   return (
-    <div className="fcr-board-toolba-panel">
-      <HorizontalSlider value={value} onChange={handleChange} />
-      <div />
-      <div>
-        <div>
-          <SvgImg type={SvgIconEnum.FCR_PEN_LINE_3SIZE} />
-        </div>
-        <div>
-          <SvgImg type={SvgIconEnum.FCR_PEN_CURVE_3SIZE} />
+    <div
+      className="fcr-board-toolba-panel"
+      style={{
+        width: 152,
+        height: 120,
+      }}>
+      <div style={{ padding: '20px 8px' }}>
+        <HorizontalSlider value={value} onChange={setValue} />
+        <div
+          className="fcr-board-toolbar-divider"
+          style={{ borderTop: '1px solid #4a4c5f', marginTop: 22, marginBottom: 10 }}
+        />
+        <div
+          className="fcr-board-toolbar-pen-type"
+          style={{
+            display: 'flex',
+          }}>
+          <div
+            className="fcr-board-toolbar__pen-straight"
+            style={{
+              width: 65,
+              height: 30,
+              display: 'flex',
+              justifyContent: 'center',
+              border: '2px solid #4262FF',
+              flexGrow: 1,
+              flexShrink: 0,
+              marginRight: 6,
+              borderRadius: 12,
+              cursor: 'pointer',
+            }}>
+            <SvgImg
+              type={SvgIconEnum.FCR_PEN_LINE_3SIZE}
+              size={30}
+              style={{
+                marginTop: -2,
+              }}
+            />
+          </div>
+          <div
+            className="fcr-board-toolbar__pen-curve"
+            style={{
+              width: 65,
+              height: 30,
+              display: 'flex',
+              justifyContent: 'center',
+              border: '1px solid #4A4C5F',
+              flexGrow: 1,
+              flexShrink: 0,
+              borderRadius: 12,
+              cursor: 'pointer',
+            }}>
+            <SvgImg
+              type={SvgIconEnum.FCR_PEN_CURVE_3SIZE}
+              size={30}
+              style={{
+                marginTop: -2,
+              }}
+            />
+          </div>
         </div>
       </div>
     </div>

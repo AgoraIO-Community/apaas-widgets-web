@@ -48,7 +48,7 @@
 }
 
 .fcr-board-toolba-panel {
-  padding: 20px 12px;
+  /* padding: 20px 12px; */
 }
 
 .fcr-board-toolbar__color-item {
@@ -122,4 +122,6 @@
 
 .fcr-board-toolbar__pen-picker__overlay .fcr-tooltip-inner {
   overflow: unset !important;
+  width: unset;
+  border: 0;
 }
