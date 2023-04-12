@@ -1,0 +1,45 @@
+.fcr-chatroom-mobile-container {
+  width: 100vw;
+  flex: 1;
+  position: relative;
+  background: unset;
+  display: flex;
+  flex-direction: column;
+  background: #27292f;
+  border-radius: 20px 20px 0 0;
+  overflow: hidden;
+}
+
+.fcr-chatroom-mobile-placeholder {
+  height: 12px;
+  flex-shrink: 0;
+}
+.fcr-chatroom-mobile-mask {
+  width: 100%;
+  height: 50px;
+  position: absolute;
+  top: 0;
+  left: 0;
+  background: linear-gradient(180deg, #282a32 32.95%, rgba(40, 42, 50, 0) 100%);
+  z-index: 1;
+  pointer-events: none;
+  border-radius: 20px 20px 0 0;
+}
+.fcr-chatroom-mobile-room-info-emoji-open {
+  position: relative;
+  top: -200px;
+}
+
+/** landscape **/
+
+.fcr-chatroom-mobile-landscape-input-container {
+  display: flex;
+  justify-content: flex-end;
+  flex-direction: column;
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+.fcr-chatroom-mobile-landscape-input-container-emoji-open {
+  bottom: 200px;
+}

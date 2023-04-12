@@ -1,0 +1,40 @@
+@keyframes fadeLeft {
+  from {
+    opacity: 0;
+    transform: translate3d(-2000px, 0, 0);
+  }
+
+  20% {
+    opacity: 1;
+    transform: translate3d(calc(100% + 20px), 0, 0);
+  }
+
+  80% {
+    opacity: 1;
+    transform: translate3d(calc(100% + 20px), 0, 0);
+  }
+
+  100% {
+    opacity: 0;
+    transform: translate3d(-2000px, 0, 0);
+  }
+}
+
+.fcr-chatroom-mobile-user-joined {
+  height: 24px;
+  border-radius: 16px;
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 24px;
+  padding: 0 10px;
+  width: fit-content;
+  position: absolute;
+  top: 12px;
+  color: #fff;
+  animation-name: fadeLeft;
+  z-index: 2;
+}
+.fcr-chatroom-mobile-user-joined.fcr-chatroom-mobile-user-joined-landscape {
+  top: calc(40% - 30px);
+  color: #000;
+}

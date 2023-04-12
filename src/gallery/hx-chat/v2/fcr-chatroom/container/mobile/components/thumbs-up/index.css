@@ -1,0 +1,36 @@
+.fcr-chatroom-mobile-inputs-thumbs-up-canvas {
+  width: 76px;
+  height: 200px;
+  position: absolute;
+  top: -200px;
+  left: -20px;
+  pointer-events: none;
+}
+.fcr-chatroom-mobile-inputs-thumbs-up {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: rgba(238, 72, 120, 1);
+  position: relative;
+  z-index: 9;
+  user-select: none;
+}
+.fcr-chatroom-mobile-inputs-thumbs-up-count {
+  width: 27px;
+  height: 14px;
+  border-radius: 15px;
+  background: rgba(255, 255, 255, 0.9);
+  color: #ee4878;
+  font-size: 8px;
+  line-height: 14px;
+  top: -7px;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  position: absolute;
+  text-align: center;
+  user-select: none;
+}
