@@ -4,7 +4,8 @@ import ReactDOM from 'react-dom';
 import { BoardUIContext, ScenePaginationUIContext, ToolbarUIContext } from '../ui-context';
 import { App } from './app';
 import { FcrBoardShape, FcrBoardTool } from '../wrapper/type';
-import { observable, action, runInAction } from 'mobx';
+import { observable, action } from 'mobx';
+import tinycolor from 'tinycolor2';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends FcrBoardWidgetBase {
@@ -48,22 +49,64 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
 
   createToolbarUIContext() {
     const observables = observable({
-      currentTool: FcrBoardTool.Clicker,
+      currentTool: undefined as FcrBoardTool | undefined,
       currentColor: '',
-      currentShape: FcrBoardShape.Straight,
+      currentShape: undefined as FcrBoardShape | undefined,
+      lastPen: undefined as FcrBoardShape | undefined,
+      lastShape: undefined as FcrBoardShape | undefined,
+      currentStrokeWidth: 2,
       toolbarPosition: { x: 0, y: 0 },
       toolbarDockPosition: { x: 0, y: 0 },
       toolbarReleased: true,
+      canRedo: false,
+      canUndo: false,
     });
+    this._connectToolbarState(observables);
     return {
       observables,
-      redo: () => {},
-      undo: () => {},
-      setTool: () => {},
-      setShape: () => {},
-      setStrokeColor: () => {},
-      setStrokeWith: () => {},
-      clickExpansionTool: () => {},
+      redo: () => {
+        this._boardMainWindow?.redo();
+      },
+      undo: () => {
+        this._boardMainWindow?.undo();
+      },
+      clean: () => {
+        this._boardMainWindow?.clean();
+      },
+      setTool: action((tool: FcrBoardTool) => {
+        observables.currentTool = tool;
+        observables.currentShape = undefined;
+        this._boardMainWindow?.selectTool(tool);
+      }),
+      setPen: action((shape: FcrBoardShape) => {
+        observables.currentShape = shape;
+        observables.lastPen = shape;
+        observables.currentTool = undefined;
+        this._boardMainWindow?.drawShape(
+          shape,
+          observables.currentStrokeWidth,
+          tinycolor(observables.currentColor).toRgb(),
+        );
+      }),
+      setShape: action((shape: FcrBoardShape) => {
+        observables.currentShape = shape;
+        observables.lastShape = shape;
+        observables.currentTool = undefined;
+        this._boardMainWindow?.drawShape(
+          shape,
+          observables.currentStrokeWidth,
+          tinycolor(observables.currentColor).toRgb(),
+        );
+      }),
+      setStrokeColor: action((color: string) => {
+        observables.currentColor = color;
+        this._boardMainWindow?.changeStrokeColor(tinycolor(color).toRgb());
+      }),
+      setStrokeWidth: action((strokeWidth: number) => {
+        observables.currentStrokeWidth = strokeWidth;
+        this._boardMainWindow?.changeStrokeWidth(strokeWidth);
+      }),
+      clickExpansionTool: action(() => {}),
       setToolbarPosition: action((pos: { x: number; y: number }) => {
         observables.toolbarPosition = pos;
       }),
@@ -76,6 +119,9 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       releaseToolbar: action(() => {
         observables.toolbarReleased = true;
       }),
+      captureApp: () => {},
+      captureScreen: () => {},
+      saveDraft: () => {},
     };
   }
 
@@ -88,4 +134,8 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       hide: () => {},
     };
   }
+
+  private _connectToolbarState(state: any) {}
+
+  private _connectPaginationState() {}
 }
