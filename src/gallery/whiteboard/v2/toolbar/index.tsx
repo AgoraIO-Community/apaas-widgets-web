@@ -12,11 +12,12 @@ import { EraserPickerItem } from './eraser-picker';
 import { ColorPickerItem } from './color-picker';
 import { ScreenCapturePickerItem } from './screen-capture-picker';
 import { DraggableWrapper, MoveHandleItem } from './move-handle';
-import { RedoItem, UndoItem } from './redo';
+import { RedoItem, UndoItem } from './history';
+import { ExtraToolPickerItem } from './extra-tool-picker';
 
 export const Toolbar = observer(() => {
   const {
-    observables: { currentTool },
+    observables: { currentTool, isMiniSize },
     setTool,
     saveDraft,
   } = useContext(ToolbarUIContext);
@@ -102,57 +103,66 @@ export const Toolbar = observer(() => {
 
   const extraTools = [
     {
-      renderItem: () => (
-        <ToolbarItem tooltip="Cloud" icon={SvgIconEnum.FCR_WHITEBOARD_CLOUD} isActive={false} />
-      ),
-    },
-    {
-      renderItem: () => (
-        <ToolbarItem
-          tooltip="Laser Pen"
-          icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
-          onClick={handleToolChange(FcrBoardTool.LaserPointer)}
-          isActive={currentTool === FcrBoardTool.LaserPointer}
-        />
-      ),
-    },
-    {
-      renderItem: () => <ScreenCapturePickerItem />,
-    },
-    {
-      renderItem: () => (
-        <ToolbarItem
-          tooltip="Save"
-          icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
-          onClick={saveDraft}
-          isActive={false}
-        />
-      ),
-    },
-    {
       renderItem: () => {
         return <MoveHandleItem />;
       },
     },
   ];
 
+  if (isMiniSize) {
+    extraTools.unshift({
+      renderItem: () => {
+        return <ExtraToolPickerItem />;
+      },
+    });
+  } else {
+    extraTools.unshift(
+      {
+        renderItem: () => (
+          <ToolbarItem tooltip="Cloud" icon={SvgIconEnum.FCR_WHITEBOARD_CLOUD} isActive={false} />
+        ),
+      },
+      {
+        renderItem: () => (
+          <ToolbarItem
+            tooltip="Laser Pen"
+            icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
+            onClick={handleToolChange(FcrBoardTool.LaserPointer)}
+            isActive={currentTool === FcrBoardTool.LaserPointer}
+          />
+        ),
+      },
+      {
+        renderItem: () => <ScreenCapturePickerItem />,
+      },
+      {
+        renderItem: () => (
+          <ToolbarItem
+            tooltip="Save"
+            icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
+            onClick={saveDraft}
+            isActive={false}
+          />
+        ),
+      },
+    );
+  }
+
   return (
     <DraggableWrapper>
-      <div className="fcr-board-toolbar">
-        <div className="fcr-board-toolbar-main">
-          <ul className="fcr-board-toolbar-list">
-            {tools.map(({ renderItem }, i) => {
-              return <li key={i.toString()}>{renderItem()}</li>;
-            })}
-          </ul>
-        </div>
-        <div className="fcr-board-toolbar-extra">
-          <ul className="fcr-board-toolbar-list">
-            {extraTools.map(({ renderItem }, i) => {
-              return <li key={i.toString()}>{renderItem()}</li>;
-            })}
-          </ul>
-        </div>
+      <div className="fcr-board-toolbar-main">
+        <ul className="fcr-board-toolbar-list">
+          {tools.map(({ renderItem }, i) => {
+            return <li key={i.toString()}>{renderItem()}</li>;
+          })}
+        </ul>
+      </div>
+      <div className="fcr-board-toolbar-extra">
+        <ul className="fcr-board-toolbar-list">
+          {extraTools.map(({ renderItem }, i) => {
+            return <li key={i.toString()}>{renderItem()}</li>;
+          })}
+        </ul>
       </div>
     </DraggableWrapper>
   );
@@ -189,6 +199,8 @@ export const ExpansionToolbarItem: FC<{
   popoverOverlayClassName?: string;
   onClick?: () => void;
   isActive: boolean;
+  extensionMark?: boolean;
+  popoverOffset?: number;
 }> = ({
   tooltip,
   tooltipPlacement,
@@ -198,6 +210,8 @@ export const ExpansionToolbarItem: FC<{
   onClick,
   popoverOverlayClassName,
   isActive,
+  extensionMark = true,
+  popoverOffset = 6,
 }) => {
   const cls = classNames('fcr-board-toolbar-item-surrounding', {
     'fcr-board-toolbar-item-surrounding--active': isActive,
@@ -207,7 +221,7 @@ export const ExpansionToolbarItem: FC<{
     <PopoverWithTooltip
       toolTipProps={{ placement: tooltipPlacement, content: tooltip }}
       popoverProps={{
-        overlayOffset: 6,
+        overlayOffset: popoverOffset,
         placement: popoverPlacement,
         content: popoverContent,
         overlayClassName: popoverOverlayClassName,
@@ -215,11 +229,13 @@ export const ExpansionToolbarItem: FC<{
       }}>
       <div className={cls} onClick={onClick}>
         <SvgImg type={icon} size={30} />
-        <SvgImg
-          type={SvgIconEnum.FCR_WHITEBOARD_LOWERRIGHTARROW}
-          size={4}
-          className="fcr-board-toolbar-expansion-icon"
-        />
+        {extensionMark && (
+          <SvgImg
+            type={SvgIconEnum.FCR_WHITEBOARD_LOWERRIGHTARROW}
+            size={4}
+            className="fcr-board-toolbar-expansion-icon"
+          />
+        )}
       </div>
     </PopoverWithTooltip>
   );

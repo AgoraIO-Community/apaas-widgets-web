@@ -1,6 +1,21 @@
+.netless-whiteboard-wrapper {
+  @apply fcr-bg-foreground fcr-border-divider;
+  height: 100%;
+  width: 100%;
+  border: 1px solid;
+  border-radius: 4px;
+}
+
+.board-widget-app {
+  height: 100%;
+}
+
 .fcr-board-toolbar {
   position: absolute;
   width: 50px;
+  z-index: 10;
+  margin-left: 10px;
+  margin-right: 10px;
   --color-brand-6: theme(colors.brand.6);
   --color-block-2: theme(colors.block-2);
 }
@@ -170,7 +185,8 @@
 
 .fcr-board-toolbar-panel--shape,
 .fcr-board-toolbar-panel--eraser,
-.fcr-board-toolbar-panel--capture {
+.fcr-board-toolbar-panel--capture,
+.fcr-board-toolbar-panel--extra {
   padding: 9px 7px;
 }
 
@@ -217,7 +233,8 @@
 
 .fcr-board-toolbar-panel--shape > div,
 .fcr-board-toolbar-panel--eraser > div,
-.fcr-board-toolbar-panel--capture > div {
+.fcr-board-toolbar-panel--capture > div,
+.fcr-board-toolbar-panel--extra > div {
   width: 36px;
   height: 36px;
   display: flex;
@@ -229,19 +246,22 @@
 }
 .fcr-board-toolbar-panel--shape > div:not(:last-child),
 .fcr-board-toolbar-panel--eraser > div:not(:last-child),
-.fcr-board-toolbar-panel--capture > div:not(:last-child) {
+.fcr-board-toolbar-panel--capture > div:not(:last-child),
+.fcr-board-toolbar-panel--extra > div:not(:last-child) {
   margin-bottom: 6px;
 }
 
 .fcr-board-toolbar-panel--shape > div.fcr-board-toolbar-panel--active,
 .fcr-board-toolbar-panel--eraser > div.fcr-board-toolbar-panel--active,
-.fcr-board-toolbar-panel--capture > div.fcr-board-toolbar-panel--active {
+.fcr-board-toolbar-panel--capture > div.fcr-board-toolbar-panel--active,
+.fcr-board-toolbar-panel--extra > div.fcr-board-toolbar-panel--active {
   border-color: var(--color-brand-6);
 }
 
 .fcr-board-toolbar-panel--shape > div:hover,
 .fcr-board-toolbar-panel--eraser > div:hover,
-.fcr-board-toolbar-panel--capture > div:hover {
+.fcr-board-toolbar-panel--capture > div:hover,
+.fcr-board-toolbar-panel--extra > div:hover {
   @apply fcr-bg-brand-6;
 }
 

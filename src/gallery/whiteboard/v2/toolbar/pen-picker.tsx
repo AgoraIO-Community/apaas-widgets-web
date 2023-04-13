@@ -8,18 +8,36 @@ import { FcrBoardShape } from '../../wrapper/type';
 import classNames from 'classnames';
 import { ToolTip } from '@components/tooltip';
 
+const penIconMap = {
+  [FcrBoardShape.Curve]: SvgIconEnum.FCR_WHITEBOARD_PED_CURVE,
+  [FcrBoardShape.Straight]: SvgIconEnum.FCR_WHITEBOARD_PED_STRAIGHTLINE,
+};
+
 export const PenPickerItem: FC = observer(() => {
   const {
-    observables: { currentShape },
+    observables: { currentShape, lastPen },
+    setPen,
   } = useContext(ToolbarUIContext);
 
+  const handlePenToolChange = (shapeTool: FcrBoardShape) => {
+    return () => {
+      setPen(shapeTool);
+    };
+  };
+
   const isActive = currentShape === FcrBoardShape.Curve || currentShape === FcrBoardShape.Straight;
+
+  const icon = lastPen
+    ? penIconMap[lastPen as keyof typeof penIconMap]
+    : SvgIconEnum.FCR_WHITEBOARD_PED_CURVE;
+  const clickShape = lastPen ? lastPen : FcrBoardShape.Curve;
 
   return (
     <ExpansionToolbarItem
       isActive={isActive}
       tooltip="Pen"
-      icon={SvgIconEnum.FCR_WHITEBOARD_PED_CURVE}
+      icon={icon}
+      onClick={handlePenToolChange(clickShape)}
       popoverPlacement="right"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<PenPickerPanel />}

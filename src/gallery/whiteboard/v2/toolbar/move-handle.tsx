@@ -22,9 +22,9 @@ export const MoveHandleItem = () => {
     <div {...bind()}>
       <ToolbarItem
         tooltip="Move"
-        // tooltipPlacement=""
         icon={SvgIconEnum.FCR_WHITEBOARD_MOVE}
         className="fcr-board-toolbar-handle"
+        isActive={false}
       />
     </div>
   );
@@ -33,7 +33,7 @@ export const MoveHandleItem = () => {
 export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) => {
   const { observables, dragToolbar, releaseToolbar } = useContext(ToolbarUIContext);
   const { toolbarPosition, toolbarReleased, toolbarDockPosition } = observables;
-  const [{ x, y }, api] = useSpring(() => ({ x: 0, y: 0 }));
+  const [{ x, y }, api] = useSpring(() => toolbarDockPosition);
   useEffect(() => {
     const mouseReleaseHandler = () => {
       releaseToolbar();
@@ -53,8 +53,12 @@ export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) =
 
   useEffect(() => {
     dragToolbar();
-    api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: false });
+    api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: true });
   }, [toolbarPosition.x, toolbarPosition.y]);
 
-  return <animated.div style={{ x, y }}>{children}</animated.div>;
+  return (
+    <animated.div style={{ left: x, top: y }} className="fcr-board-toolbar">
+      {children}
+    </animated.div>
+  );
 });

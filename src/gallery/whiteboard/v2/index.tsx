@@ -1,14 +1,22 @@
 import { Log } from 'agora-common-libs/lib/annotation';
 import { FcrBoardWidgetBase } from '../board-widget-base';
 import ReactDOM from 'react-dom';
-import { BoardUIContext, ScenePaginationUIContext, ToolbarUIContext } from '../ui-context';
+import {
+  BoardUIContext,
+  ScenePaginationUIContext,
+  ToolbarUIContext,
+  ToolbarUIObservables,
+} from '../ui-context';
 import { App } from './app';
 import { FcrBoardShape, FcrBoardTool } from '../wrapper/type';
 import { observable, action } from 'mobx';
 import tinycolor from 'tinycolor2';
+import { AgoraViewportBoundaries } from 'agora-common-libs/lib/widget';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends FcrBoardWidgetBase {
+  private _toolbarObservables?: ToolbarUIObservables;
+
   locate() {
     const dom = document.querySelector('.fcr-layout-board-view');
     if (dom) {
@@ -60,8 +68,11 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       toolbarReleased: true,
       canRedo: false,
       canUndo: false,
+      isMiniSize: false,
     });
-    this._connectToolbarState(observables);
+    this._toolbarObservables = observables;
+    this._notifyViewportChange();
+    this._connectToolbarState();
     return {
       observables,
       redo: () => {
@@ -135,7 +146,26 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
     };
   }
 
-  private _connectToolbarState(state: any) {}
+  private _connectToolbarState() {}
 
   private _connectPaginationState() {}
+
+  @action.bound
+  private _notifyViewportChange() {
+    if (this._toolbarObservables) {
+      // update dock position
+      const boardDom = document.querySelector('.fcr-layout-board-view');
+
+      if (boardDom) {
+        const clientRect = boardDom.getBoundingClientRect();
+
+        this._toolbarObservables.isMiniSize = clientRect.height < 770;
+        this.logger.info('update isMiniSize', this._toolbarObservables.isMiniSize);
+      }
+    }
+  }
+
+  onViewportBoundaryUpdate(boundaries: AgoraViewportBoundaries): void {
+    this._notifyViewportChange();
+  }
 }

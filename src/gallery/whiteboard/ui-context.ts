@@ -2,16 +2,16 @@
 import React, { createContext } from 'react';
 import { FcrBoardShape, FcrBoardTool } from './wrapper/type';
 
-export const BoardUIContext = createContext({
+const boardUIContextDefault = {
   mount: () => {},
   unmount: () => {},
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
   handleBoardDomLoad: (ref: HTMLDivElement | null) => {},
   handleCollectorDomLoad: (ref: HTMLDivElement | null) => {},
-});
+};
 
-export const ToolbarUIContext = createContext({
+const toolbarUIContextDefault = {
   observables: {
     currentTool: undefined as FcrBoardTool | undefined,
     currentShape: undefined as FcrBoardShape | undefined,
@@ -24,6 +24,7 @@ export const ToolbarUIContext = createContext({
     canUndo: false,
     lastPen: undefined as FcrBoardShape | undefined,
     lastShape: undefined as FcrBoardShape | undefined,
+    isMiniSize: true,
   },
   clean: () => {},
   redo: () => {},
@@ -41,12 +42,20 @@ export const ToolbarUIContext = createContext({
   captureApp: () => {},
   captureScreen: () => {},
   saveDraft: () => {},
-});
+};
 
-export const ScenePaginationUIContext = createContext({
+const scenePaginationUIContextDefault = {
   observables: {
     visible: true,
   },
   show: () => {},
   hide: () => {},
-});
+};
+
+export const BoardUIContext = createContext(boardUIContextDefault);
+
+export const ToolbarUIContext = createContext(toolbarUIContextDefault);
+export type ToolbarUIObservables = typeof toolbarUIContextDefault['observables'];
+
+export const ScenePaginationUIContext = createContext(scenePaginationUIContextDefault);
+export type ScenePaginationUIObservables = typeof scenePaginationUIContextDefault['observables'];

@@ -4,7 +4,7 @@ import { ExpansionToolbarItem } from '.';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolbarUIContext } from '../../ui-context';
 
-export const ScreenCapturePickerItem: FC = observer(() => {
+export const ScreenCapturePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const isActive = false;
 
   return (
@@ -15,6 +15,7 @@ export const ScreenCapturePickerItem: FC = observer(() => {
       icon={SvgIconEnum.FCR_WIHITEBOARD_SLICE}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<ScreenCapturePickerPanel />}
+      popoverOffset={offset}
     />
   );
 });
