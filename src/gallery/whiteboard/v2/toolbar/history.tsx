@@ -6,7 +6,7 @@ import { SvgIconEnum } from '@components/svg-img';
 
 export const UndoItem = observer(() => {
   const {
-    observables: { canUndo },
+    observables: { undoSteps },
     undo,
   } = useContext(ToolbarUIContext);
 
@@ -16,14 +16,14 @@ export const UndoItem = observer(() => {
       icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_UNDO}
       onClick={undo}
       isActive={false}
-      isDisabled={!canUndo}
+      isDisabled={!undoSteps}
     />
   );
 });
 
 export const RedoItem = observer(() => {
   const {
-    observables: { canRedo },
+    observables: { redoSteps },
     redo,
   } = useContext(ToolbarUIContext);
 
@@ -33,7 +33,7 @@ export const RedoItem = observer(() => {
       icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_REDO}
       onClick={redo}
       isActive={false}
-      isDisabled={!canRedo}
+      isDisabled={!redoSteps}
     />
   );
 });

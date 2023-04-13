@@ -24,7 +24,6 @@ export interface ProgressProps {
 export const Progress: React.FC<ProgressProps> = ({
   progress,
   width,
-  children,
   className,
   style,
   type,
@@ -101,7 +100,7 @@ const ProgressList = forwardRef<ProgressListRef>((_, ref) => {
       {progressList.map((progress) => (
         <div className="dialog-progress-item" key={progress.key}>
           <span className="dialog-progress-tip">{transI18n('toast2.saving')}</span>
-          <div className="flex items-center gap-2">
+          <div className="fcr-flex fcr-items-center fcr-gap-2">
             <ProgressWarpper
               key={progress.key}
               width={progress.width}

@@ -1,21 +1,31 @@
-import { Log } from 'agora-common-libs/lib/annotation';
+import { Log, bound } from 'agora-common-libs/lib/annotation';
 import { FcrBoardWidgetBase } from '../board-widget-base';
 import ReactDOM from 'react-dom';
 import {
   BoardUIContext,
   ScenePaginationUIContext,
+  ScenePaginationUIContextValue,
   ToolbarUIContext,
-  ToolbarUIObservables,
+  ToolbarUIContextValue,
 } from '../ui-context';
 import { App } from './app';
-import { FcrBoardShape, FcrBoardTool } from '../wrapper/type';
-import { observable, action } from 'mobx';
+import {
+  FcrBoardMainWindowEvent,
+  FcrBoardPageInfo,
+  FcrBoardShape,
+  FcrBoardTool,
+} from '../wrapper/type';
+import { observable, action, runInAction } from 'mobx';
 import tinycolor from 'tinycolor2';
 import { AgoraViewportBoundaries } from 'agora-common-libs/lib/widget';
+import { transI18n } from 'agora-common-libs/lib/i18n';
+import dayjs from 'dayjs';
+import { downloadCanvasImage } from '../wrapper/utils';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends FcrBoardWidgetBase {
-  private _toolbarObservables?: ToolbarUIObservables;
+  private _toolbarContext?: ToolbarUIContextValue;
+  private _paginationContext?: ScenePaginationUIContextValue;
 
   locate() {
     const dom = document.querySelector('.fcr-layout-board-view');
@@ -38,6 +48,18 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       </BoardUIContext.Provider>,
       dom,
     );
+  }
+
+  @bound
+  mount(): void {
+    super.mount();
+    this._connectObservables();
+  }
+
+  @bound
+  unmount(): void {
+    super.unmount();
+    this._disconnectObservables();
   }
 
   createBoardUIContext() {
@@ -64,16 +86,13 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       lastShape: undefined as FcrBoardShape | undefined,
       currentStrokeWidth: 2,
       toolbarPosition: { x: 0, y: 0 },
-      toolbarDockPosition: { x: 0, y: 0 },
+      toolbarDockPosition: { x: 0, y: 0, placement: 'left' as const },
       toolbarReleased: true,
-      canRedo: false,
-      canUndo: false,
+      redoSteps: 0,
+      undoSteps: 0,
       isMiniSize: false,
     });
-    this._toolbarObservables = observables;
-    this._notifyViewportChange();
-    this._connectToolbarState();
-    return {
+    this._toolbarContext = {
       observables,
       redo: () => {
         this._boardMainWindow?.redo();
@@ -121,46 +140,146 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       setToolbarPosition: action((pos: { x: number; y: number }) => {
         observables.toolbarPosition = pos;
       }),
-      setToolbarDockPosition: action((pos: { x: number; y: number }) => {
-        observables.toolbarDockPosition = pos;
-      }),
       dragToolbar: action(() => {
         observables.toolbarReleased = false;
       }),
       releaseToolbar: action(() => {
         observables.toolbarReleased = true;
+        this._calculateDockPosition();
       }),
       captureApp: () => {},
       captureScreen: () => {},
-      saveDraft: () => {},
+      saveDraft: () => {
+        this._boardMainWindow?.getSnapshotImage();
+      },
     };
+    return this._toolbarContext;
   }
 
   createScenePaginationUIContext() {
-    return {
-      observables: {
-        visible: true,
-      },
-      show: () => {},
-      hide: () => {},
+    const observables = observable({
+      currentPage: 1,
+      totalPage: 1,
+    });
+
+    this._paginationContext = {
+      observables,
+      addPage: action(() => {
+        this._boardMainWindow?.addPage({ after: true });
+      }),
+      changePage: action((page: number) => {
+        this._boardMainWindow?.setPageIndex(page - observables.currentPage);
+      }),
     };
+
+    return this._paginationContext;
   }
 
-  private _connectToolbarState() {}
+  @action.bound
+  private _updatePageInfo(info: FcrBoardPageInfo) {
+    if (this._paginationContext) {
+      this._paginationContext.observables.currentPage = info.showIndex + 1;
+      this._paginationContext.observables.totalPage = info.count;
+    }
+  }
+  @action.bound
+  private _updateRedo(steps: number) {
+    if (this._toolbarContext) {
+      this._toolbarContext.observables.redoSteps = steps;
+    }
+  }
+  @action.bound
+  private _updateUndo(steps: number) {
+    if (this._toolbarContext) {
+      this._toolbarContext.observables.undoSteps = steps;
+    }
+  }
 
-  private _connectPaginationState() {}
+  private _saveSnapshot(canvas: HTMLCanvasElement) {
+    const fileName = `${this.classroomConfig.sessionInfo.roomName}_${dayjs().format(
+      'YYYYMMDD_HHmmSSS',
+    )}.jpg`;
+    downloadCanvasImage(canvas, fileName);
+    this.ui.addToast(transI18n('toast2.save_success'), 'success');
+  }
+
+  private _connectObservables() {
+    const mainWindow = this._boardMainWindow;
+    mainWindow?.on(FcrBoardMainWindowEvent.PageInfoUpdated, this._updatePageInfo);
+    mainWindow?.on(FcrBoardMainWindowEvent.RedoStepsUpdated, this._updateRedo);
+    mainWindow?.on(FcrBoardMainWindowEvent.UndoStepsUpdated, this._updateUndo);
+    mainWindow?.on(FcrBoardMainWindowEvent.SnapshotSuccess, this._saveSnapshot);
+
+    runInAction(() => {
+      if (this._toolbarContext) {
+        const defaultStrokeColor = '#fed130';
+        const defaultStrokeWidth = 2;
+        const defaultTool = FcrBoardTool.Clicker;
+        this._boardMainWindow?.changeStrokeColor(tinycolor(defaultStrokeColor).toRgb());
+        this._toolbarContext.observables.currentColor = defaultStrokeColor;
+        this._boardMainWindow?.changeStrokeWidth(defaultStrokeWidth);
+        this._toolbarContext.observables.currentStrokeWidth = defaultStrokeWidth;
+        this._boardMainWindow?.selectTool(defaultTool);
+        this._toolbarContext.observables.currentTool = defaultTool;
+      }
+    });
+
+    this._notifyViewportChange();
+  }
+
+  private _disconnectObservables() {
+    const mainWindow = this._boardMainWindow;
+    mainWindow?.off(FcrBoardMainWindowEvent.PageInfoUpdated, this._updatePageInfo);
+    mainWindow?.off(FcrBoardMainWindowEvent.RedoStepsUpdated, this._updateRedo);
+    mainWindow?.off(FcrBoardMainWindowEvent.UndoStepsUpdated, this._updateUndo);
+    mainWindow?.off(FcrBoardMainWindowEvent.SnapshotSuccess, this._saveSnapshot);
+  }
+
+  private _calculateDockPosition() {
+    if (this._toolbarContext) {
+      const toolbarDom = document.querySelector('.fcr-board-toolbar');
+
+      if (this._boardDom && toolbarDom) {
+        const boardClientRect = this._boardDom.getBoundingClientRect();
+        const toolbarClientRect = toolbarDom.getBoundingClientRect();
+        const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2;
+        const centerPos = toolbarClientRect.x + toolbarClientRect.width / 2;
+
+        if (centerPos > boardClientRect.width / 2) {
+          // right
+          this._toolbarContext.observables.toolbarDockPosition = {
+            x: boardClientRect.width - toolbarClientRect.width,
+            y: toolbarOffsetTop,
+            placement: 'right',
+          };
+        } else {
+          // left
+          this._toolbarContext.observables.toolbarDockPosition = {
+            x: 0,
+            y: toolbarOffsetTop,
+            placement: 'left',
+          };
+        }
+      }
+    }
+  }
 
   @action.bound
   private _notifyViewportChange() {
-    if (this._toolbarObservables) {
+    if (this._toolbarContext) {
       // update dock position
-      const boardDom = document.querySelector('.fcr-layout-board-view');
 
-      if (boardDom) {
-        const clientRect = boardDom.getBoundingClientRect();
+      const toolbarDom = document.querySelector('.fcr-board-toolbar');
+      if (this._boardDom && toolbarDom) {
+        const boardClientRect = this._boardDom.getBoundingClientRect();
 
-        this._toolbarObservables.isMiniSize = clientRect.height < 770;
-        this.logger.info('update isMiniSize', this._toolbarObservables.isMiniSize);
+        this._toolbarContext.observables.isMiniSize = boardClientRect.height < 770;
+
+        const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2;
+
+        this._toolbarContext.setToolbarPosition({ x: 0, y: toolbarOffsetTop });
+
+        this._calculateDockPosition();
       }
     }
   }

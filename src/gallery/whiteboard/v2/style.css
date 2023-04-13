@@ -14,10 +14,14 @@
   position: absolute;
   width: 50px;
   z-index: 10;
-  margin-left: 10px;
-  margin-right: 10px;
   --color-brand-6: theme(colors.brand.6);
   --color-block-2: theme(colors.block-2);
+}
+.fcr-board-toolbar--left {
+  margin-left: 10px;
+}
+.fcr-board-toolbar--right {
+  margin-left: -10px;
 }
 
 .fcr-board-toolbar-list {
@@ -37,11 +41,11 @@
 
 .fcr-board-toolbar-list
   .fcr-board-toolbar-item-surrounding:hover:not(.fcr-board-toolbar-item-surrounding--disabled),
-.fcr-board-toolbar-list .fcr-board-toolbar-item-surrounding--active {
+.fcr-board-toolbar-item-surrounding--active {
   @apply fcr-bg-brand-6;
 }
 
-.fcr-board-toolbar-list .fcr-board-toolbar-item-surrounding--disabled {
+.fcr-board-toolbar-item-surrounding--disabled {
   opacity: 0.3;
 }
 
@@ -267,6 +271,7 @@
 
 .fcr-board-pagination {
   position: absolute;
-  left: 0;
-  bottom: 10px;
+  left: 10px;
+  bottom: calc(10px + 66px);
+  z-index: 10;
 }

@@ -19,9 +19,9 @@ const toolbarUIContextDefault = {
     currentStrokeWidth: 0,
     toolbarPosition: { x: 0, y: 0 },
     toolbarReleased: true,
-    toolbarDockPosition: { x: 0, y: 0 },
-    canRedo: false,
-    canUndo: false,
+    toolbarDockPosition: { x: 0, y: 0, placement: 'left' as 'left' | 'right' },
+    redoSteps: 0,
+    undoSteps: 0,
     lastPen: undefined as FcrBoardShape | undefined,
     lastShape: undefined as FcrBoardShape | undefined,
     isMiniSize: true,
@@ -36,7 +36,6 @@ const toolbarUIContextDefault = {
   setStrokeWidth: (strokeWidth: number) => {},
   clickExpansionTool: (tool: string) => {},
   setToolbarPosition: (pos: { x: number; y: number }) => {},
-  setToolbarDockPosition: (pos: { x: number; y: number }) => {},
   dragToolbar: () => {},
   releaseToolbar: () => {},
   captureApp: () => {},
@@ -46,16 +45,17 @@ const toolbarUIContextDefault = {
 
 const scenePaginationUIContextDefault = {
   observables: {
-    visible: true,
+    currentPage: 0,
+    totalPage: 0,
   },
-  show: () => {},
-  hide: () => {},
+  addPage: () => {},
+  changePage: (page: number) => {},
 };
 
 export const BoardUIContext = createContext(boardUIContextDefault);
 
 export const ToolbarUIContext = createContext(toolbarUIContextDefault);
-export type ToolbarUIObservables = typeof toolbarUIContextDefault['observables'];
+export type ToolbarUIContextValue = typeof toolbarUIContextDefault;
 
 export const ScenePaginationUIContext = createContext(scenePaginationUIContextDefault);
-export type ScenePaginationUIObservables = typeof scenePaginationUIContextDefault['observables'];
+export type ScenePaginationUIContextValue = typeof scenePaginationUIContextDefault;

@@ -5,17 +5,15 @@ import { ToolbarUIContext } from '../../ui-context';
 import { SvgIconEnum } from '@components/svg-img';
 import { useDrag, State } from '@use-gesture/react';
 import { useSpring, animated } from '@react-spring/web';
+import classNames from 'classnames';
 
 export const MoveHandleItem = () => {
-  const { setToolbarPosition, setToolbarDockPosition } = useContext(ToolbarUIContext);
+  const { setToolbarPosition, observables } = useContext(ToolbarUIContext);
   const bind = useDrag((p) => {
     const [mx, my] = (p as unknown as State['drag'])!.movement;
-    if (mx > window.innerWidth / 2) {
-      setToolbarDockPosition({ x: window.innerWidth - 50, y: 0 });
-    } else {
-      setToolbarDockPosition({ x: 0, y: 0 });
-    }
-    setToolbarPosition({ x: mx, y: my });
+
+    const { x, y } = observables.toolbarDockPosition;
+    setToolbarPosition({ x: x + mx, y: y + my });
   });
 
   return (
@@ -56,8 +54,13 @@ export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) =
     api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: true });
   }, [toolbarPosition.x, toolbarPosition.y]);
 
+  const cls = classNames('fcr-board-toolbar', {
+    'fcr-board-toolbar--left': toolbarDockPosition.placement === 'left',
+    'fcr-board-toolbar--right': toolbarDockPosition.placement === 'right',
+  });
+
   return (
-    <animated.div style={{ left: x, top: y }} className="fcr-board-toolbar">
+    <animated.div style={{ left: x, top: y }} className={cls}>
       {children}
     </animated.div>
   );
