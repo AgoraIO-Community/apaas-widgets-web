@@ -2,41 +2,60 @@
 import React, { createContext } from 'react';
 import { FcrBoardShape, FcrBoardTool } from './wrapper/type';
 
-export const BoardUIContext = createContext({
+const boardUIContextDefault = {
   mount: () => {},
   unmount: () => {},
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
   handleBoardDomLoad: (ref: HTMLDivElement | null) => {},
   handleCollectorDomLoad: (ref: HTMLDivElement | null) => {},
-});
+};
 
-export const ToolbarUIContext = createContext({
+const toolbarUIContextDefault = {
   observables: {
-    currentTool: FcrBoardTool.Clicker,
+    currentTool: undefined as FcrBoardTool | undefined,
+    currentShape: undefined as FcrBoardShape | undefined,
     currentColor: '',
-    currentShape: FcrBoardShape.Straight,
+    currentStrokeWidth: 0,
     toolbarPosition: { x: 0, y: 0 },
     toolbarReleased: true,
-    toolbarDockPosition: { x: 0, y: 0 },
+    toolbarDockPosition: { x: 0, y: 0, placement: 'left' as 'left' | 'right' },
+    redoSteps: 0,
+    undoSteps: 0,
+    lastPen: undefined as FcrBoardShape | undefined,
+    lastShape: undefined as FcrBoardShape | undefined,
+    isMiniSize: true,
   },
+  clean: () => {},
   redo: () => {},
   undo: () => {},
-  setTool: () => {},
-  setShape: () => {},
-  setStrokeColor: () => {},
-  setStrokeWith: () => {},
-  clickExpansionTool: () => {},
+  setTool: (tool: FcrBoardTool) => {},
+  setPen: (shape: FcrBoardShape) => {},
+  setShape: (shape: FcrBoardShape) => {},
+  setStrokeColor: (color: string) => {},
+  setStrokeWidth: (strokeWidth: number) => {},
+  clickExpansionTool: (tool: string) => {},
   setToolbarPosition: (pos: { x: number; y: number }) => {},
-  setToolbarDockPosition: (pos: { x: number; y: number }) => {},
   dragToolbar: () => {},
   releaseToolbar: () => {},
-});
+  captureApp: () => {},
+  captureScreen: () => {},
+  saveDraft: () => {},
+};
 
-export const ScenePaginationUIContext = createContext({
+const scenePaginationUIContextDefault = {
   observables: {
-    visible: true,
+    currentPage: 0,
+    totalPage: 0,
   },
-  show: () => {},
-  hide: () => {},
-});
+  addPage: () => {},
+  changePage: (page: number) => {},
+};
+
+export const BoardUIContext = createContext(boardUIContextDefault);
+
+export const ToolbarUIContext = createContext(toolbarUIContextDefault);
+export type ToolbarUIContextValue = typeof toolbarUIContextDefault;
+
+export const ScenePaginationUIContext = createContext(scenePaginationUIContextDefault);
+export type ScenePaginationUIContextValue = typeof scenePaginationUIContextDefault;

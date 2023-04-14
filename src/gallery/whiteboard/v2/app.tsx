@@ -34,7 +34,7 @@ export const App = () => {
       {/* toolbar */}
       <Toolbar />
       {/* scenes  */}
-      <ScenePagination />
+      {/* <ScenePagination /> */}
       {/*  */}
     </React.Fragment>
   );
