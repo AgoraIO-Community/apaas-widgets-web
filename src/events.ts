@@ -67,6 +67,8 @@ export enum AgoraExtensionRoomEvent {
   OrientationStatesChanged = 'orientation-changed',
   // 移动端大班课横屏清屏状态变化
   MobileLandscapeToolBarVisibleChanged = 'mobile-landscape-tool-bar-visible-changed',
+  //打开聊天对话框
+  OpenChatDialog = 'open-chat-dialog',
 }
 
 /**

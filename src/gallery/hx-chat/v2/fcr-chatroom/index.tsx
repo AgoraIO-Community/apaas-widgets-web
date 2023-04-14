@@ -1,15 +1,13 @@
-import { Platform } from 'agora-edu-core';
 import { Provider } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { AgoraHXChatWidget } from '..';
-import { FcrChatRoomH5 } from './container/mobile';
 import { FcrChatRoomStore } from './store';
 import im_CN from '../../locales/zh_CN';
 import im_US from '../../locales/en_US';
 import { addResourceBundle } from 'agora-common-libs/lib/i18n';
+import { FcrChatRoomDesktop } from './container/desktop';
 
 export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {
-  const { platform } = widget.classroomConfig;
   const { imConfig } = widget;
   const appKey = useMemo(() => {
     return imConfig?.orgName + '#' + imConfig?.appName;
@@ -24,9 +22,9 @@ export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {
       storeRef.current.destroy();
     };
   }, []);
-  return platform === Platform.H5 ? (
+  return (
     <Provider store={storeRef.current}>
-      <FcrChatRoomH5></FcrChatRoomH5>
+      <FcrChatRoomDesktop></FcrChatRoomDesktop>
     </Provider>
-  ) : null;
+  );
 };

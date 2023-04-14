@@ -1,6 +1,5 @@
 import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs/lib/ui';
 import { AgoraWidgetController, Platform } from 'agora-edu-core';
-import classNames from 'classnames';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
 import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
@@ -82,7 +81,6 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   onDestroy(): void {}
 
   private _renderApp() {
-    const { platform } = this.classroomConfig;
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
       ReactDOM.render(<FcrChatRoomApp widget={this} />, this._dom);
       this._rendered = true;
@@ -93,18 +91,13 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     const { platform } = this.classroomConfig;
     if (platform === Platform.H5) {
       return document.querySelector('.widget-slot-chat-mobile') as HTMLElement;
+    } else {
+      return document.querySelector('#fcr-chatroom-slot') as HTMLElement;
     }
   }
 
   render(dom: HTMLElement): void {
-    const { platform } = this.classroomConfig;
-
     this._dom = dom;
-
-    const cls = classNames({ 'chat-panel': platform !== Platform.H5 }, 'h-full');
-
-    this._dom.className = cls;
-
     this._renderApp();
   }
 

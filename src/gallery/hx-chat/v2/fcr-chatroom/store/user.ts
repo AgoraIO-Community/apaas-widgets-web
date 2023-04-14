@@ -21,7 +21,7 @@ export class UserStore {
   @action.bound
   private _initUserMuted() {
     this.userMuted =
-      this._widget.classroomStore.userStore.localUser?.userProperties.get('flexProps').mute ===
+      this._widget.classroomStore.userStore.localUser?.userProperties.get('flexProps')?.mute ===
       UserMutedState.Muted;
   }
   private _addEventListeners() {

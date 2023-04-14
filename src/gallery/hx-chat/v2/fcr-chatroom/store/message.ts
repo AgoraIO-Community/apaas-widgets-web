@@ -1,5 +1,5 @@
 import { bound, Lodash, Scheduler } from 'agora-rte-sdk';
-import { observable, action, runInAction, reaction } from 'mobx';
+import { observable, action, runInAction, computed, reaction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {
   AgoraIMBase,
@@ -16,11 +16,47 @@ export class MessageStore {
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListDom: HTMLDivElement | null = null;
+
+  // @observable
+  // messageTooltipVisible = false;
+  // @action.bound
+  // setMessageTooltipVisible(visible: boolean) {
+  //   this.messageTooltipVisible = visible;
+  // }
+
+  @observable lastUnreadTextMessage: AgoraIMTextMessage | null = null;
+  @action.bound
+  setLastUnreadTextMessage(message: AgoraIMTextMessage) {
+    this.lastUnreadTextMessage = message;
+  }
+
+  @observable messageInputText = '';
+  @action.bound
+  setMessageInputText(text: string) {
+    this.messageInputText = text;
+  }
+
+  @observable announcementInputText = '';
+  @action.bound
+  setAnnouncementInputText(text: string) {
+    this.announcementInputText = text;
+  }
+
+  @observable showAnnouncementInput = false;
+  @action.bound
+  setShowAnnouncementInput(show: boolean) {
+    this.showAnnouncementInput = show;
+  }
+  @observable showAnnouncement = false;
+  @action.bound
+  setShowAnnouncement(show: boolean) {
+    this.showAnnouncement = show;
+  }
+
   @observable isBottom = true;
   @observable unreadMessageCount = 0;
-  @observable messageList: (AgoraIMMessageBase | string)[] = [];
+  @observable messageList: AgoraIMMessageBase[] = [];
   @observable announcement = '';
-  @observable showAnnouncement = false;
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
   }
@@ -32,8 +68,15 @@ export class MessageStore {
 
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
+
     this._disposers.push(
-      reaction(() => this._widget.shareUIStore.isLandscape, this.messageListScrollToBottom),
+      reaction(
+        () => this.announcement,
+        (announcement) => {
+          this.setShowAnnouncement(!!announcement);
+          this.announcementInputText = announcement;
+        },
+      ),
     );
   }
   private async _removeEventListeners() {
@@ -43,7 +86,33 @@ export class MessageStore {
 
     this._fcrChatRoom.off(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.off(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
+
+    this._disposers.forEach((d) => d());
   }
+
+  @computed
+  get renderableMessageList() {
+    const combinedList: (AgoraIMMessageBase | AgoraIMMessageBase[])[] = [];
+    this.messageList.forEach((msg) => {
+      if (msg.type === AgoraIMMessageType.Custom) {
+        combinedList.push(msg);
+      } else {
+        const lastItem = combinedList[combinedList.length - 1];
+        if (lastItem instanceof Array) {
+          const prevMsg = lastItem[lastItem.length - 1];
+          if (prevMsg.from === msg.from) {
+            lastItem.push(msg);
+          } else {
+            combinedList.push([msg]);
+          }
+        } else {
+          combinedList.push([msg]);
+        }
+      }
+    });
+    return combinedList;
+  }
+
   private _startPollingMessageTask() {
     if (!this._pollingMessageTask) {
       this._pollingMessageTask = Scheduler.shared.addIntervalTask(() => {
@@ -77,9 +146,16 @@ export class MessageStore {
                     }
                   }
                 }
+                if (
+                  msg.type === AgoraIMMessageType.Text &&
+                  msg.from !== this._fcrChatRoom.userInfo?.userId
+                ) {
+                  this.setLastUnreadTextMessage(msg as AgoraIMTextMessage);
+                }
               }
               return true;
             });
+
             if (!this.isBottom) this.unreadMessageCount += this._messageQueue.length;
           });
           this._messageQueue = [];
@@ -102,7 +178,7 @@ export class MessageStore {
     }
   }
   @action.bound
-  addMessage(message: AgoraIMMessageBase | string) {
+  addMessage(message: AgoraIMMessageBase) {
     this.messageList.push(message);
   }
   @action.bound
@@ -111,10 +187,7 @@ export class MessageStore {
       return typeof msg !== 'string';
     });
   }
-  @action.bound
-  setShowAnnouncement(show: boolean) {
-    this.showAnnouncement = show;
-  }
+
   @action.bound
   setIsBottom(isBottom: boolean) {
     if (isBottom) {
@@ -141,9 +214,17 @@ export class MessageStore {
   private _onAnnouncementUpdated() {
     this.getAnnouncement();
   }
+
   @action.bound
   private _onAnnouncementDeleted() {
     this.announcement = '';
+  }
+  @bound
+  async updateAnnouncement(announcement: string) {
+    await this._fcrChatRoom.setAnnouncement(announcement);
+    runInAction(() => {
+      this.announcement = announcement;
+    });
   }
   @bound
   async sendTextMessage(text: string) {
