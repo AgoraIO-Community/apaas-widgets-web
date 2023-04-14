@@ -9,6 +9,8 @@ enum UserMutedState {
   Muted = 1,
 }
 export class UserStore {
+  @observable userList: AgoraIMUserInfo[] = [];
+
   @observable userCarouselAnimDelay = 3000;
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
@@ -17,6 +19,13 @@ export class UserStore {
     this._addEventListeners();
     this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
+  }
+  @bound
+  async updateUsers(userUuids: string[]) {
+    const users = await this._fcrChatRoom.getUserInfoList(userUuids);
+    runInAction(() => {
+      this.userList = users;
+    });
   }
   @action.bound
   private _initUserMuted() {

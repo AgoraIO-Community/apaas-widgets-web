@@ -59,6 +59,7 @@ export interface AgoraIMEventEmitter {
 }
 export interface AgoraIMChatRoomDetails {
   mute: boolean;
+  affiliations: { member?: string; owner?: string }[];
 }
 export interface AgoraIMMessageExt {
   nickName: string;

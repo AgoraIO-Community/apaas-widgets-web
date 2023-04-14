@@ -88,7 +88,16 @@ export class FcrChatRoomStore {
     if (error) {
       // return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
     }
-    this.roomStore.getChatRoomDetails();
+    this.roomStore.getChatRoomDetails().then((details) => {
+      const { affiliations } = details;
+      this.userStore.updateUsers(
+        affiliations
+          .filter((item) => !!item.member)
+          .map((item) => {
+            return item.member!;
+          }),
+      );
+    });
     await this.messageStore.getHistoryMessageList();
     this.messageStore.getAnnouncement();
   }

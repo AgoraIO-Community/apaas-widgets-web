@@ -20,6 +20,7 @@ export const FcrChatRoomDesktop = () => {
 };
 const FcrChatroomDialog = observer(() => {
   const {
+    userStore: { userList },
     roomStore: { chatDialogVisible, setChatDialogVisible },
   } = useStore();
   const [tab, setTab] = useState<'chat' | 'member'>('chat');
@@ -44,7 +45,7 @@ const FcrChatroomDialog = observer(() => {
                 key: 'chat',
               },
               {
-                label: 'Member',
+                label: `Member (${userList.length})`,
                 key: 'member',
               },
             ]}></Tabs>

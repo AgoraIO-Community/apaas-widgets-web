@@ -1,5 +1,6 @@
 import {
   AgoraIMBase,
+  AgoraIMChatRoomDetails,
   AgoraIMCmdActionEnum,
   AgoraIMConnectionState,
   AgoraIMEvents,
@@ -312,9 +313,10 @@ export class FcrChatRoom extends AgoraIMBase {
     const { data } = await this.conn.getChatRoomDetails({
       chatRoomId: this._connectionInfo.roomId,
     });
-    const res = (data as unknown as { mute: boolean }[])[0];
+    const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
     return {
       mute: !!res?.mute,
+      affiliations: res.affiliations,
     };
   }
   async getMutedUserList(): Promise<string[]> {

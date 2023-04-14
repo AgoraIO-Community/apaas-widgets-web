@@ -98,20 +98,12 @@
   padding-right: 20px;
 }
 .fcr-chat-input .fcr-textarea {
-  @apply fcr-rounded-12;
-  height: 48px;
   transition: all 0.2s;
 }
 .fcr-chat-input .fcr-textarea textarea {
-  overflow: hidden;
+  line-height: 18px;
+  padding: 15px 12px;
 }
-.fcr-chat-input-focus .fcr-textarea {
-  height: 140px;
-}
-.fcr-chat-input-focus .fcr-textarea textarea {
-  overflow: auto;
-}
-
 .fcr-chat-announcement {
   @apply fcr-rounded-16 fcr-bg-4;
   position: relative;

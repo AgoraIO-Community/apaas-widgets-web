@@ -86,6 +86,7 @@ const ChatInput = observer(() => {
             type={SvgIconEnum.FCR_SEND}
             size={36}></SvgImg>
           <TextArea
+            autoSize
             maxCount={150}
             onFocusChange={setInputFocus}
             resizable={false}
@@ -217,9 +218,10 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             case AgoraIMMessageType.Text:
               const textMessage = message as AgoraIMTextMessage;
               return (
-                <div key={textMessage.id} className="fcr-chat-message-list-item-content">
-                  {textMessage.msg}
-                </div>
+                <div
+                  key={textMessage.id}
+                  className="fcr-chat-message-list-item-content"
+                  dangerouslySetInnerHTML={{ __html: textMessage.msg }}></div>
               );
           }
         })}
@@ -245,7 +247,9 @@ const AnnounceMent = observer(() => {
       )}
 
       <div className="fcr-chat-announcement-title">Announcement</div>
-      <div className="fcr-chat-announcement-content">{announcement}</div>
+      <div
+        className="fcr-chat-announcement-content"
+        dangerouslySetInnerHTML={{ __html: announcement }}></div>
       <div className="fcr-chat-announcement-action">
         {isHost ? (
           <Button size="XXS" type="secondary" onClick={() => setShowAnnouncementInput(true)}>

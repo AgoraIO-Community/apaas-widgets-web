@@ -137,10 +137,14 @@ export class RoomStore {
     this.allMuted = false;
   }
   async getChatRoomDetails() {
-    const { mute } = await this._fcrChatRoom.getChatRoomDetails();
+    const { mute, affiliations } = await this._fcrChatRoom.getChatRoomDetails();
     runInAction(() => {
       this.allMuted = mute;
     });
+    return {
+      mute,
+      affiliations,
+    };
   }
 
   destroy() {
