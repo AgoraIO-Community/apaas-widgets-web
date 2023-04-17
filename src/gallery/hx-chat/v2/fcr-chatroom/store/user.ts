@@ -22,11 +22,6 @@ export class UserStore {
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
 
-  @computed
-  get localMuted() {
-    return this.muteList.includes(this._fcrChatRoom.userInfo?.userId || '');
-  }
-
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._initUserMuted();

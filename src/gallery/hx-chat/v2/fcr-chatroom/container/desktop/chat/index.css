@@ -216,7 +216,7 @@
   margin-bottom: 13px;
   word-break: break-word;
 }
-.fcr-chat-message-list-item-conten:hover {
+.fcr-chat-message-list-item-content:hover {
   @apply fcr-bg-5;
 }
 .fcr-chat-message-list-item-placement-right {
@@ -226,6 +226,17 @@
 .fcr-chat-message-list-item-placement-right .fcr-chat-message-list-item-content {
   @apply fcr-rounded-12 fcr-bg-brand-6;
   border-top-right-radius: 0;
+}
+.fcr-chat-message-list-item-placement-host.fcr-chat-message-list-item-placement-left
+  .fcr-chat-message-list-item-content {
+  @apply fcr-bg-purple-6;
+}
+.fcr-chat-message-list-item-host {
+  @apply fcr-rounded-full fcr-bg-gradient-1 fcr-font-medium fcr-text-white;
+  height: 18px;
+  line-height: 18px;
+  padding: 0 10px;
+  font-size: 10px;
 }
 .fcr-chat-message-list-item-placement-right .fcr-chat-message-list-item-right {
   display: flex;

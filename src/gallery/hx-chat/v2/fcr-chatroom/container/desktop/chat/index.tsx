@@ -20,15 +20,15 @@ import {
 } from '../../../../../../im/wrapper/typs';
 import { useI18n } from 'agora-common-libs/lib/i18n';
 import { ToolTip } from '@components/tooltip';
-import { Log, Logger } from 'agora-rte-sdk';
 import { useScroll } from '../../../hooks/useScroll';
+import { EduRoleTypeEnum } from 'agora-edu-core';
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
     roomStore: { allMuted, isHost },
-    userStore: { localMuted },
+    userStore: { userMuted },
   } = useStore();
-  const isMuted = (allMuted || localMuted) && !isHost;
+  const isMuted = (allMuted || userMuted) && !isHost;
   return (
     <div className="fcr-chat-container">
       <Messages></Messages>
@@ -99,10 +99,10 @@ const ChatInput = observer(() => {
 });
 const MutedInput = observer(() => {
   const {
-    userStore: { localMuted },
+    userStore: { userMuted },
     roomStore: { allMuted },
   } = useStore();
-  const muteText = allMuted ? 'All muted' : localMuted ? 'You are muted by teacher' : '';
+  const muteText = allMuted ? 'All muted' : userMuted ? 'You are muted by teacher' : '';
   return (
     <div className="fcr-chat-muted-input-container">
       <ToolTip placement="top" content={"Muted, can't send messages"}>
@@ -237,6 +237,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
   const lastMessage = messages[messages.length - 1];
 
   const isSelfMessage = lastMessage.from === fcrChatRoom.userInfo?.userId;
+  const isHost = lastMessage.ext?.role === EduRoleTypeEnum.teacher;
   const renderPlacement = isSelfMessage ? 'right' : 'left';
   const showAvatar = renderPlacement === 'left';
   const [actionVisible, setActionVisible] = useState(false);
@@ -249,6 +250,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
       className={classnames(
         'fcr-chat-message-list-item',
         `fcr-chat-message-list-item-placement-${renderPlacement}`,
+        { 'fcr-chat-message-list-item-placement-host': isHost },
       )}>
       {showAvatar && (
         <div className="fcr-chat-message-list-item-left">
@@ -270,6 +272,8 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
 
       <div className="fcr-chat-message-list-item-right">
         <div className="fcr-chat-message-list-item-extra">
+          {isHost && <div className="fcr-chat-message-list-item-host">Host</div>}
+
           <div className="fcr-chat-message-list-item-name">{lastMessage.ext?.nickName}</div>
         </div>
         {messages.map((message) => {
