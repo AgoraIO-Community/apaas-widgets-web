@@ -121,11 +121,12 @@ export class RoomStore {
 
     return duration.format('HH:mm:ss');
   }
+  @bound
   async setAllMute(mute: boolean) {
     if (mute) {
-      await this._fcrChatRoom.muteAllUserList();
+      return this._fcrChatRoom.muteAllUserList();
     } else {
-      await this._fcrChatRoom.unmuteAllUserList();
+      return this._fcrChatRoom.unmuteAllUserList();
     }
   }
   @action.bound

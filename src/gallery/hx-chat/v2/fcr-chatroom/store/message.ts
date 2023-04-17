@@ -8,6 +8,7 @@ import {
   AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
+  AgoraIMMessageExt,
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../im/wrapper/typs';
@@ -229,6 +230,16 @@ export class MessageStore {
   @bound
   async sendTextMessage(text: string) {
     const message = this._fcrChatRoom.createTextMessage(text);
+    await this._fcrChatRoom.sendMessage(message);
+    runInAction(() => {
+      message.from = this._fcrChatRoom.userInfo?.userId;
+      this._messageQueue.push(message);
+    });
+    this._startPollingMessageTask();
+  }
+  @bound
+  async sendCustomMessage(action: AgoraIMCmdActionEnum, ext?: Partial<AgoraIMMessageExt>) {
+    const message = this._fcrChatRoom.createCustomMessage(action, ext);
     await this._fcrChatRoom.sendMessage(message);
     runInAction(() => {
       message.from = this._fcrChatRoom.userInfo?.userId;

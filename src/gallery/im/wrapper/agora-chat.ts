@@ -3,6 +3,7 @@ import {
   AgoraIMChatRoomDetails,
   AgoraIMCmdActionEnum,
   AgoraIMConnectionState,
+  AgoraIMCustomMessage,
   AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
@@ -62,7 +63,7 @@ export class FcrChatRoom extends AgoraIMBase {
   }
 
   private _enableLog() {
-    websdk.logger.setLevel('WARN', true, 'agora-chat');
+    websdk.logger.setLevel('DEBUG', true, 'agora-chat');
     //@ts-ignore
     websdk.logger.onLog = (log: AgoraChatLog) => {
       switch (log.level) {
@@ -231,6 +232,20 @@ export class FcrChatRoom extends AgoraIMBase {
     });
   }
   @Log.silence
+  createCustomMessage(action: AgoraIMCmdActionEnum, ext?: Partial<AgoraIMMessageExt>) {
+    const baseMessageExt: AgoraIMMessageExt = {
+      nickName: this.userInfo.nickName,
+      roomUuid: this._connectionInfo.roomId,
+      role: this.userInfo.ext?.role,
+      avatarUrl: this.userInfo.avatarUrl,
+    };
+    return new AgoraIMCustomMessage({
+      action,
+      ext: Object.assign(baseMessageExt, ext),
+      id: websdk.utils.getUniqueId(),
+    });
+  }
+  @Log.silence
   async createImageMessage(params: Partial<AgoraIMImageMessage>) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
@@ -299,6 +314,17 @@ export class FcrChatRoom extends AgoraIMBase {
             : undefined,
 
           url,
+        });
+        break;
+      case AgoraIMMessageType.Custom:
+        const { action: customAction, ext: customExt } = message as AgoraIMCustomMessage;
+
+        newMsg = websdk.message.create({
+          to: this.roomId,
+          action: customAction,
+          type: 'cmd',
+          chatType: 'chatRoom',
+          ext: customExt,
         });
         break;
       default:

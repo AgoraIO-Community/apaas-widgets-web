@@ -29,6 +29,11 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract setSelfUserInfo(userInfo: AgoraIMUserInfo): Promise<AgoraIMUserInfo>;
   abstract createTextMessage(msg: string): AgoraIMTextMessage;
   abstract createImageMessage(params: Partial<AgoraIMImageMessage>): Promise<AgoraIMImageMessage>;
+  abstract createCustomMessage(
+    action: AgoraIMCmdActionEnum,
+    ext?: Partial<AgoraIMMessageExt>,
+  ): AgoraIMCustomMessage;
+
   abstract getChatRoomDetails(): Promise<AgoraIMChatRoomDetails>;
 }
 
@@ -61,12 +66,14 @@ export interface AgoraIMChatRoomDetails {
   mute: boolean;
   affiliations: { member?: string; owner?: string }[];
 }
+
 export interface AgoraIMMessageExt {
   nickName: string;
   roomUuid: string;
   role: EduRoleTypeEnum;
   avatarUrl: string;
   muteMember?: string;
+  muteNickName?: string;
 }
 export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = AgoraIMMessageExt> {
   id: string;

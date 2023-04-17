@@ -1,0 +1,40 @@
+.fcr-chatroom-member-list-item {
+  @apply fcr-rounded-8;
+
+  height: 60px;
+  padding: 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.fcr-chatroom-member-list-item:hover {
+  @apply fcr-bg-2 fcr-border-1;
+  border-width: 1px;
+  border-style: solid;
+}
+.fcr-chatroom-member-list-item-info {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fcr-chatroom-member-list-item-avatar {
+  @apply fcr-text-white fcr-font-medium fcr-rounded-full fcr-bg-brand-6;
+  width: 30px;
+  height: 30px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  user-select: none;
+}
+.fcr-chatroom-member-list-item-name {
+  @apply fcr-text-1;
+  font-size: 12px;
+  line-height: 12px;
+}
+.fcr-chatroom-member-list-wrap {
+  padding: 0 10px 10px;
+}
+.fcr-chatroom-member-list-search {
+  padding: 15px 20px 20px;
+}

@@ -7,8 +7,10 @@ import { Tabs } from '@components/tabs';
 import './index.css';
 import { useEffect, useRef, useState } from 'react';
 import { FcrChatContainer } from './chat';
+import { FcrChatMemberContainer } from './member';
+
 import { Scheduler } from 'agora-rte-sdk';
-import { AgoraIMTextMessage } from 'src/gallery/im/wrapper/typs';
+import { AgoraIMTextMessage } from '../../../../../im/wrapper/typs';
 import { generateShortUserName } from '../../utils/name';
 export const FcrChatRoomDesktop = () => {
   return (
@@ -52,6 +54,7 @@ const FcrChatroomDialog = observer(() => {
         </div>
         <div className="fcr-chatroom-dialog-tab-inner">
           {tab === 'chat' && <FcrChatContainer></FcrChatContainer>}
+          {tab === 'member' && <FcrChatMemberContainer></FcrChatMemberContainer>}
         </div>
       </div>
     </BaseDialog>

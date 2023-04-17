@@ -9,22 +9,33 @@ enum UserMutedState {
   Muted = 1,
 }
 export class UserStore {
+  @observable muteList: string[] = [];
+  @observable searchKey = '';
+  @action.bound
+  setSearchKey(key: string) {
+    this.searchKey = key;
+  }
+
   @observable userList: AgoraIMUserInfo[] = [];
 
   @observable userCarouselAnimDelay = 3000;
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
 
+  @computed
+  get localMuted() {
+    return this.muteList.includes(this._fcrChatRoom.userInfo?.userId || '');
+  }
+
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
-    this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
   }
   @bound
   async updateUsers(userUuids: string[]) {
     const users = await this._fcrChatRoom.getUserInfoList(userUuids);
     runInAction(() => {
-      this.userList = users;
+      this.userList = this.userList.concat(users);
     });
   }
   @action.bound
@@ -35,11 +46,15 @@ export class UserStore {
   }
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
+    this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
+
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
+    this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._onUserLeft);
+
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
   }
@@ -71,24 +86,41 @@ export class UserStore {
     this._updateUserMutedState(UserMutedState.Unmuted);
   }
   @bound
-  private async _onUserJoined(user: string) {
-    if (this.joinedUser) return;
-    const userInfoList = await this._fcrChatRoom.getUserInfoList([user]);
-    const joinedUser = userInfoList[0];
-    if (joinedUser.ext.role !== EduRoleTypeEnum.student) return;
-    runInAction(() => {
-      if (joinedUser) this.joinedUser = joinedUser;
+  private async _onUserJoined(userUuid: string) {
+    this.updateUsers([userUuid]);
+  }
+  @action.bound
+  private async _onUserLeft(userUuid: string) {
+    this.userList = this.userList.filter((user) => {
+      return user.userId !== userUuid;
     });
-    Scheduler.shared.addDelayTask(() => {
-      runInAction(() => {
-        this.joinedUser = undefined;
-      });
-    }, this.userCarouselAnimDelay + 500);
   }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];
   }
-
+  @bound
+  async muteUserList(userList: string[]) {
+    await this._fcrChatRoom.muteUserList({ userList });
+    runInAction(() => {
+      this.muteList = this.muteList.concat(userList);
+    });
+  }
+  @bound
+  async unmuteUserList(userList: string[]) {
+    await this._fcrChatRoom.unmuteUserList({ userList });
+    runInAction(() => {
+      this.muteList = this.muteList.filter((user) => {
+        !userList.includes(user);
+      });
+    });
+  }
+  @bound
+  async getMutedUserList() {
+    const res = await this._fcrChatRoom.getMutedUserList();
+    runInAction(() => {
+      this.muteList = res;
+    });
+  }
   destroy() {
     this._removeEventListeners();
   }

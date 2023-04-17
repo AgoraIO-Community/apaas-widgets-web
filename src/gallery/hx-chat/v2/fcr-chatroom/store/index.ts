@@ -98,7 +98,8 @@ export class FcrChatRoomStore {
           }),
       );
     });
-    await this.messageStore.getHistoryMessageList();
+    if (this.roomStore.isHost) this.userStore.getMutedUserList();
+    this.messageStore.getHistoryMessageList();
     this.messageStore.getAnnouncement();
   }
   destroy() {

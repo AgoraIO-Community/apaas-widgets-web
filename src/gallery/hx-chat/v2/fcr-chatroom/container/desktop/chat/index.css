@@ -12,7 +12,8 @@
   overflow: hidden;
   gap: 10px;
 }
-.fcr-chat-input-container {
+.fcr-chat-input-container,
+.fcr-chat-muted-input-container {
   padding: 0 20px 16px;
 }
 .fcr-chat-input-wrap {
@@ -241,4 +242,29 @@
   font-size: 10px;
   width: fit-content;
   align-self: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+.fcr-chat-message-list-item-custom > span {
+  @apply fcr-text-green;
+}
+.fcr-chat-muted-input {
+  @apply fcr-bg-4 fcr-rounded-12;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  padding-left: 10px;
+}
+
+.fcr-chat-muted-input-text {
+  @apply fcr-text-2;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 14px;
 }

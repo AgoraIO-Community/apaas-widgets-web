@@ -19,14 +19,25 @@ import {
   AgoraIMTextMessage,
 } from '../../../../../../im/wrapper/typs';
 import { useI18n } from 'agora-common-libs/lib/i18n';
+import { ToolTip } from '@components/tooltip';
+import { Log, Logger } from 'agora-rte-sdk';
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
+    roomStore: { allMuted, isHost },
+    userStore: { localMuted },
   } = useStore();
+  const isMuted = (allMuted || localMuted) && !isHost;
   return (
     <div className="fcr-chat-container">
       <Messages></Messages>
-      {showAnnouncementInput ? <AnnouncementInput></AnnouncementInput> : <ChatInput></ChatInput>}
+      {showAnnouncementInput ? (
+        <AnnouncementInput></AnnouncementInput>
+      ) : isMuted ? (
+        <MutedInput></MutedInput>
+      ) : (
+        <ChatInput></ChatInput>
+      )}
     </div>
   );
 });
@@ -34,16 +45,8 @@ const ChatInput = observer(() => {
   const [inputFocus, setInputFocus] = useState(false);
 
   const {
-    messageStore: {
-      messageInputText,
-      setMessageInputText,
-      sendTextMessage,
-      showAnnouncement,
-      setShowAnnouncement,
-      setShowAnnouncementInput,
-      announcement,
-    },
-    roomStore: { allMuted, isHost, setAllMute },
+    messageStore: { messageInputText, setMessageInputText, sendTextMessage, sendCustomMessage },
+    roomStore: { allMuted, setAllMute, isHost },
   } = useStore();
   const sendDisabled = !messageInputText;
   const send = () => {
@@ -51,31 +54,25 @@ const ChatInput = observer(() => {
     sendTextMessage(messageInputText);
     setMessageInputText('');
   };
+  const handleAllMute = async (mute: boolean) => {
+    await setAllMute(mute);
+    sendCustomMessage(
+      mute ? AgoraIMCmdActionEnum.AllUserMuted : AgoraIMCmdActionEnum.AllUserUnmuted,
+    );
+  };
   return (
     <div className="fcr-chat-input-container">
       <div className="fcr-chat-input-wrap">
         <div className="fcr-chat-input-actions">
           <div className="fcr-chat-input-actions-label">
-            <div
-              onClick={() => {
-                if (isHost && !announcement) {
-                  setShowAnnouncementInput(true);
-                  return;
-                }
-                if (!showAnnouncement) {
-                  setShowAnnouncement(true);
-                }
-              }}
-              className={classnames('fcr-chat-input-actions-item', {
-                'fcr-chat-input-actions-item-active': showAnnouncement,
-              })}>
-              <SvgImg type={SvgIconEnum.FCR_NOTICE} size={30}></SvgImg>
+            <AnnouncementTrigger></AnnouncementTrigger>
+          </div>
+          {isHost && (
+            <div className="fcr-chat-input-actions-mute-all">
+              <span>All Chat Muted</span>
+              <Switch onChange={handleAllMute} value={allMuted}></Switch>
             </div>
-          </div>
-          <div className="fcr-chat-input-actions-mute-all">
-            <span>All Chat Muted</span>
-            <Switch onChange={(val) => setAllMute(val)} value={allMuted}></Switch>
-          </div>
+          )}
         </div>
         <div className={classnames('fcr-chat-input', { 'fcr-chat-input-focus': inputFocus })}>
           <SvgImg
@@ -96,6 +93,49 @@ const ChatInput = observer(() => {
             onChange={setMessageInputText}></TextArea>
         </div>
       </div>
+    </div>
+  );
+});
+const MutedInput = observer(() => {
+  const {
+    userStore: { localMuted },
+    roomStore: { allMuted },
+  } = useStore();
+  const muteText = allMuted ? 'All muted' : localMuted ? 'You are muted by teacher' : '';
+  return (
+    <div className="fcr-chat-muted-input-container">
+      <ToolTip placement="top" content={"Muted, can't send messages"}>
+        <div className="fcr-chat-muted-input">
+          <AnnouncementTrigger></AnnouncementTrigger>
+          <div className="fcr-chat-muted-input-text">
+            <SvgImg type={SvgIconEnum.FCR_CHAT} size={30}></SvgImg>
+            {muteText}
+          </div>
+        </div>
+      </ToolTip>
+    </div>
+  );
+});
+const AnnouncementTrigger = observer(() => {
+  const {
+    messageStore: { showAnnouncement, setShowAnnouncement, setShowAnnouncementInput, announcement },
+    roomStore: { isHost },
+  } = useStore();
+  return (
+    <div
+      onClick={() => {
+        if (isHost && !announcement) {
+          setShowAnnouncementInput(true);
+          return;
+        }
+        if (!showAnnouncement) {
+          setShowAnnouncement(true);
+        }
+      }}
+      className={classnames('fcr-chat-input-actions-item', {
+        'fcr-chat-input-actions-item-active': showAnnouncement,
+      })}>
+      <SvgImg type={SvgIconEnum.FCR_NOTICE} size={30}></SvgImg>
     </div>
   );
 });
@@ -166,13 +206,19 @@ const MessageList = observer(() => {
     </div>
   );
 });
-const CmdMessageItem = ({ message }: { message: AgoraIMCustomMessage }) => {
+const CmdMessageItem = observer(({ message }: { message: AgoraIMCustomMessage }) => {
+  const { fcrChatRoom } = useStore();
+  const isSelfAction = message.from === fcrChatRoom.userInfo?.userId;
+  const msgNickName = isSelfAction
+    ? `${fcrChatRoom.userInfo?.nickName}(you)`
+    : `${message.ext?.nickName}`;
   return (
     <div className="fcr-chat-message-list-item-custom">
+      <span>{msgNickName}</span>
       {convertCmdMessageAction(message.action)}
     </div>
   );
-};
+});
 const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[] }) => {
   const { fcrChatRoom } = useStore();
   const lastMessage = messages[messages.length - 1];
