@@ -159,11 +159,11 @@ export class FcrChatRoom extends AgoraIMBase {
       });
     });
   }
-  async unmuteUserList(params: { roomId: string; userList: string[] }): Promise<void> {
-    const { roomId, userList } = params;
+  async unmuteUserList(params: { userList: string[] }): Promise<void> {
+    const { userList } = params;
     userList.forEach((user) => {
       this.conn.unmuteChatRoomMember({
-        chatRoomId: roomId,
+        chatRoomId: this.roomId,
         username: user,
       });
     });

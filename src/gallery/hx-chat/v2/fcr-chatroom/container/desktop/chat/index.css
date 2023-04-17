@@ -11,6 +11,7 @@
   flex-direction: column;
   overflow: hidden;
   gap: 10px;
+  position: relative;
 }
 .fcr-chat-input-container,
 .fcr-chat-muted-input-container {
@@ -149,6 +150,8 @@
   overflow: auto;
   padding-top: 20px;
   gap: 20px;
+  display: flex;
+  flex-direction: column;
 }
 .fcr-chat-message-list-item {
   display: flex;
@@ -246,6 +249,7 @@
   align-items: center;
   justify-content: center;
   gap: 8px;
+  padding: 0 16px;
 }
 .fcr-chat-message-list-item-custom > span {
   @apply fcr-text-green;
@@ -267,4 +271,15 @@
   justify-content: center;
   gap: 8px;
   font-size: 14px;
+}
+.fcr-chat-message-unread-message {
+  @apply fcr-rounded-full fcr-font-medium fcr-text-white fcr-bg-gradient-1;
+  height: 28px;
+  font-size: 14px;
+  line-height: 28px;
+  padding: 0 10px;
+  position: absolute;
+  left: 20px;
+  bottom: 8px;
+  cursor: pointer;
 }

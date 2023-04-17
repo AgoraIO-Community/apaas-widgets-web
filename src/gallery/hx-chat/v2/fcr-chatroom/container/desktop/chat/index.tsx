@@ -21,6 +21,7 @@ import {
 import { useI18n } from 'agora-common-libs/lib/i18n';
 import { ToolTip } from '@components/tooltip';
 import { Log, Logger } from 'agora-rte-sdk';
+import { useScroll } from '../../../hooks/useScroll';
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
@@ -179,17 +180,29 @@ const AnnouncementInput = observer(() => {
 const Messages = observer(() => {
   return (
     <div className="fcr-chat-message-container">
+      <UnreadMessageLabel></UnreadMessageLabel>
       <AnnounceMent></AnnounceMent>
       <MessageList></MessageList>
     </div>
   );
 });
+const UnreadMessageLabel = observer(() => {
+  const {
+    messageStore: { unreadMessageCount, messageListScrollToBottom },
+  } = useStore();
+  return unreadMessageCount > 0 ? (
+    <div onClick={messageListScrollToBottom} className="fcr-chat-message-unread-message">
+      {unreadMessageCount} new message(s)
+    </div>
+  ) : null;
+});
 const MessageList = observer(() => {
   const {
     messageStore: { renderableMessageList },
   } = useStore();
+  const { messageContainerRef } = useScroll();
   return (
-    <div className="fcr-chat-message-list fcr-scrollbar-override">
+    <div ref={messageContainerRef} className="fcr-chat-message-list fcr-scrollbar-override">
       {renderableMessageList.map((messages) => {
         if (messages instanceof Array) {
           const lastMessage = messages[messages.length - 1];
