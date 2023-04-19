@@ -164,7 +164,6 @@
   @apply fcr-text-white fcr-font-medium fcr-rounded-full fcr-bg-brand-6;
   width: 36px;
   height: 36px;
-
   display: flex;
   align-items: center;
   justify-content: center;
@@ -201,6 +200,10 @@
 }
 .fcr-chat-message-list-item-extra {
   display: flex;
+  padding-bottom: 5px;
+}
+.fcr-chat-message-list-item-host {
+  margin-right: 8px;
 }
 .fcr-chat-message-list-item-name {
   @apply fcr-text-1 fcr-font-medium;
@@ -213,11 +216,14 @@
   line-height: 21px;
   border-top-left-radius: 0;
   padding: 8px 16px;
-  margin-bottom: 13px;
   word-break: break-word;
 }
 .fcr-chat-message-list-item-content:hover {
   @apply fcr-bg-5;
+}
+.fcr-chat-message-list-item-right .fcr-chat-message-list-item-content:not(:last-child),
+.fcr-chat-message-list-item-left .fcr-chat-message-list-item-content:not(:last-child) {
+  margin-bottom: 13px;
 }
 .fcr-chat-message-list-item-placement-right {
   justify-content: flex-end;
@@ -293,4 +299,5 @@
   left: 20px;
   bottom: 8px;
   cursor: pointer;
+  z-index: 3;
 }

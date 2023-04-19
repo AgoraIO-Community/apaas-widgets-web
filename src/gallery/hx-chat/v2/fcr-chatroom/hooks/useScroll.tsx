@@ -1,6 +1,5 @@
 import { throttle } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
-import { AgoraIMMessageBase } from '../../../../im/wrapper/typs';
 import { useStore } from './useStore';
 
 export const useScroll = () => {
@@ -25,18 +24,12 @@ export const useScroll = () => {
     }
     return () => {
       if (messageContainerRef.current) {
-        messageContainerRef.current.onscroll = null;
         messageContainerRef.current.removeEventListener('scroll', handleScroll);
       }
     };
   }, []);
   useEffect(() => {
-    const lastMessage = messageList[messageList.length - 1];
-    if (
-      isBottom ||
-      (lastMessage instanceof AgoraIMMessageBase &&
-        lastMessage.from === fcrChatRoom.userInfo?.userId)
-    ) {
+    if (isBottom) {
       messageListScrollToBottom();
     }
   }, [isBottom, messageList.length, messageListScrollToBottom]);

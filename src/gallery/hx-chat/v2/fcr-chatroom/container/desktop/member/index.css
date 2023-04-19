@@ -1,16 +1,16 @@
 .fcr-chatroom-member-list-item {
-  @apply fcr-rounded-8;
+  @apply fcr-rounded-8 fcr-border-transparent;
 
   height: 60px;
   padding: 0 10px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  border-width: 1px;
+  border-style: solid;
 }
 .fcr-chatroom-member-list-item:hover {
   @apply fcr-bg-2 fcr-border-1;
-  border-width: 1px;
-  border-style: solid;
 }
 .fcr-chatroom-member-list-item-info {
   display: flex;

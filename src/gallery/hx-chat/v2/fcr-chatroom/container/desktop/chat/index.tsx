@@ -239,7 +239,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
   const isSelfMessage = lastMessage.from === fcrChatRoom.userInfo?.userId;
   const isHost = lastMessage.ext?.role === EduRoleTypeEnum.teacher;
   const renderPlacement = isSelfMessage ? 'right' : 'left';
-  const showAvatar = renderPlacement === 'left';
+  const showAvatarAndHost = renderPlacement === 'left';
   const [actionVisible, setActionVisible] = useState(false);
   const toggleAction = () => {
     setActionVisible(!actionVisible);
@@ -252,7 +252,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
         `fcr-chat-message-list-item-placement-${renderPlacement}`,
         { 'fcr-chat-message-list-item-placement-host': isHost },
       )}>
-      {showAvatar && (
+      {showAvatarAndHost && (
         <div className="fcr-chat-message-list-item-left">
           <div className="fcr-chat-message-list-item-avatar-container" onClick={toggleAction}>
             <div className="fcr-chat-message-list-item-avatar">
@@ -272,7 +272,9 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
 
       <div className="fcr-chat-message-list-item-right">
         <div className="fcr-chat-message-list-item-extra">
-          {isHost && <div className="fcr-chat-message-list-item-host">Host</div>}
+          {isHost && showAvatarAndHost && (
+            <div className="fcr-chat-message-list-item-host">Host</div>
+          )}
 
           <div className="fcr-chat-message-list-item-name">{lastMessage.ext?.nickName}</div>
         </div>
