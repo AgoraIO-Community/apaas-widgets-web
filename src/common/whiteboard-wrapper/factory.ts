@@ -1,7 +1,5 @@
-import { BoardWindowAnimationOptions } from './type';
-import { FcrBoardRoom } from './wrapper/board-room';
-import { FcrBoardRegion } from './wrapper/type';
-
+import { BoardWindowAnimationOptions, FcrBoardRegion } from './type';
+import { FcrBoardRoom } from './board-room';
 export class FcrBoardFactory {
   static createBoardRoom({
     appId,

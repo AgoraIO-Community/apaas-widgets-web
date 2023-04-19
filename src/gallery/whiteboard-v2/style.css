@@ -35,6 +35,12 @@
   width: 32px;
   margin: 0 auto;
 }
+.fcr-board-toolbar-list li .fcr-divider-marign-top {
+  margin-top: 5px;
+}
+.fcr-board-toolbar-list li .fcr-divider-marign-bottom {
+  margin-bottom: 5px;
+}
 
 .fcr-board-toolbar-list
   .fcr-board-toolbar-item-surrounding:hover:not(.fcr-board-toolbar-item-surrounding--disabled),
@@ -269,6 +275,6 @@
 .fcr-board-pagination {
   position: absolute;
   left: 10px;
-  bottom: calc(10px + 66px);
+  bottom: 10px;
   z-index: 10;
 }

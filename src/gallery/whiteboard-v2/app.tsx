@@ -1,22 +1,21 @@
-import React, { useContext, useEffect } from 'react';
-import { BoardUIContext } from '../ui-context';
+import React, { useContext } from 'react';
 import './style.css';
 import { Toolbar } from './toolbar';
 import { ScenePagination } from './scene-pagination';
+import { BoardUIContext } from './ui-context';
+import { observer } from 'mobx-react';
 
-export const App = () => {
-  const { mount, unmount, handleDragOver, handleDrop, handleBoardDomLoad, handleCollectorDomLoad } =
-    useContext(BoardUIContext);
-
-  useEffect(() => {
-    mount();
-    return () => {
-      unmount();
-    };
-  }, []);
+export const App = observer(() => {
+  const {
+    observables: { canOperate },
+    handleDragOver,
+    handleDrop,
+    handleBoardDomLoad,
+    handleCollectorDomLoad,
+  } = useContext(BoardUIContext);
 
   return (
-    <React.Fragment>
+    <>
       <div
         className="board-widget-app"
         onDragOver={handleDragOver}
@@ -32,10 +31,9 @@ export const App = () => {
         }}
       />
       {/* toolbar */}
-      <Toolbar />
+      {canOperate && <Toolbar />}
       {/* scenes  */}
-      {/* <ScenePagination /> */}
-      {/*  */}
-    </React.Fragment>
+      {canOperate && <ScenePagination />}
+    </>
   );
-};
+});

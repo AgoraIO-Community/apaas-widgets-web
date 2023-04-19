@@ -1,10 +1,10 @@
 import { FC, useContext } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem } from '.';
-import { ToolbarUIContext } from '../../ui-context';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
-import { FcrBoardShape } from '../../wrapper/type';
 import classNames from 'classnames';
+import { FcrBoardShape } from '../../../common/whiteboard-wrapper/type';
+import { ToolbarUIContext } from '../ui-context';
 
 const shapeIconMap = {
   [FcrBoardShape.Arrow]: SvgIconEnum.FCR_WHITEBOARD_SHAP_ARROW,
@@ -15,8 +15,11 @@ const shapeIconMap = {
   [FcrBoardShape.Triangle]: SvgIconEnum.FCR_WHITEBOARD_SHAP_TRIANGLE,
 };
 
-export const ShapePickerItem: FC = observer(() => {
-  const { observables, setShape } = useContext(ToolbarUIContext);
+export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
+  const {
+    observables: { toolbarDockPosition, currentShape, lastShape },
+    setShape,
+  } = useContext(ToolbarUIContext);
   const handleShapeToolChange = (shapeTool: FcrBoardShape) => {
     return () => {
       setShape(shapeTool);
@@ -24,7 +27,7 @@ export const ShapePickerItem: FC = observer(() => {
   };
 
   const isActive =
-    !!observables.currentShape &&
+    !!currentShape &&
     [
       FcrBoardShape.Arrow,
       FcrBoardShape.Ellipse,
@@ -32,12 +35,12 @@ export const ShapePickerItem: FC = observer(() => {
       FcrBoardShape.Rectangle,
       FcrBoardShape.Rhombus,
       FcrBoardShape.Triangle,
-    ].includes(observables.currentShape);
+    ].includes(currentShape);
 
-  const icon = observables.lastShape
-    ? shapeIconMap[observables.lastShape as keyof typeof shapeIconMap]
+  const icon = lastShape
+    ? shapeIconMap[lastShape as keyof typeof shapeIconMap]
     : SvgIconEnum.FCR_WHITEBOARD_SHAP_CIRCLE;
-  const clickShape = observables.lastShape ? observables.lastShape : FcrBoardShape.Ellipse;
+  const clickShape = lastShape ? lastShape : FcrBoardShape.Ellipse;
 
   return (
     <ExpansionToolbarItem
@@ -45,9 +48,10 @@ export const ShapePickerItem: FC = observer(() => {
       tooltip="Shape"
       icon={icon}
       onClick={handleShapeToolChange(clickShape)}
-      popoverPlacement="right"
+      popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<ShapePickerPanel />}
+      popoverOffset={offset}
     />
   );
 });

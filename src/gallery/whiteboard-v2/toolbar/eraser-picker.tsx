@@ -2,14 +2,14 @@ import { observer } from 'mobx-react';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 
 import React, { FC, useContext } from 'react';
-import { ToolbarUIContext } from '../../ui-context';
 import { ExpansionToolbarItem } from '.';
-import { FcrBoardTool } from '../../wrapper/type';
 import classNames from 'classnames';
+import { FcrBoardTool } from '../../../common/whiteboard-wrapper/type';
+import { ToolbarUIContext } from '../ui-context';
 
-export const EraserPickerItem: FC = observer(() => {
+export const EraserPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { currentTool },
+    observables: { currentTool, toolbarDockPosition },
   } = useContext(ToolbarUIContext);
 
   const isActive = currentTool === FcrBoardTool.Eraser;
@@ -18,10 +18,11 @@ export const EraserPickerItem: FC = observer(() => {
     <ExpansionToolbarItem
       isActive={isActive}
       tooltip="Eraser"
-      popoverPlacement="right"
+      popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       icon={SvgIconEnum.FCR_WHITEBOARD_ERASER}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<EraserPickerPanel />}
+      popoverOffset={offset}
     />
   );
 });
