@@ -26,6 +26,7 @@ import { downloadCanvasImage } from '../wrapper/utils';
 export class FcrBoardWidget extends FcrBoardWidgetBase {
   private _toolbarContext?: ToolbarUIContextValue;
   private _paginationContext?: ScenePaginationUIContextValue;
+  private _boardDomResizeObserver?: ResizeObserver;
 
   locate() {
     const dom = document.querySelector('.fcr-layout-board-view');
@@ -224,6 +225,14 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
       }
     });
 
+    if (this._boardDom) {
+      const resizeObserver = new ResizeObserver(this._notifyViewportChange);
+
+      resizeObserver.observe(this._boardDom);
+
+      this._boardDomResizeObserver = resizeObserver;
+    }
+
     this._notifyViewportChange();
   }
 
@@ -233,6 +242,7 @@ export class FcrBoardWidget extends FcrBoardWidgetBase {
     mainWindow?.off(FcrBoardMainWindowEvent.RedoStepsUpdated, this._updateRedo);
     mainWindow?.off(FcrBoardMainWindowEvent.UndoStepsUpdated, this._updateUndo);
     mainWindow?.off(FcrBoardMainWindowEvent.SnapshotSuccess, this._saveSnapshot);
+    this._boardDomResizeObserver?.disconnect();
   }
 
   private _calculateDockPosition() {

@@ -10,7 +10,9 @@
   "files": [
     "lib"
   ],
-  "scripts": {},
+  "scripts": {
+    "bundle:npm": "bundle-pack --entries src/gallery/*/index --out-dir dist"
+  },
   "dependencies": {
     "@netless/app-slide": "0.2.27",
     "@netless/app-talkative": "0.1.0",
@@ -26,8 +28,8 @@
     "@netless/window-manager": "0.4.54",
     "agora-chat": "^1.0.4",
     "antd-mobile": "5.28.0",
-    "axios": "0.27.2",
-    "classnames": "2.3.1",
+    "axios": "0.19.2",
+    "classnames": "2.2.6",
     "dayjs": "1.10.4",
     "jspdf": "2.5.1",
     "lodash": "4.17.21",
@@ -38,6 +40,10 @@
     "redux": "4.1.0",
     "twemoji": "13.1.0",
     "white-web-sdk": "2.16.37"
+  },
+  "devDependencies": {
+    "@types/axios": "0.14.0",
+    "@types/classnames": "2.2.11"
   },
   "peerDependencies": {
     "agora-common-libs": "*"

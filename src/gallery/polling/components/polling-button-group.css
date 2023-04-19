@@ -1,0 +1,15 @@
+.fcr-polling-btn-group {
+  display: flex;
+  padding-top: 20px;
+  justify-content: space-between;
+}
+
+.fcr-polling-btn {
+  flex-grow: 1;
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+.fcr-polling-btn .fcr-button {
+  width: 100%;
+}

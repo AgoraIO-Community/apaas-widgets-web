@@ -1,0 +1,38 @@
+.fcr-polling-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 1px solid;
+  outline: none;
+  position: relative;
+  --effect-color: theme(colors.white);
+}
+
+.fcr-polling-icon-style {
+  @apply fcr-border-brand-6 fcr-bg-transparent;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  border-style: solid;
+  border-width: 0px;
+  box-sizing: border-box;
+}
+
+.fcr-polling-icon:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.fcr-polling-icon:active,
+.fcr-polling-icon:focus {
+  outline: none;
+}
+
+.fcr-polling-icon:not(:disabled):active {
+  @apply fcr-border-brand-6  fcr-bg-transparent;
+}
+
+.fcr-polling-icon svg {
+  @apply fcr-text-brand-6;
+}
