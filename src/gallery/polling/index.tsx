@@ -87,6 +87,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
     this._updateContext(properties);
   }
 
+  @action
   private _updateContext(properties: any) {
     if (properties.extra?.pollId) {
       const { mode, pollId, pollDetails, pollItems, pollState, pollTitle } = properties.extra;
@@ -95,46 +96,44 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
         this._pollId = pollId;
       }
 
-      runInAction(() => {
-        const { observables } = this._context;
+      const { observables } = this._context;
 
-        let total = 0;
+      let total = 0;
 
-        const optionList = Object.keys(pollDetails).map((index) => {
-          const { num, percentage } = pollDetails[index] as { num: number; percentage: number };
+      const optionList = Object.keys(pollDetails).map((index) => {
+        const { num, percentage } = pollDetails[index] as { num: number; percentage: number };
 
-          total += num;
-          return {
-            id: parseInt(index),
-            content: pollItems[index] as string,
-            selectCount: num,
-            percent: percentage,
-          };
-        });
-
-        observables.resultInfo = {
-          isMuti: mode !== 1,
-          question: pollTitle,
-          optionList,
-          total,
+        total += num;
+        return {
+          id: parseInt(index),
+          content: pollItems[index] as string,
+          selectCount: num,
+          percent: percentage,
         };
-
-        if (observables.pollingState !== PollingState.POLLING_SUBMIT_END) {
-          switch (pollState) {
-            case 0:
-              observables.pollingState = PollingState.POLLING_SUBMIT_END;
-              break;
-            case 1:
-              observables.pollingState = this.startedState;
-              break;
-            case 2:
-              observables.pollingState = PollingState.POLLING_EDIT;
-              break;
-            default:
-              throw new Error('invalid poll state');
-          }
-        }
       });
+
+      observables.resultInfo = {
+        isMuti: mode !== 1,
+        question: pollTitle,
+        optionList,
+        total,
+      };
+
+      if (observables.pollingState !== PollingState.POLLING_SUBMIT_END) {
+        switch (pollState) {
+          case 0:
+            observables.pollingState = PollingState.POLLING_SUBMIT_END;
+            break;
+          case 1:
+            observables.pollingState = this.startedState;
+            break;
+          case 2:
+            observables.pollingState = PollingState.POLLING_EDIT;
+            break;
+          default:
+            throw new Error('invalid poll state');
+        }
+      }
     }
   }
 
@@ -163,21 +162,22 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
 
         context.setActionLoading(true);
         try {
-          await this.classroomStore.api.startPolling(roomUuid, {
-            mode: observables.pollingType === PollingType.SINGLE ? 1 : 2,
-            pollItems: observables.options.map(({ content }) => content),
-            pollTitle: observables.question,
-            position: { xaxis: 0.5, yaxis: 0.5 },
-          });
-
           runInAction(() => {
-            observables.pollingState = PollingState.POLLING_END;
             observables.resultInfo = {
               question: observables.question,
               isMuti: observables.pollingType === PollingType.MULTI,
               optionList: [],
               total: 0,
             };
+          });
+          await this.classroomStore.api.startPolling(roomUuid, {
+            mode: observables.pollingType === PollingType.SINGLE ? 1 : 2,
+            pollItems: observables.options.map(({ content }) => content),
+            pollTitle: observables.question,
+            position: { xaxis: 0.5, yaxis: 0.5 },
+          });
+          runInAction(() => {
+            observables.pollingState = PollingState.POLLING_END;
           });
         } catch (e) {
           this.ui.addToast('Cannot create poll as something is wrong', 'error');

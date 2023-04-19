@@ -1,9 +1,6 @@
 .netless-whiteboard-wrapper {
-  @apply fcr-border-1 fcr-bg-2;
   height: 100%;
   width: 100%;
-  border: 1px solid;
-  border-radius: 4px;
 }
 
 .board-widget-app {
