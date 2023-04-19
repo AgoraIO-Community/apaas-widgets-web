@@ -22,6 +22,10 @@ export class UserStore {
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
 
+  @computed
+  get searchUserList() {
+    return this.userList.filter((user) => user.nickName.includes(this.searchKey));
+  }
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._initUserMuted();

@@ -18,12 +18,7 @@ export class MessageStore {
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListDom: HTMLDivElement | null = null;
 
-  // @observable
-  // messageTooltipVisible = false;
-  // @action.bound
-  // setMessageTooltipVisible(visible: boolean) {
-  //   this.messageTooltipVisible = visible;
-  // }
+  @observable historyMessageLoaded = false;
 
   @observable lastUnreadTextMessage: AgoraIMTextMessage | null = null;
   @action.bound
@@ -127,6 +122,12 @@ export class MessageStore {
               const deletedMessageId = (msg.ext as unknown as { msgId: string }).msgId;
               deletedMessageIds.set(deletedMessageId, true);
             }
+            if (
+              msg.type === AgoraIMMessageType.Text &&
+              msg.from !== this._fcrChatRoom.userInfo?.userId
+            ) {
+              this.setLastUnreadTextMessage(msg as AgoraIMTextMessage);
+            }
           });
           runInAction(() => {
             this.messageList = this.messageList.concat(this._messageQueue).filter((msg) => {
@@ -146,12 +147,6 @@ export class MessageStore {
                       return false;
                     }
                   }
-                }
-                if (
-                  msg.type === AgoraIMMessageType.Text &&
-                  msg.from !== this._fcrChatRoom.userInfo?.userId
-                ) {
-                  this.setLastUnreadTextMessage(msg as AgoraIMTextMessage);
                 }
               }
               return true;
@@ -264,6 +259,7 @@ export class MessageStore {
     const messages = await this._fcrChatRoom.getHistoryMessageList({ msgId: -1 });
     runInAction(() => {
       this._messageQueue = this._messageQueue.concat(messages);
+      this.historyMessageLoaded = true;
     });
     this._startPollingMessageTask();
   }
