@@ -203,6 +203,12 @@ const MessageList = observer(() => {
   const { messageContainerRef } = useScroll();
   return (
     <div ref={messageContainerRef} className="fcr-chat-message-list fcr-scrollbar-override">
+      {renderableMessageList.length === 0 && (
+        <div className="fcr-chat-message-list-placeholder">
+          <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={200}></SvgImg>
+          <span>No Message</span>
+        </div>
+      )}
       {renderableMessageList.map((messages) => {
         if (messages instanceof Array) {
           const lastMessage = messages[messages.length - 1];

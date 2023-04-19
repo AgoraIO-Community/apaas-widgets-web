@@ -18,14 +18,14 @@ export const FcrChatMemberContainer = () => {
 const UserList = observer(() => {
   const {
     fcrChatRoom,
-    userStore: { userList, muteList },
+    userStore: { searchUserList, muteList },
     roomStore: { isHost },
   } = useStore();
   const { muteUser, unmuteUser } = useMute();
   const localUserId = fcrChatRoom.userInfo?.userId || '';
   return (
     <div className="fcr-chatroom-member-list-wrap">
-      {userList.map((user) => {
+      {searchUserList.map((user) => {
         const enableUserAction = isHost && user.userId !== localUserId;
         const muted = muteList.includes(user.userId);
         return (

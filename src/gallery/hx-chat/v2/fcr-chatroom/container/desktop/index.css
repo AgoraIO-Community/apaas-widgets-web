@@ -1,8 +1,12 @@
+.fcr-chatroom-dialog-wrap {
+  pointer-events: none;
+}
 .fcr-chatroom-dialog-wrap .fcr-dialog {
   position: absolute;
   right: 20px;
   bottom: 80px;
   height: 70%;
+  pointer-events: all;
 }
 
 .fcr-chatroom-dialog-wrap .fcr-dialog-content {
