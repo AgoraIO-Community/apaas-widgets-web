@@ -63,6 +63,7 @@ const PollingResultList: React.FC = observer(() => {
               <div
                 style={{
                   flex: 1,
+                  wordBreak: 'break-all',
                 }}>
                 {item.content}
               </div>
