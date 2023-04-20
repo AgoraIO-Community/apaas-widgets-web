@@ -1,5 +1,9 @@
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
+import {
+  AgoraUiCapable,
+  AgoraWidgetBase,
+  AgoraWidgetLifecycle,
+} from 'agora-common-libs/lib/widget';
+import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum } from 'agora-edu-core';
 import { bound, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
@@ -38,6 +42,7 @@ import { observable, action } from 'mobx';
 import tinycolor from 'tinycolor2';
 import { FcrBoardFactory } from '../../common/whiteboard-wrapper/factory';
 import { DialogProgressApi } from '../../components/progress';
+import { FcrUIConfig, FcrTheme } from 'agora-common-libs/lib/ui';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -80,6 +85,18 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       ReactDOM.unmountComponentAtNode(this._outerDom);
       this._outerDom = undefined;
     }
+  }
+
+  constructor(
+    _widgetController: AgoraWidgetController,
+    _classroomStore: EduClassroomStore,
+    _ui: AgoraUiCapable,
+    _uiConfig: FcrUIConfig,
+    _theme: FcrTheme,
+  ) {
+    super(_widgetController, _classroomStore, _ui, _uiConfig, _theme);
+    //@ts-ignore
+    window.boardWidget = this;
   }
 
   onInstall(controller: AgoraWidgetController): void {
@@ -469,7 +486,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     if (prev !== hasPrivilege && this._boardMainWindow) {
       await this._boardMainWindow.updateOperationPrivilege(hasPrivilege);
       this._resetToolIfNeed();
-      this._boardContext?.setPrivilege(hasPrivilege);
     }
 
     this.broadcast(AgoraExtensionWidgetEvent.BoardGrantedUsersUpdated, grantedUsers);
@@ -531,7 +547,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
 
   createBoardUIContext() {
     const observables = observable({ canOperate: this.hasPrivilege });
-    return {
+    this._boardContext = {
       observables,
       mount: this.mount,
       unmount: this.unmount,
@@ -559,6 +575,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         observables.canOperate = canOperate;
       }),
     };
+    return this._boardContext;
   }
 
   createToolbarUIContext() {
@@ -752,5 +769,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       this._toolbarContext?.setStrokeWidth(strokeWidth);
       this._toolbarContext?.setTool(tool);
     }
+    this._boardContext?.setPrivilege(this.hasPrivilege);
   }
 }

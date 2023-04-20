@@ -42,6 +42,7 @@ const PollingInputList: React.FC = observer(() => {
                 onClick={isAllowedToRemove ? handleRemove : undefined}
               />
             }
+            maxLength={20}
             placeholder={'Please Enter...'}
             defaultValue={content}
             onChange={handleChange}
