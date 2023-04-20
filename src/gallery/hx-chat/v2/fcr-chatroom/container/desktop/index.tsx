@@ -63,7 +63,7 @@ const FcrChatroomDialog = observer(() => {
 
 const FcrChatroomTooltip = observer(() => {
   const {
-    roomStore: { chatDialogVisible },
+    roomStore: { chatDialogVisible, setChatDialogVisible },
     messageStore: { lastUnreadTextMessage },
   } = useStore();
   const [tooltipVisible, setTooltipVisible] = useState(false);
@@ -88,7 +88,9 @@ const FcrChatroomTooltip = observer(() => {
   return (
     <DialogToolTip
       content={
-        <FcrChatroomTooltipContent message={lastUnreadTextMessage}></FcrChatroomTooltipContent>
+        <FcrChatroomTooltipContent
+          onClick={() => setChatDialogVisible(false)}
+          message={lastUnreadTextMessage}></FcrChatroomTooltipContent>
       }
       visible={tooltipVisible}
       onClose={hideToolTip}>
@@ -96,9 +98,15 @@ const FcrChatroomTooltip = observer(() => {
     </DialogToolTip>
   );
 });
-const FcrChatroomTooltipContent = ({ message }: { message: AgoraIMTextMessage | null }) => {
+const FcrChatroomTooltipContent = ({
+  message,
+  onClick,
+}: {
+  message: AgoraIMTextMessage | null;
+  onClick: () => void;
+}) => {
   return (
-    <div className="fcr-chatroom-tooltip-content">
+    <div className="fcr-chatroom-tooltip-content" onClick={onClick}>
       <div className="fcr-chatroom-avatar">
         {generateShortUserName(message?.ext?.nickName || '')}
       </div>
