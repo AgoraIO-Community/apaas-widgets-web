@@ -6,8 +6,12 @@ import { DialogWrapper } from './components/dialog-wrapper';
 import { PollingResultInfo, PollingState, PollingType } from './type';
 import { action, observable, runInAction } from 'mobx';
 import { EduRoleTypeEnum } from 'agora-edu-core';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
+import { bound } from 'agora-common-libs/lib/annotation';
+import { SvgIconEnum } from '@components/svg-img';
 
 export class FcrPollingWidget extends AgoraEduToolWidget {
+  protected _listenerDisposer?: CallableFunction;
   private _dom?: HTMLElement;
   private _context: PollingUIContextValue = this._createUIContext();
   private _pollId?: string;
@@ -42,7 +46,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
           onResize={this.handleResize}
           onClose={this.handleClose}
           canClose={this.isTeacher}
-          onMinimize={() => {}}>
+          onMinimize={this._setMinimize}>
           <Polling />
         </DialogWrapper>
       </PollingUIContext.Provider>,
@@ -74,7 +78,21 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   }
 
   onCreate(properties: any, userProperties: any) {
-    console.log('onCreate', properties, userProperties);
+    const broadcastListener = {
+      messageType: AgoraExtensionRoomEvent.SetMinimize,
+      onMessage: ({ widgetId, minimized }: { widgetId: string; minimized: boolean }) => {
+        if (widgetId === this.widgetId) {
+          this._setMinimize(minimized);
+        }
+      },
+    };
+
+    this.addBroadcastListener(broadcastListener);
+
+    this._listenerDisposer = () => {
+      this.removeBroadcastListener(broadcastListener);
+    };
+
     this._updateContext(properties);
   }
 
@@ -85,6 +103,12 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   onPropertiesUpdate(properties: any) {
     console.log('onPropertiesUpdate', properties);
     this._updateContext(properties);
+  }
+
+  onDestroy() {
+    if (this._listenerDisposer) {
+      this._listenerDisposer();
+    }
   }
 
   @action
@@ -243,5 +267,23 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
     };
 
     return context;
+  }
+
+  @bound
+  private _setMinimize(minimized = true) {
+    if (minimized) {
+      this.setVisibility(false);
+      this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
+        minimized: true,
+        widgetId: this.widgetId,
+        icon: SvgIconEnum.FCR_V2_VOTE,
+      });
+    } else {
+      this.setVisibility(true);
+      this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
+        minimized: false,
+        widgetId: this.widgetId,
+      });
+    }
   }
 }

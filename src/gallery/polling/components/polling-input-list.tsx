@@ -17,7 +17,7 @@ const PollingInputList: React.FC = observer(() => {
 
   return (
     <div className="fcr-polling-input-list">
-      {options.map(({ id }) => {
+      {options.map(({ id, content }) => {
         const handleChange = (value: string) => {
           updateOption(id, value);
         };
@@ -43,6 +43,7 @@ const PollingInputList: React.FC = observer(() => {
               />
             }
             placeholder={'Please Enter...'}
+            defaultValue={content}
             onChange={handleChange}
           />
         );

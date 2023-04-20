@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react';
 import { ToolbarItem } from '.';
 import { useContext } from 'react';
-import { ToolbarUIContext } from '../../ui-context';
 import { SvgIconEnum } from '@components/svg-img';
+import { ToolbarUIContext } from '../ui-context';
 
 export const UndoItem = observer(() => {
   const {

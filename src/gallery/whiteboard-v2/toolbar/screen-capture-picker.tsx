@@ -2,19 +2,22 @@ import { FC, useContext } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem } from '.';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
-import { ToolbarUIContext } from '../../ui-context';
 import { AgoraRteEngineConfig, AgoraRteRuntimePlatform } from 'agora-rte-sdk';
+import { ToolbarUIContext } from '../ui-context';
 
 const isElectron = () => {
   return AgoraRteEngineConfig.platform === AgoraRteRuntimePlatform.Electron;
 };
 
 export const ScreenCapturePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
+  const {
+    observables: { toolbarDockPosition },
+  } = useContext(ToolbarUIContext);
   return isElectron() ? (
     <ExpansionToolbarItem
       isActive={false}
       tooltip="Screen"
-      popoverPlacement="right"
+      popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       icon={SvgIconEnum.FCR_WIHITEBOARD_SLICE}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<ScreenCapturePickerPanel />}

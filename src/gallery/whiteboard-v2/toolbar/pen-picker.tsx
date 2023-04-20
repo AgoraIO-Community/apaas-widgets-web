@@ -1,21 +1,21 @@
 import { FC, useContext } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem } from '.';
-import { ToolbarUIContext } from '../../ui-context';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { HorizontalSlider } from '@components/slider';
-import { FcrBoardShape } from '../../wrapper/type';
 import classNames from 'classnames';
 import { ToolTip } from '@components/tooltip';
+import { FcrBoardShape } from '../../../common/whiteboard-wrapper/type';
+import { ToolbarUIContext } from '../ui-context';
 
 const penIconMap = {
   [FcrBoardShape.Curve]: SvgIconEnum.FCR_WHITEBOARD_PED_CURVE,
   [FcrBoardShape.Straight]: SvgIconEnum.FCR_WHITEBOARD_PED_STRAIGHTLINE,
 };
 
-export const PenPickerItem: FC = observer(() => {
+export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { currentShape, lastPen },
+    observables: { currentShape, lastPen, toolbarDockPosition },
     setPen,
   } = useContext(ToolbarUIContext);
 
@@ -38,9 +38,10 @@ export const PenPickerItem: FC = observer(() => {
       tooltip="Pen"
       icon={icon}
       onClick={handlePenToolChange(clickShape)}
-      popoverPlacement="right"
+      popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<PenPickerPanel />}
+      popoverOffset={offset}
     />
   );
 });

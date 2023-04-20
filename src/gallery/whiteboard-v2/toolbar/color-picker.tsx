@@ -1,12 +1,12 @@
 import { observer } from 'mobx-react';
 import React, { FC, useContext } from 'react';
-import { ToolbarUIContext } from '../../ui-context';
 import { Popover } from '@components/popover';
 import classNames from 'classnames';
+import { ToolbarUIContext } from '../ui-context';
 
 export const ColorPickerItem: FC = observer(() => {
   const {
-    observables: { currentColor },
+    observables: { currentColor, toolbarDockPosition },
     setStrokeColor,
   } = useContext(ToolbarUIContext);
 
@@ -36,7 +36,7 @@ export const ColorPickerItem: FC = observer(() => {
       <Popover
         content={<ColorPickerPanel />}
         trigger="click"
-        placement="right"
+        placement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
         overlayClassName="fcr-board-toolbar__picker__overlay">
         <div className={cls} />
       </Popover>

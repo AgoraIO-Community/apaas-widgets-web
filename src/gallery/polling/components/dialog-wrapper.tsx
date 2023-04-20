@@ -30,7 +30,7 @@ export const DialogWrapper: FC<Props> = ({ onResize, onClose, onMinimize, childr
     {
       icon: SvgIconEnum.FCR_WINDOW_SMALLER,
       onClick: onMinimize,
-      onMouseDown: undefined as undefined | ((e: React.MouseEvent) => void),
+      onMouseDown: handleMouseDown,
     },
   ];
   if (canClose) {

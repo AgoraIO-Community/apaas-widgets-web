@@ -1,11 +1,11 @@
 import { FC, PropsWithChildren, useContext, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { ToolbarItem } from '.';
-import { ToolbarUIContext } from '../../ui-context';
 import { SvgIconEnum } from '@components/svg-img';
 import { useDrag, State } from '@use-gesture/react';
 import { useSpring, animated } from '@react-spring/web';
 import classNames from 'classnames';
+import { ToolbarUIContext } from '../ui-context';
 
 export const MoveHandleItem = () => {
   const { setToolbarPosition, observables } = useContext(ToolbarUIContext);

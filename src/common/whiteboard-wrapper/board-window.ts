@@ -29,7 +29,6 @@ import {
   FcrBoardMediaWindowConfig,
 } from './type';
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
-import { DialogProgressApi } from '../../../components/progress';
 
 @Log.attach()
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
@@ -399,7 +398,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   }
 
   @bound
-  async getSnapshotImage(background = '#fff') {
+  async getSnapshotImage(background = '#fff', progressCallback = (progress: number) => {}) {
     this.preCheck({ wm: false });
     const whiteRoom = this._whiteRoom;
 
@@ -421,7 +420,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
             });
         });
 
-        DialogProgressApi.show({ key: 'saveImage', progress: 1, width: 100, auto: true });
+        progressCallback(1);
 
         try {
           const merged = await mergeCanvasImage(cps);
@@ -435,7 +434,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
           );
         }
 
-        DialogProgressApi.destroy('saveImage');
+        progressCallback(100);
       }
     }
   }
