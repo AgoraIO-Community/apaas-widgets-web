@@ -31,7 +31,8 @@ export const MoveHandleItem = () => {
 export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) => {
   const { observables, dragToolbar, releaseToolbar } = useContext(ToolbarUIContext);
   const { toolbarPosition, toolbarReleased, toolbarDockPosition } = observables;
-  const [{ x, y }, api] = useSpring(() => toolbarDockPosition);
+  const [{ x, y }, api] = useSpring(() => toolbarDockPosition, [toolbarDockPosition]);
+
   useEffect(() => {
     const mouseReleaseHandler = () => {
       releaseToolbar();
@@ -50,6 +51,12 @@ export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) =
   }, [toolbarReleased]);
 
   useEffect(() => {
+    if (toolbarDockPosition.initialized) {
+      api.start({ x: toolbarDockPosition.x, y: toolbarDockPosition.y, immediate: true });
+    }
+  }, [toolbarDockPosition.initialized]);
+
+  useEffect(() => {
     dragToolbar();
     api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: true });
   }, [toolbarPosition.x, toolbarPosition.y]);
@@ -59,8 +66,14 @@ export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) =
     'fcr-board-toolbar--right': toolbarDockPosition.placement === 'right',
   });
 
+  let display: string | undefined = 'hidden';
+
+  if (toolbarDockPosition.initialized) {
+    display = undefined;
+  }
+
   return (
-    <animated.div style={{ left: x, top: y }} className={cls}>
+    <animated.div style={{ left: x, top: y, display }} className={cls}>
       {children}
     </animated.div>
   );

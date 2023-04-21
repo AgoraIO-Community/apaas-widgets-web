@@ -4,7 +4,7 @@ import {
   AgoraWidgetLifecycle,
 } from 'agora-common-libs/lib/widget';
 import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum } from 'agora-edu-core';
-import { bound, Log, Logger } from 'agora-rte-sdk';
+import { bound, Lodash, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 
@@ -43,6 +43,7 @@ import tinycolor from 'tinycolor2';
 import { FcrBoardFactory } from '../../common/whiteboard-wrapper/factory';
 import { DialogProgressApi } from '../../components/progress';
 import { FcrUIConfig, FcrTheme } from 'agora-common-libs/lib/ui';
+import { runInAction } from 'mobx';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -562,8 +563,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
           resizeObserver.observe(this._boardDom);
 
           this._boardDomResizeObserver = resizeObserver;
-
-          this._notifyViewportChange();
         } else {
           this._boardDomResizeObserver?.disconnect();
         }
@@ -587,7 +586,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       lastShape: undefined as FcrBoardShape | undefined,
       currentStrokeWidth: 2,
       toolbarPosition: { x: 0, y: 0 },
-      toolbarDockPosition: { x: 0, y: 0, placement: 'left' as const },
+      toolbarDockPosition: { x: 0, y: 0, placement: 'left' as const, initialized: false },
       toolbarReleased: true,
       redoSteps: 0,
       undoSteps: 0,
@@ -713,6 +712,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     mainWindow?.on(FcrBoardMainWindowEvent.SnapshotSuccess, this._saveSnapshot);
   }
 
+  @bound
+  @Lodash.throttled(200)
   private _calculateDockPosition() {
     if (this._toolbarContext) {
       const toolbarDom = document.querySelector('.fcr-board-toolbar');
@@ -723,21 +724,26 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2;
         const centerPos = toolbarClientRect.x + toolbarClientRect.width / 2;
 
-        if (centerPos > boardClientRect.width / 2) {
-          // right
-          this._toolbarContext.observables.toolbarDockPosition = {
-            x: boardClientRect.width - toolbarClientRect.width,
-            y: toolbarOffsetTop,
-            placement: 'right',
-          };
-        } else {
-          // left
-          this._toolbarContext.observables.toolbarDockPosition = {
-            x: 0,
-            y: toolbarOffsetTop,
-            placement: 'left',
-          };
-        }
+        const toolbarContext = this._toolbarContext;
+        runInAction(() => {
+          if (centerPos > boardClientRect.width / 2) {
+            // right
+            toolbarContext.observables.toolbarDockPosition = {
+              x: boardClientRect.width - toolbarClientRect.width,
+              y: toolbarOffsetTop,
+              placement: 'right',
+              initialized: true,
+            };
+          } else {
+            // left
+            toolbarContext.observables.toolbarDockPosition = {
+              x: 0,
+              y: toolbarOffsetTop,
+              placement: 'left',
+              initialized: true,
+            };
+          }
+        });
       }
     }
   }
@@ -753,11 +759,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
           (boardClientRect.height - 60 - 200) / 40,
         );
 
-        const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2;
-
-        this._toolbarContext.setToolbarPosition({ x: 0, y: toolbarOffsetTop });
-
-        this._calculateDockPosition();
+        setTimeout(this._calculateDockPosition);
       }
     }
   }

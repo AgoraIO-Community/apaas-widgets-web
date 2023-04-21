@@ -23,7 +23,7 @@ const toolbarUIContextDefault = {
     currentStrokeWidth: 0,
     toolbarPosition: { x: 0, y: 0 },
     toolbarReleased: true,
-    toolbarDockPosition: { x: 0, y: 0, placement: 'left' as 'left' | 'right' },
+    toolbarDockPosition: { x: 0, y: 0, placement: 'left' as 'left' | 'right', initialized: false },
     redoSteps: 0,
     undoSteps: 0,
     lastPen: undefined as FcrBoardShape | undefined,
