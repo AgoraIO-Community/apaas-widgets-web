@@ -5,11 +5,10 @@ import { Button } from '@components/button';
 
 import { Switch } from '@components/switch';
 import { observer } from 'mobx-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classnames from 'classnames';
-import { generateShortUserName } from '../../../utils/name';
 
 import {
   AgoraIMCmdActionEnum,
@@ -22,6 +21,8 @@ import { useI18n } from 'agora-common-libs/lib/i18n';
 import { ToolTip } from '@components/tooltip';
 import { useScroll } from '../../../hooks/useScroll';
 import { EduRoleTypeEnum } from 'agora-edu-core';
+import { Avatar } from '@components/avatar';
+import { useMute } from '../../../hooks/useMute';
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
@@ -227,58 +228,157 @@ const MessageList = observer(() => {
 });
 const CmdMessageItem = observer(({ message }: { message: AgoraIMCustomMessage }) => {
   const { fcrChatRoom } = useStore();
+  const selfUserId = fcrChatRoom.userInfo?.userId;
   const isSelfAction = message.from === fcrChatRoom.userInfo?.userId;
   const msgNickName = isSelfAction
     ? `${fcrChatRoom.userInfo?.nickName}(you)`
     : `${message.ext?.nickName}`;
+  const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
+    const transI18n = useI18n();
+
+    switch (action) {
+      case AgoraIMCmdActionEnum.AllUserMuted:
+        return 'The teacher mute all';
+      case AgoraIMCmdActionEnum.AllUserUnmuted:
+        return 'The teacher unmute all';
+      case AgoraIMCmdActionEnum.UserMuted:
+        if (isSelfAction) {
+          return (
+            <>
+              <span>{message.ext?.muteNickName}</span>
+              was mute by you
+            </>
+          );
+        }
+        if (message.ext?.muteMember === selfUserId) {
+          return (
+            <>
+              <span>{message.ext?.muteNickName} (you)</span>
+              was mute by teacher
+            </>
+          );
+        } else {
+          return (
+            <>
+              <span>{message.ext?.muteNickName}</span>
+              was mute by teacher
+            </>
+          );
+        }
+
+      case AgoraIMCmdActionEnum.UserUnmuted:
+        if (isSelfAction) {
+          return (
+            <>
+              <span>{message.ext?.muteNickName}</span>
+              was unmute by you
+            </>
+          );
+        }
+        if (message.ext?.muteMember === selfUserId) {
+          return (
+            <>
+              <span>{message.ext?.muteNickName} (you)</span>
+              was unmute by teacher
+            </>
+          );
+        } else {
+          return (
+            <>
+              <span>{message.ext?.muteNickName}</span>
+              was unmute by teacher
+            </>
+          );
+        }
+      case AgoraIMCmdActionEnum.MsgDeleted:
+        return transI18n('chat.remove_message_notify');
+    }
+  };
   return (
     <div className="fcr-chat-message-list-item-custom">
-      <span>{msgNickName}</span>
       {convertCmdMessageAction(message.action)}
     </div>
   );
 });
 const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[] }) => {
-  const { fcrChatRoom } = useStore();
+  const {
+    fcrChatRoom,
+    roomStore: { isHost },
+    userStore: { muteList, userList },
+  } = useStore();
+  const { muteUser, unmuteUser } = useMute();
   const lastMessage = messages[messages.length - 1];
 
   const isSelfMessage = lastMessage.from === fcrChatRoom.userInfo?.userId;
-  const isHost = lastMessage.ext?.role === EduRoleTypeEnum.teacher;
+  const isMessageFromHost = lastMessage.ext?.role === EduRoleTypeEnum.teacher;
   const renderPlacement = isSelfMessage ? 'right' : 'left';
   const showAvatarAndHost = renderPlacement === 'left';
   const [actionVisible, setActionVisible] = useState(false);
+  const isUserMuted = muteList.includes(lastMessage.from || '');
+  const currUser = userList.find((user) => user.userId === lastMessage.from);
   const toggleAction = () => {
     setActionVisible(!actionVisible);
   };
-
+  useEffect(() => {
+    if (actionVisible) {
+      document.addEventListener('click', toggleAction);
+    } else {
+      document.removeEventListener('click', toggleAction);
+    }
+    return () => document.removeEventListener('click', toggleAction);
+  }, [actionVisible]);
   return (
     <div
       className={classnames(
         'fcr-chat-message-list-item',
         `fcr-chat-message-list-item-placement-${renderPlacement}`,
-        { 'fcr-chat-message-list-item-placement-host': isHost },
+        { 'fcr-chat-message-list-item-placement-host': isMessageFromHost },
       )}>
       {showAvatarAndHost && (
         <div className="fcr-chat-message-list-item-left">
           <div className="fcr-chat-message-list-item-avatar-container" onClick={toggleAction}>
-            <div className="fcr-chat-message-list-item-avatar">
-              {generateShortUserName(lastMessage.ext?.nickName || '')}
-            </div>
-            <div
-              className={classnames('fcr-chat-message-list-item-avatar-action', {
-                'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
-              })}>
-              <div>
-                <Button size="XXS">mute</Button>
+            <Avatar size={36} textSize={14} nickName={lastMessage?.ext?.nickName || ''}></Avatar>
+            {isUserMuted && (
+              <div className="fcr-chat-message-list-item-mute-icon">
+                <SvgImg type={SvgIconEnum.FCR_SETTING_NONE}></SvgImg>
               </div>
-            </div>
+            )}
+            {isHost && (
+              <>
+                <div
+                  className={classnames('fcr-chat-message-list-item-avatar-action', {
+                    'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
+                  })}>
+                  <div>
+                    {isUserMuted ? (
+                      <Button
+                        styleType="danger"
+                        size="XXS"
+                        onClick={() => {
+                          if (currUser) unmuteUser(currUser);
+                        }}>
+                        Unmute
+                      </Button>
+                    ) : (
+                      <Button
+                        onClick={() => {
+                          if (currUser) muteUser(currUser);
+                        }}
+                        size="XXS">
+                        Mute
+                      </Button>
+                    )}
+                  </div>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}
 
       <div className="fcr-chat-message-list-item-right">
         <div className="fcr-chat-message-list-item-extra">
-          {isHost && showAvatarAndHost && (
+          {isMessageFromHost && showAvatarAndHost && (
             <div className="fcr-chat-message-list-item-host">Host</div>
           )}
 
@@ -335,20 +435,3 @@ const AnnounceMent = observer(() => {
     </div>
   ) : null;
 });
-const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
-  const transI18n = useI18n();
-
-  switch (action) {
-    case AgoraIMCmdActionEnum.AllUserMuted:
-      return transI18n('chat.muted_all');
-    case AgoraIMCmdActionEnum.AllUserUnmuted:
-      return transI18n('chat.unmuted_all');
-    case AgoraIMCmdActionEnum.UserMuted:
-      return transI18n('fcr_H5_mute_user_msg');
-
-    case AgoraIMCmdActionEnum.UserUnmuted:
-      return transI18n('fcr_H5_unmute_user_msg');
-    case AgoraIMCmdActionEnum.MsgDeleted:
-      return transI18n('chat.remove_message_notify');
-  }
-};

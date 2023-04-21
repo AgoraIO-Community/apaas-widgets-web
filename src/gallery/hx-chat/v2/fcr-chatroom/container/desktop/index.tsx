@@ -3,6 +3,7 @@ import { BaseDialog } from '@components/dialog';
 import { observer } from 'mobx-react';
 import { DialogToolTip } from '@components/tooltip/dialog';
 import { Tabs } from '@components/tabs';
+import { Avatar } from '@components/avatar';
 
 import './index.css';
 import { useEffect, useRef, useState } from 'react';
@@ -11,7 +12,6 @@ import { FcrChatMemberContainer } from './member';
 
 import { Scheduler } from 'agora-rte-sdk';
 import { AgoraIMTextMessage } from '../../../../../im/wrapper/typs';
-import { generateShortUserName } from '../../utils/name';
 export const FcrChatRoomDesktop = () => {
   return (
     <div className="fcr-chatroom-container">
@@ -64,7 +64,7 @@ const FcrChatroomDialog = observer(() => {
 const FcrChatroomTooltip = observer(() => {
   const {
     roomStore: { chatDialogVisible, setChatDialogVisible },
-    messageStore: { lastUnreadTextMessage },
+    messageStore: { lastUnreadTextMessage, messageListScrollToBottom },
   } = useStore();
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const tooltipVisibelTaskRef = useRef<Scheduler.Task | null>(null);
@@ -72,24 +72,25 @@ const FcrChatroomTooltip = observer(() => {
     setTooltipVisible(false);
     tooltipVisibelTaskRef.current?.stop();
   };
-
+  useEffect(() => {
+    if (!chatDialogVisible && lastUnreadTextMessage) {
+      tooltipVisibelTaskRef.current?.stop();
+      setTooltipVisible(true);
+      tooltipVisibelTaskRef.current = Scheduler.shared.addDelayTask(hideToolTip, 6000);
+    }
+  }, [lastUnreadTextMessage]);
   useEffect(() => {
     if (chatDialogVisible) {
       hideToolTip();
-    } else {
-      if (lastUnreadTextMessage) {
-        tooltipVisibelTaskRef.current?.stop();
-        setTooltipVisible(true);
-        tooltipVisibelTaskRef.current = Scheduler.shared.addDelayTask(hideToolTip, 6000);
-      }
+      messageListScrollToBottom();
     }
     return hideToolTip;
-  }, [lastUnreadTextMessage, chatDialogVisible]);
+  }, [chatDialogVisible]);
   return (
     <DialogToolTip
       content={
         <FcrChatroomTooltipContent
-          onClick={() => setChatDialogVisible(false)}
+          onClick={() => setChatDialogVisible(true)}
           message={lastUnreadTextMessage}></FcrChatroomTooltipContent>
       }
       visible={tooltipVisible}
@@ -107,9 +108,8 @@ const FcrChatroomTooltipContent = ({
 }) => {
   return (
     <div className="fcr-chatroom-tooltip-content" onClick={onClick}>
-      <div className="fcr-chatroom-avatar">
-        {generateShortUserName(message?.ext?.nickName || '')}
-      </div>
+      <Avatar size={32} textSize={10} nickName={message?.ext?.nickName || ''}></Avatar>
+
       <div className="fcr-chatroom-tooltip-content-text">
         <div className="fcr-chatroom-tooltip-content-from">From {message?.ext?.nickName}</div>
         <div className="fcr-chatroom-tooltip-content-from">{message?.msg}</div>

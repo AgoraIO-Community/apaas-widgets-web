@@ -131,6 +131,7 @@
   font-size: 14px;
   line-height: 150%;
   padding: 25px 20px 0;
+  white-space: pre-wrap;
 }
 .fcr-chat-announcement-action {
   display: flex;
@@ -168,18 +169,25 @@
 .fcr-chat-message-list-item-avatar-container {
   position: relative;
 }
-.fcr-chat-message-list-item-avatar {
-  @apply fcr-text-white fcr-font-medium fcr-rounded-full fcr-bg-brand-6;
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  display: flex;
-  z-index: 2;
+.fcr-chat-message-list-item-avatar-container .fcr-avatar {
   position: relative;
+  z-index: 2;
   user-select: none;
   cursor: pointer;
+}
+.fcr-chat-message-list-item-mute-icon {
+  @apply fcr-bg-6 fcr-rounded-full;
+  position: absolute;
+  right: -4px;
+  bottom: -1px;
+  z-index: 2;
+  width: 16px;
+  height: 16px;
+}
+.fcr-chat-message-list-item-mute-icon svg {
+  left: -4px;
+  top: -4px;
+  position: relative;
 }
 .fcr-chat-message-list-item-avatar-action {
   @apply fcr-bg-2 fcr-rounded-full;
@@ -225,6 +233,7 @@
   border-top-left-radius: 0;
   padding: 8px 16px;
   word-break: break-word;
+  white-space: pre-wrap;
 }
 .fcr-chat-message-list-item-content:hover {
   @apply fcr-bg-5;
@@ -264,20 +273,19 @@
 
 .fcr-chat-message-list-item-custom {
   @apply fcr-text-2 fcr-rounded-full fcr-bg-4;
-  height: 30px;
-  line-height: 30px;
+  /* height: 30px; */
+  line-height: 14px;
   text-align: center;
   font-size: 10px;
   width: fit-content;
   align-self: center;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+
   gap: 8px;
-  padding: 0 16px;
+  padding: 8px 16px;
 }
 .fcr-chat-message-list-item-custom > span {
   @apply fcr-text-green;
+  padding-right: 8px;
 }
 .fcr-chat-muted-input {
   @apply fcr-bg-4 fcr-rounded-12;

@@ -28,7 +28,9 @@ export class UserStore {
       .filter((user) => user.nickName.includes(this.searchKey))
       .sort((a, b) => {
         if (a.ext.role === EduRoleTypeEnum.teacher) return -1;
-        if (this.muteList.includes(a.userId)) return -1;
+
+        if (this.muteList.includes(a.userId) && b.ext.role !== EduRoleTypeEnum.teacher) return -1;
+
         return 0;
       });
   }

@@ -4,8 +4,8 @@ import { observer } from 'mobx-react';
 import { useStore } from '../../../hooks/useStore';
 import { SvgIconEnum } from '@components/svg-img';
 import { Button } from '@components/button';
-import { generateShortUserName } from '../../../utils/name';
 import { useMute } from '../../../hooks/useMute';
+import { Avatar } from '@components/avatar';
 export const FcrChatMemberContainer = () => {
   return (
     <div className="fcr-chatroom-member-container">
@@ -31,9 +31,8 @@ const UserList = observer(() => {
         return (
           <div key={user.userId} className="fcr-chatroom-member-list-item">
             <div className="fcr-chatroom-member-list-item-info">
-              <div className="fcr-chatroom-member-list-item-avatar">
-                {generateShortUserName(user.nickName)}
-              </div>
+              <Avatar size={30} textSize={14} nickName={user.nickName}></Avatar>
+
               <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
             </div>
             <div className="fcr-chatroom-member-list-item-action">
