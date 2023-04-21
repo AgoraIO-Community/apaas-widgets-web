@@ -25,7 +25,7 @@ import { App } from './app';
 import { DialogProgressApi } from '../../components/progress';
 
 @Log.attach({ proxyMethods: false })
-export class FcrBoardWidgetBase extends AgoraWidgetBase implements AgoraWidgetLifecycle {
+export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
   protected static _installationDisposer?: CallableFunction;
   protected static _animationOptions: BoardWindowAnimationOptions;
   logger!: Logger;
@@ -100,7 +100,7 @@ export class FcrBoardWidgetBase extends AgoraWidgetBase implements AgoraWidgetLi
     };
 
     const setAnimationOptions = (animationOptions: BoardWindowAnimationOptions) => {
-      FcrBoardWidgetBase._animationOptions = animationOptions;
+      FcrBoardWidget._animationOptions = animationOptions;
     };
 
     controller.addBroadcastListener({
@@ -112,7 +112,7 @@ export class FcrBoardWidgetBase extends AgoraWidgetBase implements AgoraWidgetLi
       onMessage: setAnimationOptions,
     });
 
-    FcrBoardWidgetBase._installationDisposer = () => {
+    FcrBoardWidget._installationDisposer = () => {
       controller.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.ToggleBoard,
         onMessage: handleOpen,
@@ -358,7 +358,7 @@ export class FcrBoardWidgetBase extends AgoraWidgetBase implements AgoraWidgetLi
     this._boardRoom = FcrBoardFactory.createBoardRoom({
       appId: this._initArgs?.appId || '',
       region: this._initArgs?.region || FcrBoardRegion.CN,
-      animationOptions: FcrBoardWidgetBase._animationOptions,
+      animationOptions: FcrBoardWidget._animationOptions,
     });
 
     const joinConfig = {
@@ -502,8 +502,8 @@ export class FcrBoardWidgetBase extends AgoraWidgetBase implements AgoraWidgetLi
   }
 
   onUninstall(controller: AgoraWidgetController) {
-    if (FcrBoardWidgetBase._installationDisposer) {
-      FcrBoardWidgetBase._installationDisposer();
+    if (FcrBoardWidget._installationDisposer) {
+      FcrBoardWidget._installationDisposer();
     }
   }
 
