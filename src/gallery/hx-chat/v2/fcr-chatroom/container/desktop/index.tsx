@@ -45,7 +45,7 @@ const FcrChatroomDialog = observer(() => {
       }}
       maskClosable={false}
       wrapClassName="fcr-chatroom-dialog-wrap"
-      width={387}
+      width={330}
       mask={false}
       visible={chatDialogVisible}>
       <FcrChatroomToastContext.Provider value={toastRef.current}>

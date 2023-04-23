@@ -8,8 +8,12 @@
   height: 70%;
   pointer-events: all;
 }
-
+.fcr-chatroom-dialog-wrap .fcr-dialog-close {
+  right: 12px;
+  top: 12px;
+}
 .fcr-chatroom-dialog-wrap .fcr-dialog-content {
+  @apply fcr-shadow-line-1-.5;
   height: 100%;
   overflow: hidden;
 }
@@ -24,10 +28,10 @@
 }
 .fcr-chatroom-dialog-title {
   @apply fcr-bg-4;
-  height: 50px;
+  height: 44px;
   display: flex;
   align-items: center;
-  padding-left: 24px;
+  padding-left: 6px;
 }
 .fcr-chatroom-dialog-tab-inner {
   flex: 1;
