@@ -6,8 +6,6 @@ const boardUIContextDefault = {
   observables: {
     canOperate: false,
   },
-  mount: () => {},
-  unmount: () => {},
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
   handleBoardDomLoad: (ref: HTMLDivElement | null) => {},
