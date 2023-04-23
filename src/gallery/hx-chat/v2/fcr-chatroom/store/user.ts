@@ -1,8 +1,8 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
-import { EduRoleTypeEnum, iterateMap } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core';
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../im/wrapper/typs';
-import { Scheduler, bound } from 'agora-rte-sdk';
+import { bound } from 'agora-rte-sdk';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -15,9 +15,7 @@ export class UserStore {
   setSearchKey(key: string) {
     this.searchKey = key;
   }
-
   @observable userList: AgoraIMUserInfo[] = [];
-
   @observable userCarouselAnimDelay = 3000;
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
