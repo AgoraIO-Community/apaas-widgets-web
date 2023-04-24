@@ -440,7 +440,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       )}.jpg`;
 
       downloadCanvasImage(canvas, fileName);
-      this.ui.addToast(transI18n('toast2.save_success'));
+      this.ui.addToast('Save successfully');
     });
     mainWindow.on(FcrBoardMainWindowEvent.Failure, (reason) => {
       this.logger.error('operation failure, reason: ', reason);
