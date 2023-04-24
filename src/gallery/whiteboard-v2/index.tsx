@@ -289,13 +289,17 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   mount() {
     const { _boardMainWindow, _boardDom } = this;
 
-    if (_boardDom && _boardMainWindow) {
+    if (_boardDom && _boardMainWindow && !this._mounted) {
       this._mounted = true;
       const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
-      _boardMainWindow.mount(_boardDom, {
-        containerSizeRatio: aspectRatio,
-        collectorContainer: this._collectorDom ?? undefined,
-      });
+      _boardMainWindow
+        .mount(_boardDom, {
+          containerSizeRatio: aspectRatio,
+          collectorContainer: this._collectorDom ?? undefined,
+        })
+        .catch(() => {
+          this._mounted = false;
+        });
     }
   }
 
@@ -550,8 +554,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     const observables = observable({ canOperate: this.hasPrivilege });
     this._boardContext = {
       observables,
-      mount: this.mount,
-      unmount: this.unmount,
       handleDrop: this.handleDrop,
       handleDragOver: this.handleDragOver,
       handleBoardDomLoad: (ref: HTMLDivElement | null) => {
@@ -563,8 +565,13 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
           resizeObserver.observe(this._boardDom);
 
           this._boardDomResizeObserver = resizeObserver;
+
+          this._notifyViewportChange();
+
+          this.mount();
         } else {
           this._boardDomResizeObserver?.disconnect();
+          this.unmount();
         }
       },
       handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
