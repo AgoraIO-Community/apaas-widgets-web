@@ -695,7 +695,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       this._toolbarContext.observables.undoSteps = steps;
     }
   }
-
+  @bound
   private _saveSnapshot(canvas: HTMLCanvasElement) {
     const fileName = `${this.classroomConfig.sessionInfo.roomName}_${dayjs().format(
       'YYYYMMDD_HHmmSSS',
