@@ -1,3 +1,9 @@
+.fcr-chatroom-member-container {
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  flex: 1;
+}
 .fcr-chatroom-member-list-item {
   @apply fcr-rounded-8 fcr-border-transparent;
 
@@ -35,6 +41,15 @@
 }
 .fcr-chatroom-member-list-wrap {
   padding: 0 10px 10px;
+  flex: 1;
+  overflow: auto;
+}
+
+.fcr-chatroom-member-list-wrap::-webkit-scrollbar {
+  @apply fcr-bg-2;
+}
+.fcr-chatroom-member-list-wrap::-webkit-scrollbar-thumb {
+  @apply fcr-bg-4 fcr-rounded-8;
 }
 .fcr-chatroom-member-list-search {
   padding: 15px 20px 20px;

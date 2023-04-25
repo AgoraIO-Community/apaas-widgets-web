@@ -43,6 +43,7 @@ const FcrChatroomDialog = observer(() => {
       onClose={() => {
         setChatDialogVisible(false);
       }}
+      getContainer={() => document.querySelector('.fcr-classroom-viewport') as HTMLElement}
       maskClosable={false}
       wrapClassName="fcr-chatroom-dialog-wrap"
       width={330}

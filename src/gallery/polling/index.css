@@ -67,6 +67,7 @@
 
 .fcr-polling-list-container {
   padding: 24px;
+  backdrop-filter: blur(25px);
 }
 
 .fcr-polling-input-list {

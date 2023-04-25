@@ -130,7 +130,7 @@ const AnnouncementTrigger = observer(() => {
           setShowAnnouncementInput(true);
           return;
         }
-        if (!showAnnouncement) {
+        if (!showAnnouncement && announcement) {
           setShowAnnouncement(true);
         }
       }}

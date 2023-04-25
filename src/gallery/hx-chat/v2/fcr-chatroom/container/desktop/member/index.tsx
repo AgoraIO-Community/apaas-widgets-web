@@ -25,40 +25,42 @@ const UserList = observer(() => {
   const localUserId = fcrChatRoom.userInfo?.userId || '';
   return (
     <div className="fcr-chatroom-member-list-wrap">
-      {searchUserList.map((user) => {
-        const enableUserAction = isHost && user.userId !== localUserId;
-        const muted = muteList.includes(user.userId);
-        return (
-          <div key={user.userId} className="fcr-chatroom-member-list-item">
-            <div className="fcr-chatroom-member-list-item-info">
-              <Avatar size={30} textSize={14} nickName={user.nickName}></Avatar>
+      <div>
+        {searchUserList.map((user) => {
+          const enableUserAction = isHost && user.userId !== localUserId;
+          const muted = muteList.includes(user.userId);
+          return (
+            <div key={user.userId} className="fcr-chatroom-member-list-item">
+              <div className="fcr-chatroom-member-list-item-info">
+                <Avatar size={30} textSize={14} nickName={user.nickName}></Avatar>
 
-              <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
+                <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
+              </div>
+              <div className="fcr-chatroom-member-list-item-action">
+                {enableUserAction &&
+                  (muted ? (
+                    <Button
+                      onClick={() => {
+                        unmuteUser(user);
+                      }}
+                      styleType="danger"
+                      size="XS">
+                      Unmute
+                    </Button>
+                  ) : (
+                    <Button
+                      onClick={() => {
+                        muteUser(user);
+                      }}
+                      size="XS">
+                      Mute
+                    </Button>
+                  ))}
+              </div>
             </div>
-            <div className="fcr-chatroom-member-list-item-action">
-              {enableUserAction &&
-                (muted ? (
-                  <Button
-                    onClick={() => {
-                      unmuteUser(user);
-                    }}
-                    styleType="danger"
-                    size="XS">
-                    Unmute
-                  </Button>
-                ) : (
-                  <Button
-                    onClick={() => {
-                      muteUser(user);
-                    }}
-                    size="XS">
-                    Mute
-                  </Button>
-                ))}
-            </div>
-          </div>
-        );
-      })}
+          );
+        })}
+      </div>
     </div>
   );
 });
