@@ -728,7 +728,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       if (this._boardDom && toolbarDom) {
         const boardClientRect = this._boardDom.getBoundingClientRect();
         const toolbarClientRect = toolbarDom.getBoundingClientRect();
-        const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2;
+        //todo offsettop
+        const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2 + 35;
         const centerPos = toolbarClientRect.x + toolbarClientRect.width / 2;
 
         const toolbarContext = this._toolbarContext;

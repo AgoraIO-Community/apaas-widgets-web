@@ -159,15 +159,23 @@ export const useVisibleTools = () => {
         .map((index) => baseMainTools[index])
         .concat(fixedTools)
     : baseMainTools.concat(fixedTools);
-
+  //todo add dragtool
+  // const extraTools = isShinked
+  //   ? range(
+  //       0,
+  //       max([0, min([maxCountAvailableToDisplay - baseMainTools.length, baseExtraTools.length])]),
+  //     )
+  //       .map((index) => baseExtraTools[index])
+  //       .concat([additionTool, dragTool])
+  //   : baseExtraTools.concat([dragTool]);
   const extraTools = isShinked
     ? range(
         0,
         max([0, min([maxCountAvailableToDisplay - baseMainTools.length, baseExtraTools.length])]),
       )
         .map((index) => baseExtraTools[index])
-        .concat([additionTool, dragTool])
-    : baseExtraTools.concat([dragTool]);
+        .concat([additionTool])
+    : baseExtraTools.concat([]);
 
   const additionToolsCount =
     baseMainTools.length + baseExtraTools.length - maxCountAvailableToDisplay;
