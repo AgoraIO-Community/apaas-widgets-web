@@ -43,6 +43,18 @@ export class UserStore {
       this.userList = this.userList.concat(users);
     });
   }
+  @bound
+  async updateUser(userUuid: string) {
+    const [user] = await this._fcrChatRoom.getUserInfoList([userUuid]);
+    const userIndex = this.userList.findIndex((user) => user.userId === userUuid);
+    runInAction(() => {
+      if (userIndex === -1) {
+        this.userList.push(user);
+      } else {
+        this.userList[userIndex] = user;
+      }
+    });
+  }
   @action.bound
   private _initUserMuted() {
     this.userMuted =
