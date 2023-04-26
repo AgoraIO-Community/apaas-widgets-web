@@ -20,9 +20,7 @@ export const App = observer(() => {
         className="board-widget-app"
         onDragOver={handleDragOver}
         onDrop={handleDrop}
-        ref={(ref) => {
-          handleBoardDomLoad(ref);
-        }}
+        ref={handleBoardDomLoad}
       />
       <div
         className="window-manager-collector"
