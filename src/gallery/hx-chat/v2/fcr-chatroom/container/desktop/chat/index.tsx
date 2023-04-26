@@ -62,6 +62,14 @@ const ChatInput = observer(() => {
       mute ? AgoraIMCmdActionEnum.AllUserMuted : AgoraIMCmdActionEnum.AllUserUnmuted,
     );
   };
+  const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
+    if (e.keyCode === 13 && !e.ctrlKey) {
+      e.preventDefault();
+      send();
+    } else if (e.keyCode === 13 && e.ctrlKey) {
+      setMessageInputText(messageInputText + '\n');
+    }
+  };
   return (
     <div className="fcr-chat-input-container">
       <div className="fcr-chat-input-wrap">
@@ -85,6 +93,7 @@ const ChatInput = observer(() => {
             type={SvgIconEnum.FCR_SEND}
             size={36}></SvgImg>
           <TextArea
+            onKeyDown={handleKeyDown}
             autoSize
             maxCount={150}
             onFocusChange={setInputFocus}
