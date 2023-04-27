@@ -579,6 +579,19 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       },
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
+        setTimeout(() => {
+          runInAction(() => {
+            if (this._toolbarContext) {
+              this._toolbarContext.observables.toolbarDockPosition = {
+                x: 0,
+                y: 0,
+                initialized: false,
+                placement: 'left',
+              };
+            }
+          });
+          this._notifyViewportChange();
+        });
       }),
     };
     return this._boardContext;
