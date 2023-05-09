@@ -32,7 +32,7 @@ const UserList = observer(() => {
           return (
             <div key={user.userId} className="fcr-chatroom-member-list-item">
               <div className="fcr-chatroom-member-list-item-info">
-                <Avatar size={30} textSize={14} nickName={user.nickName}></Avatar>
+                <Avatar size={24} textSize={12} nickName={user.nickName}></Avatar>
 
                 <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
               </div>
@@ -44,15 +44,17 @@ const UserList = observer(() => {
                         unmuteUser(user);
                       }}
                       styleType="danger"
-                      size="XS">
+                      shape="rounded"
+                      size="XXS">
                       Unmute
                     </Button>
                   ) : (
                     <Button
+                      shape="rounded"
                       onClick={() => {
                         muteUser(user);
                       }}
-                      size="XS">
+                      size="XXS">
                       Mute
                     </Button>
                   ))}

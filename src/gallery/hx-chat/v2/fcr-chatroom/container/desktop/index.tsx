@@ -31,22 +31,26 @@ const FcrChatroomDialog = observer(() => {
 
   const [tab, setTab] = useState<'chat' | 'member'>('chat');
   useEffect(() => {
-    if (dialogContentRef.current) {
+    if (chatDialogVisible && dialogContentRef.current && !toastRef.current) {
       toastRef.current = new ToastApiFactory({
         toastPlacement: 'bottom',
         renderContainer: dialogContentRef.current,
       });
     }
-  }, []);
+    return () => {
+      toastRef.current = null;
+    };
+  }, [chatDialogVisible]);
   return (
     <BaseDialog
+      destroyOnClose={false}
       onClose={() => {
         setChatDialogVisible(false);
       }}
       getContainer={() => document.querySelector('.fcr-classroom-viewport') as HTMLElement}
       maskClosable={false}
       wrapClassName="fcr-chatroom-dialog-wrap"
-      width={330}
+      width={270}
       mask={false}
       visible={chatDialogVisible}>
       <FcrChatroomToastContext.Provider value={toastRef.current}>

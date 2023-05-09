@@ -5,7 +5,7 @@ import { Button } from '@components/button';
 
 import { Switch } from '@components/switch';
 import { observer } from 'mobx-react';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classnames from 'classnames';
@@ -23,6 +23,8 @@ import { useScroll } from '../../../hooks/useScroll';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { Avatar } from '@components/avatar';
 import { useMute } from '../../../hooks/useMute';
+import { ToastApi } from '@components/toast';
+import { FcrChatroomToastContext } from '..';
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
@@ -91,7 +93,7 @@ const ChatInput = observer(() => {
             })}
             onClick={send}
             type={SvgIconEnum.FCR_SEND}
-            size={36}></SvgImg>
+            size={32}></SvgImg>
           <TextArea
             onKeyDown={handleKeyDown}
             autoSize
@@ -146,7 +148,7 @@ const AnnouncementTrigger = observer(() => {
       className={classnames('fcr-chat-input-actions-item', {
         'fcr-chat-input-actions-item-active': showAnnouncement,
       })}>
-      <SvgImg type={SvgIconEnum.FCR_NOTICE} size={30}></SvgImg>
+      <SvgImg type={SvgIconEnum.FCR_NOTICE} size={24}></SvgImg>
     </div>
   );
 });
@@ -159,26 +161,43 @@ const AnnouncementInput = observer(() => {
       updateAnnouncement,
     },
   } = useStore();
+  const toast = useContext(FcrChatroomToastContext);
+
   return (
     <div className="fcr-chat-announcement-input-wrap">
       <div className="fcr-chat-announcement-input">
-        <div className="fcr-chat-announcement-input-title">Announcement</div>
+        <div className="fcr-chat-announcement-input-title">
+          Announcement
+          <div className="fcr-chat-announcement-close">
+            <SvgImg
+              onClick={() => setShowAnnouncementInput(false)}
+              type={SvgIconEnum.FCR_CLOSE}
+              size={12}></SvgImg>
+          </div>
+        </div>
         <div className="fcr-chat-announcement-input-textarea">
           <TextArea
             value={announcementInputText}
             onChange={setAnnouncementInputText}
             maxCount={150}
+            placeholder={'Enter ...'}
             resizable={false}></TextArea>
         </div>
       </div>
       <div className="fcr-chat-announcement-submit">
-        <Button size="S" styleType="gray" onClick={() => setShowAnnouncementInput(false)}>
+        <Button size="XS" styleType="gray" onClick={() => setShowAnnouncementInput(false)}>
           Cancel
         </Button>
         <Button
-          size="S"
-          onClick={() => {
-            updateAnnouncement(announcementInputText);
+          size="XS"
+          onClick={async () => {
+            await updateAnnouncement(announcementInputText);
+            toast?.open({
+              toastProps: {
+                content: 'Announcement submit successfully',
+                type: 'normal',
+              },
+            });
             setShowAnnouncementInput(false);
           }}>
           Submit
@@ -329,11 +348,14 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
     setActionVisible(!actionVisible);
   };
   useEffect(() => {
-    if (actionVisible) {
-      document.addEventListener('click', toggleAction);
-    } else {
-      document.removeEventListener('click', toggleAction);
-    }
+    setTimeout(() => {
+      if (actionVisible) {
+        document.addEventListener('click', toggleAction);
+      } else {
+        document.removeEventListener('click', toggleAction);
+      }
+    });
+
     return () => document.removeEventListener('click', toggleAction);
   }, [actionVisible]);
   return (
@@ -346,7 +368,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
       {showAvatarAndHost && (
         <div className="fcr-chat-message-list-item-left">
           <div className="fcr-chat-message-list-item-avatar-container" onClick={toggleAction}>
-            <Avatar size={36} textSize={14} nickName={lastMessage?.ext?.nickName || ''}></Avatar>
+            <Avatar size={28} textSize={12} nickName={lastMessage?.ext?.nickName || ''}></Avatar>
             {isUserMuted && (
               <div className="fcr-chat-message-list-item-mute-icon">
                 <SvgImg type={SvgIconEnum.FCR_SETTING_NONE}></SvgImg>
@@ -419,11 +441,9 @@ const AnnounceMent = observer(() => {
   return showAnnouncement ? (
     <div className="fcr-chat-announcement">
       {isHost && (
-        <SvgImg
-          className="fcr-chat-announcement-close"
-          onClick={hideAnnouncement}
-          type={SvgIconEnum.FCR_CLOSE}
-          size={24}></SvgImg>
+        <div className="fcr-chat-announcement-close">
+          <SvgImg onClick={hideAnnouncement} type={SvgIconEnum.FCR_CLOSE} size={12}></SvgImg>
+        </div>
       )}
 
       <div className="fcr-chat-announcement-title">Announcement</div>
