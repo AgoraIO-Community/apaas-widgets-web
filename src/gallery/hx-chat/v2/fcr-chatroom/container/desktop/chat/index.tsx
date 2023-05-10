@@ -27,6 +27,7 @@ import { useMute } from '../../../hooks/useMute';
 import { FcrChatroomToastContext } from '..';
 import dayjs from 'dayjs';
 import { AutoSizer, CellMeasurer, CellMeasurerCache, List, ListRowProps } from 'react-virtualized';
+import { getNameColor } from '@components/avatar/helper';
 const cache = new CellMeasurerCache({
   // defaultWidth: 200,
   minHeight: 30,
@@ -413,7 +414,6 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
 
     return () => document.removeEventListener('click', toggleAction);
   }, [actionVisible]);
-  console.log(messages, 'messages');
   return (
     <div
       className={classnames(
@@ -427,7 +427,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             <Avatar size={24} textSize={12} nickName={lastMessage?.ext?.nickName || ''}></Avatar>
             {isUserMuted && (
               <div className="fcr-chat-message-list-item-mute-icon">
-                <SvgImg type={SvgIconEnum.FCR_SETTING_NONE}></SvgImg>
+                <SvgImg type={SvgIconEnum.FCR_SETTING_NONE} size={18}></SvgImg>
               </div>
             )}
             {isHost && (
@@ -435,6 +435,8 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                 <div
                   className={classnames('fcr-chat-message-list-item-avatar-action', {
                     'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
+                    'fcr-bg-transparent': !actionVisible,
+                    'fcr-bg-1': actionVisible,
                   })}>
                   <div>
                     {isUserMuted ? (
@@ -469,7 +471,11 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             <div className="fcr-chat-message-list-item-host">Host</div>
           )}
 
-          <div className="fcr-chat-message-list-item-name">{lastMessage.ext?.nickName}</div>
+          <div
+            className="fcr-chat-message-list-item-name"
+            style={isSelfMessage ? {} : { color: getNameColor(lastMessage.ext?.nickName || '') }}>
+            {lastMessage.ext?.nickName}
+          </div>
           {messages[0]?.ts && (
             <div className="fcr-chat-message-list-item-time">
               {dayjs(messages[0].ts).format('M-D HH:mm')}

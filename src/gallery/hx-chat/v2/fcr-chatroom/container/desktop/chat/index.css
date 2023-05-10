@@ -42,6 +42,7 @@
   padding-right: 9px;
   font-size: 12px;
   user-select: none;
+  font-weight: 300;
 }
 .fcr-chat-input-actions-mute-all .fcr-switch {
   transform-origin: 0;
@@ -63,8 +64,8 @@
 .fcr-chat-input-send {
   position: absolute;
   right: 10px;
-  top: 0;
-  bottom: 0;
+
+  bottom: 2px;
   margin: auto;
   z-index: 1;
   cursor: pointer;
@@ -169,7 +170,6 @@
 .fcr-chat-message-list {
   flex: 1;
   overflow: hidden;
-  padding-top: 20px;
   gap: 12px;
   display: flex;
   flex-direction: column;
@@ -224,16 +224,16 @@
   right: -4px;
   bottom: -1px;
   z-index: 2;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 12px;
 }
 .fcr-chat-message-list-item-mute-icon svg {
-  left: -4px;
-  top: -4px;
+  left: -3px;
+  top: -3px;
   position: relative;
 }
 .fcr-chat-message-list-item-avatar-action {
-  @apply fcr-bg-2 fcr-rounded-full;
+  @apply fcr-rounded-full;
   height: calc(100% + 4px);
   width: calc(100% + 4px);
   position: absolute;
@@ -245,7 +245,7 @@
   justify-content: flex-end;
   overflow: hidden;
   transition: all 0.2s;
-  padding-right: 8px;
+  padding-right: 2px;
   padding-left: 20px;
 }
 .fcr-chat-message-list-item-avatar-action div {
@@ -255,7 +255,7 @@
   overflow: hidden;
 }
 .fcr-chat-message-list-item-avatar-action-visible {
-  width: 160px;
+  width: 120px;
 }
 .fcr-chat-message-list-item-extra {
   display: flex;
@@ -277,7 +277,7 @@
   font-size: 12px;
 }
 .fcr-chat-message-list-item-content {
-  @apply fcr-text-1 fcr-rounded-12 fcr-bg-4;
+  @apply fcr-text-1 fcr-rounded-8 fcr-bg-4;
   width: fit-content;
   font-size: 12px;
   line-height: 130%;
@@ -285,7 +285,7 @@
   padding: 8px 12px;
   word-break: break-word;
   white-space: pre-wrap;
-  font-weight: 400;
+  font-weight: 300;
 }
 .fcr-chat-message-list-item-content:hover {
   @apply fcr-bg-5;
@@ -297,9 +297,11 @@
 .fcr-chat-message-list-item-placement-right {
   justify-content: flex-end;
 }
-
+.fcr-chat-message-list-item-placement-left {
+  padding-left: 2px;
+}
 .fcr-chat-message-list-item-placement-right .fcr-chat-message-list-item-content {
-  @apply fcr-rounded-12 fcr-bg-brand-6;
+  @apply fcr-rounded-8 fcr-bg-brand-6;
   border-top-right-radius: 0;
 }
 .fcr-chat-message-list-item-placement-host.fcr-chat-message-list-item-placement-left
@@ -307,11 +309,12 @@
   @apply fcr-bg-purple-6;
 }
 .fcr-chat-message-list-item-host {
-  @apply fcr-rounded-full fcr-bg-gradient-1 fcr-font-medium fcr-text-white;
+  @apply fcr-rounded-full fcr-bg-gradient-1 fcr-text-white;
   height: 18px;
   line-height: 18px;
   padding: 0 10px;
   font-size: 12px;
+  font-weight: 400;
 }
 .fcr-chat-message-list-item-placement-right .fcr-chat-message-list-item-right {
   display: flex;
@@ -328,12 +331,13 @@
   /* height: 30px; */
   line-height: 14px;
   text-align: center;
-  font-size: 10px;
+  font-size: 12px;
   width: fit-content;
   align-self: center;
 
   gap: 8px;
   padding: 8px 16px;
+  font-weight: 300;
 }
 .fcr-chat-message-list-item-custom > span {
   @apply fcr-text-green;
@@ -359,14 +363,15 @@
   font-size: 14px;
 }
 .fcr-chat-message-unread-message {
-  @apply fcr-rounded-full fcr-font-medium fcr-text-white fcr-bg-gradient-1;
-  height: 28px;
-  font-size: 14px;
-  line-height: 28px;
+  @apply fcr-rounded-full fcr-text-white fcr-bg-gradient-1;
+  height: 24px;
+  font-size: 12px;
+  line-height: 24px;
   padding: 0 10px;
   position: absolute;
-  left: 20px;
+  left: 10px;
   bottom: 8px;
   cursor: pointer;
   z-index: 3;
+  font-weight: 300;
 }
