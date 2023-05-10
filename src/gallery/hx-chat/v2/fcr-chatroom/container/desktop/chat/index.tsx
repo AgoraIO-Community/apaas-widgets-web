@@ -1,11 +1,10 @@
 import './index.css';
-import { Input } from '@components/input';
 import { TextArea } from '@components/textarea';
 import { Button } from '@components/button';
 
 import { Switch } from '@components/switch';
 import { observer } from 'mobx-react';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classnames from 'classnames';
@@ -14,6 +13,7 @@ import {
   AgoraIMCmdActionEnum,
   AgoraIMCustomMessage,
   AgoraIMMessageBase,
+  AgoraIMMessageExt,
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../../../im/wrapper/typs';
@@ -23,8 +23,15 @@ import { useScroll } from '../../../hooks/useScroll';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { Avatar } from '@components/avatar';
 import { useMute } from '../../../hooks/useMute';
-import { ToastApi } from '@components/toast';
+
 import { FcrChatroomToastContext } from '..';
+import dayjs from 'dayjs';
+import { AutoSizer, CellMeasurer, CellMeasurerCache, List, ListRowProps } from 'react-virtualized';
+const cache = new CellMeasurerCache({
+  // defaultWidth: 200,
+  minHeight: 30,
+  fixedWidth: true,
+});
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
@@ -229,28 +236,76 @@ const MessageList = observer(() => {
   const {
     messageStore: { renderableMessageList },
   } = useStore();
-  const { messageContainerRef } = useScroll();
+  const { listRef, handleScroll } = useScroll();
+  const renderMessage = (
+    messages:
+      | AgoraIMMessageBase<unknown, AgoraIMMessageExt>
+      | AgoraIMMessageBase<unknown, AgoraIMMessageExt>[],
+  ) => {
+    if (messages instanceof Array) {
+      const lastMessage = messages[messages.length - 1];
+      return <MessageListItem key={lastMessage.id} messages={messages}></MessageListItem>;
+    } else {
+      const message = messages;
+      return (
+        <CmdMessageItem
+          key={message.id}
+          message={messages as AgoraIMCustomMessage}></CmdMessageItem>
+      );
+    }
+  };
+
+  const rowRenderer = ({ columnIndex, key, parent, index, style }: ListRowProps) => {
+    return (
+      // @ts-ignore
+      <CellMeasurer cache={cache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
+        {({ measure, registerChild }) => {
+          const currMsg = renderableMessageList[index];
+          const isSingleMsg = !(currMsg instanceof Array);
+          const lastMsg = isSingleMsg ? currMsg : currMsg[0];
+          return (
+            <div
+              className={classnames('fcr-chat-message-list-item-wrap', {
+                'fcr-chat-message-list-item-wrap-center': isSingleMsg,
+              })}
+              key={lastMsg.id}
+              ref={registerChild as any}
+              style={{
+                ...style,
+              }}>
+              {renderMessage(currMsg)}
+            </div>
+          );
+        }}
+      </CellMeasurer>
+    );
+  };
   return (
-    <div ref={messageContainerRef} className="fcr-chat-message-list fcr-scrollbar-override">
+    <div className="fcr-chat-message-list">
       {renderableMessageList.length === 0 && (
         <div className="fcr-chat-message-list-placeholder">
           <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={200}></SvgImg>
           <span>No Message</span>
         </div>
       )}
-      {renderableMessageList.map((messages) => {
-        if (messages instanceof Array) {
-          const lastMessage = messages[messages.length - 1];
-          return <MessageListItem key={lastMessage.id} messages={messages}></MessageListItem>;
-        } else {
-          const message = messages;
+      <AutoSizer>
+        {({ width, height }) => {
           return (
-            <CmdMessageItem
-              key={message.id}
-              message={messages as AgoraIMCustomMessage}></CmdMessageItem>
+            //@ts-ignore
+            <List
+              className="fcr-scrollbar-override"
+              ref={listRef}
+              height={height}
+              width={width}
+              rowCount={renderableMessageList.length}
+              deferredMeasurementCache={cache}
+              rowHeight={cache.rowHeight}
+              rowRenderer={rowRenderer}
+              onScroll={handleScroll}
+            />
           );
-        }
-      })}
+        }}
+      </AutoSizer>
     </div>
   );
 });
@@ -358,6 +413,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
 
     return () => document.removeEventListener('click', toggleAction);
   }, [actionVisible]);
+  console.log(messages, 'messages');
   return (
     <div
       className={classnames(
@@ -368,7 +424,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
       {showAvatarAndHost && (
         <div className="fcr-chat-message-list-item-left">
           <div className="fcr-chat-message-list-item-avatar-container" onClick={toggleAction}>
-            <Avatar size={28} textSize={12} nickName={lastMessage?.ext?.nickName || ''}></Avatar>
+            <Avatar size={24} textSize={12} nickName={lastMessage?.ext?.nickName || ''}></Avatar>
             {isUserMuted && (
               <div className="fcr-chat-message-list-item-mute-icon">
                 <SvgImg type={SvgIconEnum.FCR_SETTING_NONE}></SvgImg>
@@ -414,6 +470,11 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           )}
 
           <div className="fcr-chat-message-list-item-name">{lastMessage.ext?.nickName}</div>
+          {messages[0]?.ts && (
+            <div className="fcr-chat-message-list-item-time">
+              {dayjs(messages[0].ts).format('M-D HH:mm')}
+            </div>
+          )}
         </div>
         {messages.map((message) => {
           switch (message.type) {
