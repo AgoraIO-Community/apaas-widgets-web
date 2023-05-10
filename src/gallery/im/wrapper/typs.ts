@@ -82,6 +82,7 @@ export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = Agora
   type?: AgoraIMMessageType;
   body?: B;
   ext?: E;
+  ts?: number;
   constructor(params: AgoraIMMessageBase<B, E>) {
     this.id = params.id;
     this.from = params.from;
@@ -89,6 +90,7 @@ export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = Agora
     this.type = params.type;
     this.body = params.body;
     this.ext = params.ext;
+    this.ts = params.ts || new Date().getTime();
   }
 }
 export class AgoraIMTextMessage extends AgoraIMMessageBase {

@@ -12,11 +12,12 @@ import {
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../im/wrapper/typs';
+import { List } from 'react-virtualized';
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
-  private _messageListDom: HTMLDivElement | null = null;
+  private _messageListRef: List | null = null;
 
   @observable historyMessageLoaded = false;
 
@@ -163,14 +164,14 @@ export class MessageStore {
     }
   }
   @bound
-  setMessageListDom(dom: HTMLDivElement) {
-    this._messageListDom = dom;
+  setMessageListRef(list: List) {
+    this._messageListRef = list;
   }
   @bound
   @Lodash.debounced(100)
   messageListScrollToBottom() {
-    if (this._messageListDom) {
-      this._messageListDom.scrollTop = this._messageListDom.scrollHeight;
+    if (this._messageListRef) {
+      this._messageListRef.scrollToPosition(-1);
     }
   }
   @action.bound

@@ -82,6 +82,9 @@ export const convertHXMessage = (msg: AgoraChat.MessageBody) => {
         msg: msg.data,
         //@ts-ignore
         ext: { ...msg.ext } as AgoraIMMessageExt,
+        //@ts-ignore
+
+        ts: msg.time,
       });
     case 'IMAGE':
       return new AgoraIMImageMessage({
@@ -95,6 +98,9 @@ export const convertHXMessage = (msg: AgoraChat.MessageBody) => {
         url: msg.url,
         //@ts-ignore
         ext: { ...msg.ext } as AgoraIMMessageExt,
+        //@ts-ignore
+
+        ts: msg.time,
       });
     case 'COMMAND':
       return new AgoraIMCustomMessage({
@@ -106,6 +112,9 @@ export const convertHXMessage = (msg: AgoraChat.MessageBody) => {
         action: msg.action as AgoraIMCmdActionEnum,
         //@ts-ignore
         ext: { ...msg.ext } as AgoraIMMessageExt,
+        //@ts-ignore
+
+        ts: msg.time,
       });
     default:
       return new AgoraIMTextMessage({
@@ -114,6 +123,9 @@ export const convertHXMessage = (msg: AgoraChat.MessageBody) => {
         to: msg.to,
         type: AgoraIMMessageType.Text,
         msg: '',
+        //@ts-ignore
+
+        ts: msg.time,
       });
   }
 };

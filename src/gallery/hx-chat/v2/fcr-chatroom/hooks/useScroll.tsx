@@ -1,53 +1,37 @@
 import { throttle } from 'lodash';
 import { useCallback, useEffect, useRef } from 'react';
 import { useStore } from './useStore';
-
+import { List, ScrollParams } from 'react-virtualized';
 export const useScroll = () => {
   const {
     fcrChatRoom,
     messageStore: {
-      setMessageListDom,
+      setMessageListRef,
       messageList,
       isBottom,
       messageListScrollToBottom,
       setIsBottom,
     },
   } = useStore();
-  const messageContainerRef = useRef<HTMLDivElement>(null);
-
+  const listRef = useRef<List>(null);
   useEffect(() => {
-    const messageContainer = messageContainerRef.current;
-    if (messageContainer) {
-      messageContainer.addEventListener('scroll', handleScroll);
-
-      setMessageListDom(messageContainer);
+    if (listRef.current) {
+      setMessageListRef(listRef.current);
     }
-    return () => {
-      if (messageContainerRef.current) {
-        messageContainerRef.current.removeEventListener('scroll', handleScroll);
-      }
-    };
   }, []);
   useEffect(() => {
-    if (isBottom) {
-      messageListScrollToBottom();
+    listRef.current?.recomputeRowHeights(0);
+  }, [messageList.length]);
+  const handleScroll = throttle((scrollParams: ScrollParams) => {
+    const { scrollHeight, scrollTop, clientHeight } = scrollParams;
+    if (scrollTop + clientHeight <= scrollHeight - 2) {
+      setIsBottom(false);
+    } else {
+      setIsBottom(true);
     }
-  }, [isBottom, messageList.length, messageListScrollToBottom]);
-  const handleScroll = useCallback(
-    throttle(() => {
-      if (messageContainerRef.current)
-        if (
-          messageContainerRef.current.scrollTop + messageContainerRef.current.clientHeight <=
-          messageContainerRef.current.scrollHeight - 2
-        ) {
-          setIsBottom(false);
-        } else {
-          setIsBottom(true);
-        }
-    }, 200),
-    [],
-  );
+  }, 200);
   return {
-    messageContainerRef,
+    listRef,
+    handleScroll,
   };
 };

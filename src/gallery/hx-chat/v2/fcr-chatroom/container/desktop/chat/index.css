@@ -168,12 +168,20 @@
 }
 .fcr-chat-message-list {
   flex: 1;
-  overflow: auto;
+  overflow: hidden;
   padding-top: 20px;
   gap: 12px;
   display: flex;
   flex-direction: column;
   position: relative;
+}
+.fcr-chat-message-list-item-wrap {
+  padding-bottom: 12px;
+}
+.fcr-chat-message-list-item-wrap-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .fcr-chat-message-list-placeholder {
   @apply fcr-text-2;
@@ -199,7 +207,7 @@
 }
 .fcr-chat-message-list-item {
   display: flex;
-  gap: 15px;
+  gap: 10px;
 }
 .fcr-chat-message-list-item-avatar-container {
   position: relative;
@@ -252,10 +260,9 @@
 .fcr-chat-message-list-item-extra {
   display: flex;
   padding-bottom: 5px;
+  gap: 9px;
 }
-.fcr-chat-message-list-item-host {
-  margin-right: 8px;
-}
+
 .fcr-chat-message-list-item-name {
   @apply fcr-text-1 fcr-font-medium;
   font-size: 10px;
@@ -264,15 +271,21 @@
   text-overflow: ellipsis;
   white-space: nowrap;
 }
+.fcr-chat-message-list-item-time {
+  @apply fcr-text-2;
+  font-weight: 200;
+  font-size: 12px;
+}
 .fcr-chat-message-list-item-content {
   @apply fcr-text-1 fcr-rounded-12 fcr-bg-4;
   width: fit-content;
-  font-size: 14px;
-  line-height: 21px;
+  font-size: 12px;
+  line-height: 130%;
   border-top-left-radius: 0;
-  padding: 8px 16px;
+  padding: 8px 12px;
   word-break: break-word;
   white-space: pre-wrap;
+  font-weight: 400;
 }
 .fcr-chat-message-list-item-content:hover {
   @apply fcr-bg-5;
@@ -298,7 +311,7 @@
   height: 18px;
   line-height: 18px;
   padding: 0 10px;
-  font-size: 10px;
+  font-size: 12px;
 }
 .fcr-chat-message-list-item-placement-right .fcr-chat-message-list-item-right {
   display: flex;
