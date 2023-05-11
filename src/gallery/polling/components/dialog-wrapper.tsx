@@ -28,7 +28,7 @@ export const DialogWrapper: FC<Props> = ({ onResize, onClose, onMinimize, childr
   };
   const actions = [
     {
-      icon: SvgIconEnum.FCR_WINDOW_SMALLER,
+      icon: SvgIconEnum.FCR_MINUS,
       onClick: onMinimize,
       onMouseDown: handleMouseDown,
     },

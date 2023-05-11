@@ -2,7 +2,7 @@ import { Input } from '@components/input';
 import './index.css';
 import { observer } from 'mobx-react';
 import { useStore } from '../../../hooks/useStore';
-import { SvgIconEnum } from '@components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { Button } from '@components/button';
 import { useMute } from '../../../hooks/useMute';
 import { Avatar } from '@components/avatar';
@@ -26,6 +26,12 @@ const UserList = observer(() => {
   return (
     <div className="fcr-chatroom-member-list-wrap">
       <div>
+        {searchUserList.length === 0 && (
+          <div className="fcr-chatroom-member-list-placeholder">
+            <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={200}></SvgImg>
+            <span>No Data</span>
+          </div>
+        )}
         {searchUserList.map((user) => {
           const enableUserAction = isHost && user.userId !== localUserId;
           const muted = muteList.includes(user.userId);

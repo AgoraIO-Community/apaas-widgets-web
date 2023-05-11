@@ -1,9 +1,8 @@
 .fcr-polling-result-item {
-  @apply fcr-border-1 fcr-rounded-12;
+  @apply fcr-border-1 fcr-rounded-4;
   background-color: rgba(67, 67, 78, 0.5);
-  height: 60px;
+  height: 36px;
   position: relative;
-  margin-bottom: 20px;
   border-width: 1px;
   overflow: hidden;
 }
@@ -11,14 +10,14 @@
 .fcr-polling-result-progress {
   background-color: #4c5462;
   height: 100%;
-  border-radius: 10px 0 0 10px;
+  border-radius: inherit;
 }
 
 .fcr-polling-result-progress-select {
   /* @apply fcr-bg-brand */
-  background-color: #4262FF;
+  background-color: #4262ff;
   height: 100%;
-  border-radius: 10px 0 0 10px;
+  border-radius: inherit;
 }
 
 .fcr-polling-result-progress-text {
@@ -26,10 +25,10 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 14px;
+  font-size: 12px;
   display: flex;
   gap: 12px;
-  padding: 0 12px;
+  padding: 0 10px;
   width: 100%;
   height: 100%;
   align-items: center;
@@ -37,7 +36,8 @@
 }
 
 .fcr-polling-result-person-count {
-  @apply fcr-text-2 fcr-font-regular;
+  @apply fcr-text-2;
+  font-weight: 300;
   font-size: 12px;
 }
 

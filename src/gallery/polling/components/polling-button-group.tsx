@@ -22,6 +22,10 @@ const PollingButtonGroup: React.FC = observer(() => {
 
   const isAllowedToAdd = options.length < POLL_INPUT_MAX_COUNT;
   const centerText = PollingButtonTextMap[pollingState].centerText;
+
+  const size = PollingButtonTextMap[pollingState].size || 'S';
+  const block = PollingButtonTextMap[pollingState].block || false;
+
   const centerBtnStyleType = PollingButtonTextMap[pollingState].centerButtonStyle;
   const isShowAddMinusBtn = pollingState == PollingState.POLLING_EDIT;
   const isAllowedToCreate = question && !options.some(({ content }) => content === '');
@@ -59,17 +63,16 @@ const PollingButtonGroup: React.FC = observer(() => {
           icon={SvgIconEnum.FCR_V2_POLL_ADD}></PollingIcon>
       )}
 
-      <div className="fcr-polling-btn">
-        <Button
-          disabled={isDisabled}
-          styleType={centerBtnStyleType}
-          shape="circle"
-          size={'S'}
-          loading={isActionLoading}
-          onClick={innerOnClickCenter}>
-          {centerText}
-        </Button>
-      </div>
+      <Button
+        block={block}
+        size={size}
+        disabled={isDisabled}
+        styleType={centerBtnStyleType}
+        shape="circle"
+        loading={isActionLoading}
+        onClick={innerOnClickCenter}>
+        {centerText}
+      </Button>
     </div>
   );
 });

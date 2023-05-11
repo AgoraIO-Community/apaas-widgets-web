@@ -27,7 +27,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   }
 
   get minWidth() {
-    return 300;
+    return 230;
   }
 
   get minHeight() {

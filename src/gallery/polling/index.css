@@ -1,19 +1,14 @@
 .fcr-polling-question {
   @apply fcr-bg-4;
-  width: 100%;
-  min-height: 103px;
-  width: 300px;
-  padding: 0 24px;
+  width: 230px;
+  padding: 0 15px;
   border-radius: inherit;
 }
 
 .fcr-polling-title {
   @apply fcr-text-1 fcr-font-medium;
-  font-size: 20px;
-  line-height: 22px;
-  padding-top: 20px;
-  /* margin-left: 24px; */
-  padding-bottom: 20px;
+  font-size: 13px;
+  line-height: 45px;
 }
 
 .fcr-polling-tr-icon {
@@ -35,8 +30,8 @@
 
 .fcr-polling-question-hint {
   @apply fcr-text-1 fcr-font-regular;
-  font-size: 16px;
-  padding-bottom: 20px;
+  font-size: 12px;
+  padding-bottom: 15px;
   word-break: break-all;
 }
 
@@ -51,7 +46,8 @@
 }
 
 .fcr-polling-input .fcr-textarea textarea {
-  font-size: 16px;
+  font-size: 12px;
+  font-weight: 400;
 }
 
 .fcr-polling-input .fcr-textarea-divider {
@@ -64,10 +60,15 @@
   gap: 24px;
   padding-bottom: 12px;
 }
-
+.fcr-polling-check .fcr-radio-label {
+  padding-left: 8px;
+}
 .fcr-polling-list-container {
-  padding: 24px;
+  padding: 10px 15px 20px;
   backdrop-filter: blur(25px);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
 }
 
 .fcr-polling-input-list {
