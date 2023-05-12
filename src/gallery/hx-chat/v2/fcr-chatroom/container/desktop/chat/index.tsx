@@ -142,22 +142,36 @@ const AnnouncementTrigger = observer(() => {
     messageStore: { showAnnouncement, setShowAnnouncement, setShowAnnouncementInput, announcement },
     roomStore: { isHost },
   } = useStore();
+  const disabled = !isHost && !announcement;
+  const [tootipVisible, setTootipVisible] = useState(false);
   return (
-    <div
-      onClick={() => {
-        if (isHost && !announcement) {
-          setShowAnnouncementInput(true);
+    <ToolTip
+      visible={tootipVisible}
+      onVisibleChange={(visible) => {
+        if (!disabled) {
+          setTootipVisible(false);
           return;
         }
-        if (!showAnnouncement && announcement) {
-          setShowAnnouncement(true);
-        }
+        setTootipVisible(visible);
       }}
-      className={classnames('fcr-chat-input-actions-item', {
-        'fcr-chat-input-actions-item-active': showAnnouncement,
-      })}>
-      <SvgImg type={SvgIconEnum.FCR_NOTICE} size={24}></SvgImg>
-    </div>
+      content={disabled && 'No announcement'}>
+      <div
+        onClick={() => {
+          if (isHost && !announcement) {
+            setShowAnnouncementInput(true);
+            return;
+          }
+          if (!showAnnouncement && announcement) {
+            setShowAnnouncement(true);
+          }
+        }}
+        className={classnames('fcr-chat-input-actions-item', {
+          'fcr-chat-input-actions-item-active': showAnnouncement,
+          'fcr-chat-input-actions-item-disable': disabled,
+        })}>
+        <SvgImg type={SvgIconEnum.FCR_NOTICE} size={24}></SvgImg>
+      </div>
+    </ToolTip>
   );
 });
 const AnnouncementInput = observer(() => {

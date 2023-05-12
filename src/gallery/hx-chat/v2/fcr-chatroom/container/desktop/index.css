@@ -11,7 +11,7 @@
 }
 .fcr-chatroom-dialog-wrap .fcr-dialog-close {
   @apply fcr-bg-transparent;
-  right: 8px;
+  right: 5px;
   top: 12px;
 }
 .fcr-chatroom-dialog-wrap .fcr-dialog-close:hover {
@@ -54,7 +54,7 @@
   @apply fcr-text-white fcr-font-medium fcr-rounded-full fcr-bg-brand-6;
   width: 32px;
   height: 32px;
-  font-size: 10px;
+  font-size: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -62,13 +62,22 @@
   user-select: none;
 }
 .fcr-chatroom-tooltip-content {
+  max-width: 280px;
   display: flex;
   gap: 13px;
   padding-right: 15px;
+  overflow: hidden;
 }
 .fcr-chatroom-tooltip-content-text {
   @apply fcr-text-1;
+  flex: 1;
   display: flex;
   flex-direction: column;
   gap: 10px;
+  overflow: hidden;
+}
+.fcr-chatroom-tooltip-content-from {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
