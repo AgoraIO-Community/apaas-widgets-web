@@ -94,6 +94,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
     };
 
     this._updateContext(properties);
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, true);
   }
 
   onUserPropertiesUpdate(userProperties: any) {
@@ -106,6 +107,8 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   }
 
   onDestroy() {
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
+
     if (this._listenerDisposer) {
       this._listenerDisposer();
     }

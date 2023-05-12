@@ -47,7 +47,9 @@ export const DialogWrapper: FC<Props> = observer(
         onClick: onClose,
         onMouseDown: handleMouseDown,
         disable: closeDisable,
-        tooltipContent: closeDisable ? '程序在运行，不能关闭' : '',
+        tooltipContent: closeDisable
+          ? 'Please end the current round of voting before closing the polls.'
+          : '',
       });
     }
     return (

@@ -12,13 +12,17 @@ import {
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../im/wrapper/typs';
-import { List } from 'react-virtualized';
+import { List, CellMeasurerCache } from 'react-virtualized';
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListRef: List | null = null;
-
+  listCache = new CellMeasurerCache({
+    // defaultWidth: 200,
+    minHeight: 30,
+    fixedWidth: true,
+  });
   @observable historyMessageLoaded = false;
 
   @observable lastUnreadTextMessage: AgoraIMTextMessage | null = null;
@@ -171,7 +175,7 @@ export class MessageStore {
   @Lodash.debounced(100)
   messageListScrollToBottom() {
     if (this._messageListRef) {
-      this._messageListRef.scrollToPosition(-1);
+      this._messageListRef?.scrollToRow(this.renderableMessageList.length);
     }
   }
   @action.bound

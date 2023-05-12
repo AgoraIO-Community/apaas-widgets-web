@@ -26,13 +26,9 @@ import { useMute } from '../../../hooks/useMute';
 
 import { FcrChatroomToastContext } from '..';
 import dayjs from 'dayjs';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, List, ListRowProps } from 'react-virtualized';
+import { AutoSizer, CellMeasurer, List, ListRowProps } from 'react-virtualized';
 import { getNameColor } from '@components/avatar/helper';
-const cache = new CellMeasurerCache({
-  // defaultWidth: 200,
-  minHeight: 30,
-  fixedWidth: true,
-});
+
 export const FcrChatContainer = observer(() => {
   const {
     messageStore: { showAnnouncementInput },
@@ -249,7 +245,7 @@ const UnreadMessageLabel = observer(() => {
 });
 const MessageList = observer(() => {
   const {
-    messageStore: { renderableMessageList },
+    messageStore: { renderableMessageList, listCache },
   } = useStore();
   const { listRef, handleScroll } = useScroll();
   const renderMessage = (
@@ -273,7 +269,7 @@ const MessageList = observer(() => {
   const rowRenderer = ({ columnIndex, key, parent, index, style }: ListRowProps) => {
     return (
       // @ts-ignore
-      <CellMeasurer cache={cache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
+      <CellMeasurer cache={listCache} columnIndex={0} key={key} parent={parent} rowIndex={index}>
         {({ measure, registerChild }) => {
           const currMsg = renderableMessageList[index];
           const isSingleMsg = !(currMsg instanceof Array);
@@ -308,13 +304,14 @@ const MessageList = observer(() => {
           return (
             //@ts-ignore
             <List
+              scrollToAlignment={'end'}
               className="fcr-scrollbar-override"
               ref={listRef}
               height={height}
               width={width}
               rowCount={renderableMessageList.length}
-              deferredMeasurementCache={cache}
-              rowHeight={cache.rowHeight}
+              deferredMeasurementCache={listCache}
+              rowHeight={listCache.rowHeight}
               rowRenderer={rowRenderer}
               onScroll={handleScroll}
             />
