@@ -281,6 +281,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
         minimized: true,
         widgetId: this.widgetId,
         icon: SvgIconEnum.FCR_V2_VOTE,
+        tooltip: 'Poll',
       });
     } else {
       this.setVisibility(true);

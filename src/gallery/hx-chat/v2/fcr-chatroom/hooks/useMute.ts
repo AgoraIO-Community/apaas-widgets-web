@@ -15,6 +15,7 @@ export const useMute = () => {
       toastProps: {
         type: 'info',
         content: `${user.nickName} muted`,
+        size: 'small',
       },
     });
     sendCustomMessage(AgoraIMCmdActionEnum.UserMuted, {
@@ -28,6 +29,7 @@ export const useMute = () => {
       toastProps: {
         type: 'info',
         content: `${user.nickName} unmuted`,
+        size: 'small',
       },
     });
     sendCustomMessage(AgoraIMCmdActionEnum.UserUnmuted, {
