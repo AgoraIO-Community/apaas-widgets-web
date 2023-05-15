@@ -1,7 +1,7 @@
 import { WidgetDialog } from '@components/dialog';
 import { ActionIcon } from '@components/dialog/widget-dialog';
 import { SvgIconEnum } from '@components/svg-img';
-import React, { FC, useCallback, useContext, useRef } from 'react';
+import React, { FC, useCallback, useContext, useRef, useState } from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { PollingState } from '../type';
 import { PollingUIContext } from '../ui-context';
@@ -16,6 +16,7 @@ type Props = {
 
 export const DialogWrapper: FC<Props> = observer(
   ({ onResize, onClose, onMinimize, children, canClose }) => {
+    const [dialogVisible, setDialogVisible] = useState(true);
     const resizeTimes = useRef(0);
     const {
       observables: { pollingState },
@@ -44,7 +45,12 @@ export const DialogWrapper: FC<Props> = observer(
     if (canClose) {
       actions.push({
         icon: SvgIconEnum.FCR_CLOSE,
-        onClick: onClose,
+        onClick: () => {
+          setDialogVisible(false);
+          setTimeout(() => {
+            onClose();
+          }, 200);
+        },
         onMouseDown: handleMouseDown,
         disable: closeDisable,
         tooltipContent: closeDisable
@@ -53,7 +59,11 @@ export const DialogWrapper: FC<Props> = observer(
       });
     }
     return (
-      <WidgetDialog actions={actions} className="fcr-relative fcr-w-full fcr-h-full">
+      <WidgetDialog
+        visible={dialogVisible}
+        width={230}
+        actions={actions}
+        className="fcr-relative fcr-w-full fcr-h-full">
         <AutoSizer onResize={handleResize}>
           {() => <div className="fcr-w-full fcr-h-full fcr-absolute" style={{ zIndex: -1 }} />}
         </AutoSizer>
