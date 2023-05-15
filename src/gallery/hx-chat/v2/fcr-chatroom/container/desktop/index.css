@@ -12,7 +12,7 @@
 .fcr-chatroom-dialog-wrap .fcr-dialog-close {
   @apply fcr-bg-transparent;
   right: 5px;
-  top: 12px;
+  top: 10px;
 }
 .fcr-chatroom-dialog-wrap .fcr-dialog-close:hover {
   @apply fcr-bg-brand-6;

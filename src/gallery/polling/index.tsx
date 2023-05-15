@@ -107,6 +107,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   }
 
   onDestroy() {
+    this._setMinimize(false);
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
 
     if (this._listenerDisposer) {

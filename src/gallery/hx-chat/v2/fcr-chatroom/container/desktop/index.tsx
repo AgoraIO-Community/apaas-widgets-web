@@ -27,19 +27,22 @@ const FcrChatroomDialog = observer(() => {
     roomStore: { chatDialogVisible, setChatDialogVisible },
   } = useStore();
   const dialogContentRef = useRef<HTMLDivElement | null>(null);
-  const toastRef = useRef<ToastApiFactory | null>(null);
+  const [toastInstance, setToastInstance] = useState<ToastApiFactory | null>(null);
 
   const [tab, setTab] = useState<'chat' | 'member'>('chat');
   useEffect(() => {
-    if (chatDialogVisible && dialogContentRef.current && !toastRef.current) {
-      toastRef.current = new ToastApiFactory({
-        toastPlacement: 'bottom',
-        renderContainer: dialogContentRef.current,
-      });
+    if (chatDialogVisible) {
+      if (dialogContentRef.current) {
+        setToastInstance(
+          new ToastApiFactory({
+            toastPlacement: 'bottom',
+            renderContainer: dialogContentRef.current,
+          }),
+        );
+      }
+    } else {
+      setToastInstance(null);
     }
-    return () => {
-      toastRef.current = null;
-    };
   }, [chatDialogVisible]);
   return (
     <BaseDialog
@@ -53,7 +56,7 @@ const FcrChatroomDialog = observer(() => {
       width={270}
       mask={false}
       visible={chatDialogVisible}>
-      <FcrChatroomToastContext.Provider value={toastRef.current}>
+      <FcrChatroomToastContext.Provider value={toastInstance}>
         <div ref={dialogContentRef} className="fcr-chatroom-dialog-content">
           <div className="fcr-chatroom-dialog-title">
             <Tabs

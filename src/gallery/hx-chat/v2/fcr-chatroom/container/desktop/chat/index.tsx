@@ -214,6 +214,7 @@ const AnnouncementInput = observer(() => {
               toastProps: {
                 content: 'Announcement submit successfully',
                 type: 'normal',
+                size: 'small',
               },
             });
             setShowAnnouncementInput(false);
