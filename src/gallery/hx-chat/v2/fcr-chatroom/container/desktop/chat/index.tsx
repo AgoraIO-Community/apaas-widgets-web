@@ -53,7 +53,13 @@ const ChatInput = observer(() => {
   const [inputFocus, setInputFocus] = useState(false);
 
   const {
-    messageStore: { messageInputText, setMessageInputText, sendTextMessage, sendCustomMessage },
+    messageStore: {
+      messageInputText,
+      setMessageInputText,
+      sendTextMessage,
+      sendCustomMessage,
+      messageListScrollToBottom,
+    },
     roomStore: { allMuted, setAllMute, isHost },
   } = useStore();
   const sendDisabled = !messageInputText;
@@ -61,6 +67,7 @@ const ChatInput = observer(() => {
     if (sendDisabled) return;
     sendTextMessage(messageInputText);
     setMessageInputText('');
+    messageListScrollToBottom();
   };
   const handleAllMute = async (mute: boolean) => {
     await setAllMute(mute);
@@ -155,6 +162,7 @@ const AnnouncementTrigger = observer(() => {
         onClick={() => {
           if (isHost && !announcement) {
             setShowAnnouncementInput(true);
+
             return;
           }
           if (!showAnnouncement && announcement) {
@@ -246,7 +254,7 @@ const UnreadMessageLabel = observer(() => {
 });
 const MessageList = observer(() => {
   const {
-    messageStore: { renderableMessageList, listCache },
+    messageStore: { renderableMessageList, listCache, messageListScrollToBottom },
   } = useStore();
   const { listRef, handleScroll } = useScroll();
   const renderMessage = (
@@ -292,6 +300,9 @@ const MessageList = observer(() => {
       </CellMeasurer>
     );
   };
+  useEffect(() => {
+    messageListScrollToBottom();
+  }, []);
   return (
     <div className="fcr-chat-message-list">
       {renderableMessageList.length === 0 && (
@@ -531,7 +542,13 @@ const AnnounceMent = observer(() => {
         dangerouslySetInnerHTML={{ __html: announcement }}></div>
       <div className="fcr-chat-announcement-action">
         {isHost ? (
-          <Button size="XXS" type="secondary" onClick={() => setShowAnnouncementInput(true)}>
+          <Button
+            size="XXS"
+            type="secondary"
+            onClick={() => {
+              setShowAnnouncementInput(true);
+              setShowAnnouncement(false);
+            }}>
             Modify
           </Button>
         ) : (
