@@ -1,7 +1,7 @@
 .fcr-polling-question {
   @apply fcr-bg-4;
   width: 230px;
-  padding: 0 15px;
+
   border-radius: inherit;
 }
 
@@ -9,8 +9,27 @@
   @apply fcr-text-1 fcr-font-medium;
   font-size: 13px;
   line-height: 45px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: move;
 }
-
+.fcr-polling-title-label {
+  @apply fcr-rounded-4;
+  height: 18px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: center;
+  padding: 0 4px;
+  font-weight: 400;
+}
+.fcr-polling-title-label-ended {
+  @apply fcr-bg-red-6 fcr-text-white;
+}
+.fcr-polling-title-label-in-progress {
+  @apply fcr-bg-blue-300 fcr-text-black;
+}
 .fcr-polling-tr-icon {
   @apply fcr-rounded-full fcr-bg-1;
   width: 30px;
@@ -31,13 +50,16 @@
 .fcr-polling-question-hint {
   @apply fcr-text-1 fcr-font-regular;
   font-size: 12px;
-  padding-bottom: 15px;
   word-break: break-all;
+  padding: 0 15px;
+  padding-bottom: 15px;
 }
 
 .fcr-polling-input {
   width: 100%;
   height: 127px;
+  padding: 0 15px;
+
   padding-bottom: 10px;
 }
 

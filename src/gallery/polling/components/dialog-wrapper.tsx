@@ -42,6 +42,7 @@ export const DialogWrapper: FC<Props> = observer(
         icon: SvgIconEnum.FCR_MINUS,
         onClick: onMinimize,
         onMouseDown: handleMouseDown,
+        tooltipContent: 'Minimization',
       },
     ];
     if (canClose) {
@@ -57,7 +58,7 @@ export const DialogWrapper: FC<Props> = observer(
         disable: closeDisable,
         tooltipContent: closeDisable
           ? 'Please end the current round of voting before closing the polls.'
-          : '',
+          : 'Close',
       });
     }
     return (
@@ -66,6 +67,7 @@ export const DialogWrapper: FC<Props> = observer(
         width={230}
         actions={actions}
         minimize={minimize}
+        dragHandleClassName="fcr-polling-title"
         className="fcr-relative fcr-w-full fcr-h-full">
         <AutoSizer onResize={handleResize}>
           {() => <div className="fcr-w-full fcr-h-full fcr-absolute" style={{ zIndex: -1 }} />}

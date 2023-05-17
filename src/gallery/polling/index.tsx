@@ -94,11 +94,22 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
     };
 
     this._updateContext(properties);
+    runInAction(() => {
+      if (userProperties.pollId === this._pollId) {
+        this._context.observables.selectIndex = userProperties?.selectIndex;
+      }
+    });
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, true);
   }
 
   onUserPropertiesUpdate(userProperties: any) {
     console.log('onUserPropertiesUpdate', userProperties);
+
+    runInAction(() => {
+      if (userProperties.pollId === this._pollId) {
+        this._context.observables.selectIndex = userProperties?.selectIndex;
+      }
+    });
   }
 
   onPropertiesUpdate(properties: any) {
@@ -118,7 +129,8 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   @action
   private _updateContext(properties: any) {
     if (properties.extra?.pollId) {
-      const { mode, pollId, pollDetails, pollItems, pollState, pollTitle } = properties.extra;
+      const { mode, pollId, pollDetails, pollItems, pollState, pollTitle, userCount } =
+        properties.extra;
 
       if (pollId) {
         this._pollId = pollId;
@@ -146,7 +158,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
         optionList,
         total,
       };
-
+      observables.userCount = userCount || 0;
       if (observables.pollingState !== PollingState.POLLING_SUBMIT_END) {
         switch (pollState) {
           case 0:
@@ -179,6 +191,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
       selectedOptions: new Set<number>(),
       resultInfo: undefined as PollingResultInfo | undefined,
       minimize: false,
+      selectIndex: null,
     });
 
     const context = {
@@ -223,9 +236,6 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
           await this.classroomStore.api.submitResult(roomUuid, `${this._pollId}`, userUuid, {
             selectIndex: Array.from(observables.selectedOptions),
           });
-          runInAction(() => {
-            observables.pollingState = PollingState.POLLING_SUBMIT_END;
-          });
         } catch (e) {
           this.ui.addToast('Cannot submit poll as something is wrong', 'error');
         } finally {
@@ -237,10 +247,6 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
 
         try {
           this.classroomStore.api.stopPolling(roomUuid, `${this._pollId}`);
-
-          runInAction(() => {
-            observables.pollingState = PollingState.POLLING_SUBMIT_END;
-          });
         } catch (e) {
           this.ui.addToast('Cannot submit poll as something is wrong', 'error');
         }

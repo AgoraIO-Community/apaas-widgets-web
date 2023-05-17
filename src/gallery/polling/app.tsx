@@ -9,12 +9,12 @@ import { Radio, RadioGroup } from '@components/radio';
 import { observer } from 'mobx-react';
 import { PollingState, PollingType } from './type';
 import { PollingUIContext } from './ui-context';
-
+import classnames from 'classnames';
 const PollingQuestion: React.FC = observer(() => {
   const {
     setQuestion,
     setPollingType,
-    observables: { question, pollingState, resultInfo },
+    observables: { question, pollingState, resultInfo, isOwner },
   } = useContext(PollingUIContext);
   const onInputChange = (val: string) => {
     setQuestion(val);
@@ -25,17 +25,29 @@ const PollingQuestion: React.FC = observer(() => {
   };
 
   const isInput = useMemo(() => pollingState == PollingState.POLLING_EDIT, [pollingState]);
-
+  const showProgressLabel = !isOwner;
+  const progressStatus = pollingState === PollingState.POLLING_SUBMIT_END ? 'ended' : 'in-progress';
   return (
     <div className="fcr-polling-question">
-      <div className="fcr-polling-title">{'Polling'}</div>
+      <div className="fcr-polling-title">
+        {'Polling'}
+        {showProgressLabel && (
+          <div
+            className={classnames(
+              'fcr-polling-title-label',
+              `fcr-polling-title-label-${progressStatus}`,
+            )}>
+            {progressStatus === 'ended' ? 'Ended' : 'In Progress'}
+          </div>
+        )}
+      </div>
       {isInput ? (
         <>
           <div className="fcr-polling-question-hint fcr-drag-cancel">Please set the question.</div>
           <div className="fcr-polling-input">
             <TextArea
               placeholder="Please Enter..."
-              maxCount={50}
+              maxCount={100}
               value={question}
               onChange={onInputChange}
             />
@@ -61,13 +73,15 @@ const PollingQuestion: React.FC = observer(() => {
 
 const PollingList: React.FC = observer(() => {
   const {
-    observables: { pollingState },
+    observables: { pollingState, isOwner, selectIndex },
   } = useContext(PollingUIContext);
-
+  const showButtonGroup = isOwner
+    ? PollingState.POLLING_SUBMIT_END !== pollingState
+    : !selectIndex && PollingState.POLLING_SUBMIT_END !== pollingState;
   return (
     <div className="fcr-polling-list-container">
       {PollingState.POLLING_EDIT === pollingState ? <PollingInputList /> : <PollingResultList />}
-      {PollingState.POLLING_SUBMIT_END !== pollingState && <PollingButtonGroup />}
+      {showButtonGroup && <PollingButtonGroup />}
     </div>
   );
 });

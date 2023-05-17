@@ -13,7 +13,15 @@ export type PollingButtonStyle = 'danger' | 'gray';
 
 const PollingButtonGroup: React.FC = observer(() => {
   const {
-    observables: { isOwner, pollingState, options, question, isActionLoading, selectedOptions },
+    observables: {
+      isOwner,
+      pollingState,
+      options,
+      question,
+      isActionLoading,
+      selectedOptions,
+      selectIndex,
+    },
     addOption,
     create,
     submit,
@@ -28,7 +36,10 @@ const PollingButtonGroup: React.FC = observer(() => {
 
   const centerBtnStyleType = PollingButtonTextMap[pollingState].centerButtonStyle;
   const isShowAddMinusBtn = pollingState == PollingState.POLLING_EDIT;
-  const isAllowedToCreate = question && !options.some(({ content }) => content === '');
+  const isAllowedToCreate =
+    question &&
+    !options.some(({ content }) => content === '') &&
+    new Set(options.map(({ content }) => content)).size === options.length;
   const isAllowedToSubmit = !!selectedOptions.size;
   let isDisabled = false;
 

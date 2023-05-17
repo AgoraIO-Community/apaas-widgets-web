@@ -9,7 +9,7 @@ import './polling-result-list.css';
 
 const PollingResultList: React.FC = observer(() => {
   const {
-    observables: { resultInfo, selectedOptions, isOwner, pollingState },
+    observables: { resultInfo, selectedOptions, isOwner, pollingState, selectIndex, userCount },
     setSelectedOptions,
   } = useContext(PollingUIContext);
 
@@ -48,67 +48,48 @@ const PollingResultList: React.FC = observer(() => {
 
   return (
     <>
-      {resultInfo.optionList.map((item, index) =>
-        isOwner == true ? (
-          <div key={index} className="fcr-polling-result-item">
-            <div
-              style={{
-                width: parseInt((item.percent * 100).toFixed(2)) + '%',
-              }}
-              className={classnames(
-                'fcr-polling-result-progress',
-                selectedOptions.has(item.id) ? 'fcr-polling-result-progress-select' : '',
-              )}></div>
-            <div className="fcr-polling-result-progress-text">
-              <div
-                style={{
-                  flex: 1,
-                  wordBreak: 'break-all',
-                }}>
-                {item.content}
-              </div>
-              <div className="fcr-polling-result-count">{item.selectCount}</div>
-              <div className="fcr-polling-result-precent">
-                {parseInt((item.percent * 100).toFixed(2))}%
-              </div>
-            </div>
-          </div>
-        ) : (
+      {resultInfo.optionList.map((item, index) => {
+        const selected = selectIndex?.includes(item.id) || selectedOptions.has(item.id);
+        const showPercent = selectIndex || isOwner;
+        return (
           <div
-            key={index}
+            key={item.id}
             onClick={() => {
-              onClickItem(index);
+              !isOwner && !selectIndex && onClickItem(index);
             }}
-            className="fcr-polling-result-item">
+            style={{ cursor: selectIndex || isOwner ? 'default' : 'pointer' }}
+            className={classnames('fcr-polling-result-item', {
+              'fcr-polling-result-item-selected': selected,
+            })}>
             <div
               style={{
-                width: '100%',
+                width: `${selectIndex || isOwner ? item.percent * 100 : 100}%`,
               }}
-              className={classnames(
-                'fcr-polling-result-progress',
-                selectedOptions.has(index) ? 'fcr-polling-result-progress-select' : '',
-              )}
+              className={classnames('fcr-polling-result-progress', {
+                'fcr-polling-result-progress-selected': selected,
+              })}
             />
             <div className="fcr-polling-result-progress-text">
-              <div
-                style={{
-                  flex: 1,
-                }}>
-                {item.content}
-              </div>
+              <div>{item.content}</div>
+              {showPercent && (
+                <>
+                  <div className="fcr-polling-result-count">{item.selectCount}</div>
+                  <div className="fcr-polling-result-precent">
+                    {parseInt((item.percent * 100).toFixed(2))}%
+                  </div>
+                </>
+              )}
             </div>
           </div>
-        ),
-      )}
+        );
+      })}
 
-      {PollingState.POLLING_SUBMIT === pollingState ? (
+      {PollingState.POLLING_SUBMIT === pollingState && !selectIndex ? (
         <div className={classnames('fcr-polling-result-person-count', 'fcr-polling-result-center')}>
           {resultInfo.isMuti ? 'Muti-select' : 'Single'}
         </div>
       ) : (
-        <div className="fcr-polling-result-person-count">
-          {resultInfo.total} people participated
-        </div>
+        <div className="fcr-polling-result-person-count">{userCount} people participated</div>
       )}
     </>
   );
