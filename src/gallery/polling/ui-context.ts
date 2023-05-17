@@ -11,10 +11,13 @@ const pollingUIContextDefaultValue = {
     selectedOptions: new Set<number>(),
     resultInfo: undefined as PollingResultInfo | undefined,
     isActionLoading: false,
+    minimize: false,
   },
   create: () => {},
   submit: () => {},
   end: () => {},
+  setMinimize: (minimize: boolean) => {},
+
   setPollingState: (state: PollingState) => {},
   setPollingType: (type: PollingType) => {},
   setQuestion: (question: string) => {},

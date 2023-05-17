@@ -178,6 +178,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
       ],
       selectedOptions: new Set<number>(),
       resultInfo: undefined as PollingResultInfo | undefined,
+      minimize: false,
     });
 
     const context = {
@@ -185,6 +186,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
       setActionLoading: action((loading: boolean) => {
         observables.isActionLoading = loading;
       }),
+
       create: async () => {
         const { roomUuid } = this.classroomConfig.sessionInfo;
 
@@ -243,6 +245,9 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
           this.ui.addToast('Cannot submit poll as something is wrong', 'error');
         }
       },
+      setMinimize: action((minimize: boolean) => {
+        observables.minimize = minimize;
+      }),
       setPollingState: action((state: PollingState) => {
         observables.pollingState = state;
       }),
@@ -275,8 +280,9 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
 
   @bound
   private _setMinimize(minimized = true) {
+    this._context.setMinimize(minimized);
+
     if (minimized) {
-      this.setVisibility(false);
       this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
         minimized: true,
         widgetId: this.widgetId,
@@ -284,7 +290,6 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
         tooltip: 'Poll',
       });
     } else {
-      this.setVisibility(true);
       this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
         minimized: false,
         widgetId: this.widgetId,

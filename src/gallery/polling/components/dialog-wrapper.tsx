@@ -17,9 +17,10 @@ type Props = {
 export const DialogWrapper: FC<Props> = observer(
   ({ onResize, onClose, onMinimize, children, canClose }) => {
     const [dialogVisible, setDialogVisible] = useState(true);
+
     const resizeTimes = useRef(0);
     const {
-      observables: { pollingState },
+      observables: { pollingState, minimize },
     } = useContext(PollingUIContext);
     const handleResize = useCallback(
       (dimensions: { width: number; height: number }) => {
@@ -35,6 +36,7 @@ export const DialogWrapper: FC<Props> = observer(
       e.stopPropagation();
     };
     const closeDisable = pollingState === PollingState.POLLING_END;
+
     const actions: ActionIcon[] = [
       {
         icon: SvgIconEnum.FCR_MINUS,
@@ -63,6 +65,7 @@ export const DialogWrapper: FC<Props> = observer(
         visible={dialogVisible}
         width={230}
         actions={actions}
+        minimize={minimize}
         className="fcr-relative fcr-w-full fcr-h-full">
         <AutoSizer onResize={handleResize}>
           {() => <div className="fcr-w-full fcr-h-full fcr-absolute" style={{ zIndex: -1 }} />}
