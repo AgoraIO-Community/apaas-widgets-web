@@ -155,6 +155,7 @@
   padding-top: 8px;
   padding-bottom: 8px;
   padding-right: 8px;
+  gap: 10px;
 }
 .fcr-chat-announcement-close {
   @apply fcr-bg-1 fcr-rounded-full;

@@ -6,6 +6,7 @@ import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { Button } from '@components/button';
 import { useMute } from '../../../hooks/useMute';
 import { Avatar } from '@components/avatar';
+import { useState } from 'react';
 export const FcrChatMemberContainer = () => {
   return (
     <div className="fcr-chatroom-member-container">
@@ -33,16 +34,22 @@ const UserList = observer(() => {
           </div>
         )}
         {searchUserList.map((user) => {
-          const enableUserAction = isHost && user.userId !== localUserId;
+          const [hover, setHover] = useState(false);
+          const enableUserAction = isHost && user.userId !== localUserId && hover;
           const muted = muteList.includes(user.userId);
           return (
-            <div key={user.userId} className="fcr-chatroom-member-list-item">
+            <div
+              onMouseEnter={() => setHover(true)}
+              onMouseLeave={() => setHover(false)}
+              key={user.userId}
+              className="fcr-chatroom-member-list-item">
               <div className="fcr-chatroom-member-list-item-info">
                 <Avatar size={24} textSize={12} nickName={user.nickName}></Avatar>
 
                 <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
               </div>
               <div className="fcr-chatroom-member-list-item-action">
+                {!hover && muted && <SvgImg type={SvgIconEnum.FCR_MOBILE_CHAT2} size={20}></SvgImg>}
                 {enableUserAction &&
                   (muted ? (
                     <Button

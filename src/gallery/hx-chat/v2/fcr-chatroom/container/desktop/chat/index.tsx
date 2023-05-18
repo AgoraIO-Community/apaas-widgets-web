@@ -4,7 +4,7 @@ import { Button } from '@components/button';
 
 import { Switch } from '@components/switch';
 import { observer } from 'mobx-react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classnames from 'classnames';
@@ -51,7 +51,7 @@ export const FcrChatContainer = observer(() => {
 });
 const ChatInput = observer(() => {
   const [inputFocus, setInputFocus] = useState(false);
-
+  const textAreaRef = useRef<{ dom: HTMLTextAreaElement | null }>({ dom: null });
   const {
     messageStore: {
       messageInputText,
@@ -76,13 +76,24 @@ const ChatInput = observer(() => {
     );
   };
   const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
-    if (e.keyCode === 13 && !e.ctrlKey) {
+    if (e.keyCode === 13 && !e.ctrlKey && !e.metaKey && !e.altKey) {
       e.preventDefault();
       send();
-    } else if (e.keyCode === 13 && e.ctrlKey) {
-      setMessageInputText(messageInputText + '\n');
+    } else if (
+      (e.keyCode === 13 && e.ctrlKey) ||
+      (e.keyCode === 13 && e.metaKey) ||
+      (e.keyCode === 13 && e.altKey)
+    ) {
+      const currSelectationStart = textAreaRef.current?.dom?.selectionStart;
+
+      setMessageInputText(
+        messageInputText.slice(0, currSelectationStart) +
+          '\n' +
+          messageInputText.slice(currSelectationStart),
+      );
     }
   };
+
   return (
     <div className="fcr-chat-input-container">
       <div className="fcr-chat-input-wrap">
@@ -106,6 +117,7 @@ const ChatInput = observer(() => {
             type={SvgIconEnum.FCR_SEND}
             size={32}></SvgImg>
           <TextArea
+            ref={textAreaRef}
             onKeyDown={handleKeyDown}
             autoSize
             maxCount={150}
@@ -523,7 +535,14 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
 });
 const AnnounceMent = observer(() => {
   const {
-    messageStore: { showAnnouncement, announcement, setShowAnnouncement, setShowAnnouncementInput },
+    widget,
+    messageStore: {
+      showAnnouncement,
+      announcement,
+      setShowAnnouncement,
+      setShowAnnouncementInput,
+      updateAnnouncement,
+    },
     roomStore: { isHost },
   } = useStore();
   const hideAnnouncement = () => setShowAnnouncement(false);
@@ -542,15 +561,34 @@ const AnnounceMent = observer(() => {
         dangerouslySetInnerHTML={{ __html: announcement }}></div>
       <div className="fcr-chat-announcement-action">
         {isHost ? (
-          <Button
-            size="XXS"
-            type="secondary"
-            onClick={() => {
-              setShowAnnouncementInput(true);
-              setShowAnnouncement(false);
-            }}>
-            Modify
-          </Button>
+          <>
+            <Button
+              size="XXS"
+              styleType="danger"
+              type="secondary"
+              onClick={() => {
+                widget.ui.addConfirmDialog({
+                  title: 'Delete Confirmation',
+                  content: 'Are you sure to delete the announcement?',
+                  okButtonProps: { styleType: 'danger' },
+                  onOk: async () => {
+                    await updateAnnouncement('');
+                    widget.ui.addToast('Delete announcement successfully', 'success');
+                  },
+                });
+              }}>
+              Delete
+            </Button>
+            <Button
+              size="XXS"
+              type="secondary"
+              onClick={() => {
+                setShowAnnouncementInput(true);
+                setShowAnnouncement(false);
+              }}>
+              Modify
+            </Button>
+          </>
         ) : (
           <Button size="XXS" onClick={hideAnnouncement}>
             Got it

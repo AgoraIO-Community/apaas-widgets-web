@@ -93,6 +93,7 @@ export class MessageStore {
 
   @computed
   get renderableMessageList() {
+    console.log(this.messageList, 'combinedList');
     const combinedList: (AgoraIMMessageBase | AgoraIMMessageBase[])[] = [];
     this.messageList.forEach((msg) => {
       if (msg.type === AgoraIMMessageType.Custom) {
@@ -111,6 +112,8 @@ export class MessageStore {
         }
       }
     });
+    console.log(combinedList, 'combinedList');
+
     return combinedList;
   }
 
@@ -140,19 +143,19 @@ export class MessageStore {
                 //过滤被删除消息
                 if (deletedMessageIds.has(msg.id)) return false;
                 //如果是自定义消息
-                if (msg.type === AgoraIMMessageType.Custom) {
-                  const customMessage = msg as AgoraIMCustomMessage;
-                  //如果是单个禁言消息
-                  if (
-                    customMessage.action === AgoraIMCmdActionEnum.UserMuted ||
-                    customMessage.action === AgoraIMCmdActionEnum.UserUnmuted
-                  ) {
-                    //如果不是自己的单个禁言消息，过滤
-                    if (customMessage.ext?.muteMember !== this._fcrChatRoom.userInfo?.userId) {
-                      return false;
-                    }
-                  }
-                }
+                // if (msg.type === AgoraIMMessageType.Custom) {
+                //   const customMessage = msg as AgoraIMCustomMessage;
+                //   //如果是单个禁言消息
+                //   if (
+                //     customMessage.action === AgoraIMCmdActionEnum.UserMuted ||
+                //     customMessage.action === AgoraIMCmdActionEnum.UserUnmuted
+                //   ) {
+                //     //如果不是自己的单个禁言消息，过滤
+                //     if (customMessage.ext?.muteMember !== this._fcrChatRoom.userInfo?.userId) {
+                //       return false;
+                //     }
+                //   }
+                // }
               }
               return true;
             });
@@ -195,6 +198,18 @@ export class MessageStore {
       this.unreadMessageCount = 0;
     }
     this.isBottom = isBottom;
+  }
+  @bound
+  recomputedList() {
+    this.listCache.clearAll();
+    this._messageListRef?.recomputeRowHeights(this.renderableMessageList.length);
+  }
+  @bound
+  reRenderMessageList() {
+    this.recomputedList();
+    if (this.isBottom) {
+      this.messageListScrollToBottom();
+    }
   }
   @action.bound
   private _onTextMessageReceived(msg: AgoraIMTextMessage) {

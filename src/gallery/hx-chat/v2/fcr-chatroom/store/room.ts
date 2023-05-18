@@ -3,7 +3,7 @@ import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../im/wrapper/typs';
 import { ClassState, EduRoleTypeEnum } from 'agora-edu-core';
 import dayjs from 'dayjs';
-import { AgoraExtensionRoomEvent } from '../../../../../events';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { bound } from 'agora-rte-sdk';
 
 export class RoomStore {
@@ -19,10 +19,15 @@ export class RoomStore {
   @action.bound
   setChatDialogVisible(visible: boolean) {
     this.chatDialogVisible = visible;
+    this._widget.broadcast(AgoraExtensionWidgetEvent.ChatDialogVisibleChanged, visible);
   }
   @bound
   openChatDialog() {
     this.setChatDialogVisible(true);
+  }
+  @bound
+  closeChatDialog() {
+    this.setChatDialogVisible(false);
   }
   @observable
   allMuted = false;
@@ -31,6 +36,10 @@ export class RoomStore {
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OpenChatDialog,
       onMessage: this.openChatDialog,
+    });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.CloseChatDialog,
+      onMessage: this.closeChatDialog,
     });
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
@@ -41,6 +50,10 @@ export class RoomStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OpenChatDialog,
       onMessage: this.openChatDialog,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.CloseChatDialog,
+      onMessage: this.closeChatDialog,
     });
   }
   @computed

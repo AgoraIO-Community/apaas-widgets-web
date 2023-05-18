@@ -192,6 +192,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
       resultInfo: undefined as PollingResultInfo | undefined,
       minimize: false,
       selectIndex: null,
+      userCount: 0,
     });
 
     const context = {

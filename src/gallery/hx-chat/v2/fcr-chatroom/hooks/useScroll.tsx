@@ -4,42 +4,29 @@ import { useStore } from './useStore';
 import { List, ScrollParams } from 'react-virtualized';
 export const useScroll = () => {
   const {
-    fcrChatRoom,
+    roomStore: { chatDialogVisible },
     messageStore: {
       setMessageListRef,
       messageList,
-      messageListScrollToBottom,
       setIsBottom,
-      listCache,
-      renderableMessageList,
+
+      reRenderMessageList,
     },
   } = useStore();
-  const isBottomRef = useRef(false);
+  const isBottomRef = useRef(true);
   const listRef = useRef<List>(null);
-  const recomputedList = () => {
-    listCache.clearAll();
-    listRef.current?.recomputeRowHeights(renderableMessageList.length);
-  };
+
   useEffect(() => {
     if (listRef.current) {
       setMessageListRef(listRef.current);
     }
   }, []);
-  useEffect(() => {
-    recomputedList();
-    if (isBottomRef.current) {
-      messageListScrollToBottom();
-    }
-  }, [messageList.length, messageListScrollToBottom]);
+  useEffect(reRenderMessageList, [messageList.length, chatDialogVisible]);
   const handleScroll = throttle((scrollParams: ScrollParams) => {
     const { scrollHeight, scrollTop, clientHeight } = scrollParams;
-    if (scrollTop + clientHeight <= scrollHeight - 2) {
-      setIsBottom(false);
-      isBottomRef.current = false;
-    } else {
-      setIsBottom(true);
-      isBottomRef.current = true;
-    }
+    const isBottom = clientHeight === 0 || Math.abs(scrollHeight - clientHeight - scrollTop) < 1;
+    setIsBottom(isBottom);
+    isBottomRef.current = isBottom;
   }, 200);
   return {
     listRef,

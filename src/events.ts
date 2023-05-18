@@ -69,6 +69,8 @@ export enum AgoraExtensionRoomEvent {
   MobileLandscapeToolBarVisibleChanged = 'mobile-landscape-tool-bar-visible-changed',
   //打开聊天对话框
   OpenChatDialog = 'open-chat-dialog',
+  //关闭聊天对话框
+  CloseChatDialog = 'close-chat-dialog',
   //设置插件最小化
   SetMinimize = 'set-minimize',
 }
@@ -123,4 +125,6 @@ export enum AgoraExtensionWidgetEvent {
   RequestMobileLandscapeToolBarVisible = 'request-mobile-landscape-tool-bar-visible',
   //插件最小化
   Minimize = 'minimize',
+  //聊天对话框开启状态变更
+  ChatDialogVisibleChanged = 'chat-dialog-visible-changed',
 }

@@ -12,6 +12,9 @@ export class FcrChatRoomStore {
   messageStore: MessageStore;
   userStore: UserStore;
   roomStore: RoomStore;
+  get widget() {
+    return this._widget;
+  }
   constructor(private _widget: AgoraHXChatWidget, appKey: string, roomId: string) {
     const easemobUserId = this._widget.easemobUserId || '';
     const { userName, role } = this._widget.classroomConfig.sessionInfo;
