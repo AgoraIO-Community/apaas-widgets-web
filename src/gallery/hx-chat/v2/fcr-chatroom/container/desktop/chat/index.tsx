@@ -210,7 +210,7 @@ const AnnouncementInput = observer(() => {
             <SvgImg
               onClick={() => setShowAnnouncementInput(false)}
               type={SvgIconEnum.FCR_CLOSE}
-              size={12}></SvgImg>
+              size={10}></SvgImg>
           </div>
         </div>
         <div className="fcr-chat-announcement-input-textarea">
@@ -471,7 +471,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                   className={classnames('fcr-chat-message-list-item-avatar-action', {
                     'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
                     'fcr-bg-transparent': !actionVisible,
-                    'fcr-bg-1': actionVisible,
+                    'fcr-bg-3-a70': actionVisible,
                   })}>
                   <div>
                     {isUserMuted ? (
@@ -551,7 +551,7 @@ const AnnounceMent = observer(() => {
     <div className="fcr-chat-announcement">
       {isHost && (
         <div className="fcr-chat-announcement-close">
-          <SvgImg onClick={hideAnnouncement} type={SvgIconEnum.FCR_CLOSE} size={12}></SvgImg>
+          <SvgImg onClick={hideAnnouncement} type={SvgIconEnum.FCR_CLOSE} size={10}></SvgImg>
         </div>
       )}
 
