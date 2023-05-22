@@ -7,6 +7,7 @@ import { Button } from '@components/button';
 import { useMute } from '../../../hooks/useMute';
 import { Avatar } from '@components/avatar';
 import { useState } from 'react';
+import { AgoraIMUserInfo, AgoraIMUserInfoExt } from 'src/gallery/im/wrapper/typs';
 export const FcrChatMemberContainer = () => {
   return (
     <div className="fcr-chatroom-member-container">
@@ -18,12 +19,9 @@ export const FcrChatMemberContainer = () => {
 
 const UserList = observer(() => {
   const {
-    fcrChatRoom,
-    userStore: { searchUserList, muteList },
-    roomStore: { isHost },
+    userStore: { searchUserList },
   } = useStore();
-  const { muteUser, unmuteUser } = useMute();
-  const localUserId = fcrChatRoom.userInfo?.userId || '';
+
   return (
     <div className="fcr-chatroom-member-list-wrap">
       <div>
@@ -33,48 +31,9 @@ const UserList = observer(() => {
             <span>No Data</span>
           </div>
         )}
-        {searchUserList.map((user) => {
-          const [hover, setHover] = useState(false);
-          const enableUserAction = isHost && user.userId !== localUserId && hover;
-          const muted = muteList.includes(user.userId);
-          return (
-            <div
-              onMouseEnter={() => setHover(true)}
-              onMouseLeave={() => setHover(false)}
-              key={user.userId}
-              className="fcr-chatroom-member-list-item">
-              <div className="fcr-chatroom-member-list-item-info">
-                <Avatar size={24} textSize={12} nickName={user.nickName}></Avatar>
-
-                <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
-              </div>
-              <div className="fcr-chatroom-member-list-item-action">
-                {!hover && muted && <SvgImg type={SvgIconEnum.FCR_MOBILE_CHAT2} size={20}></SvgImg>}
-                {enableUserAction &&
-                  (muted ? (
-                    <Button
-                      onClick={() => {
-                        unmuteUser(user);
-                      }}
-                      styleType="danger"
-                      shape="rounded"
-                      size="XXS">
-                      Unmute
-                    </Button>
-                  ) : (
-                    <Button
-                      shape="rounded"
-                      onClick={() => {
-                        muteUser(user);
-                      }}
-                      size="XXS">
-                      Mute
-                    </Button>
-                  ))}
-              </div>
-            </div>
-          );
-        })}
+        {searchUserList.map((user) => (
+          <UserItem key={user.userId} user={user}></UserItem>
+        ))}
       </div>
     </div>
   );
@@ -93,6 +52,56 @@ const SearchInput = observer(() => {
         iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
         placeholder="Search"
       />
+    </div>
+  );
+});
+const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> }) => {
+  const { user } = props;
+  const {
+    fcrChatRoom,
+    userStore: { muteList },
+    roomStore: { isHost },
+  } = useStore();
+  const { muteUser, unmuteUser } = useMute();
+  const localUserId = fcrChatRoom.userInfo?.userId || '';
+  const [hover, setHover] = useState(false);
+  const enableUserAction = isHost && user.userId !== localUserId && hover;
+  const muted = muteList.includes(user.userId);
+  return (
+    <div
+      onMouseEnter={() => setHover(true)}
+      onMouseLeave={() => setHover(false)}
+      key={user.userId}
+      className="fcr-chatroom-member-list-item">
+      <div className="fcr-chatroom-member-list-item-info">
+        <Avatar size={24} textSize={12} nickName={user.nickName}></Avatar>
+
+        <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
+      </div>
+      <div className="fcr-chatroom-member-list-item-action">
+        {!hover && muted && <SvgImg type={SvgIconEnum.FCR_MOBILE_CHAT2} size={20}></SvgImg>}
+        {enableUserAction &&
+          (muted ? (
+            <Button
+              onClick={() => {
+                unmuteUser(user);
+              }}
+              styleType="danger"
+              shape="rounded"
+              size="XXS">
+              Unmute
+            </Button>
+          ) : (
+            <Button
+              shape="rounded"
+              onClick={() => {
+                muteUser(user);
+              }}
+              size="XXS">
+              Mute
+            </Button>
+          ))}
+      </div>
     </div>
   );
 });
