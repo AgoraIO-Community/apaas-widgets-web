@@ -4,8 +4,11 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-i
 import { ThumbsUpAni } from './thumbsup';
 import './index.css';
 import { useStore } from '../../../../hooks/useStore';
-import { ComponentLevelRulesMobile } from '../../../../../../../../../agora-classroom-sdk/src/infra/capabilities/config';
-
+enum ComponentLevelRulesMobile {
+  Level1 = 1,
+  Level2 = 10,
+  Level3 = 20,
+}
 const ctxRequire = require.context('./assets/', false, /\.svg$/);
 const thumbsupImgList: string[] = ctxRequire.keys().map((img) => {
   return ctxRequire(img);
