@@ -2,9 +2,7 @@ import { FC, useContext } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem } from '.';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
-import { HorizontalSlider } from '@components/slider';
 import classNames from 'classnames';
-import { ToolTip } from '@components/tooltip';
 import { FcrBoardShape } from '../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
 
@@ -49,41 +47,49 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
 const PenPickerPanel = observer(() => {
   const { observables, setPen, setStrokeWidth } = useContext(ToolbarUIContext);
 
-  const handleChange = (value: number) => {
-    setStrokeWidth(value);
-  };
+  const pens = [
+    { type: FcrBoardShape.Straight, icon: SvgIconEnum.FCR_WHITEBOARD_PED_STRAIGHTLINE },
+    { type: FcrBoardShape.Curve, icon: SvgIconEnum.FCR_WHITEBOARD_PED_CURVE },
+  ];
 
-  const handlePenTypeChange = (shape: FcrBoardShape) => {
-    return () => {
-      setPen(shape);
-    };
-  };
+  const isCurve = observables.currentShape === FcrBoardShape.Curve;
 
-  const straightCls = classNames({
-    'fcr-board-toolbar-panel__pen-type--active':
-      observables.currentShape === FcrBoardShape.Straight,
-  });
-
-  const curveCls = classNames({
-    'fcr-board-toolbar-panel__pen-type--active': observables.currentShape === FcrBoardShape.Curve,
-  });
+  const weights = [
+    { value: 1, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_1SIZE : SvgIconEnum.FCR_PEN_LINE_1SIZE },
+    { value: 2, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_2SIZE : SvgIconEnum.FCR_PEN_LINE_2SIZE },
+    { value: 3, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_3SIZE : SvgIconEnum.FCR_PEN_LINE_3SIZE },
+    { value: 4, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_4SIZE : SvgIconEnum.FCR_PEN_LINE_4SIZE },
+  ];
 
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--pen">
-      <HorizontalSlider value={observables.currentStrokeWidth} onChange={handleChange} />
-      <div className="fcr-board-toolbar-panel__divider" />
-      <div className="fcr-board-toolbar-panel__pen-type">
-        <ToolTip content="直线" placement="bottom">
-          <div className={straightCls} onClick={handlePenTypeChange(FcrBoardShape.Straight)}>
-            <SvgImg type={SvgIconEnum.FCR_PEN_LINE_3SIZE} size={30} />
+      {pens.map(({ type, icon }) => {
+        const cls = classNames({
+          'fcr-board-toolbar-panel--active': observables.currentShape === type,
+        });
+        const handleClick = () => {
+          setPen(type);
+        };
+        return (
+          <div key={type} className={cls} onClick={handleClick}>
+            <SvgImg type={icon} size={28} />
           </div>
-        </ToolTip>
-        <ToolTip content="曲线" placement="bottom">
-          <div className={curveCls} onClick={handlePenTypeChange(FcrBoardShape.Curve)}>
-            <SvgImg type={SvgIconEnum.FCR_PEN_CURVE_3SIZE} size={30} />
+        );
+      })}
+      <div className="fcr-divider-vertical fcr-divider-marign-bottom"></div>
+      {weights.map(({ value, icon }) => {
+        const cls = classNames({
+          'fcr-board-toolbar-panel--active': observables.currentStrokeWidth === value,
+        });
+        const handleClick = () => {
+          setStrokeWidth(value);
+        };
+        return (
+          <div key={value} className={cls} onClick={handleClick}>
+            <SvgImg type={icon} size={28} />
           </div>
-        </ToolTip>
-      </div>
+        );
+      })}
     </div>
   );
 });

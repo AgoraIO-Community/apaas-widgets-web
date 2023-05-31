@@ -2,15 +2,29 @@
 import React, { createContext } from 'react';
 import { FcrBoardTool, FcrBoardShape } from '../../common/whiteboard-wrapper/type';
 
+export interface DraggableHandler {
+  getPosition(): { x: number; y: number };
+  getSize(): { width: number; height: number };
+  updatePosition(position: { x: number; y: number }): void;
+  updateSize(size: { width: string | number; height: string | number }): void;
+}
+
 const boardUIContextDefault = {
   observables: {
     canOperate: false,
+    canClose: false,
+    minimized: false,
+    fitted: false,
   },
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
   handleBoardDomLoad: (ref: HTMLDivElement | null) => {},
   handleCollectorDomLoad: (ref: HTMLDivElement | null) => {},
+  handleDraggableDomLoad: (handler: DraggableHandler | null) => {},
   setPrivilege: (canOperate: boolean) => {},
+  handleClose: () => {},
+  handleFitToContainer: () => {},
+  handleMinimize: (minimized = true) => {},
 };
 
 const toolbarUIContextDefault = {

@@ -11,7 +11,8 @@
     "lib"
   ],
   "scripts": {
-    "bundle:npm": "bundle-pack --entries src/gallery/*/index --out-dir dist"
+    "bundle:umd": "bundle-pack --entries src/gallery/*/index --out-dir dist",
+    "bundle:cjs": "bundle-pack"
   },
   "dependencies": {
     "@netless/app-slide": "0.2.27",

@@ -48,10 +48,10 @@ const EraserPickerPanel = observer(() => {
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--eraser">
       <div className={eraserCls} onClick={handleEraserClick}>
-        <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_ERASER} size={30} />
+        <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_ERASER} size={28} />
       </div>
       <div onClick={handleCleanClick}>
-        <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_ELIMINATE} size={30} />
+        <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_ELIMINATE} size={28} />
       </div>
     </div>
   );

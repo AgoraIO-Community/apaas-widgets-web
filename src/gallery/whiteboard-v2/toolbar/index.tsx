@@ -2,16 +2,29 @@ import { observer } from 'mobx-react';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import { PopoverWithTooltip } from '@components/popover';
-import React, { FC } from 'react';
+import React, { FC, useState } from 'react';
 import classNames from 'classnames';
 import { useVisibleTools } from './hooks';
 import { DraggableWrapper } from './move-handle';
+import FoldIcon from '../fold-icon';
 
 export const Toolbar = observer(() => {
-  const { mainTools, extraTools } = useVisibleTools();
+  const { mainTools } = useVisibleTools();
+
+  const [folded, setFolded] = useState<boolean | undefined>();
+
+  const handleFoldClick = () => {
+    setFolded(!folded);
+  };
+
+  const clsn = classNames({
+    'fcr-board-toolbar--folded': folded,
+    // prefent first animation play
+    'fcr-board-toolbar--unfolded': typeof folded !== 'undefined' && !folded,
+  });
 
   return (
-    <DraggableWrapper>
+    <DraggableWrapper className={clsn}>
       <div className="fcr-board-toolbar-main">
         <ul className="fcr-board-toolbar-list">
           {mainTools.map(({ renderItem }, i) => {
@@ -19,12 +32,9 @@ export const Toolbar = observer(() => {
           })}
         </ul>
       </div>
-      <div className="fcr-board-toolbar-extra">
-        <ul className="fcr-board-toolbar-list">
-          {extraTools.map(({ renderItem }, i) => {
-            return <li key={i.toString()}>{renderItem()}</li>;
-          })}
-        </ul>
+      {/* fold */}
+      <div className={`fcr-board-toolbar-fold`} onClick={handleFoldClick}>
+        <FoldIcon />
       </div>
     </DraggableWrapper>
   );
@@ -46,7 +56,7 @@ export const ToolbarItem: FC<{
   return (
     <ToolTip placement={tooltipPlacement} content={tooltip}>
       <div className={cls} onClick={isDisabled ? undefined : onClick}>
-        <SvgImg type={icon} size={30} />
+        <SvgImg type={icon} size={28} />
       </div>
     </ToolTip>
   );
@@ -90,7 +100,7 @@ export const ExpansionToolbarItem: FC<{
         visible: true,
       }}>
       <div className={cls} onClick={onClick}>
-        <SvgImg type={icon} size={30} />
+        <SvgImg type={icon} size={28} />
         {extensionMark && (
           <SvgImg
             type={SvgIconEnum.FCR_WHITEBOARD_LOWERRIGHTARROW}

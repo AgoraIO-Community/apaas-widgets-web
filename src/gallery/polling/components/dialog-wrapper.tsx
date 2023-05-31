@@ -1,7 +1,7 @@
 import { WidgetDialog } from '@components/dialog';
 import { ActionIcon } from '@components/dialog/widget-dialog';
 import { SvgIconEnum } from '@components/svg-img';
-import React, { FC, useCallback, useContext, useRef, useState } from 'react';
+import React, { FC, useCallback, useContext, useRef } from 'react';
 import { AutoSizer } from 'react-virtualized';
 import { PollingState } from '../type';
 import { PollingUIContext } from '../ui-context';
@@ -16,8 +16,6 @@ type Props = {
 
 export const DialogWrapper: FC<Props> = observer(
   ({ onResize, onClose, onMinimize, children, canClose }) => {
-    const [dialogVisible, setDialogVisible] = useState(true);
-
     const resizeTimes = useRef(0);
     const {
       observables: { pollingState, minimize },
@@ -49,7 +47,6 @@ export const DialogWrapper: FC<Props> = observer(
       actions.push({
         icon: SvgIconEnum.FCR_CLOSE,
         onClick: () => {
-          setDialogVisible(false);
           setTimeout(() => {
             onClose();
           }, 200);
@@ -63,7 +60,6 @@ export const DialogWrapper: FC<Props> = observer(
     }
     return (
       <WidgetDialog
-        visible={dialogVisible}
         width={230}
         actions={actions}
         minimize={minimize}

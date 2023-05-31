@@ -28,53 +28,59 @@ export const MoveHandleItem = () => {
   );
 };
 
-export const DraggableWrapper: FC<PropsWithChildren> = observer(({ children }) => {
-  const { observables, dragToolbar, releaseToolbar } = useContext(ToolbarUIContext);
-  const { toolbarPosition, toolbarReleased, toolbarDockPosition } = observables;
-  const [{ x, y }, api] = useSpring(() => toolbarDockPosition, [toolbarDockPosition]);
+export const DraggableWrapper: FC<PropsWithChildren<{ className?: string }>> = observer(
+  ({ children, className }) => {
+    const { observables, dragToolbar, releaseToolbar } = useContext(ToolbarUIContext);
+    const { toolbarPosition, toolbarReleased, toolbarDockPosition } = observables;
+    const [{ x, y }, api] = useSpring(() => toolbarDockPosition, [toolbarDockPosition]);
 
-  useEffect(() => {
-    const mouseReleaseHandler = () => {
-      releaseToolbar();
-    };
-    window.addEventListener('mouseup', mouseReleaseHandler);
+    useEffect(() => {
+      const mouseReleaseHandler = () => {
+        releaseToolbar();
+      };
+      window.addEventListener('mouseup', mouseReleaseHandler);
 
-    return () => {
-      window.removeEventListener('mouseup', mouseReleaseHandler);
-    };
-  }, []);
+      return () => {
+        window.removeEventListener('mouseup', mouseReleaseHandler);
+      };
+    }, []);
 
-  useEffect(() => {
-    if (toolbarReleased) {
-      api.start({ ...toolbarDockPosition, immediate: false });
-    }
-  }, [toolbarReleased]);
+    useEffect(() => {
+      if (toolbarReleased) {
+        api.start({ ...toolbarDockPosition, immediate: false });
+      }
+    }, [toolbarReleased]);
 
-  useEffect(() => {
+    useEffect(() => {
+      if (toolbarDockPosition.initialized) {
+        api.start({ x: toolbarDockPosition.x, y: toolbarDockPosition.y, immediate: true });
+      }
+    }, [toolbarDockPosition.initialized]);
+
+    useEffect(() => {
+      dragToolbar();
+      api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: true });
+    }, [toolbarPosition.x, toolbarPosition.y]);
+
+    const cls = classNames(
+      'fcr-board-toolbar',
+      {
+        'fcr-board-toolbar--left': toolbarDockPosition.placement === 'left',
+        'fcr-board-toolbar--right': toolbarDockPosition.placement === 'right',
+      },
+      className,
+    );
+
+    let display: string | undefined = 'hidden';
+
     if (toolbarDockPosition.initialized) {
-      api.start({ x: toolbarDockPosition.x, y: toolbarDockPosition.y, immediate: true });
+      display = undefined;
     }
-  }, [toolbarDockPosition.initialized]);
 
-  useEffect(() => {
-    dragToolbar();
-    api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: true });
-  }, [toolbarPosition.x, toolbarPosition.y]);
-
-  const cls = classNames('fcr-board-toolbar', {
-    'fcr-board-toolbar--left': toolbarDockPosition.placement === 'left',
-    'fcr-board-toolbar--right': toolbarDockPosition.placement === 'right',
-  });
-
-  let display: string | undefined = 'hidden';
-
-  if (toolbarDockPosition.initialized) {
-    display = undefined;
-  }
-
-  return (
-    <animated.div style={{ left: x, top: y, display }} className={cls}>
-      {children}
-    </animated.div>
-  );
-});
+    return (
+      <animated.div style={{ left: x, top: y, display }} className={cls}>
+        {children}
+      </animated.div>
+    );
+  },
+);

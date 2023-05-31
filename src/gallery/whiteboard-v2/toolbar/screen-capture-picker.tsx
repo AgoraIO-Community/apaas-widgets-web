@@ -32,10 +32,10 @@ const ScreenCapturePickerPanel = observer(() => {
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--capture">
       <div onClick={captureApp}>
-        <SvgImg type={SvgIconEnum.FCR_WIHITEBOARD_SLICE} size={30} />
+        <SvgImg type={SvgIconEnum.FCR_WIHITEBOARD_SLICE} size={28} />
       </div>
       <div onClick={captureScreen}>
-        <SvgImg type={SvgIconEnum.FCR_WIHITEBOARD_SLICEWITHOUTCLASSROOM} size={30} />
+        <SvgImg type={SvgIconEnum.FCR_WIHITEBOARD_SLICEWITHOUTCLASSROOM} size={28} />
       </div>
     </div>
   );

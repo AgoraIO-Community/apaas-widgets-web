@@ -27,6 +27,7 @@ import { downloadCanvasImage } from '../../common/whiteboard-wrapper//utils';
 import {
   BoardUIContext,
   BoardUIContextValue,
+  DraggableHandler,
   ScenePaginationUIContext,
   ScenePaginationUIContextValue,
   ToolbarUIContext,
@@ -44,12 +45,20 @@ import { FcrBoardFactory } from '../../common/whiteboard-wrapper/factory';
 import { DialogProgressApi } from '../../components/progress';
 import { FcrUIConfig, FcrTheme } from 'agora-common-libs/lib/ui';
 import { runInAction } from 'mobx';
+import { WINDOW_DEFAULT_POSITION, getMaxSizeInContainer } from './utils';
+import { SvgIconEnum } from '@components/svg-img';
+
+const heightPerTool = 36;
+const defaultToolsRetain = heightPerTool * 6;
+const verticalPadding = 10;
+const sceneNavHeight = heightPerTool + verticalPadding;
+const widgetContainerClassName = 'netless-whiteboard-wrapper';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
+  logger!: Logger;
   protected static _installationDisposer?: CallableFunction;
   protected static _animationOptions: BoardWindowAnimationOptions;
-  logger!: Logger;
   protected _boardRoom?: FcrBoardRoom;
   protected _boardMainWindow?: FcrBoardMainWindow;
   protected _outerDom?: HTMLElement;
@@ -163,8 +172,24 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       };
     });
 
+    const broadcastListener = {
+      messageType: AgoraExtensionRoomEvent.SetMinimize,
+      onMessage: ({ widgetId, minimized }: { widgetId: string; minimized: boolean }) => {
+        if (widgetId === this.widgetId) {
+          runInAction(() => {
+            if (this._boardContext) {
+              this._boardContext.handleMinimize(minimized);
+            }
+          });
+        }
+      },
+    };
+
+    this.addBroadcastListener(broadcastListener);
+
     this._listenerDisposer = () => {
       disposers.forEach((d) => d());
+      this.removeBroadcastListener(broadcastListener);
     };
 
     // 处理
@@ -178,6 +203,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         () => {
           const { _boardDom } = this;
           if (_boardDom) {
+            // wait until the UI rerenders, then actual dimensions can be obtained
             setTimeout(() => {
               const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
 
@@ -187,6 +213,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         },
       ),
     );
+
+    this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
   }
 
   /**
@@ -194,7 +222,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
    */
   onDestroy() {
     this._leave();
-
+    this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
     if (this._listenerDisposer) {
       this._listenerDisposer();
     }
@@ -502,6 +530,11 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) ? true : granted;
   }
 
+  get canClose() {
+    const { role } = this.classroomConfig.sessionInfo;
+    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role);
+  }
+
   /**
    * 房间属性变更
    * @param props
@@ -526,16 +559,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     }
   }
 
-  locate() {
-    const dom = document.querySelector('.fcr-layout-board-view');
-    if (dom) {
-      return dom as HTMLElement;
-    }
-    this.logger.info('Cannot find a proper DOM to render the FCR board widget');
-  }
-
   render(dom: HTMLElement): void {
-    dom.classList.add('netless-whiteboard-wrapper');
+    dom.classList.add(widgetContainerClassName);
     this._outerDom = dom;
 
     ReactDOM.render(
@@ -551,7 +576,15 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   }
 
   createBoardUIContext() {
-    const observables = observable({ canOperate: this.hasPrivilege });
+    const observables = observable({
+      canOperate: this.hasPrivilege,
+      canClose: this.canClose,
+      minimized: false,
+      fitted: false,
+    });
+    let handler: DraggableHandler | null = null;
+    let remainSize = { width: 0, height: 0 };
+    let remainPosition = WINDOW_DEFAULT_POSITION;
     this._boardContext = {
       observables,
       handleDrop: this.handleDrop,
@@ -560,13 +593,11 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         this._boardDom = ref;
 
         if (this._boardDom) {
-          const resizeObserver = new ResizeObserver(this._notifyViewportChange);
+          const resizeObserver = new ResizeObserver(this._notifyUIChange);
 
           resizeObserver.observe(this._boardDom);
 
           this._boardDomResizeObserver = resizeObserver;
-
-          this._notifyViewportChange();
 
           this.mount();
         } else {
@@ -577,22 +608,76 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
         this._collectorDom = ref;
       },
+      handleDraggableDomLoad(_handler) {
+        handler = _handler;
+      },
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
-        setTimeout(() => {
-          runInAction(() => {
-            if (this._toolbarContext) {
-              this._toolbarContext.observables.toolbarDockPosition = {
-                x: 0,
-                y: 0,
-                initialized: false,
-                placement: 'left',
-              };
-            }
-          });
-          this._notifyViewportChange();
-        });
+        if (this._toolbarContext) {
+          this._toolbarContext.observables.toolbarDockPosition = {
+            x: 0,
+            y: 0,
+            initialized: false,
+            placement: 'left',
+          };
+        }
+        // wait until the UI rerenders, then actual dimensions can be obtained
+        setTimeout(this._notifyUIChange);
       }),
+      handleFitToContainer: action(() => {
+        if (!handler) {
+          this.logger.info('handler is not available');
+          return;
+        }
+        if (observables.fitted) {
+          handler.updatePosition(remainPosition);
+          handler.updateSize(remainSize);
+          setTimeout(this._updateDockPosition, 1000);
+        } else {
+          remainSize = handler.getSize();
+          remainPosition = handler.getPosition();
+          const widgetContainerDom = document.querySelector(`.${widgetContainerClassName}`);
+          if (!widgetContainerDom) {
+            this.logger.info('container dom is not available');
+            return;
+          }
+          const containerSize = {
+            width: widgetContainerDom.clientWidth,
+            height: widgetContainerDom.clientHeight,
+          };
+
+          const maxSize = getMaxSizeInContainer(containerSize);
+
+          handler.updatePosition({ x: 0, y: 0 });
+          handler.updateSize(maxSize);
+          setTimeout(this._updateDockPosition, 1000);
+        }
+        observables.fitted = !observables.fitted;
+      }),
+      handleMinimize: action((minimized = true) => {
+        if (minimized) {
+          this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
+            minimized: true,
+            widgetId: this.widgetId,
+            icon: SvgIconEnum.FCR_WHITEBOARD,
+            tooltip: 'Whiteboard',
+          });
+        } else {
+          this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
+            minimized: false,
+            widgetId: this.widgetId,
+          });
+        }
+        observables.minimized = minimized;
+      }),
+      handleClose: () => {
+        this.widgetController.broadcast(
+          AgoraExtensionWidgetEvent.WidgetBecomeInactive,
+          this.widgetId,
+        );
+
+        this.setInactive();
+      },
     };
     return this._boardContext;
   }
@@ -666,7 +751,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       }),
       releaseToolbar: action(() => {
         observables.toolbarReleased = true;
-        this._calculateDockPosition();
+        this._updateDockPosition();
+        this._updateMaxVisibleTools();
+        setTimeout(this._updateDockPosition);
       }),
       captureApp: () => {},
       captureScreen: () => {},
@@ -734,24 +821,24 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
 
   @bound
   @Lodash.throttled(200)
-  private _calculateDockPosition() {
+  private _updateDockPosition() {
     if (this._toolbarContext) {
       const toolbarDom = document.querySelector('.fcr-board-toolbar');
-
-      if (this._boardDom && toolbarDom) {
-        const boardClientRect = this._boardDom.getBoundingClientRect();
+      const containerDom = document.querySelector('.fcr-board-window-content');
+      if (containerDom && toolbarDom) {
+        const containerClientRect = containerDom.getBoundingClientRect();
         const toolbarClientRect = toolbarDom.getBoundingClientRect();
-        const toolbarOffsetTop = (boardClientRect.height - toolbarDom.clientHeight) / 2;
-
-        const centerPos = toolbarClientRect.x + toolbarClientRect.width / 2;
-
+        /* scene page bar 42 px height */
+        const toolbarOffsetTop = (containerClientRect.height - toolbarDom.clientHeight - 42) / 2;
+        const toolbarCenterPos =
+          toolbarClientRect.left - containerClientRect.left + toolbarClientRect.width / 2;
         const toolbarContext = this._toolbarContext;
         runInAction(() => {
-          if (centerPos > boardClientRect.width / 2) {
+          if (toolbarCenterPos > containerClientRect.width / 2) {
             // right
             toolbarContext.observables.toolbarDockPosition = {
-              x: boardClientRect.width - toolbarClientRect.width,
-              y: toolbarOffsetTop,
+              x: containerClientRect.width - toolbarClientRect.width,
+              y: toolbarOffsetTop + sceneNavHeight / 2,
               placement: 'right',
               initialized: true,
             };
@@ -770,18 +857,42 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   }
 
   @action.bound
-  private _notifyViewportChange() {
+  private _notifyUIChange() {
     if (this._toolbarContext) {
-      // update dock position
+      this.logger.info('notifying UI change');
       const toolbarDom = document.querySelector('.fcr-board-toolbar');
-      if (this._boardDom && toolbarDom) {
-        const boardClientRect = this._boardDom.getBoundingClientRect();
-        this._toolbarContext.observables.maxCountVisibleTools = Math.floor(
-          (boardClientRect.height - 60 - 200) / 40,
-        );
+      const containerDom = document.querySelector('.fcr-board-window-content');
 
-        setTimeout(this._calculateDockPosition);
+      if (containerDom && toolbarDom) {
+        this._updateMaxVisibleTools();
+        // wait until the UI rerenders, then actual dimensions can be obtained
+        setTimeout(this._updateDockPosition);
       }
+    }
+  }
+
+  @bound
+  @Lodash.throttled(200)
+  private _updateMaxVisibleTools() {
+    const containerDom = document.querySelector('.fcr-board-window-content');
+
+    if (this._toolbarContext && containerDom) {
+      const containerClientRect = containerDom.getBoundingClientRect();
+
+      const { placement } = this._toolbarContext.observables.toolbarDockPosition;
+      const toolbarContext = this._toolbarContext;
+      runInAction(() => {
+        if (placement === 'right') {
+          toolbarContext.observables.maxCountVisibleTools = Math.floor(
+            (containerClientRect.height - verticalPadding - defaultToolsRetain + sceneNavHeight) /
+              heightPerTool,
+          );
+        } else {
+          toolbarContext.observables.maxCountVisibleTools = Math.floor(
+            (containerClientRect.height - verticalPadding - defaultToolsRetain) / heightPerTool,
+          );
+        }
+      });
     }
   }
 

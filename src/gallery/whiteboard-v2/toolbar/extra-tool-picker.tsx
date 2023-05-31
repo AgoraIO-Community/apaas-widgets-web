@@ -15,7 +15,7 @@ export const AdditionToolPickerItem = observer(() => {
     <ExpansionToolbarItem
       isActive={isActive}
       tooltip="Extra"
-      icon={SvgIconEnum.FCR_V2_TOOL_NEW}
+      icon={SvgIconEnum.FCR_SUBTRACT}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<AdditionToolPickerPanel />}

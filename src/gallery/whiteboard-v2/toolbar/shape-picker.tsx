@@ -78,7 +78,7 @@ const ShapePickerPanel = observer(() => {
         };
         return (
           <div key={type} className={cls} onClick={handleClick}>
-            <SvgImg type={icon} size={30} />
+            <SvgImg type={icon} size={28} />
           </div>
         );
       })}

@@ -3,44 +3,80 @@ import React, { FC, useContext } from 'react';
 import { Popover } from '@components/popover';
 import classNames from 'classnames';
 import { ToolbarUIContext } from '../ui-context';
+import { useVisibleTools } from './hooks';
+
+const colors = ['#fed130', '#fc3141'];
 
 export const ColorPickerItem: FC = observer(() => {
+  const { showColorCount, isShinked } = useVisibleTools();
+
+  let list = [];
+
+  if (!isShinked) {
+    list = colors
+      .map((color) => <Color value={color} key={color} />)
+      .slice(0, Math.min(showColorCount - colors.length + 1, colors.length));
+
+    if (showColorCount > 0) {
+      list.push(<Picker key="picker" />);
+    }
+  } else {
+    list = [<Picker key="picker" />];
+  }
+
+  return <div className="fcr-board-toolbar__color-items">{list}</div>;
+});
+
+const Color: FC<{ value: string }> = observer(({ value }) => {
   const {
-    observables: { currentColor, toolbarDockPosition },
+    observables: { currentColor, currentShape },
     setStrokeColor,
   } = useContext(ToolbarUIContext);
 
-  const colors = ['#fed130', '#4262ff', '#fc3141'];
+  const isActive = currentColor === value;
+  const isDisabled = !currentShape;
+
+  const cls = classNames('fcr-board-toolbar__color-item', {
+    'fcr-board-toolbar__color-item--active': isActive,
+    'fcr-board-toolbar__color-item--disabled': isDisabled,
+  });
+
+  const handleClick = () => {
+    setStrokeColor(value);
+  };
+
+  const style = {
+    backgroundColor: value,
+  };
+
+  return <div className={cls} onClick={isDisabled ? undefined : handleClick} style={style} />;
+});
+
+const Picker = observer(() => {
+  const {
+    observables: { currentColor, currentShape, currentTool, toolbarDockPosition },
+  } = useContext(ToolbarUIContext);
 
   const isOtherColorActive = !!currentColor && !colors.includes(currentColor);
 
-  const cls = classNames('fcr-board-toolbar__color-item', {
+  const isDisabled = !currentShape;
+
+  const cls = classNames('fcr-board-toolbar__color-item fcr-board-toolbar__color-item--picker', {
     'fcr-board-toolbar__color-item--active': isOtherColorActive,
+    'fcr-board-toolbar__color-item--disabled': isDisabled,
   });
 
-  return (
-    <div className="fcr-board-toolbar__color-items">
-      {colors.map((color) => {
-        const isActive = currentColor === color;
-
-        const cls = classNames('fcr-board-toolbar__color-item', {
-          'fcr-board-toolbar__color-item--active': isActive,
-        });
-
-        const handleClick = () => {
-          setStrokeColor(color);
-        };
-
-        return <div key={color} className={cls} onClick={handleClick} />;
-      })}
-      <Popover
-        content={<ColorPickerPanel />}
-        trigger="click"
-        placement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-        overlayClassName="fcr-board-toolbar__picker__overlay">
-        <div className={cls} />
-      </Popover>
-    </div>
+  return isDisabled ? (
+    <div className={cls} />
+  ) : (
+    <Popover
+      content={<ColorPickerPanel />}
+      trigger="click"
+      placement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
+      overlayClassName="fcr-board-toolbar__picker__overlay"
+      overlayOffset={18}>
+      <div className={cls} />
+    </Popover>
   );
 });
 

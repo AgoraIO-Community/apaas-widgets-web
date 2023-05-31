@@ -1,5 +1,5 @@
 import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
+import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core';
 import { bound, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
@@ -23,6 +23,7 @@ import { downloadCanvasImage } from '../../common/whiteboard-wrapper/utils';
 import { BoardUIContext } from './ui-context';
 import { App } from './app';
 import { DialogProgressApi } from '../../components/progress';
+import isNumber from 'lodash/isNumber';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -153,7 +154,35 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     // 处理讲台隐藏/显示，重新计算白板宽高比
     this._disposers.push(
       reaction(
-        () => !!(this.classroomStore.roomStore.flexProps?.stage ?? true),
+        // () => !!(this.classroomStore.roomStore.flexProps?.stage ?? true),
+        () => {
+          enum LayoutMaskCode {
+            None = 0,
+            StageVisible = 1,
+            VideoGalleryVisible = 2,
+          }
+
+          const { flexProps } = this.classroomStore.roomStore;
+
+          const getLayoutCode = () => {
+            if (!isNumber(flexProps.area)) {
+              // 1v1和大班课默认讲台不开启
+              if (
+                this.classroomConfig.sessionInfo.roomType === EduRoomTypeEnum.Room1v1Class ||
+                this.classroomConfig.sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass
+              ) {
+                return LayoutMaskCode.None;
+              }
+              // 小班课默认开启讲台
+              return LayoutMaskCode.None | LayoutMaskCode.StageVisible;
+            }
+            return flexProps.area;
+          };
+
+          const layoutCode = getLayoutCode();
+
+          return !!(layoutCode & LayoutMaskCode.StageVisible);
+        },
         () => {
           const { _boardDom } = this;
           if (_boardDom) {

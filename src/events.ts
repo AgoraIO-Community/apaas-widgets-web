@@ -127,4 +127,8 @@ export enum AgoraExtensionWidgetEvent {
   Minimize = 'minimize',
   //聊天对话框开启状态变更
   ChatDialogVisibleChanged = 'chat-dialog-visible-changed',
+  // Widget创建成功
+  WidgetCreated = 'widget-created',
+  // Widget销毁成功
+  WidgetDestroyed = 'widget-destroyed',
 }

@@ -25,7 +25,6 @@ export const useVisibleTools = () => {
       setTool(tool);
     };
   };
-
   const baseMainTools = [
     {
       renderItem: () => (
@@ -64,9 +63,6 @@ export const useVisibleTools = () => {
       ),
     },
     {
-      renderItem: ({ offset }: { offset?: number } = {}) => <EraserPickerItem offset={offset} />,
-    },
-    {
       renderItem: () => {
         return (
           <ToolbarItem
@@ -78,35 +74,8 @@ export const useVisibleTools = () => {
         );
       },
     },
-  ];
-
-  const fixedTools = [
     {
-      renderItem: () => {
-        return <div className="fcr-divider-vertical fcr-divider-marign-top"></div>;
-      },
-    },
-    {
-      renderItem: () => <ColorPickerItem />,
-    },
-    {
-      renderItem: () => {
-        return <div className="fcr-divider-vertical fcr-divider-marign-bottom"></div>;
-      },
-    },
-    {
-      renderItem: () => <UndoItem />,
-    },
-    {
-      renderItem: () => <RedoItem />,
-    },
-  ];
-
-  const baseExtraTools = [
-    {
-      renderItem: () => (
-        <ToolbarItem tooltip="Cloud" icon={SvgIconEnum.FCR_WHITEBOARD_CLOUD} isActive={false} />
-      ),
+      renderItem: ({ offset }: { offset?: number } = {}) => <EraserPickerItem offset={offset} />,
     },
     {
       renderItem: () => (
@@ -118,11 +87,16 @@ export const useVisibleTools = () => {
         />
       ),
     },
-    {
-      renderItem: ({ offset }: { offset?: number } = {}) => (
-        <ScreenCapturePickerItem offset={offset} />
-      ),
-    },
+    // {
+    //   renderItem: () => (
+    //     <ToolbarItem tooltip="Cloud" icon={SvgIconEnum.FCR_WHITEBOARD_CLOUD} isActive={false} />
+    //   ),
+    // },
+    // {
+    //   renderItem: ({ offset }: { offset?: number } = {}) => (
+    //     <ScreenCapturePickerItem offset={offset} />
+    //   ),
+    // },
     {
       renderItem: () => (
         <ToolbarItem
@@ -133,13 +107,31 @@ export const useVisibleTools = () => {
         />
       ),
     },
+    // {
+    //   renderItem: () => {
+    //     return <div className="fcr-divider-vertical fcr-divider-marign-bottom"></div>;
+    //   },
+    // },
   ];
 
-  const dragTool = {
-    renderItem: () => {
-      return <MoveHandleItem />;
-    },
+  const divider = {
+    renderItem: () => <div className="fcr-divider-vertical fcr-divider-marign-bottom"></div>,
   };
+
+  const fixedTools = [
+    divider,
+    {
+      renderItem: () => <UndoItem />,
+    },
+    {
+      renderItem: () => <RedoItem />,
+    },
+    {
+      renderItem: () => {
+        return <MoveHandleItem />;
+      },
+    },
+  ];
 
   const additionTool = {
     renderItem: () => {
@@ -147,49 +139,49 @@ export const useVisibleTools = () => {
     },
   };
 
+  const colorTool = {
+    renderItem: () => <ColorPickerItem />,
+  };
+
   // whether toolbar needs to shrink in vertical direction
   const isShinked =
-    maxCountVisibleTools <
-    baseMainTools.length + baseExtraTools.length + 4; /* 4 means fixedTools + dragTool */
+    maxCountVisibleTools < baseMainTools.length + fixedTools.length; /* fixedTools + dragTool */
 
-  const maxCountAvailableToDisplay = maxCountVisibleTools - 4;
+  const showColorCount = isShinked
+    ? 0
+    : maxCountVisibleTools - (baseMainTools.length + fixedTools.length) + 1; /* addition tool */
+
+  if (showColorCount) {
+    baseMainTools.push(divider);
+    baseMainTools.push(colorTool);
+  }
+
+  const maxCountAvailableToDisplay = maxCountVisibleTools;
 
   const mainTools = isShinked
     ? range(0, max([0, min([maxCountAvailableToDisplay, baseMainTools.length])]))
         .map((index) => baseMainTools[index])
+        .concat([additionTool])
         .concat(fixedTools)
     : baseMainTools.concat(fixedTools);
-  //todo add dragtool
-  // const extraTools = isShinked
-  //   ? range(
-  //       0,
-  //       max([0, min([maxCountAvailableToDisplay - baseMainTools.length, baseExtraTools.length])]),
-  //     )
-  //       .map((index) => baseExtraTools[index])
-  //       .concat([additionTool, dragTool])
-  //   : baseExtraTools.concat([dragTool]);
-  const extraTools = isShinked
-    ? range(
-        0,
-        max([0, min([maxCountAvailableToDisplay - baseMainTools.length, baseExtraTools.length])]),
-      )
-        .map((index) => baseExtraTools[index])
-        .concat([additionTool])
-    : baseExtraTools.concat([]);
 
-  const additionToolsCount =
-    baseMainTools.length + baseExtraTools.length - maxCountAvailableToDisplay;
+  const additionToolsCount = baseMainTools.length - maxCountAvailableToDisplay;
 
-  const additionTools = [...baseMainTools, ...baseExtraTools].reverse().filter((tool, index) => {
+  const additionTools = [...baseMainTools].reverse().filter((tool, index) => {
     if (index < additionToolsCount) {
       return true;
     }
     return false;
   });
 
+  if (isShinked) {
+    additionTools.unshift(colorTool);
+  }
+
   return {
     mainTools,
-    extraTools,
     additionTools,
+    showColorCount,
+    isShinked,
   };
 };
