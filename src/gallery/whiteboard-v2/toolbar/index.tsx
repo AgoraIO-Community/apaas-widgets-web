@@ -19,7 +19,7 @@ export const Toolbar = observer(() => {
 
   const clsn = classNames({
     'fcr-board-toolbar--folded': folded,
-    // prefent first animation play
+    // prevent first animation play
     'fcr-board-toolbar--unfolded': typeof folded !== 'undefined' && !folded,
   });
 

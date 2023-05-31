@@ -30,7 +30,7 @@ const AdditionToolPickerPanel = observer(() => {
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--extra">
       {additionTools.map(({ renderItem }, index) => (
-        <React.Fragment key={index.toString()}>{renderItem({ offset: 14 })}</React.Fragment>
+        <React.Fragment key={index.toString()}>{renderItem({ offset: 10 })}</React.Fragment>
       ))}
     </div>
   );

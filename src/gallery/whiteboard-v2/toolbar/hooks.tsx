@@ -107,11 +107,6 @@ export const useVisibleTools = () => {
         />
       ),
     },
-    // {
-    //   renderItem: () => {
-    //     return <div className="fcr-divider-vertical fcr-divider-marign-bottom"></div>;
-    //   },
-    // },
   ];
 
   const divider = {
@@ -144,12 +139,11 @@ export const useVisibleTools = () => {
   };
 
   // whether toolbar needs to shrink in vertical direction
-  const isShinked =
-    maxCountVisibleTools < baseMainTools.length + fixedTools.length; /* fixedTools + dragTool */
+  const isShinked = maxCountVisibleTools < baseMainTools.length + 1;
 
   const showColorCount = isShinked
     ? 0
-    : maxCountVisibleTools - (baseMainTools.length + fixedTools.length) + 1; /* addition tool */
+    : maxCountVisibleTools - baseMainTools.length; /* addition tool */
 
   if (showColorCount) {
     baseMainTools.push(divider);
@@ -167,7 +161,7 @@ export const useVisibleTools = () => {
 
   const additionToolsCount = baseMainTools.length - maxCountAvailableToDisplay;
 
-  const additionTools = [...baseMainTools].reverse().filter((tool, index) => {
+  let additionTools = [...baseMainTools].reverse().filter((tool, index) => {
     if (index < additionToolsCount) {
       return true;
     }
@@ -177,6 +171,8 @@ export const useVisibleTools = () => {
   if (isShinked) {
     additionTools.unshift(colorTool);
   }
+
+  additionTools = additionTools.reverse();
 
   return {
     mainTools,

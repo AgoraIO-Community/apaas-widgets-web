@@ -46,7 +46,7 @@ export const App = observer(() => {
 });
 
 export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) => {
-  const bounds = 'parent';
+  // const bounds = 'parent';
   const dragHandle = 'fcr-board-window-drag-handle';
   const dragCancel = 'fcr-board-window-drag-cancel';
   const minWidth = 653;
@@ -112,7 +112,7 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
       ref={rndInstance}
       dragHandleClassName={dragHandle}
       cancel={`.${dragCancel}`}
-      bounds={bounds}
+      // bounds={bounds}
       minWidth={minWidth}
       minHeight={minHeight}
       default={{

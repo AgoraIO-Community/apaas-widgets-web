@@ -49,6 +49,7 @@ import { WINDOW_DEFAULT_POSITION, getMaxSizeInContainer } from './utils';
 import { SvgIconEnum } from '@components/svg-img';
 
 const heightPerTool = 36;
+const heightPerColor = 18;
 const defaultToolsRetain = heightPerTool * 6;
 const verticalPadding = 10;
 const sceneNavHeight = heightPerTool + verticalPadding;
@@ -632,7 +633,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         if (observables.fitted) {
           handler.updatePosition(remainPosition);
           handler.updateSize(remainSize);
-          setTimeout(this._updateDockPosition, 1000);
+          setTimeout(this._updateDockPosition, 500);
         } else {
           remainSize = handler.getSize();
           remainPosition = handler.getPosition();
@@ -650,7 +651,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
 
           handler.updatePosition({ x: 0, y: 0 });
           handler.updateSize(maxSize);
-          setTimeout(this._updateDockPosition, 1000);
+          setTimeout(this._updateDockPosition, 500);
         }
         observables.fitted = !observables.fitted;
       }),
@@ -667,6 +668,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
             minimized: false,
             widgetId: this.widgetId,
           });
+
+          setTimeout(this._notifyUIChange, 500);
         }
         observables.minimized = minimized;
       }),
@@ -859,7 +862,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   @action.bound
   private _notifyUIChange() {
     if (this._toolbarContext) {
-      this.logger.info('notifying UI change');
       const toolbarDom = document.querySelector('.fcr-board-toolbar');
       const containerDom = document.querySelector('.fcr-board-window-content');
 
@@ -883,14 +885,29 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       const toolbarContext = this._toolbarContext;
       runInAction(() => {
         if (placement === 'right') {
+          const availableHeight =
+            containerClientRect.height - verticalPadding - defaultToolsRetain + sceneNavHeight;
           toolbarContext.observables.maxCountVisibleTools = Math.floor(
-            (containerClientRect.height - verticalPadding - defaultToolsRetain + sceneNavHeight) /
-              heightPerTool,
+            availableHeight / heightPerTool,
           );
+          if (toolbarContext.observables.maxCountVisibleTools >= 9) {
+            const visibleTools = toolbarContext.observables.maxCountVisibleTools;
+            toolbarContext.observables.maxCountVisibleTools += Math.floor(
+              (availableHeight - visibleTools * heightPerTool) / heightPerColor,
+            );
+          }
         } else {
+          const availableHeight = containerClientRect.height - verticalPadding - defaultToolsRetain;
           toolbarContext.observables.maxCountVisibleTools = Math.floor(
-            (containerClientRect.height - verticalPadding - defaultToolsRetain) / heightPerTool,
+            availableHeight / heightPerTool,
           );
+
+          if (toolbarContext.observables.maxCountVisibleTools >= 9) {
+            const visibleTools = toolbarContext.observables.maxCountVisibleTools;
+            toolbarContext.observables.maxCountVisibleTools += Math.floor(
+              (availableHeight - visibleTools * heightPerTool) / heightPerColor,
+            );
+          }
         }
       });
     }
