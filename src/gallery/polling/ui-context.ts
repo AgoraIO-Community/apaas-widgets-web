@@ -14,6 +14,7 @@ const pollingUIContextDefaultValue = {
     isActionLoading: false,
     minimize: false,
     userCount: 0,
+    canClose: false,
   },
   create: () => {},
   submit: () => {},
@@ -27,6 +28,9 @@ const pollingUIContextDefaultValue = {
   addOption: () => {},
   removeOption: (id: number) => {},
   updateOption: (id: number, content: string) => {},
+  onResize: (size: { width: number; height: number }) => {},
+  onClose: () => {},
+  onMinimize: (minimize: boolean) => {},
 };
 
 export const PollingUIContext = createContext(pollingUIContextDefaultValue);

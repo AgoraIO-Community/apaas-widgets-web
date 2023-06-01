@@ -19,7 +19,10 @@ export class RoomStore {
   @action.bound
   setChatDialogVisible(visible: boolean) {
     this.chatDialogVisible = visible;
-    this._widget.broadcast(AgoraExtensionWidgetEvent.ChatDialogVisibleChanged, visible);
+    this._widget.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this._widget.widgetId,
+      visible,
+    });
   }
   @bound
   openChatDialog() {
@@ -29,31 +32,29 @@ export class RoomStore {
   closeChatDialog() {
     this.setChatDialogVisible(false);
   }
+  @action.bound
+  private _handleWidgetVisibleChanged(message: { widgetId: string; visible: boolean }) {
+    if (message.widgetId === this._widget.widgetId) {
+      this.setChatDialogVisible(message.visible);
+    }
+  }
   @observable
   allMuted = false;
 
   private _addEventListeners() {
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.OpenChatDialog,
-      onMessage: this.openChatDialog,
-    });
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.CloseChatDialog,
-      onMessage: this.closeChatDialog,
-    });
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.VisibleChanged,
+      onMessage: this._handleWidgetVisibleChanged,
+    });
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.removeBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.OpenChatDialog,
-      onMessage: this.openChatDialog,
-    });
-    this._widget.removeBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.CloseChatDialog,
-      onMessage: this.closeChatDialog,
+      messageType: AgoraExtensionRoomEvent.VisibleChanged,
+      onMessage: this._handleWidgetVisibleChanged,
     });
   }
   @computed

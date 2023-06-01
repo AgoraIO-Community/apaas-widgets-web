@@ -2,35 +2,20 @@
   pointer-events: none;
 }
 
-.fcr-chatroom-dialog-wrap .fcr-dialog {
-  position: absolute;
-  right: 20px;
-  bottom: 40px;
-  height: 70%;
-  pointer-events: all;
-}
 .fcr-chatroom-dialog-wrap .fcr-dialog-close {
   @apply fcr-bg-transparent;
   right: 5px;
   top: 10px;
 }
-.fcr-chatroom-dialog-wrap .fcr-dialog-close:hover {
-  @apply fcr-bg-brand-6;
-}
-.fcr-chatroom-dialog-wrap .fcr-dialog-content {
-  @apply fcr-shadow-line-1-.5 fcr-rounded-12;
-  height: 100%;
-  overflow: hidden;
-}
-.fcr-chatroom-dialog-wrap .fcr-dialog-body {
-  padding: 0;
-  height: 100%;
-}
+
 .fcr-chatroom-dialog-content {
+  @apply fcr-shadow-line-1-.5 fcr-rounded-12 fcr-bg-2;
   height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
+  overflow: hidden;
+  backdrop-filter: blur(25px);
 }
 .fcr-chatroom-dialog-content .fcr-toast-container-content > span {
   font-size: 12px;
@@ -80,4 +65,19 @@
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+}
+.fcr-chatroom-dialog-title-close {
+  @apply fcr-rounded-full;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 8px;
+  top: 10px;
+  cursor: pointer;
+}
+.fcr-chatroom-dialog-title-close:hover {
+  @apply fcr-bg-brand-6;
 }

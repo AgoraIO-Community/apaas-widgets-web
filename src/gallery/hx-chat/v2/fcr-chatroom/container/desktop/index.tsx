@@ -1,5 +1,4 @@
 import { useStore } from '../../hooks/useStore';
-import { BaseDialog } from '@components/dialog';
 import { observer } from 'mobx-react';
 import { DialogToolTip } from '@components/tooltip/dialog';
 import { Tabs } from '@components/tabs';
@@ -9,9 +8,10 @@ import './index.css';
 import { createContext, useEffect, useReducer, useRef, useState } from 'react';
 import { FcrChatContainer } from './chat';
 import { FcrChatMemberContainer } from './member';
-
+import { createPortal } from 'react-dom';
 import { Scheduler } from 'agora-rte-sdk';
 import { AgoraIMTextMessage } from '../../../../../im/wrapper/typs';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 export const FcrChatRoomDesktop = () => {
   return (
     <div className="fcr-chatroom-container">
@@ -28,7 +28,6 @@ const FcrChatroomDialog = observer(() => {
   } = useStore();
   const dialogContentRef = useRef<HTMLDivElement | null>(null);
   const [toastInstance, setToastInstance] = useState<ToastApiFactory | null>(null);
-
   const [tab, setTab] = useState<'chat' | 'member'>('chat');
   useEffect(() => {
     if (chatDialogVisible) {
@@ -45,41 +44,37 @@ const FcrChatroomDialog = observer(() => {
     }
   }, [chatDialogVisible]);
   return (
-    <BaseDialog
-      destroyOnClose={false}
-      onClose={() => {
-        setChatDialogVisible(false);
-      }}
-      getContainer={() => document.querySelector('.fcr-classroom-viewport') as HTMLElement}
-      maskClosable={false}
-      wrapClassName="fcr-chatroom-dialog-wrap"
-      width={270}
-      mask={false}
-      visible={chatDialogVisible}>
-      <FcrChatroomToastContext.Provider value={toastInstance}>
-        <div ref={dialogContentRef} className="fcr-chatroom-dialog-content">
-          <div className="fcr-chatroom-dialog-title">
-            <Tabs
-              onChange={(key) => setTab(key as 'chat' | 'member')}
-              activeKey={tab}
-              items={[
-                {
-                  label: 'Chat',
-                  key: 'chat',
-                },
-                {
-                  label: `Member (${userList.length})`,
-                  key: 'member',
-                },
-              ]}></Tabs>
+    <FcrChatroomToastContext.Provider value={toastInstance}>
+      <div
+        ref={dialogContentRef}
+        style={{ width: 270, height: 500 }}
+        className="fcr-chatroom-dialog-content">
+        <div className="fcr-chatroom-dialog-title">
+          <div
+            className="fcr-chatroom-dialog-title-close"
+            onClick={() => setChatDialogVisible(false)}>
+            <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
           </div>
-          <div className="fcr-chatroom-dialog-tab-inner">
-            {tab === 'chat' && <FcrChatContainer></FcrChatContainer>}
-            {tab === 'member' && <FcrChatMemberContainer></FcrChatMemberContainer>}
-          </div>
+          <Tabs
+            onChange={(key) => setTab(key as 'chat' | 'member')}
+            activeKey={tab}
+            items={[
+              {
+                label: 'Chat',
+                key: 'chat',
+              },
+              {
+                label: `Member (${userList.length})`,
+                key: 'member',
+              },
+            ]}></Tabs>
         </div>
-      </FcrChatroomToastContext.Provider>
-    </BaseDialog>
+        <div className="fcr-chatroom-dialog-tab-inner">
+          {tab === 'chat' && <FcrChatContainer></FcrChatContainer>}
+          {tab === 'member' && <FcrChatMemberContainer></FcrChatMemberContainer>}
+        </div>
+      </div>
+    </FcrChatroomToastContext.Provider>
   );
 });
 
@@ -108,7 +103,7 @@ const FcrChatroomTooltip = observer(() => {
     }
     return hideToolTip;
   }, [chatDialogVisible]);
-  return (
+  return createPortal(
     <DialogToolTip
       content={
         <FcrChatroomTooltipContent
@@ -118,7 +113,8 @@ const FcrChatroomTooltip = observer(() => {
       visible={tooltipVisible}
       onClose={hideToolTip}>
       <div></div>
-    </DialogToolTip>
+    </DialogToolTip>,
+    document.querySelector('#fcr-chatroom-slot') as HTMLElement,
   );
 });
 const FcrChatroomTooltipContent = ({

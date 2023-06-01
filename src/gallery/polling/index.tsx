@@ -34,19 +34,11 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
     return 332;
   }
 
-  get zContainer() {
-    return 10 as const;
-  }
-
   render(dom: HTMLElement) {
     this._dom = dom;
     ReactDOM.render(
       <PollingUIContext.Provider value={this._context}>
-        <DialogWrapper
-          onResize={this.handleResize}
-          onClose={this.handleClose}
-          canClose={this.isTeacher}
-          onMinimize={this._setMinimize}>
+        <DialogWrapper>
           <Polling />
         </DialogWrapper>
       </PollingUIContext.Provider>,
@@ -78,20 +70,10 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   }
 
   onCreate(properties: any, userProperties: any) {
-    const broadcastListener = {
-      messageType: AgoraExtensionRoomEvent.SetMinimize,
-      onMessage: ({ widgetId, minimized }: { widgetId: string; minimized: boolean }) => {
-        if (widgetId === this.widgetId) {
-          this._setMinimize(minimized);
-        }
-      },
-    };
-
-    this.addBroadcastListener(broadcastListener);
-
-    this._listenerDisposer = () => {
-      this.removeBroadcastListener(broadcastListener);
-    };
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this.widgetId,
+      visible: true,
+    });
 
     this._updateContext(properties);
     runInAction(() => {
@@ -193,6 +175,7 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
       minimize: false,
       selectIndex: null,
       userCount: 0,
+      canClose: this.isTeacher,
     });
 
     const context = {
@@ -280,6 +263,17 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
       setSelectedOptions: action((selections: Set<number>) => {
         observables.selectedOptions = selections;
       }),
+      onResize: this.handleResize,
+      onClose: () => {
+        this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+          widgetId: this.widgetId,
+          visible: false,
+        });
+        setTimeout(() => {
+          this.handleClose();
+        }, 500);
+      },
+      onMinimize: this._setMinimize,
     };
 
     return context;

@@ -2,7 +2,12 @@ import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-
 import { AgoraWidgetController, Platform } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
+import {
+  AgoraTrackSyncedWidget,
+  AgoraWidgetBase,
+  AgoraWidgetLifecycle,
+} from 'agora-common-libs/lib/widget';
+import { AgoraExtensionWidgetEvent } from '../../../events';
 
 export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
   private _imConfig?: { chatRoomId: string; appName: string; orgName: string };
@@ -11,7 +16,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   private _rendered = false;
 
   onInstall(controller: AgoraWidgetController): void {}
-
+  dragHandleClassName = 'fcr-chatroom-dialog-title';
   get widgetName(): string {
     return 'easemobIM';
   }
@@ -65,6 +70,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   onCreate(properties: any, userProperties: any) {
     this._easemobUserId = userProperties?.userId;
     this._imConfig = properties?.extra;
+
     this._renderApp();
   }
 
@@ -87,29 +93,16 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     }
   }
 
-  locate() {
-    const { platform } = this.classroomConfig;
-    if (platform === Platform.H5) {
-      return document.querySelector('.widget-slot-chat-mobile') as HTMLElement;
-    } else {
-      return document.querySelector('#fcr-chatroom-slot') as HTMLElement;
-    }
-  }
-
   render(dom: HTMLElement): void {
     this._dom = dom;
     this._renderApp();
   }
 
-  setHide(hide: boolean) {
-    const dom = this._dom;
-    if (dom) {
-      if (hide) {
-        dom.classList.add('min-w-0');
-      } else {
-        dom.classList.remove('min-w-0');
-      }
-    }
+  setVisible(visible: boolean) {
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this.widgetId,
+      visible: visible,
+    });
   }
 
   unload(): void {

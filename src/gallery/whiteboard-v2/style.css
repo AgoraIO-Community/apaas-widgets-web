@@ -311,7 +311,7 @@
 }
 
 .fcr-board-window-title-bar {
-  @apply fcr-bg-brand-6 fcr-text-white;
+  @apply fcr-bg-4 fcr-text-white;
   height: 36px;
   line-height: 36px;
   font-weight: 700;
