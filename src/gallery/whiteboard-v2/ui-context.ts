@@ -14,7 +14,7 @@ const boardUIContextDefault = {
     canOperate: false,
     canClose: false,
     minimized: false,
-    fitted: false,
+    fitted: true,
   },
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
@@ -25,6 +25,7 @@ const boardUIContextDefault = {
   handleClose: () => {},
   handleFitToContainer: () => {},
   handleMinimize: (minimized = true) => {},
+  getDefaultBounds: () => ({ width: 0, height: 0, x: 0, y: 0 }),
 };
 
 const toolbarUIContextDefault = {

@@ -235,20 +235,22 @@
 .fcr-board-toolbar-panel--extra > div:not(:last-child) {
   margin-bottom: 6px;
 }
-.fcr-board-toolbar-panel--pen > div.fcr-board-toolbar-panel--active,
-.fcr-board-toolbar-panel--shape > div.fcr-board-toolbar-panel--active,
-.fcr-board-toolbar-panel--eraser > div.fcr-board-toolbar-panel--active,
-.fcr-board-toolbar-panel--capture > div.fcr-board-toolbar-panel--active,
-.fcr-board-toolbar-panel--extra > div.fcr-board-toolbar-panel--active {
-  border-color: var(--color-brand-6);
-  border: 2px solid var(--color-brand-6);
-}
+
 .fcr-board-toolbar-panel--pen > div:hover,
 .fcr-board-toolbar-panel--shape > div:hover,
 .fcr-board-toolbar-panel--eraser > div:hover,
 .fcr-board-toolbar-panel--capture > div:hover,
 .fcr-board-toolbar-panel--extra > div:hover {
-  @apply fcr-bg-brand-6;
+  @apply fcr-bg-3;
+}
+
+.fcr-board-toolbar-panel--pen > div.fcr-board-toolbar-panel--active,
+.fcr-board-toolbar-panel--shape > div.fcr-board-toolbar-panel--active,
+.fcr-board-toolbar-panel--eraser > div.fcr-board-toolbar-panel--active,
+.fcr-board-toolbar-panel--capture > div.fcr-board-toolbar-panel--active,
+.fcr-board-toolbar-panel--extra > div.fcr-board-toolbar-panel--active {
+  @apply fcr-bg-hover;
+  border: 2px solid var(--color-brand-6);
 }
 
 .fcr-board-toolbar-panel--extra > .fcr-board-toolbar__color-items:hover {
@@ -312,8 +314,8 @@
 
 .fcr-board-window-title-bar {
   @apply fcr-bg-4 fcr-text-white;
-  height: 36px;
-  line-height: 36px;
+  height: 28px;
+  line-height: 28px;
   font-weight: 700;
   font-size: 14px;
   padding: 0 16px;
@@ -327,8 +329,8 @@
 .fcr-board-window-title-bar ul li {
   @apply fcr-bg-block-1 fcr-rounded-full;
   border-radius: 40px;
-  width: 24px;
-  height: 24px;
+  width: 16px;
+  height: 16px;
   display: flex;
   justify-content: center;
   align-items: center;
@@ -456,4 +458,29 @@
   100% {
     transform: translateX(0px);
   }
+}
+
+.fcr-board-toolbar-panel--extra {
+  max-height: 233px;
+  overflow: auto;
+  overflow-y: overlay;
+}
+
+.fcr-board-toolbar-panel--extra::-webkit-scrollbar {
+  width: 3px;
+}
+
+.section::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.fcr-board-toolbar-panel--extra::-webkit-scrollbar-thumb {
+  @apply fcr-bg-4;
+  width: 3px;
+  opacity: 0.8;
+  border-radius: 3px;
+}
+
+.fcr-board-toolbar__picker__overlay .fcr-tooltip-inner {
+  overflow: hidden !important;
 }

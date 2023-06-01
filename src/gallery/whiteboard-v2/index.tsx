@@ -1,5 +1,6 @@
 import {
   AgoraUiCapable,
+  AgoraViewportBoundaries,
   AgoraWidgetBase,
   AgoraWidgetLifecycle,
 } from 'agora-common-libs/lib/widget';
@@ -7,8 +8,7 @@ import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum } from 'agora
 import { bound, Lodash, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
-
-import { reaction, IReactionDisposer } from 'mobx';
+import { reaction, IReactionDisposer, observable, action, runInAction } from 'mobx';
 import { transI18n } from 'agora-common-libs/lib/i18n';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
 import { FcrBoardRoom } from '../../common/whiteboard-wrapper/board-room';
@@ -22,8 +22,11 @@ import {
   BoardMountState,
   FcrBoardMainWindowFailureReason,
   BoardWindowAnimationOptions,
-} from '../../common/whiteboard-wrapper//type';
-import { downloadCanvasImage } from '../../common/whiteboard-wrapper//utils';
+  FcrBoardPageInfo,
+  FcrBoardShape,
+  FcrBoardTool,
+} from '../../common/whiteboard-wrapper/type';
+import { downloadCanvasImage } from '../../common/whiteboard-wrapper/utils';
 import {
   BoardUIContext,
   BoardUIContextValue,
@@ -34,25 +37,23 @@ import {
   ToolbarUIContextValue,
 } from './ui-context';
 import { App } from './app';
-import {
-  FcrBoardPageInfo,
-  FcrBoardShape,
-  FcrBoardTool,
-} from '../../common/whiteboard-wrapper/type';
-import { observable, action } from 'mobx';
 import tinycolor from 'tinycolor2';
 import { FcrBoardFactory } from '../../common/whiteboard-wrapper/factory';
 import { DialogProgressApi } from '../../components/progress';
 import { FcrUIConfig, FcrTheme } from 'agora-common-libs/lib/ui';
-import { runInAction } from 'mobx';
-import { WINDOW_DEFAULT_POSITION, getMaxSizeInContainer } from './utils';
+import {
+  WINDOW_REMAIN_POSITION,
+  WINDOW_REMAIN_SIZE,
+  defaultToolsRetain,
+  getDefaultBounds,
+  heightPerColor,
+  heightPerTool,
+  layoutContentClassName,
+  sceneNavHeight,
+  verticalPadding,
+  widgetContainerClassName,
+} from './utils';
 import { SvgIconEnum } from '@components/svg-img';
-
-const heightPerTool = 36;
-const defaultToolsRetain = heightPerTool * 6;
-const verticalPadding = 10;
-const sceneNavHeight = heightPerTool + verticalPadding;
-const widgetContainerClassName = 'netless-whiteboard-wrapper';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -85,6 +86,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     strokeColor: '#fed130',
     strokeWidth: 2,
   };
+
+  private _handler: DraggableHandler | null = null;
 
   get widgetName() {
     return 'netlessBoard';
@@ -354,7 +357,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   }
 
   @bound
-  private async _getSnapshotImage(background?: string) {
+  private _getSnapshotImage(background?: string) {
     const mainWindow = this._boardMainWindow;
 
     if (mainWindow) {
@@ -499,16 +502,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     });
   }
 
-  @bound
-  handleDragOver(e: unknown) {
-    this.broadcast(AgoraExtensionWidgetEvent.BoardDragOver, e);
-  }
-
-  @bound
-  handleDrop(e: unknown) {
-    this.broadcast(AgoraExtensionWidgetEvent.BoardDrop, e);
-  }
-
   private async _checkPrivilege(props: any) {
     const { userUuid } = this.classroomConfig.sessionInfo;
     const prev = this._grantedUsers.has(userUuid);
@@ -533,6 +526,21 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   get canClose() {
     const { role } = this.classroomConfig.sessionInfo;
     return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role);
+  }
+
+  get contentAreaSize() {
+    const layoutContentDom = document.querySelector(`.${layoutContentClassName}`);
+
+    const contentAreaSize = { width: 0, height: 0, top: 0, left: 0 };
+    if (layoutContentDom) {
+      const { width, height, left, top } = layoutContentDom.getBoundingClientRect();
+      contentAreaSize.width = width;
+      contentAreaSize.height = height;
+      contentAreaSize.left = left;
+      contentAreaSize.top = top;
+    }
+
+    return contentAreaSize;
   }
 
   /**
@@ -564,9 +572,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     this._outerDom = dom;
 
     ReactDOM.render(
-      <BoardUIContext.Provider value={this.createBoardUIContext()}>
-        <ToolbarUIContext.Provider value={this.createToolbarUIContext()}>
-          <ScenePaginationUIContext.Provider value={this.createScenePaginationUIContext()}>
+      <BoardUIContext.Provider value={this._createBoardUIContext()}>
+        <ToolbarUIContext.Provider value={this._createToolbarUIContext()}>
+          <ScenePaginationUIContext.Provider value={this._createScenePaginationUIContext()}>
             <App />
           </ScenePaginationUIContext.Provider>
         </ToolbarUIContext.Provider>
@@ -575,25 +583,39 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     );
   }
 
-  createBoardUIContext() {
+  onViewportBoundaryUpdate() {
+    if (this._boardContext?.observables.fitted && this._handler) {
+      const defaultBounds = getDefaultBounds(this.contentAreaSize);
+      this._handler.updatePosition({ x: defaultBounds.x, y: defaultBounds.y });
+      this._handler.updateSize({ width: defaultBounds.width, height: defaultBounds.height });
+      this._updateDockPosition();
+    }
+  }
+
+  private _createBoardUIContext() {
     const observables = observable({
       canOperate: this.hasPrivilege,
       canClose: this.canClose,
       minimized: false,
-      fitted: false,
+      fitted: true,
+      contentAreaSize: this.contentAreaSize,
     });
-    let handler: DraggableHandler | null = null;
-    let remainSize = { width: 0, height: 0 };
-    let remainPosition = WINDOW_DEFAULT_POSITION;
+
+    let remainSize = WINDOW_REMAIN_SIZE;
+    let remainPosition = WINDOW_REMAIN_POSITION;
     this._boardContext = {
       observables,
-      handleDrop: this.handleDrop,
-      handleDragOver: this.handleDragOver,
+      handleDrop: (e: unknown) => {
+        this.broadcast(AgoraExtensionWidgetEvent.BoardDrop, e);
+      },
+      handleDragOver: (e: unknown) => {
+        this.broadcast(AgoraExtensionWidgetEvent.BoardDragOver, e);
+      },
       handleBoardDomLoad: (ref: HTMLDivElement | null) => {
         this._boardDom = ref;
 
         if (this._boardDom) {
-          const resizeObserver = new ResizeObserver(this._notifyUIChange);
+          const resizeObserver = new ResizeObserver(this._repositionToolbar);
 
           resizeObserver.observe(this._boardDom);
 
@@ -608,8 +630,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
         this._collectorDom = ref;
       },
-      handleDraggableDomLoad(_handler) {
-        handler = _handler;
+      handleDraggableDomLoad: (handler) => {
+        this._handler = handler;
       },
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
@@ -622,35 +644,28 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
           };
         }
         // wait until the UI rerenders, then actual dimensions can be obtained
-        setTimeout(this._notifyUIChange);
+        setTimeout(this._repositionToolbar);
       }),
       handleFitToContainer: action(() => {
-        if (!handler) {
+        if (!this._handler) {
           this.logger.info('handler is not available');
           return;
         }
         if (observables.fitted) {
-          handler.updatePosition(remainPosition);
-          handler.updateSize(remainSize);
-          setTimeout(this._updateDockPosition, 1000);
+          this._handler.updatePosition(remainPosition);
+          this._handler.updateSize(remainSize);
+          setTimeout(() => {
+            this._updateDockPosition();
+          }, 500);
         } else {
-          remainSize = handler.getSize();
-          remainPosition = handler.getPosition();
-          const widgetContainerDom = document.querySelector(`.${widgetContainerClassName}`);
-          if (!widgetContainerDom) {
-            this.logger.info('container dom is not available');
-            return;
-          }
-          const containerSize = {
-            width: widgetContainerDom.clientWidth,
-            height: widgetContainerDom.clientHeight,
-          };
-
-          const maxSize = getMaxSizeInContainer(containerSize);
-
-          handler.updatePosition({ x: 0, y: 0 });
-          handler.updateSize(maxSize);
-          setTimeout(this._updateDockPosition, 1000);
+          remainSize = this._handler.getSize();
+          remainPosition = this._handler.getPosition();
+          const defaultBounds = getDefaultBounds(this.contentAreaSize);
+          this._handler.updatePosition({ x: defaultBounds.x, y: defaultBounds.y });
+          this._handler.updateSize({ width: defaultBounds.width, height: defaultBounds.height });
+          setTimeout(() => {
+            this._updateDockPosition();
+          }, 500);
         }
         observables.fitted = !observables.fitted;
       }),
@@ -667,6 +682,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
             minimized: false,
             widgetId: this.widgetId,
           });
+
+          setTimeout(this._repositionToolbar, 500);
         }
         observables.minimized = minimized;
       }),
@@ -678,11 +695,14 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
 
         this.setInactive();
       },
+      getDefaultBounds: () => {
+        return getDefaultBounds(this.contentAreaSize);
+      },
     };
     return this._boardContext;
   }
 
-  createToolbarUIContext() {
+  private _createToolbarUIContext() {
     const observables = observable({
       currentTool: undefined as FcrBoardTool | undefined,
       currentColor: '',
@@ -764,7 +784,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     return this._toolbarContext;
   }
 
-  createScenePaginationUIContext() {
+  private _createScenePaginationUIContext() {
     const observables = observable({
       currentPage: 1,
       totalPage: 1,
@@ -856,14 +876,38 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     }
   }
 
-  @action.bound
-  private _notifyUIChange() {
+  @bound
+  private _updateDockPlacement() {
     if (this._toolbarContext) {
-      this.logger.info('notifying UI change');
+      const toolbarDom = document.querySelector('.fcr-board-toolbar');
+      const containerDom = document.querySelector('.fcr-board-window-content');
+      if (containerDom && toolbarDom) {
+        const containerClientRect = containerDom.getBoundingClientRect();
+        const toolbarClientRect = toolbarDom.getBoundingClientRect();
+        const toolbarCenterPos =
+          toolbarClientRect.left - containerClientRect.left + toolbarClientRect.width / 2;
+        const toolbarContext = this._toolbarContext;
+        runInAction(() => {
+          if (toolbarCenterPos > containerClientRect.width / 2) {
+            // right
+            toolbarContext.observables.toolbarDockPosition.placement = 'right';
+          } else {
+            // left
+            toolbarContext.observables.toolbarDockPosition.placement = 'left';
+          }
+        });
+      }
+    }
+  }
+
+  @action.bound
+  private _repositionToolbar() {
+    if (this._toolbarContext) {
       const toolbarDom = document.querySelector('.fcr-board-toolbar');
       const containerDom = document.querySelector('.fcr-board-window-content');
 
       if (containerDom && toolbarDom) {
+        this._updateDockPlacement();
         this._updateMaxVisibleTools();
         // wait until the UI rerenders, then actual dimensions can be obtained
         setTimeout(this._updateDockPosition);
@@ -883,14 +927,29 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       const toolbarContext = this._toolbarContext;
       runInAction(() => {
         if (placement === 'right') {
+          const availableHeight =
+            containerClientRect.height - verticalPadding - defaultToolsRetain + sceneNavHeight;
           toolbarContext.observables.maxCountVisibleTools = Math.floor(
-            (containerClientRect.height - verticalPadding - defaultToolsRetain + sceneNavHeight) /
-              heightPerTool,
+            availableHeight / heightPerTool,
           );
+          if (toolbarContext.observables.maxCountVisibleTools >= 9) {
+            const visibleTools = toolbarContext.observables.maxCountVisibleTools;
+            toolbarContext.observables.maxCountVisibleTools += Math.floor(
+              (availableHeight - visibleTools * heightPerTool) / heightPerColor,
+            );
+          }
         } else {
+          const availableHeight = containerClientRect.height - verticalPadding - defaultToolsRetain;
           toolbarContext.observables.maxCountVisibleTools = Math.floor(
-            (containerClientRect.height - verticalPadding - defaultToolsRetain) / heightPerTool,
+            availableHeight / heightPerTool,
           );
+
+          if (toolbarContext.observables.maxCountVisibleTools >= 9) {
+            const visibleTools = toolbarContext.observables.maxCountVisibleTools;
+            toolbarContext.observables.maxCountVisibleTools += Math.floor(
+              (availableHeight - visibleTools * heightPerTool) / heightPerColor,
+            );
+          }
         }
       });
     }
