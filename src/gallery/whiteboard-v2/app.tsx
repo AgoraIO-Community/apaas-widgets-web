@@ -9,7 +9,7 @@ import { SvgImg } from '@components/svg-img';
 import { SvgIconEnum } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import classNames from 'classnames';
-import { WINDOW_ASPECT_RATIO, WINDOW_DEFAULT_POSITION, WINDOW_TITLE_HEIGHT } from './utils';
+import { WINDOW_ASPECT_RATIO, WINDOW_TITLE_HEIGHT, WINDOW_MIN_SIZE } from './utils';
 import { useMinimize } from '@ui-kit-utils/hooks/animations';
 
 export const App = observer(() => {
@@ -49,8 +49,7 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
   // const bounds = 'parent';
   const dragHandle = 'fcr-board-window-drag-handle';
   const dragCancel = 'fcr-board-window-drag-cancel';
-  const minWidth = 653;
-  const minHeight = 336;
+
   const resizeHandleStyleOverride = { zIndex: 999 };
 
   const rndInstance = useRef<Rnd>(null);
@@ -60,6 +59,7 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
     handleFitToContainer,
     handleMinimize,
     handleDraggableDomLoad,
+    getDefaultBounds,
     observables: { minimized, fitted },
   } = useContext(BoardUIContext);
 
@@ -107,20 +107,18 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
   const { style: miniStyle, ref: miniRef } = useMinimize(minimized);
 
   const clsn = classNames('fcr-board-draggable-window');
+
+  const defaultBounds = getDefaultBounds();
+
   return (
     <Rnd
       ref={rndInstance}
       dragHandleClassName={dragHandle}
       cancel={`.${dragCancel}`}
       // bounds={bounds}
-      minWidth={minWidth}
-      minHeight={minHeight}
-      default={{
-        width: minWidth,
-        height: minHeight,
-        x: WINDOW_DEFAULT_POSITION.x,
-        y: WINDOW_DEFAULT_POSITION.y,
-      }}
+      minWidth={WINDOW_MIN_SIZE.width}
+      minHeight={WINDOW_MIN_SIZE.height}
+      default={defaultBounds}
       lockAspectRatio={WINDOW_ASPECT_RATIO}
       lockAspectRatioExtraHeight={WINDOW_TITLE_HEIGHT}
       resizeHandleStyles={{
@@ -142,7 +140,7 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
                 <ToolTip content="Minimization">
                   <SvgImg
                     type={SvgIconEnum.FCR_WINDOWPAGE_SMALLER}
-                    size={22}
+                    size={16}
                     onClick={() => handleMinimize()}
                   />
                 </ToolTip>
@@ -155,14 +153,14 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
                         ? SvgIconEnum.FCR_WINDOWPAGE_SMALLER3
                         : SvgIconEnum.FCR_WINDOWPAGE_SMALLER2
                     }
-                    size={22}
+                    size={16}
                     onClick={handleFitToContainer}
                   />
                 </ToolTip>
               </li>
               <li>
                 <ToolTip content="Close">
-                  <SvgImg type={SvgIconEnum.FCR_CLOSE} size={14.4} onClick={handleClose} />
+                  <SvgImg type={SvgIconEnum.FCR_CLOSE} size={9.6} onClick={handleClose} />
                 </ToolTip>
               </li>
             </ul>
