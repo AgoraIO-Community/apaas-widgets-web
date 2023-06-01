@@ -11,7 +11,7 @@ export const WINDOW_TITLE_HEIGHT = 28;
 export const WINDOW_ASPECT_RATIO = 1836 / 847;
 
 export const WINDOW_MIN_SIZE = { width: 653, height: 336 };
-export const WINDOW_REMAIN_SIZE = { width: 830, height: 383 };
+export const WINDOW_REMAIN_SIZE = { width: 783, height: 388 };
 export const WINDOW_REMAIN_POSITION = { x: 0, y: 171 };
 
 type Size = { width: number; height: number };
