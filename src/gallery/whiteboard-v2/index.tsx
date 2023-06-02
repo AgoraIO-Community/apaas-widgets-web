@@ -44,6 +44,7 @@ import { FcrUIConfig, FcrTheme } from 'agora-common-libs/lib/ui';
 import {
   WINDOW_REMAIN_POSITION,
   WINDOW_REMAIN_SIZE,
+  clampBounds,
   defaultToolsRetain,
   getDefaultBounds,
   heightPerColor,
@@ -584,11 +585,28 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   }
 
   onViewportBoundaryUpdate() {
-    if (this._boardContext?.observables.fitted && this._handler) {
-      const defaultBounds = getDefaultBounds(this.contentAreaSize);
-      this._handler.updatePosition({ x: defaultBounds.x, y: defaultBounds.y });
-      this._handler.updateSize({ width: defaultBounds.width, height: defaultBounds.height });
-      this._updateDockPosition();
+    if (this._handler) {
+      if (this._boardContext?.observables.fitted) {
+        const defaultBounds = getDefaultBounds(this.contentAreaSize);
+        this._handler.updatePosition({ x: defaultBounds.x, y: defaultBounds.y });
+        this._handler.updateSize({ width: defaultBounds.width, height: defaultBounds.height });
+        this._updateDockPosition();
+      } else {
+        const position = this._handler.getPosition();
+        const size = this._handler.getSize();
+        const bounds = clampBounds(
+          {
+            width: size.width,
+            height: size.height,
+            left: position.x,
+            top: position.y,
+          },
+          this.contentAreaSize,
+        );
+        this._handler.updatePosition({ x: bounds.x, y: bounds.y });
+        this._handler.updateSize({ width: bounds.width, height: bounds.height });
+        this._updateDockPosition();
+      }
     }
   }
 

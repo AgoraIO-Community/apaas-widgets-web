@@ -71,7 +71,8 @@ export enum AgoraExtensionRoomEvent {
   OpenChatDialog = 'open-chat-dialog',
   //关闭聊天对话框
   CloseChatDialog = 'close-chat-dialog',
-
+  //设置插件最小化
+  SetMinimize = 'set-minimize',
   //设置插件可见性
   VisibleChanged = 'visible-changed',
 }
