@@ -36,6 +36,7 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
       tooltip="Pen"
       icon={icon}
       onClick={handlePenToolChange(clickShape)}
+      tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<PenPickerPanel />}

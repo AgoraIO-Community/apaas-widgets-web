@@ -18,6 +18,7 @@ export const EraserPickerItem: FC<{ offset?: number }> = observer(({ offset }) =
     <ExpansionToolbarItem
       isActive={isActive}
       tooltip="Eraser"
+      tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       icon={SvgIconEnum.FCR_WHITEBOARD_ERASER}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"

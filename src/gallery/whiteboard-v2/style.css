@@ -269,12 +269,15 @@
   position: absolute;
   top: 50%;
   cursor: pointer;
-  /* opacity: 0; */
   transition: all 0.2s;
 }
 
-.fcr-board-toolbar-fold:hover {
-  /* opacity: 1; */
+.fcr-board-toolbar--unfolded .fcr-board-toolbar-fold {
+  opacity: 0;
+}
+
+.fcr-board-toolbar--unfolded:hover .fcr-board-toolbar-fold {
+  opacity: 1;
 }
 
 .fcr-board-toolbar--left .fcr-board-toolbar-fold {

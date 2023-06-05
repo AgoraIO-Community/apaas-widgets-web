@@ -19,6 +19,7 @@ export const MoveHandleItem = () => {
   return (
     <div {...bind()}>
       <ToolbarItem
+        tooltipPlacement={observables.toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
         tooltip="Move"
         icon={SvgIconEnum.FCR_WHITEBOARD_MOVE}
         className="fcr-board-toolbar-handle"

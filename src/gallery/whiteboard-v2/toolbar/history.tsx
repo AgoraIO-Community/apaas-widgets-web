@@ -6,12 +6,13 @@ import { ToolbarUIContext } from '../ui-context';
 
 export const UndoItem = observer(() => {
   const {
-    observables: { undoSteps },
+    observables: { undoSteps, toolbarDockPosition },
     undo,
   } = useContext(ToolbarUIContext);
 
   return (
     <ToolbarItem
+      tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       tooltip="Undo"
       icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_UNDO}
       onClick={undo}
@@ -23,12 +24,13 @@ export const UndoItem = observer(() => {
 
 export const RedoItem = observer(() => {
   const {
-    observables: { redoSteps },
+    observables: { redoSteps, toolbarDockPosition },
     redo,
   } = useContext(ToolbarUIContext);
 
   return (
     <ToolbarItem
+      tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       tooltip="Redo"
       icon={SvgIconEnum.FCR_MOBILE_WHITEBOARD_REDO}
       onClick={redo}

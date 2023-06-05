@@ -15,7 +15,7 @@ import { FcrBoardTool } from '../../../common/whiteboard-wrapper/type';
 
 export const useVisibleTools = () => {
   const {
-    observables: { currentTool, maxCountVisibleTools },
+    observables: { currentTool, maxCountVisibleTools, toolbarDockPosition },
     setTool,
     saveDraft,
   } = useContext(ToolbarUIContext);
@@ -29,6 +29,7 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
+          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip="Clicker"
           icon={SvgIconEnum.FCR_WHITEBOARD_MOUSE}
           onClick={handleToolChange(FcrBoardTool.Clicker)}
@@ -39,6 +40,7 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
+          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip="Selector"
           icon={SvgIconEnum.FCR_WHITECHOOSE}
           onClick={handleToolChange(FcrBoardTool.Selector)}
@@ -55,6 +57,7 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
+          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip="Text"
           icon={SvgIconEnum.FCR_WHITEBOARD_TEXT}
           onClick={handleToolChange(FcrBoardTool.Text)}
@@ -66,6 +69,7 @@ export const useVisibleTools = () => {
       renderItem: () => {
         return (
           <ToolbarItem
+            tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
             tooltip="Hand"
             icon={SvgIconEnum.FCR_WHITEBOARD_MOVESUBJECTS}
             onClick={handleToolChange(FcrBoardTool.Hand)}
@@ -80,6 +84,7 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
+          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip="Laser Pen"
           icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
           onClick={handleToolChange(FcrBoardTool.LaserPointer)}
@@ -100,6 +105,7 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
+          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip="Save"
           icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
           onClick={saveDraft}

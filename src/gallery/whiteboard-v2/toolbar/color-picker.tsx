@@ -54,7 +54,7 @@ const Color: FC<{ value: string }> = observer(({ value }) => {
 
 const Picker = observer(() => {
   const {
-    observables: { currentColor, currentShape, currentTool, toolbarDockPosition },
+    observables: { currentColor, currentShape, toolbarDockPosition },
   } = useContext(ToolbarUIContext);
 
   const isOtherColorActive = !!currentColor && !colors.includes(currentColor);

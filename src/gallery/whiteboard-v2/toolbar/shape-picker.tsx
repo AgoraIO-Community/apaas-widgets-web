@@ -48,6 +48,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
       tooltip="Shape"
       icon={icon}
       onClick={handleShapeToolChange(clickShape)}
+      tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<ShapePickerPanel />}
@@ -57,7 +58,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
 });
 
 const ShapePickerPanel = observer(() => {
-  const { observables, setShape } = useContext(ToolbarUIContext);
+  const { observables, setShape, setStrokeWidth } = useContext(ToolbarUIContext);
   const shapes = [
     { type: FcrBoardShape.Rectangle, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_SQUARE },
     { type: FcrBoardShape.Ellipse, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_CIRCLE },
@@ -65,6 +66,15 @@ const ShapePickerPanel = observer(() => {
     { type: FcrBoardShape.Triangle, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_TRIANGLE },
     { type: FcrBoardShape.Rhombus, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_REHUMBUS },
     { type: FcrBoardShape.Arrow, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_ARROW },
+  ];
+
+  const isCurve = observables.lastPen === FcrBoardShape.Curve;
+
+  const weights = [
+    { value: 1, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_1SIZE : SvgIconEnum.FCR_PEN_LINE_1SIZE },
+    { value: 2, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_2SIZE : SvgIconEnum.FCR_PEN_LINE_2SIZE },
+    { value: 3, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_3SIZE : SvgIconEnum.FCR_PEN_LINE_3SIZE },
+    { value: 4, icon: isCurve ? SvgIconEnum.FCR_PEN_CURVE_4SIZE : SvgIconEnum.FCR_PEN_LINE_4SIZE },
   ];
 
   return (
@@ -78,6 +88,20 @@ const ShapePickerPanel = observer(() => {
         };
         return (
           <div key={type} className={cls} onClick={handleClick}>
+            <SvgImg type={icon} size={28} />
+          </div>
+        );
+      })}
+      <div className="fcr-divider-vertical fcr-divider-marign-bottom"></div>
+      {weights.map(({ value, icon }) => {
+        const cls = classNames({
+          'fcr-board-toolbar-panel--active': observables.currentStrokeWidth === value,
+        });
+        const handleClick = () => {
+          setStrokeWidth(value);
+        };
+        return (
+          <div key={value} className={cls} onClick={handleClick}>
             <SvgImg type={icon} size={28} />
           </div>
         );
