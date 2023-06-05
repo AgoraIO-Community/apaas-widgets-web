@@ -2,11 +2,7 @@ import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-
 import { AgoraWidgetController, Platform } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
-import {
-  AgoraTrackSyncedWidget,
-  AgoraWidgetBase,
-  AgoraWidgetLifecycle,
-} from 'agora-common-libs/lib/widget';
+import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 
 export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
@@ -17,6 +13,18 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
 
   onInstall(controller: AgoraWidgetController): void {}
   dragHandleClassName = 'fcr-chatroom-dialog-title';
+  private _width = 270;
+  private _height = 500;
+  get defaultRect() {
+    const clientRect = document.body.getBoundingClientRect();
+    return {
+      width: this._width,
+      height: this._height,
+      x: clientRect.width - this._width - 20,
+      y: clientRect.height - this._height - 60,
+    };
+  }
+
   get widgetName(): string {
     return 'easemobIM';
   }

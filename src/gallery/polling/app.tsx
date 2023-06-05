@@ -97,7 +97,7 @@ const PollingList: React.FC = observer(() => {
   );
 });
 
-export const Polling: React.FC = () => {
+export const Polling: React.FC = observer(() => {
   const {
     observables: { pollingState, canClose },
     onMinimize,
@@ -119,9 +119,7 @@ export const Polling: React.FC = () => {
     actions.push({
       icon: SvgIconEnum.FCR_CLOSE,
       onClick: () => {
-        setTimeout(() => {
-          onClose();
-        }, 500);
+        onClose();
       },
       onMouseDown: handleMouseDown,
       disable: closeDisable,
@@ -134,7 +132,6 @@ export const Polling: React.FC = () => {
     <React.Fragment>
       <div className="fcr-polling-container">
         <div className="fcr-widget-dialog-actions">
-          {' '}
           {actions.map((action, index) => {
             const { tooltipContent, disable, onMouseDown, onMouseUp, icon, iconColor, onClick } =
               action;
@@ -176,4 +173,4 @@ export const Polling: React.FC = () => {
       </div>
     </React.Fragment>
   );
-};
+});

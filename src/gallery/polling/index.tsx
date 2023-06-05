@@ -15,7 +15,18 @@ export class FcrPollingWidget extends AgoraEduToolWidget {
   private _dom?: HTMLElement;
   private _context: PollingUIContextValue = this._createUIContext();
   private _pollId?: string;
+  private _width = 230;
+  private _height = 405;
 
+  get defaultRect() {
+    const clientRect = document.body.getBoundingClientRect();
+    return {
+      width: this._width,
+      height: this._height,
+      x: clientRect.width / 2 - this._width / 2,
+      y: clientRect.height / 2 - this._height / 2,
+    };
+  }
   get dragHandleClassName() {
     return 'fcr-polling-question';
   }

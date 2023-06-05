@@ -1,6 +1,6 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
-import { EduRoleTypeEnum } from 'agora-edu-core';
+import { EduRoleTypeEnum, iterateMap } from 'agora-edu-core';
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../im/wrapper/typs';
 import { bound } from 'agora-rte-sdk';
 
@@ -15,10 +15,19 @@ export class UserStore {
   setSearchKey(key: string) {
     this.searchKey = key;
   }
-  @observable userList: AgoraIMUserInfo[] = [];
+  @observable userMap: Map<string, AgoraIMUserInfo> = new Map();
   @observable userCarouselAnimDelay = 3000;
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
+
+  @computed
+  get userList() {
+    return iterateMap(this.userMap, {
+      onMap(_key, item) {
+        return item;
+      },
+    }).list;
+  }
 
   @computed
   get searchUserList() {
@@ -40,7 +49,14 @@ export class UserStore {
   async updateUsers(userUuids: string[]) {
     const users = await this._fcrChatRoom.getUserInfoList(userUuids);
     runInAction(() => {
-      this.userList = this.userList.concat(users);
+      users.forEach((user) => {
+        if (
+          user.ext.role === EduRoleTypeEnum.teacher ||
+          user.ext.role === EduRoleTypeEnum.student
+        ) {
+          this.userMap.set(user.userId, user);
+        }
+      });
     });
   }
   @bound
@@ -108,9 +124,7 @@ export class UserStore {
   }
   @action.bound
   private async _onUserLeft(userUuid: string) {
-    this.userList = this.userList.filter((user) => {
-      return user.userId !== userUuid;
-    });
+    this.userMap.delete(userUuid);
   }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];
