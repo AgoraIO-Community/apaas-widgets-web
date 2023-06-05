@@ -75,6 +75,8 @@ export enum AgoraExtensionRoomEvent {
   SetMinimize = 'set-minimize',
   //设置插件可见性
   VisibleChanged = 'visible-changed',
+  // 布局变化
+  LayoutChanged = 'layout-changed',
 }
 
 /**

@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useContext, useEffect, useRef } from 'react';
+import React, { FC, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
 import './style.css';
 import { Toolbar } from './toolbar';
 import { ScenePagination } from './scene-pagination';
@@ -104,7 +104,9 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
     };
   }, []);
 
-  const { style: miniStyle, ref: miniRef } = useMinimize({ minimize: minimized });
+  const { style: miniStyle, ref: miniRef } = useMinimize({
+    minimize: minimized,
+  });
 
   const clsn = classNames('fcr-board-draggable-window');
 

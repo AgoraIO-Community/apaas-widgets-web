@@ -5,6 +5,10 @@ export const verticalPadding = 10;
 export const sceneNavHeight = heightPerTool + verticalPadding;
 export const widgetContainerClassName = 'netless-whiteboard-wrapper';
 export const layoutContentClassName = 'fcr-layout-content-main-view';
+export const videoRowClassName = 'fcr-layout-content-video-list-row';
+
+export const toolbarClassName = 'fcr-board-toolbar';
+export const windowClassName = 'fcr-board-window-content';
 
 export const WINDOW_TITLE_HEIGHT = 28;
 // width / height
@@ -32,6 +36,10 @@ export const getMaxSizeInContainer = (containerSize: Size) => {
 };
 
 export const getDefaultBounds = (containerBoundaries: Boundaries) => {
+  if (isHorizontalLayout()) {
+    containerBoundaries.height = containerBoundaries.height - 58;
+  }
+
   const maxSize = getMaxSizeInContainer(containerBoundaries);
 
   const x = (containerBoundaries.width - maxSize.width) / 2 + containerBoundaries.left;
@@ -71,4 +79,10 @@ export const clampBounds = (selfBoundaries: Boundaries, containerBoundaries: Bou
   }
 
   return newBounds;
+};
+
+export const isHorizontalLayout = () => {
+  const clasNameExists = document.querySelector(`.${videoRowClassName}`);
+
+  return !!clasNameExists;
 };
