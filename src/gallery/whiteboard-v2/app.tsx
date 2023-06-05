@@ -1,4 +1,4 @@
-import React, { FC, PropsWithChildren, useContext, useEffect, useRef } from 'react';
+import React, { FC, PropsWithChildren, useContext, useEffect, useRef, useState } from 'react';
 import './style.css';
 import { Toolbar } from './toolbar';
 import { ScenePagination } from './scene-pagination';
@@ -46,7 +46,7 @@ export const App = observer(() => {
 });
 
 export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) => {
-  // const bounds = 'parent';
+  const bounds = 'parent';
   const dragHandle = 'fcr-board-window-drag-handle';
   const dragCancel = 'fcr-board-window-drag-cancel';
 
@@ -104,7 +104,9 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
     };
   }, []);
 
-  const { style: miniStyle, ref: miniRef } = useMinimize(minimized);
+  const { style: miniStyle, ref: miniRef } = useMinimize({
+    minimize: minimized,
+  });
 
   const clsn = classNames('fcr-board-draggable-window');
 
@@ -115,7 +117,7 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
       ref={rndInstance}
       dragHandleClassName={dragHandle}
       cancel={`.${dragCancel}`}
-      // bounds={bounds}
+      bounds={bounds}
       minWidth={WINDOW_MIN_SIZE.width}
       minHeight={WINDOW_MIN_SIZE.height}
       default={defaultBounds}

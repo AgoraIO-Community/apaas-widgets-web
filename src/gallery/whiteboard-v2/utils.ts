@@ -5,6 +5,10 @@ export const verticalPadding = 10;
 export const sceneNavHeight = heightPerTool + verticalPadding;
 export const widgetContainerClassName = 'netless-whiteboard-wrapper';
 export const layoutContentClassName = 'fcr-layout-content-main-view';
+export const videoRowClassName = 'fcr-layout-content-video-list-row';
+
+export const toolbarClassName = 'fcr-board-toolbar';
+export const windowClassName = 'fcr-board-window-content';
 
 export const WINDOW_TITLE_HEIGHT = 28;
 // width / height
@@ -32,6 +36,10 @@ export const getMaxSizeInContainer = (containerSize: Size) => {
 };
 
 export const getDefaultBounds = (containerBoundaries: Boundaries) => {
+  if (isHorizontalLayout()) {
+    containerBoundaries.height = containerBoundaries.height - 58;
+  }
+
   const maxSize = getMaxSizeInContainer(containerBoundaries);
 
   const x = (containerBoundaries.width - maxSize.width) / 2 + containerBoundaries.left;
@@ -39,4 +47,42 @@ export const getDefaultBounds = (containerBoundaries: Boundaries) => {
   const y = (containerBoundaries.height - maxSize.height) / 2 + containerBoundaries.top;
 
   return { x, y, width: maxSize.width, height: maxSize.height };
+};
+
+export const clampBounds = (selfBoundaries: Boundaries, containerBoundaries: Boundaries) => {
+  const newBounds = {
+    width: selfBoundaries.width,
+    height: selfBoundaries.height,
+    x: selfBoundaries.left,
+    y: selfBoundaries.top,
+  };
+  if (selfBoundaries.left < containerBoundaries.left) {
+    newBounds.x = containerBoundaries.left;
+  }
+
+  if (selfBoundaries.top < containerBoundaries.top) {
+    newBounds.y = containerBoundaries.top;
+  }
+
+  if (
+    selfBoundaries.width + selfBoundaries.left >
+    containerBoundaries.width + containerBoundaries.left
+  ) {
+    newBounds.width = containerBoundaries.width + containerBoundaries.left - selfBoundaries.left;
+  }
+
+  if (
+    selfBoundaries.height + selfBoundaries.top >
+    containerBoundaries.height + containerBoundaries.top
+  ) {
+    newBounds.height = containerBoundaries.height + containerBoundaries.top - selfBoundaries.top;
+  }
+
+  return newBounds;
+};
+
+export const isHorizontalLayout = () => {
+  const clasNameExists = document.querySelector(`.${videoRowClassName}`);
+
+  return !!clasNameExists;
 };
