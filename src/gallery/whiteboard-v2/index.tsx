@@ -232,7 +232,12 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         },
       ),
     );
-
+    this._disposers.push(
+      reaction(
+        () => this.classroomStore.roomStore.flexProps?.boardBackgroundImage,
+        this._setBackgourndImage,
+      ),
+    );
     this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
   }
 
@@ -586,7 +591,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   render(dom: HTMLElement): void {
     dom.classList.add(widgetContainerClassName);
     this._outerDom = dom;
-
     ReactDOM.render(
       <BoardUIContext.Provider value={this._createBoardUIContext()}>
         <ToolbarUIContext.Provider value={this._createToolbarUIContext()}>
@@ -649,6 +653,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         this._boardDom = ref;
 
         if (this._boardDom) {
+          this._setBackgourndImage();
+
           const resizeObserver = new ResizeObserver(this._repositionToolbar);
 
           resizeObserver.observe(this._boardDom);
@@ -1014,5 +1020,12 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       this._toolbarContext?.setTool(tool);
     }
     this._boardContext?.setPrivilege(this.hasPrivilege);
+  }
+  @bound
+  private _setBackgourndImage() {
+    const imageUrl = this.classroomStore.roomStore.flexProps?.boardBackgroundImage;
+    if (imageUrl && this._boardDom) {
+      this._boardDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
+    }
   }
 }
