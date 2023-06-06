@@ -60,7 +60,7 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
     handleMinimize,
     handleDraggableDomLoad,
     getDefaultBounds,
-    observables: { minimized, fitted },
+    observables: { minimized, fitted, canClose },
   } = useContext(BoardUIContext);
 
   useEffect(() => {
@@ -160,11 +160,13 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
                   />
                 </ToolTip>
               </li>
-              <li>
-                <ToolTip content="Close">
-                  <SvgImg type={SvgIconEnum.FCR_CLOSE} size={9.6} onClick={handleClose} />
-                </ToolTip>
-              </li>
+              {canClose && (
+                <li>
+                  <ToolTip content="Close">
+                    <SvgImg type={SvgIconEnum.FCR_CLOSE} size={9.6} onClick={handleClose} />
+                  </ToolTip>
+                </li>
+              )}
             </ul>
           </div>
         </div>
