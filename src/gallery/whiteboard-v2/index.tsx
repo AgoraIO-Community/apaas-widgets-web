@@ -193,14 +193,9 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       },
       {
         messageType: AgoraExtensionRoomEvent.LayoutChanged,
-        onMessage: (layout: string) => {
-          // runInAction(() => {
-          //   if (this._toolbarContext) {
-          //     this._toolbarContext.observables.toolbarDockPosition.initialized = false;
-          //   }
-          // });
-          setTimeout(this.onViewportBoundaryUpdate, 50);
-          setTimeout(this._repositionToolbar, 100);
+        onMessage: () => {
+          setTimeout(this.onViewportBoundaryUpdate);
+          setTimeout(this._repositionToolbar);
         },
       },
     ];
