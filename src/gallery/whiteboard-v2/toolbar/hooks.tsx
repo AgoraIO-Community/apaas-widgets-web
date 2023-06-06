@@ -70,7 +70,7 @@ export const useVisibleTools = () => {
         return (
           <ToolbarItem
             tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-            tooltip="Hand"
+            tooltip="Drag"
             icon={SvgIconEnum.FCR_WHITEBOARD_MOVESUBJECTS}
             onClick={handleToolChange(FcrBoardTool.Hand)}
             isActive={currentTool === FcrBoardTool.Hand}

@@ -138,17 +138,20 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
           <span>Whiteboard</span>
           <div className={`fcr-board-window-title-actions ${dragCancel}`}>
             <ul>
-              <li>
-                <ToolTip content="Minimization">
+              <ToolTip content="Minimization">
+                <li>
                   <SvgImg
                     type={SvgIconEnum.FCR_WINDOWPAGE_SMALLER}
                     size={16}
                     onClick={() => handleMinimize()}
                   />
-                </ToolTip>
-              </li>
-              <li>
-                <ToolTip content="Attach the window to the presentation viewport">
+                </li>
+              </ToolTip>
+              <ToolTip
+                overlayInnerStyle={{ whiteSpace: 'nowrap' }}
+                placement={'top'}
+                content={fitted ? 'Exit Adaptation' : 'Adapt to Viewport'}>
+                <li>
                   <SvgImg
                     type={
                       fitted
@@ -158,14 +161,14 @@ export const DraggableWindow: FC<PropsWithChildren> = observer(({ children }) =>
                     size={16}
                     onClick={handleFitToContainer}
                   />
-                </ToolTip>
-              </li>
-              {canClose && (
-                <li>
-                  <ToolTip content="Close">
-                    <SvgImg type={SvgIconEnum.FCR_CLOSE} size={9.6} onClick={handleClose} />
-                  </ToolTip>
                 </li>
+              </ToolTip>
+              {canClose && (
+                <ToolTip content="Close">
+                  <li>
+                    <SvgImg type={SvgIconEnum.FCR_CLOSE} size={9.6} onClick={handleClose} />
+                  </li>
+                </ToolTip>
               )}
             </ul>
           </div>
