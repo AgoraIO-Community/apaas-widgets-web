@@ -306,10 +306,9 @@
 /* board window */
 
 .fcr-board-draggable-window {
-  @apply fcr-rounded-10;
+  @apply fcr-rounded-10 fcr-shadow-dialog;
   display: flex !important;
   flex-direction: column;
-  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
   backdrop-filter: blur(25px);
   overflow: hidden;
   height: 100%;
