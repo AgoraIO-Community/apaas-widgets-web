@@ -51,5 +51,16 @@ export const UNMUTE_USER = 'unmute';
 // 设置禁言 properties
 export const MUTE_CONFIG = {
   mute: 1,
-  unMute: 0
-}
+  unMute: 0,
+};
+
+/**
+ * 本地消息保留条数
+ * 修改次参数限制本地消息列表保存的最大条数
+ */
+export const LOCAL_RETAIN_HISTORY_COUNT = 1000;
+/**
+ *  消息更新截流设置
+ *  修改此参数可降低消息列表渲染频率
+ */
+export const TEXT_MESSAGE_THROTTLE_TIME_MS = 100;
