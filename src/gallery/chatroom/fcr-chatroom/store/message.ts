@@ -11,7 +11,7 @@ import {
   AgoraIMMessageExt,
   AgoraIMMessageType,
   AgoraIMTextMessage,
-} from '../../../../im/wrapper/typs';
+} from '../../../../common/im/wrapper/typs';
 import { List, CellMeasurerCache } from 'react-virtualized';
 export class MessageStore {
   private _disposers: (() => void)[] = [];

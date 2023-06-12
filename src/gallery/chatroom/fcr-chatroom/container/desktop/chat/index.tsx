@@ -16,7 +16,7 @@ import {
   AgoraIMMessageExt,
   AgoraIMMessageType,
   AgoraIMTextMessage,
-} from '../../../../../../im/wrapper/typs';
+} from '../../../../../../common/im/wrapper/typs';
 import { useI18n } from 'agora-common-libs/lib/i18n';
 import { ToolTip } from '@components/tooltip';
 import { useScroll } from '../../../hooks/useScroll';

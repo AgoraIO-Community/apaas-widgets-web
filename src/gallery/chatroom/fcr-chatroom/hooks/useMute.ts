@@ -1,5 +1,5 @@
 import { useContext } from 'react';
-import { AgoraIMCmdActionEnum, AgoraIMUserInfo } from '../../../../im/wrapper/typs';
+import { AgoraIMCmdActionEnum, AgoraIMUserInfo } from '../../../../common/im/wrapper/typs';
 import { FcrChatroomToastContext } from '../container/desktop';
 import { useStore } from './useStore';
 

@@ -1,4 +1,4 @@
-import { EventHandler, FC, SyntheticEvent, useEffect, useRef } from 'react';
+import { EventHandler, FC, PropsWithChildren, SyntheticEvent, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import './index.css';
 
@@ -23,7 +23,7 @@ export interface ButtonProps {
   className?: string;
 }
 
-export const Button: FC<ButtonProps> = ({
+export const Button: FC<PropsWithChildren<ButtonProps>> = ({
   type = 'primary',
   size = 'sm',
   disabled,

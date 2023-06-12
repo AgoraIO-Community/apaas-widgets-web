@@ -2,8 +2,8 @@ import { Provider } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { AgoraHXChatWidget } from '..';
 import { FcrChatRoomStore } from './store';
-import im_CN from '../../locales/zh_CN';
-import im_US from '../../locales/en_US';
+import im_CN from '../../hx-chat/locales/zh_CN';
+import im_US from '../../hx-chat/locales/en_US';
 import { addResourceBundle } from 'agora-common-libs/lib/i18n';
 import { FcrChatRoomDesktop } from './container/desktop';
 

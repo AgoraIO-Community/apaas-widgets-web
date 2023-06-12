@@ -7,7 +7,7 @@ import { Button } from '@components/button';
 import { useMute } from '../../../hooks/useMute';
 import { Avatar } from '@components/avatar';
 import { useState } from 'react';
-import { AgoraIMUserInfo, AgoraIMUserInfoExt } from 'src/gallery/im/wrapper/typs';
+import { AgoraIMUserInfo, AgoraIMUserInfoExt } from 'src/common/im/wrapper/typs';
 export const FcrChatMemberContainer = () => {
   return (
     <div className="fcr-chatroom-member-container">

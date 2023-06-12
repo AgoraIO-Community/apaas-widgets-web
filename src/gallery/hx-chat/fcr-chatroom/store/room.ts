@@ -1,6 +1,6 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
-import { AgoraIMBase, AgoraIMEvents } from '../../../im/wrapper/typs';
+import { AgoraIMBase, AgoraIMEvents } from '../../../../common/im/wrapper/typs';
 import { ClassState } from 'agora-edu-core';
 import dayjs from 'dayjs';
 

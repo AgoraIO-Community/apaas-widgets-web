@@ -170,7 +170,7 @@ export class FcrChatRoom extends AgoraIMBase {
   }
   async getUserInfoList(userIdList: string[]): Promise<AgoraIMUserInfo[]> {
     const { data } = await this.conn.fetchUserInfoById(userIdList);
-    const userList = data || [];
+    const userList = data || {};
     return Object.keys(userList).map((userId) => {
       const user: AgoraChat.UpdateOwnUserInfoParams = userList[userId];
       return {
@@ -186,7 +186,7 @@ export class FcrChatRoom extends AgoraIMBase {
   ): Promise<AgoraIMUserInfo> {
     this.userInfo = Object.assign(this.userInfo, userInfo);
 
-    const { data } = await this.conn.updateUserInfo({
+    await this.conn.updateUserInfo({
       nickname: this.userInfo.nickName,
       avatarurl: this.userInfo.avatarUrl,
       //兼容老版本
@@ -359,6 +359,7 @@ export class FcrChatRoom extends AgoraIMBase {
     pageNum: number;
     pageSize: number;
   }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
+    console.log(params);
     return [];
   }
   async leave(): Promise<void> {

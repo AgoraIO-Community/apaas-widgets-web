@@ -3,7 +3,7 @@ import { AgoraWidgetController, Platform } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
 import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
-import { AgoraExtensionWidgetEvent } from '../../../events';
+import { AgoraExtensionWidgetEvent } from '../../events';
 
 export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
   private _imConfig?: { chatRoomId: string; appName: string; orgName: string };

@@ -10,7 +10,7 @@ import {
   AgoraIMMessageBase,
   AgoraIMMessageType,
   AgoraIMTextMessage,
-} from '../../../im/wrapper/typs';
+} from '../../../../common/im/wrapper/typs';
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
@@ -33,6 +33,7 @@ export class MessageStore {
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
     this._disposers.push(
+      //@ts-ignore
       reaction(() => this._widget.shareUIStore.isLandscape, this.messageListScrollToBottom),
     );
   }

@@ -1,5 +1,9 @@
-import { AgoraIM } from '../../../im/wrapper';
-import { AgoraIMBase, AgoraIMConnectionState, AgoraIMEvents } from '../../../im/wrapper/typs';
+import { AgoraIM } from '../../../../common/im/wrapper';
+import {
+  AgoraIMBase,
+  AgoraIMConnectionState,
+  AgoraIMEvents,
+} from '../../../../common/im/wrapper/typs';
 import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
@@ -53,6 +57,7 @@ export class FcrChatRoomStore {
   }
   @bound
   private _handleFcrChatRoomErrorOccurred(error: unknown) {
+    //@ts-ignore
     this._widget.shareUIStore.addSingletonToast(JSON.stringify(error), 'error');
   }
   @bound
@@ -86,6 +91,7 @@ export class FcrChatRoomStore {
     );
 
     if (error) {
+      //@ts-ignore
       return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
     }
     this.roomStore.getChatRoomDetails();

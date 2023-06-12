@@ -10,7 +10,7 @@ import { FcrChatContainer } from './chat';
 import { FcrChatMemberContainer } from './member';
 import { createPortal } from 'react-dom';
 import { Scheduler } from 'agora-rte-sdk';
-import { AgoraIMTextMessage } from '../../../../../im/wrapper/typs';
+import { AgoraIMTextMessage } from '../../../../../common/im/wrapper/typs';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 export const FcrChatRoomDesktop = () => {
   return (

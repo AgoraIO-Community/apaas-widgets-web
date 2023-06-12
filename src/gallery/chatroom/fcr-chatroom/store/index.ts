@@ -1,5 +1,9 @@
-import { AgoraIM } from '../../../../im/wrapper';
-import { AgoraIMBase, AgoraIMConnectionState, AgoraIMEvents } from '../../../../im/wrapper/typs';
+import { AgoraIM } from '../../../../common/im/wrapper';
+import {
+  AgoraIMBase,
+  AgoraIMConnectionState,
+  AgoraIMEvents,
+} from '../../../../common/im/wrapper/typs';
 import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';

@@ -1,9 +1,9 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
-import { AgoraIMBase, AgoraIMEvents } from '../../../../im/wrapper/typs';
+import { AgoraIMBase, AgoraIMEvents } from '../../../../common/im/wrapper/typs';
 import { ClassState, EduRoleTypeEnum } from 'agora-edu-core';
 import dayjs from 'dayjs';
-import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../events';
 import { bound } from 'agora-rte-sdk';
 
 export class RoomStore {
