@@ -1,4 +1,4 @@
-import { useI18n } from 'agora-common-libs/lib/i18n';
+import { useI18n } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../components/svg-img';

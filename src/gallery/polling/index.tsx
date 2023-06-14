@@ -7,7 +7,7 @@ import { PollingResultInfo, PollingState, PollingType } from './type';
 import { action, observable, runInAction } from 'mobx';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
-import { bound } from 'agora-common-libs/lib/annotation';
+import { bound } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 
 export class FcrPollingWidget extends AgoraEduToolWidget {

@@ -2,7 +2,7 @@ import { Input, message, Modal, Popover, Radio, Switch } from 'antd';
 import classnames from 'classnames';
 import React, { useRef, useState } from 'react';
 import { useSelector, useStore } from 'react-redux';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import { MSG_TYPE } from '../../contants';
 import { messageAction } from '../../redux/actions/messageAction';
 import { setQuestioinStateAction } from '../../redux/actions/roomAction';

@@ -10,7 +10,7 @@ import { UserStore } from './user';
 import { RoomStore } from './room';
 import { bound, Logger, retryAttempt } from 'agora-rte-sdk';
 import to from 'await-to-js';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 
 export class FcrChatRoomStore {
   fcrChatRoom: AgoraIMBase;

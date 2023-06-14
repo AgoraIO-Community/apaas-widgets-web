@@ -4,7 +4,7 @@ import { AgoraHXChatWidget } from '..';
 import { FcrChatRoomStore } from './store';
 import im_CN from '../../hx-chat/locales/zh_CN';
 import im_US from '../../hx-chat/locales/en_US';
-import { addResourceBundle } from 'agora-common-libs/lib/i18n';
+import { addResourceBundle } from 'agora-common-libs';
 import { FcrChatRoomDesktop } from './container/desktop';
 
 export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {

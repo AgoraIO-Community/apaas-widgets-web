@@ -1,14 +1,10 @@
-import {
-  AgoraUiCapable,
-  AgoraWidgetBase,
-  AgoraWidgetLifecycle,
-} from 'agora-common-libs/lib/widget';
+import { AgoraUiCapable, AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
 import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum } from 'agora-edu-core';
 import { bound, Lodash, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 import { reaction, IReactionDisposer, observable, action, runInAction } from 'mobx';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
 import { FcrBoardRoom } from '../../common/whiteboard-wrapper/board-room';
 import { FcrBoardMainWindow } from '../../common/whiteboard-wrapper/board-window';
@@ -39,7 +35,7 @@ import { App } from './app';
 import tinycolor from 'tinycolor2';
 import { FcrBoardFactory } from '../../common/whiteboard-wrapper/factory';
 import { DialogProgressApi } from '../../components/progress';
-import { FcrUIConfig, FcrTheme } from 'agora-common-libs/lib/ui';
+import { FcrUIConfig, FcrTheme } from 'agora-common-libs';
 import {
   WINDOW_REMAIN_POSITION,
   WINDOW_REMAIN_SIZE,

@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
-import { ThemeProvider } from 'agora-common-libs/lib/ui';
+import { ThemeProvider } from 'agora-common-libs';
 import createStore from './redux/store';
 import { setVisibleUI } from './redux/actions/roomAction';
 import { isShowChat, isShowMiniIcon, setAPIs } from './redux/actions/propsAction';

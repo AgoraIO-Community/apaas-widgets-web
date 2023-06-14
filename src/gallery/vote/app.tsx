@@ -8,7 +8,7 @@ import addSvg from './add.svg';
 import { usePluginStore } from './hooks';
 import './index.css';
 import reduceSvg from './reduce.svg';
-import { useI18n } from 'agora-common-libs/lib/i18n';
+import { useI18n } from 'agora-common-libs';
 
 const MAX_LENGTH = 50;
 

@@ -6,7 +6,7 @@ import dayjs from 'dayjs';
 
 import { AgoraRteEventType, bound, Scheduler } from 'agora-rte-sdk';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../events';
 import { OrientationEnum } from '../../type';
 export class RoomStore {

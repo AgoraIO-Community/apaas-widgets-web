@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { AgoraEduToolWidget } from './edu-tool-widget';
 import { WidgetModal } from '../components/modal';
-import { ThemeProvider } from 'agora-common-libs/lib/ui';
+import { ThemeProvider } from 'agora-common-libs';
 
 export const ControlledModal: FC<
   PropsWithChildren<{

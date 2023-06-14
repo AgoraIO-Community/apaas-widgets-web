@@ -1,7 +1,7 @@
 import { useSelector } from 'react-redux';
 import { InputMsg } from './InputMsg';
 import { ROLE } from '../../contants';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import './index.css';
 
 const AllMute = () => {

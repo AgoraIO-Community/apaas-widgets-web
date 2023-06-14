@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import { WaterMark } from '../../components/watermark';
 import { WidgetWatermarkUIStore } from './store';
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
+import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
 const App = observer(({ widget }: { widget: FcrWatermarkWidget }) => {
   const widgetStore = widget.widgetStore as WidgetWatermarkUIStore;
   return widgetStore.visible ? (

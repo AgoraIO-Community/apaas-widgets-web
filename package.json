@@ -10,9 +10,29 @@
   "files": [
     "lib"
   ],
+  "exports": {
+    "./classroom": "./lib/classroom.widget.js",
+    "./onlineclass": "./lib/onlineclass.widget.js",
+    "./proctor": "./lib/classroom.widget.js"
+  },
+  "typesVersions": {
+    "*": {
+      "classroom": [
+        "./lib/agora-plugin-gallery/src/classroom.d.ts"
+      ],
+      "onlineclass": [
+        "./lib/agora-plugin-gallery/src/onlineclass.d.ts"
+      ],
+      "proctor": [
+        "./lib/agora-plugin-gallery/src/proctor.d.ts"
+      ]
+    }
+  },
   "scripts": {
-    "bundle:umd": "bundle-pack --entries src/gallery/*/index --out-dir dist",
-    "bundle:cjs": "bundle-pack"
+    "build:types": "tsc -p tsconfig.json",
+    "build:docs": "typedoc",
+    "pack:npm": "run-s bundle:npm build:types",
+    "bundle:npm": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js"
   },
   "dependencies": {
     "@netless/app-slide": "0.2.27",
@@ -40,13 +60,12 @@
     "react-redux": "7.2.4",
     "redux": "4.1.0",
     "twemoji": "13.1.0",
-    "white-web-sdk": "2.16.37"
+    "white-web-sdk": "2.16.37",
+    "agora-common-libs": "2.8.1",
+    "agora-rte-sdk": "2.8.21"
   },
   "devDependencies": {
     "@types/axios": "0.14.0",
     "@types/classnames": "2.2.11"
-  },
-  "peerDependencies": {
-    "agora-common-libs": "*"
   }
 }

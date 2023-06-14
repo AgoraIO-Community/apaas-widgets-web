@@ -3,7 +3,7 @@ import {
   AgoraWidgetBase,
   AgoraWidgetLifecycle,
   AgoraWidgetTrackMode,
-} from 'agora-common-libs/lib/widget';
+} from 'agora-common-libs';
 import {
   AgoraWidgetController,
   AgoraWidgetTrack,

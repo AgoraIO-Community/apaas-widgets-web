@@ -1,5 +1,5 @@
-import { bound, Log, Logger } from 'agora-common-libs/lib/annotation';
-import { AGEventEmitter } from 'agora-common-libs/lib/emitter';
+import { bound, Log, Logger } from 'agora-common-libs';
+import { AGEventEmitter } from 'agora-common-libs';
 import {
   WhiteWebSdk,
   Room,

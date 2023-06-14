@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import { TextMsg } from './TextMsg';
 import { CmdMsg } from './CmdMsg';
 import { ImgMsg } from './ImgMsg';

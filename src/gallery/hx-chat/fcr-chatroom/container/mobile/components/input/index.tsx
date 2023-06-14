@@ -6,7 +6,7 @@ import { useStore } from '../../../../hooks/useStore';
 import { ThumbsUp } from '../thumbs-up';
 import { emojis } from '../../../../utils/emoji';
 import './index.css';
-import { useI18n } from 'agora-common-libs/lib/i18n';
+import { useI18n } from 'agora-common-libs';
 import { useClickAnywhere } from '../../../../utils/hooks';
 import classNames from 'classnames';
 export const FcrChatRoomH5Inputs = observer(

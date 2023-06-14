@@ -1,5 +1,5 @@
 import ImageViewer from '../image-viewer';
-import { useI18n } from 'agora-common-libs/lib/i18n';
+import { useI18n } from 'agora-common-libs';
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { throttle } from 'lodash';
 import { observer } from 'mobx-react';

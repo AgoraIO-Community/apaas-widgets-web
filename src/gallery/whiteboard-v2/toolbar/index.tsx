@@ -39,7 +39,7 @@ export const Toolbar = observer(() => {
     </DraggableWrapper>
   );
 });
-
+/** @internal */
 export const ToolbarItem: FC<{
   tooltip: string;
   icon: SvgIconEnum;
@@ -61,7 +61,7 @@ export const ToolbarItem: FC<{
     </ToolTip>
   );
 };
-
+/** @internal */
 export const ExpansionToolbarItem: FC<{
   tooltip: string;
   popoverContent: React.ReactNode;

@@ -17,7 +17,7 @@ import {
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../../../common/im/wrapper/typs';
-import { useI18n } from 'agora-common-libs/lib/i18n';
+import { useI18n } from 'agora-common-libs';
 import { ToolTip } from '@components/tooltip';
 import { useScroll } from '../../../hooks/useScroll';
 import { EduRoleTypeEnum } from 'agora-edu-core';

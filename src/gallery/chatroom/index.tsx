@@ -1,8 +1,8 @@
-import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs/lib/ui';
+import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs';
 import { AgoraWidgetController, Platform } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs/lib/widget';
+import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../events';
 
 export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {

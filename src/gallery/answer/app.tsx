@@ -8,8 +8,8 @@ import './index.css';
 import addSvg from './add.svg';
 import reduceSvg from './reduce.svg';
 import awardSvg from './award.svg';
-import { useI18n } from 'agora-common-libs/lib/i18n';
-import { themeContext } from 'agora-common-libs/lib/ui';
+import { useI18n } from 'agora-common-libs';
+import { themeContext } from 'agora-common-libs';
 
 const App = observer(() => (
   <div className="h-full w-full overflow-hidden" style={{ padding: '21px 14px' }}>
