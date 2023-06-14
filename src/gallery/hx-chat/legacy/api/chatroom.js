@@ -1,5 +1,5 @@
 import { message } from 'antd';
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import { ROLE } from '../contants';
 import {
   announcementStatus,

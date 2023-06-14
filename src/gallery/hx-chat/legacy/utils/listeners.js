@@ -1,4 +1,4 @@
-import { transI18n } from 'agora-common-libs/lib/i18n';
+import { transI18n } from 'agora-common-libs';
 import { statusAction, clearStore } from '../redux/actions/userAction';
 import { messageAction, showRedNotification } from '../redux/actions/messageAction';
 import {
