@@ -32,7 +32,8 @@
     "build:types": "tsc -p tsconfig.json",
     "build:docs": "typedoc",
     "pack:npm": "run-s bundle:npm build:types",
-    "bundle:npm": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js"
+    "bundle:npm": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
+    "ci:build": "run-s bundle:npm build:types"
   },
   "dependencies": {
     "@netless/app-slide": "0.2.27",
