@@ -9,6 +9,11 @@ import { FcrWatermarkWidget } from './gallery/watermark';
 import { FcrWebviewWidget } from './gallery/webview';
 import { FcrBoardWidget } from './gallery/whiteboard';
 import { FcrBoardWidget as FcrBoardWidgetV2 } from './gallery/whiteboard-v2';
+import tailwindConfig from '../tailwind.config';
+import '@ui-kit-utils/preflight.css';
+
+import { setTailwindConfig } from '@ui-kit-utils/tailwindcss';
+setTailwindConfig(tailwindConfig);
 export {
   AgoraSelector,
   FcrChatroom,

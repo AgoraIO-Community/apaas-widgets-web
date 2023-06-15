@@ -5,7 +5,6 @@ const plugin = require('agora-common-libs/presets/postcss-plugin/px-to-vw/index.
 
 module.exports = {
   plugins: [
-    autoprefixer(),
     tailwindcss(tailwindConfig),
     plugin({
       viewportWidth: 375,
@@ -19,5 +18,6 @@ module.exports = {
       landscapeWidth: 812, // (Number) 横屏时使用的视口宽度
       landscapeHeight: 375, // (Number) 横屏时使用的视口宽度
     }),
+    autoprefixer(),
   ],
 };

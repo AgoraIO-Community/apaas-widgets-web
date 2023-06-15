@@ -9,6 +9,13 @@ const config = {
     classroom: './src/classroom.tsx',
     proctor: './src/proctor.tsx',
   },
+  output: {
+    path: path.resolve(ROOT_PATH, 'lib'),
+    publicPath: './',
+    filename: '[name].widget.js',
+    libraryTarget: 'umd',
+    clean: true,
+  },
   resolve: {
     alias: {
       '@components': path.resolve(ROOT_PATH, '../agora-scenario-ui-kit/src/components'),
