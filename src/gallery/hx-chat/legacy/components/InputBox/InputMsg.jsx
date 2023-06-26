@@ -151,10 +151,16 @@ export const InputMsg = ({ allMutePermission }) => {
     setInputStatus(true);
   };
 
+  const stopPropagation = (e) => {
+    e.stopPropagation();
+  };
+
   const renderInputBox = React.useMemo(() => {
     if (configUIVisible.inputBox === 'inline') {
       return (
         <Input
+          onKeyUp={stopPropagation}
+          onKeyDown={stopPropagation}
           className="inline-input-chat"
           bordered={false}
           ref={inputRef}
@@ -168,6 +174,8 @@ export const InputMsg = ({ allMutePermission }) => {
     } else {
       return (
         <Input.TextArea
+          onKeyUp={stopPropagation}
+          onKeyDown={stopPropagation}
           placeholder={transI18n('chat.enter_contents')}
           className={classnames('fcr-hx-input-chat', { 'input-chating-status': inputStatus })}
           onChange={(e) => changeMsg(e)}

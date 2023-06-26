@@ -1,5 +1,5 @@
 import { EduRoleTypeEnum } from 'agora-edu-core';
-import { bound, Lodash } from 'agora-rte-sdk';
+import { bound, Lodash, Scheduler } from 'agora-rte-sdk';
 import { action, autorun, computed, observable, reaction, runInAction } from 'mobx';
 import { computedFn } from 'mobx-utils';
 import { AgoraSelector } from '.';
@@ -12,6 +12,7 @@ type answerState = 0 | 1 | 2; // 0 答题结束 1 答题中 2 本地状态只为
 
 export class PluginStore {
   clock = '';
+  private _pollingTask: Scheduler.Task;
 
   constructor(private _widget: AgoraSelector) {
     autorun(() => {
@@ -36,6 +37,12 @@ export class PluginStore {
         }
       },
     );
+    this._pollingTask = Scheduler.shared.addPollingTask(() => {
+      const { extra } = _widget.roomProperties;
+      if (this.isTeacherType && extra?.answerState) {
+        return this.fetchList();
+      }
+    }, 3000);
   }
 
   @observable
@@ -125,7 +132,6 @@ export class PluginStore {
       this._widget.classroomStore.api.submitAnswer(roomId, popupQuizId, userUuid, {
         selectedItems,
       });
-      this._widget.updateWidgetProperties({ extra: { ts: Date.now() } });
       this.localOptionPermission = false;
     }
   }
@@ -150,6 +156,7 @@ export class PluginStore {
     this.answerList = ['A', 'B', 'C', 'D'];
     this.selectedAnswers = [];
     this.localOptionPermission = false;
+    this._pollingTask.stop();
   }
 
   @action.bound
@@ -370,4 +377,6 @@ export class PluginStore {
   setList(list: any[]) {
     this.rslist = list;
   }
+
+  
 }

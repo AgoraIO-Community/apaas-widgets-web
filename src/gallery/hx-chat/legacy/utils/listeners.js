@@ -12,15 +12,29 @@ import _ from 'lodash';
 import { message } from 'antd';
 import { CHAT_TABS_KEYS, MUTE_CONFIG } from '../contants';
 import WebIM from './WebIM';
-import { ROLE } from '../contants';
+import { ROLE, TEXT_MESSAGE_THROTTLE_TIME_MS } from '../contants';
 
 export const createListener = (store) => {
-  let arr = [];
+  let messageFromArr = [];
   let intervalId;
+  let messageArr = [];
 
   const createListen = (new_IM_Data, appkey) => {
     const { apis } = store.getState();
-    WebIM.conn.listen({
+
+    const dispatchMessageAction = _.throttle(() => {
+      const temp = [...messageArr];
+      messageArr = [];
+      store.dispatch(messageAction(temp, { isHistory: false }));
+      const showChat = store.getState().showChat;
+      const isShowRed = store.getState().isTabKey !== CHAT_TABS_KEYS.chat;
+      store.dispatch(showRedNotification(isShowRed));
+      if (!showChat) {
+        store.dispatch(showRedNotification(true));
+      }
+    }, TEXT_MESSAGE_THROTTLE_TIME_MS);
+
+    const listener = {
       onOpened: () => {
         console.log('onOpened>>>', store.getState());
         store.dispatch(statusAction(true));
@@ -48,16 +62,14 @@ export const createListener = (store) => {
       },
       onTextMessage: (message) => {
         console.log('onTextMessage>>>', message);
+        const startTs = Date.now();
         if (new_IM_Data.chatRoomId === message.to) {
           const newMessage = apis.messageAPI.convertCustomMessage(message);
-          store.dispatch(messageAction(newMessage, { isHistory: false }));
-          const showChat = store.getState().showChat;
-          const isShowRed = store.getState().isTabKey !== CHAT_TABS_KEYS.chat;
-          store.dispatch(showRedNotification(isShowRed));
-          if (!showChat) {
-            store.dispatch(showRedNotification(true));
-          }
+          messageArr.push(newMessage);
+          dispatchMessageAction();
         }
+        const endTs = Date.now();
+        console.log('SAVE_ROOM_MESSAGE time:', endTs - startTs);
       },
       onPictureMessage: (message) => {
         console.log('onPictureMessage>>>', message);
@@ -101,11 +113,11 @@ export const createListener = (store) => {
           case 'memberJoinChatRoomSuccess':
             if (!isAdmins) return;
             if (message.from === '系统管理员') return;
-            arr.push(message.from);
+            messageFromArr.push(message.from);
             intervalId && clearInterval(intervalId);
             intervalId = setTimeout(() => {
-              let users = _.cloneDeep(arr);
-              arr = [];
+              let users = _.cloneDeep(messageFromArr);
+              messageFromArr = [];
               apis.userInfoAPI.getUserInfo({ member: users });
             }, 500);
             let ary = [];
@@ -173,7 +185,9 @@ export const createListener = (store) => {
           }
         });
       },
-    });
+    };
+
+    WebIM.conn.listen(listener);
   };
 
   return { createListen };

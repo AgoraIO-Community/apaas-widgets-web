@@ -1,5 +1,5 @@
 import _ from 'lodash';
-import { CHAT_TABS_KEYS, MUTE_CONFIG } from '../contants';
+import { CHAT_TABS_KEYS, MUTE_CONFIG, LOCAL_RETAIN_HISTORY_COUNT } from '../contants';
 let defaultState = {
   propsData: {}, // props 值
   showChat: false, // 控制Chat
@@ -132,17 +132,27 @@ const reducer = (state = defaultState, action) => {
       };
     case 'SAVE_ROOM_MESSAGE':
       const { isHistory } = action.options;
+
+      let dataArray = data;
+
+      if (!_.isArray(data)) {
+        dataArray = [data];
+      }
+
       let msgs;
       let newMsgs;
       if (isHistory) {
-        msgs = [data].concat(state.messages);
+        msgs = dataArray.concat(state.messages);
       } else {
-        msgs = state.messages.concat([data]);
+        msgs = state.messages.concat(dataArray);
       }
-      if (data.ext.msgId) {
-        msgs = msgs.filter((item) => item.id !== data.ext.msgId);
-      }
+
+      const msgIds = dataArray.filter((msg) => !!msg.ext.msgId).map((msg) => msg.ext.msgId);
+
+      msgs = msgs.filter((item) => !msgIds.includes(item.id));
+
       newMsgs = _.uniqBy(msgs, 'id');
+      newMsgs = newMsgs.slice(newMsgs.length - LOCAL_RETAIN_HISTORY_COUNT, newMsgs.length);
       return {
         ...state,
         messages: newMsgs,
