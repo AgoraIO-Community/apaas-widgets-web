@@ -8,11 +8,12 @@ export class AgoraIM {
       appKey: string;
       roomId: string;
       userInfo: AgoraIMUserInfo<AgoraIMUserInfoExt>;
+      ext: { roomUuid: string };
     },
   ): AgoraIMBase {
     switch (type) {
       case 'easemob':
-        return new FcrChatRoom(opt.appKey, opt.roomId, opt.userInfo);
+        return new FcrChatRoom(opt.appKey, opt.roomId, opt.userInfo, opt.ext);
     }
   }
 }

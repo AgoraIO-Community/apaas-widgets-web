@@ -28,16 +28,22 @@ export class FcrChatRoom extends AgoraIMBase {
   private _logger = new Logger('agora-chat', { console: true, database: true });
   private _conn?: AgoraChat.Connection;
   userInfo: AgoraIMUserInfo;
+  ext: { roomUuid: string };
   private _connectionInfo: {
     appKey: string;
     roomId: string;
   };
-  constructor(appKey: string, roomId: string, userInfo: AgoraIMUserInfo) {
+  constructor(
+    appKey: string,
+    roomId: string,
+    userInfo: AgoraIMUserInfo,
+    ext: { roomUuid: string },
+  ) {
     super();
     this._connectionInfo = { appKey, roomId };
     this.init(appKey);
     this.userInfo = userInfo;
-
+    this.ext = ext;
     this._enableLog();
   }
   get conn() {
@@ -221,7 +227,7 @@ export class FcrChatRoom extends AgoraIMBase {
   createTextMessage(msg: string) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
-      roomUuid: this._connectionInfo.roomId,
+      roomUuid: this.ext.roomUuid,
       role: this.userInfo.ext?.role,
       avatarUrl: this.userInfo.avatarUrl,
     };
@@ -235,7 +241,7 @@ export class FcrChatRoom extends AgoraIMBase {
   createCustomMessage(action: AgoraIMCmdActionEnum, ext?: Partial<AgoraIMMessageExt>) {
     const baseMessageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
-      roomUuid: this._connectionInfo.roomId,
+      roomUuid: this.ext.roomUuid,
       role: this.userInfo.ext?.role,
       avatarUrl: this.userInfo.avatarUrl,
     };
@@ -249,7 +255,7 @@ export class FcrChatRoom extends AgoraIMBase {
   async createImageMessage(params: Partial<AgoraIMImageMessage>) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
-      roomUuid: this._connectionInfo.roomId,
+      roomUuid: this.ext.roomUuid,
       role: this.userInfo.ext?.role,
       avatarUrl: this.userInfo.avatarUrl,
     };

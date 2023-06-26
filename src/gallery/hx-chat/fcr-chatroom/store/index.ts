@@ -31,6 +31,9 @@ export class FcrChatRoomStore {
           'https://download-sdk.oss-cn-beijing.aliyuncs.com/downloads/IMDemo/avatar/Image1.png',
         ext: { role },
       },
+      ext: {
+        roomUuid: this._widget.classroomConfig.sessionInfo.roomUuid,
+      },
     });
     this.messageStore = new MessageStore(this._widget, this.fcrChatRoom);
     this.userStore = new UserStore(this._widget, this.fcrChatRoom);
