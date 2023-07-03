@@ -1,6 +1,5 @@
 import { observer } from 'mobx-react';
 import { useRef, useState } from 'react';
-import { OrientationEnum } from '@classroom/infra/stores/common/type';
 import { useStore } from '../../hooks/useStore';
 import { FcrChatRoomH5Inputs } from './components/input';
 import { MessageList } from './components/message-list';
@@ -9,6 +8,7 @@ import { UserJoined } from './components/user-joined';
 import classNames from 'classnames';
 
 import './index.css';
+import { OrientationEnum } from '../../../type';
 
 export const FcrChatRoomH5 = observer(() => {
   const containerRef = useRef<HTMLDivElement | null>(null);

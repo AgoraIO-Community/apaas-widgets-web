@@ -1,11 +1,8 @@
 import { EduRoleTypeEnum } from 'agora-edu-core';
 import { action, autorun, computed, observable } from 'mobx';
 import { AgoraCountdown } from '.';
-import {
-  AgoraExtensionRoomEvent,
-  AgoraExtensionWidgetEvent,
-} from '../../../../agora-classroom-sdk/src/infra/protocol/events';
-import { OrientationEnum } from '../../../../agora-classroom-sdk/src/infra/stores/common/type';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
+import { OrientationEnum } from '../hx-chat/type';
 
 export class PluginStore {
   constructor(private _widget: AgoraCountdown) {

@@ -1,6 +1,13 @@
 import { useI18n } from 'agora-common-libs';
 import classnames from 'classnames';
-import React, { createRef, forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, {
+  createRef,
+  forwardRef,
+  useEffect,
+  useImperativeHandle,
+  useRef,
+  useState,
+} from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
@@ -11,13 +18,12 @@ export interface ProgressProps {
   width: number;
   type: ProgressType;
   className?: string;
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
 }
 
 export const Progress: React.FC<ProgressProps> = ({
   progress,
   width,
-  children,
   className,
   style,
   type,
@@ -52,9 +58,6 @@ export const Progress: React.FC<ProgressProps> = ({
     </div>
   );
 };
-
-
-
 
 type ProgressListItem = Pick<ProgressProps, 'width' | 'progress'> & { key: string; auto?: boolean };
 
@@ -97,7 +100,7 @@ const ProgressList = forwardRef<ProgressListRef>((_, ref) => {
       {progressList.map((progress) => (
         <div className="dialog-progress-item" key={progress.key}>
           <span className="dialog-progress-tip">{transI18n('toast2.saving')}</span>
-          <div className="flex items-center gap-2">
+          <div className="fcr-flex fcr-items-center fcr-gap-2">
             <ProgressWarpper
               key={progress.key}
               width={progress.width}

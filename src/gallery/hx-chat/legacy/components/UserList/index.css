@@ -27,7 +27,7 @@
 }
 
 .fcr-hx-user-text {
-  @apply text-level2;
+  @apply fcr-text-level2;
   /* width: 43px; */
   height: 18px;
   font-size: 13px;
@@ -50,11 +50,11 @@
 }
 
 .fcr-hx-teacher-tag {
-  @apply text-brand border border-solid border-brand !important;
+  @apply fcr-text-brand fcr-border fcr-border-solid fcr-border-brand !important;
 }
 
 .fcr-hx-student-tag {
-  @apply border border-solid border-divider !important;
+  @apply fcr-border fcr-border-solid fcr-border-divider !important;
 }
 
 .fcr-hx-tag-text {
@@ -67,7 +67,7 @@
 }
 
 .fcr-hx-teacher-text {
-  @apply text-brand;
+  @apply fcr-text-brand;
 }
 
 .fcr-hx-mute-icon {

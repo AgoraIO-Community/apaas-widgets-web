@@ -2,13 +2,10 @@ import { EduRoleTypeEnum } from 'agora-edu-core';
 import { Toast } from '../../components/toast';
 import { action, autorun, computed, observable, runInAction } from 'mobx';
 import { AgoraPolling } from '.';
-import { OrientationEnum } from '../../../../agora-classroom-sdk/src/infra/stores/common/type';
-import {
-  AgoraExtensionRoomEvent,
-  AgoraExtensionWidgetEvent,
-} from '../../../../agora-classroom-sdk/src/infra/protocol/events';
 import { transI18n } from 'agora-common-libs';
 import { bound } from 'agora-rte-sdk';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
+import { OrientationEnum } from '../hx-chat/type';
 
 // 2 为老师或者助教出题阶段 只可老师或者助教可见
 // 1 为中间答题阶段，不同为老师或者助教和学生的权限问题

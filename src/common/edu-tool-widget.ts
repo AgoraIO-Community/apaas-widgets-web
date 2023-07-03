@@ -1,10 +1,9 @@
 import {
-  AgoraExtensionWidgetEvent,
   AgoraTrackSyncedWidget,
   AgoraWidgetBase,
   AgoraWidgetLifecycle,
   AgoraWidgetTrackMode,
-} from 'agora-classroom-sdk';
+} from 'agora-common-libs';
 import {
   AgoraWidgetController,
   AgoraWidgetTrack,
@@ -14,6 +13,7 @@ import {
   TrackOptions,
 } from 'agora-edu-core';
 import { bound } from 'agora-rte-sdk';
+import { AgoraExtensionWidgetEvent } from '../events';
 
 /**
  * 教学工具 Widget 基类，使用此抽象类作为基类实现可拖拽且轨迹同步的 Widget
@@ -30,7 +30,7 @@ export abstract class AgoraEduToolWidget
   onUserPropertiesUpdate(userProperties: any): void {}
   onDestroy(): void {}
   get track(): Track {
-    return this.trackController?.track!;
+    return this.trackController?.track as Track;
   }
   get zIndex(): number {
     return this.trackController?.zIndex || 0;

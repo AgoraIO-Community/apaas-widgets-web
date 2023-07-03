@@ -13,7 +13,7 @@ import {
   AgoraIMMessageBase,
   AgoraIMMessageType,
   AgoraIMTextMessage,
-} from '../../../../../../im/wrapper/typs';
+} from '../../../../../../../common/im/wrapper/typs';
 import { useStore } from '../../../../hooks/useStore';
 import './index.css';
 import { Scheduler } from 'agora-rte-sdk';

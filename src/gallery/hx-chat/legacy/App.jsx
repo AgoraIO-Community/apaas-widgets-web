@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { useEffect, useMemo, useRef } from 'react';
 import { useSelector, useStore } from 'react-redux';
 import { initIMSDK } from './utils/WebIM';

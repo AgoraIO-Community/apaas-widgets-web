@@ -11,7 +11,7 @@
   margin: 0 !important;
 }
 .chat-widget .ant-tabs-tab-btn {
-  @apply text-level3 !important;
+  @apply fcr-text-level3 !important;
 
   /* width: 35px !important; */
   height: 18px !important;
@@ -23,7 +23,7 @@
 }
 
 .chat-widget.ant-tabs-tab.ant-tabs-tab-active .ant-tabs-tab-btn {
-  @apply text-level1 !important;
+  @apply fcr-text-level1 !important;
 }
 /* .chat-icon .ant-switch {
   background-color: #E2E2EE;
@@ -52,7 +52,7 @@
 }
 
 .fcr-hx-notice {
-  @apply bg-background;
+  @apply fcr-bg-background;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -70,7 +70,7 @@
 }
 
 .fcr-hx-notice-text {
-  @apply text-level2;
+  @apply fcr-text-level2;
   height: 12px;
   font-size: 12px;
   font-family: 'PingFangSC-Regular', 'PingFang SC';

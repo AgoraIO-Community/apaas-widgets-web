@@ -1,50 +1,51 @@
-import {
-  AgoraExtensionRoomEvent,
-  AgoraExtensionWidgetEvent,
-  AgoraWidgetBase,
-  AgoraWidgetLifecycle,
-  BoardConnectionState,
-  BoardMountState,
-} from 'agora-classroom-sdk';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
+import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
+import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core';
 import { bound, Log, Logger } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
-import { App } from './app';
-import { FcrBoardFactory } from './factory';
-import { FcrBoardRoom } from './wrapper/board-room';
-import { FcrBoardMainWindow } from './wrapper/board-window';
-import {
-  FcrBoardMainWindowEvent,
-  FcrBoardMainWindowFailureReason,
-  FcrBoardRegion,
-  FcrBoardRoomEvent,
-  FcrBoardRoomJoinConfig,
-} from './wrapper/type';
-import { downloadCanvasImage } from './wrapper/utils';
 import { reaction, IReactionDisposer } from 'mobx';
 import { transI18n } from 'agora-common-libs';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../events';
+import { FcrBoardFactory } from '../../common/whiteboard-wrapper/factory';
+import { FcrBoardRoom } from '../../common/whiteboard-wrapper/board-room';
+import { FcrBoardMainWindow } from '../../common/whiteboard-wrapper/board-window';
+import {
+  BoardWindowAnimationOptions,
+  FcrBoardRegion,
+  FcrBoardRoomJoinConfig,
+  FcrBoardRoomEvent,
+  BoardConnectionState,
+  FcrBoardMainWindowEvent,
+  BoardMountState,
+  FcrBoardMainWindowFailureReason,
+} from '../../common/whiteboard-wrapper/type';
+import { downloadCanvasImage } from '../../common/whiteboard-wrapper/utils';
+import { BoardUIContext } from './ui-context';
+import { App } from './app';
+import { DialogProgressApi } from '../../components/progress';
+import isNumber from 'lodash/isNumber';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
-  private static _installationDisposer?: CallableFunction;
+  protected static _installationDisposer?: CallableFunction;
+  protected static _animationOptions: BoardWindowAnimationOptions;
   logger!: Logger;
-  private _boardRoom?: FcrBoardRoom;
-  private _boardMainWindow?: FcrBoardMainWindow;
-  private _outerDom?: HTMLElement;
-  private _boardDom?: HTMLDivElement | null;
-  private _collectorDom?: HTMLDivElement | null;
-  private _listenerDisposer?: CallableFunction;
-  private _initialized = false;
-  private _mounted = false;
-  private _isInitialUser = false;
-  private _joined = false;
-  private _initArgs?: {
+  protected _boardRoom?: FcrBoardRoom;
+  protected _boardMainWindow?: FcrBoardMainWindow;
+  protected _outerDom?: HTMLElement;
+  protected _boardDom?: HTMLDivElement | null;
+  protected _collectorDom?: HTMLDivElement | null;
+  protected _listenerDisposer?: CallableFunction;
+  protected _initialized = false;
+  protected _mounted = false;
+  protected _isInitialUser = false;
+  protected _joined = false;
+  protected _initArgs?: {
     appId: string;
     region: FcrBoardRegion;
   };
-  private _grantedUsers = new Set<string>();
-  private _disposers: IReactionDisposer[] = [];
+  protected _grantedUsers = new Set<string>();
+  protected _disposers: IReactionDisposer[] = [];
 
   get widgetName() {
     return 'netlessBoard';
@@ -58,19 +59,18 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     this._boardDom = dom;
   }
 
-  locate() {
-    const dom = document.querySelector('.widget-slot-board');
-    if (dom) {
-      return dom as HTMLElement;
-    }
-    this.logger.info('Cannot find a proper DOM to render the FCR board widget');
-  }
-
   render(dom: HTMLElement) {
     dom.classList.add('netless-whiteboard-wrapper');
     this._outerDom = dom;
-    this._setBackgourndImage();
-    ReactDOM.render(<App widget={this} />, dom);
+
+    this.setBackgourndImage();
+
+    ReactDOM.render(
+      <BoardUIContext.Provider value={this.createUIContext()}>
+        <App />
+      </BoardUIContext.Provider>,
+      dom,
+    );
   }
 
   unload() {
@@ -100,9 +100,17 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       }
     };
 
+    const setAnimationOptions = (animationOptions: BoardWindowAnimationOptions) => {
+      FcrBoardWidget._animationOptions = animationOptions;
+    };
+
     controller.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToggleBoard,
       onMessage: handleOpen,
+    });
+    controller.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.BoardSetAnimationOptions,
+      onMessage: setAnimationOptions,
     });
 
     FcrBoardWidget._installationDisposer = () => {
@@ -146,7 +154,35 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     // 处理讲台隐藏/显示，重新计算白板宽高比
     this._disposers.push(
       reaction(
-        () => !!(this.classroomStore.roomStore.flexProps?.stage ?? true),
+        // () => !!(this.classroomStore.roomStore.flexProps?.stage ?? true),
+        () => {
+          enum LayoutMaskCode {
+            None = 0,
+            StageVisible = 1,
+            VideoGalleryVisible = 2,
+          }
+
+          const { flexProps } = this.classroomStore.roomStore;
+
+          const getLayoutCode = () => {
+            if (!isNumber(flexProps.area)) {
+              // 1v1和大班课默认讲台不开启
+              if (
+                this.classroomConfig.sessionInfo.roomType === EduRoomTypeEnum.Room1v1Class ||
+                this.classroomConfig.sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass
+              ) {
+                return LayoutMaskCode.None;
+              }
+              // 小班课默认开启讲台
+              return LayoutMaskCode.None | LayoutMaskCode.StageVisible;
+            }
+            return flexProps.area;
+          };
+
+          const layoutCode = getLayoutCode();
+
+          return !!(layoutCode & LayoutMaskCode.StageVisible);
+        },
         () => {
           const { _boardDom } = this;
           if (_boardDom) {
@@ -159,10 +195,11 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         },
       ),
     );
+
     this._disposers.push(
       reaction(
         () => this.classroomStore.roomStore.flexProps?.backgroundImage,
-        this._setBackgourndImage,
+        this.setBackgourndImage,
       ),
     );
   }
@@ -202,13 +239,6 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       this._initialized = true;
     }
   }
-
-  private _setBackgourndImage = () => {
-    const imageUrl = this.classroomStore.roomStore.flexProps?.backgroundImage;
-    if (imageUrl && this._outerDom) {
-      this._outerDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
-    }
-  };
 
   private _extractMessage(event: AgoraExtensionRoomEvent) {
     return (args: unknown[]) => this._handleMessage({ command: event, args });
@@ -252,7 +282,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
         [AgoraExtensionRoomEvent.BoardChangeStrokeColor]: mainWindow.changeStrokeColor,
         [AgoraExtensionRoomEvent.BoardSaveAttributes]: this._saveAttributes,
         [AgoraExtensionRoomEvent.BoardLoadAttributes]: this._loadAttributes,
-        [AgoraExtensionRoomEvent.BoardGetSnapshotImageList]: mainWindow.getSnapshotImage,
+        [AgoraExtensionRoomEvent.BoardGetSnapshotImageList]: this._getSnapshotImage,
         [AgoraExtensionRoomEvent.BoardSetDelay]: mainWindow.setTimeDelay,
         [AgoraExtensionRoomEvent.BoardOpenH5ResourceWindow]: mainWindow.createH5Window,
       });
@@ -270,6 +300,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     }
   }
 
+  @bound
   mount() {
     const { _boardMainWindow, _boardDom } = this;
 
@@ -283,6 +314,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     }
   }
 
+  @bound
   unmount() {
     if (this._mounted && this._boardMainWindow) {
       this._boardMainWindow.destroy();
@@ -315,6 +347,21 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   }
 
   @bound
+  private async _getSnapshotImage(background: string) {
+    const mainWindow = this._boardMainWindow;
+
+    if (mainWindow) {
+      mainWindow.getSnapshotImage(background, (progress) => {
+        if (progress !== 100) {
+          DialogProgressApi.show({ key: 'saveImage', progress: 1, width: 100, auto: true });
+        } else {
+          DialogProgressApi.destroy('saveImage');
+        }
+      });
+    }
+  }
+
+  @bound
   private async _loadAttributes() {
     if (!this._isInitialUser) {
       return;
@@ -340,6 +387,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
     this._boardRoom = FcrBoardFactory.createBoardRoom({
       appId: this._initArgs?.appId || '',
       region: this._initArgs?.region || FcrBoardRegion.CN,
+      animationOptions: FcrBoardWidget._animationOptions,
     });
 
     const joinConfig = {
@@ -356,7 +404,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       this.logger.info('Fcr board join success');
       await mainWindow.updateOperationPrivilege(this.hasPrivilege);
       this._deliverWindowEvents(mainWindow);
-      this.unmount();
+      // this.unmount();
       this._boardMainWindow = mainWindow;
       this.mount();
     });
@@ -421,15 +469,15 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
       )}.jpg`;
 
       downloadCanvasImage(canvas, fileName);
-      this.shareUIStore.addToast(transI18n('toast2.save_success'));
+      this.ui.addToast('Save successfully');
     });
     mainWindow.on(FcrBoardMainWindowEvent.Failure, (reason) => {
       this.logger.error('operation failure, reason: ', reason);
       if (reason === FcrBoardMainWindowFailureReason.ResourceWindowAlreadyOpened) {
-        this.shareUIStore.addToast(transI18n('edu_error.600074'), 'error');
+        this.ui.addToast(transI18n('edu_error.600074'), 'error');
       }
       if (reason === FcrBoardMainWindowFailureReason.SnapshotFailure) {
-        this.shareUIStore.addToast(transI18n('toast2.save_error'));
+        this.ui.addToast(transI18n('toast2.save_error'));
       }
     });
   }
@@ -485,6 +533,37 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   onUninstall(controller: AgoraWidgetController) {
     if (FcrBoardWidget._installationDisposer) {
       FcrBoardWidget._installationDisposer();
+    }
+  }
+
+  locate() {
+    const dom = document.querySelector('.widget-slot-board');
+    if (dom) {
+      return dom as HTMLElement;
+    }
+    this.logger.info('Cannot find a proper DOM to render the FCR board widget');
+  }
+
+  createUIContext() {
+    return {
+      mount: this.mount,
+      unmount: this.unmount,
+      handleDrop: this.handleDrop,
+      handleDragOver: this.handleDragOver,
+      handleBoardDomLoad: (ref: HTMLDivElement | null) => {
+        this.boardDom = ref;
+      },
+      handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
+        this.collectorDom = ref;
+      },
+    };
+  }
+
+  @bound
+  setBackgourndImage() {
+    const imageUrl = this.classroomStore.roomStore.flexProps?.backgroundImage;
+    if (imageUrl && this._outerDom) {
+      this._outerDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
     }
   }
 }

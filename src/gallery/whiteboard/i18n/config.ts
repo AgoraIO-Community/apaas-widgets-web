@@ -1,4 +1,5 @@
-import { addResourceBundle } from 'agora-common-libs';
+import { addResourceBundle } from 'agora-common-libs/';
+
 import en from './en';
 import zh from './zh';
 

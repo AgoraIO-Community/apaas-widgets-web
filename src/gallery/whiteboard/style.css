@@ -1,9 +1,13 @@
 .netless-whiteboard-wrapper {
+  @apply fcr-bg-foreground fcr-border-divider;
   height: 100%;
   width: 100%;
   border: 1px solid;
   border-radius: 4px;
-  @apply bg-foreground border-divider;
+}
+
+.board-widget-app {
+  height: 100%;
 }
 
 .whiteboard-zoom-status {

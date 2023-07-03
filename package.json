@@ -3,8 +3,6 @@
   "version": "1.0.0",
   "description": "> TODO: description",
   "author": "agora.io",
-  "main": "src/index.ts",
-  "types": "src/index.ts",
   "directories": {
     "lib": "lib",
     "test": "__tests__"
@@ -12,7 +10,31 @@
   "files": [
     "lib"
   ],
-  "scripts": {},
+  "exports": {
+    "./classroom": "./lib/classroom.widget.js",
+    "./onlineclass": "./lib/onlineclass.widget.js",
+    "./proctor": "./lib/classroom.widget.js"
+  },
+  "typesVersions": {
+    "*": {
+      "classroom": [
+        "./lib/agora-plugin-gallery/src/classroom.d.ts"
+      ],
+      "onlineclass": [
+        "./lib/agora-plugin-gallery/src/onlineclass.d.ts"
+      ],
+      "proctor": [
+        "./lib/agora-plugin-gallery/src/proctor.d.ts"
+      ]
+    }
+  },
+  "scripts": {
+    "build:types": "tsc -p tsconfig.json",
+    "build:docs": "typedoc",
+    "pack:npm": "run-s bundle:npm build:types",
+    "bundle:npm": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
+    "ci:build": "run-s bundle:npm build:types"
+  },
   "dependencies": {
     "@netless/app-slide": "0.2.27",
     "@netless/app-talkative": "0.1.0",
@@ -28,8 +50,8 @@
     "@netless/window-manager": "0.4.57",
     "agora-chat": "^1.0.4",
     "antd-mobile": "5.28.0",
-    "axios": "0.27.2",
-    "classnames": "2.3.1",
+    "axios": "0.19.2",
+    "classnames": "2.2.6",
     "dayjs": "1.10.4",
     "jspdf": "2.5.1",
     "lodash": "4.17.21",
@@ -39,6 +61,16 @@
     "react-redux": "7.2.4",
     "redux": "4.1.0",
     "twemoji": "13.1.0",
-    "white-web-sdk": "2.16.37"
+    "white-web-sdk": "2.16.37",
+    "agora-common-libs": "2.8.1",
+    "agora-rte-sdk": "2.8.21"
+  },
+  "devDependencies": {
+    "@types/axios": "0.14.0",
+    "@types/classnames": "2.2.11",
+    "postcss": "8.4.21",
+    "postcss-import": "14.0.1",
+    "postcss-loader": "4.0.3",
+    "tailwindcss": "2.0.3"
   }
 }

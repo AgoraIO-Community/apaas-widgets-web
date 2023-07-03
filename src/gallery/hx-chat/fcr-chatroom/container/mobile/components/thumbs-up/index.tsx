@@ -4,7 +4,6 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-i
 import { ThumbsUpAni } from './thumbs-up';
 import './index.css';
 import { useStore } from '../../../../hooks/useStore';
-import { ComponentLevelRulesMobile } from '../../../../../../../../../agora-classroom-sdk/src/infra/capabilities/config';
 
 const ctxRequire = require.context('./assets/', false, /\.svg$/);
 const thumbsUpImgList: string[] = ctxRequire.keys().map((img) => {
@@ -55,7 +54,7 @@ export const ThumbsUp = observer(() => {
         size={30}></SvgImgMobile>
       <canvas
         style={{
-          zIndex: ComponentLevelRulesMobile.Level2,
+          zIndex: 10,
         }}
         ref={canvasRef}
         className="fcr-chatroom-mobile-inputs-thumbs-up-canvas"></canvas>

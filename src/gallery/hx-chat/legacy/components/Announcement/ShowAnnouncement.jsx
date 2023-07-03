@@ -76,13 +76,19 @@ export const ShowAnnouncement = () => {
           </div>
         </div>
       ) : (
-          <div className="fcr-hx-no-show-icon">
-            <div className="fcr-hx-no-announcement">
-              <img src={announcement} className="fcr-hx-announcement-icon" />
-              <div className="fcr-hx-no-notice">
-                <span className="fcr-hx-no-notice-text"> {transI18n('chat.default_announcement')}</span>
+        <div className="fcr-hx-no-show-icon">
+          <div className="fcr-hx-no-announcement">
+            <img src={announcement} className="fcr-hx-announcement-icon" />
+            <div className="fcr-hx-no-notice">
+              <span className="fcr-hx-no-notice-text">
+                {' '}
+                {transI18n('chat.default_announcement')}
+              </span>
               {(isTeacher || isAssistant) && (
-                  <span className="fcr-hx-no-notice-text"> {transI18n('chat.sentence_connector')}</span>
+                <span className="fcr-hx-no-notice-text">
+                  {' '}
+                  {transI18n('chat.sentence_connector')}
+                </span>
               )}
               {(isTeacher || isAssistant) && <Edit onChangeStatus={onChangeStatus} />}
             </div>

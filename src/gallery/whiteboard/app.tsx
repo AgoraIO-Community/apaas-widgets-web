@@ -1,31 +1,34 @@
-import React, { useEffect } from 'react';
+import React, { useContext, useEffect } from 'react';
+import { BoardUIContext } from './ui-context';
 import './style.css';
-import { FcrBoardWidget } from '.';
 
+export const App = () => {
+  const { mount, unmount, handleDragOver, handleDrop, handleBoardDomLoad, handleCollectorDomLoad } =
+    useContext(BoardUIContext);
 
-export const App = ({ widget }: { widget: FcrBoardWidget }) => {
   useEffect(() => {
-    widget.mount();
+    mount();
     return () => {
-      widget.unmount();
-    }
+      unmount();
+    };
   }, []);
 
   return (
     <React.Fragment>
       <div
-        className='h-full'
-        onDragOver={widget.handleDragOver}
-        onDrop={widget.handleDrop}
+        className="board-widget-app"
+        onDragOver={handleDragOver}
+        onDrop={handleDrop}
         ref={(ref) => {
-          widget.boardDom = ref;
+          handleBoardDomLoad(ref);
         }}
       />
       <div
-        className='window-manager-collector'
+        className="window-manager-collector"
         ref={(ref) => {
-          widget.collectorDom = ref;
-        }} />
+          handleCollectorDomLoad(ref);
+        }}
+      />
     </React.Fragment>
   );
 };

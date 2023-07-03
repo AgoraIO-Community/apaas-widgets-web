@@ -1,5 +1,5 @@
 .fcr-hx-input-box {
-  @apply bg-component border-divider border border-solid;
+  @apply fcr-bg-component fcr-border-divider fcr-border fcr-border-solid;
   margin: 5px 0 0 0;
   width: 100%;
   border-radius: 6px 6px 4px 4px;
@@ -8,14 +8,14 @@
 }
 
 .fcr-hx-all-mute {
-  @apply text-level2;
+  @apply fcr-text-level2;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 
 .fcr-hx-all-mute-text {
-  @apply text-level2;
+  @apply fcr-text-level2;
 
   width: 53px;
   height: 18px;
@@ -106,7 +106,7 @@ textarea.input-chat {
 }
 
 .fcr-hx-input-box .fcr-hx-input-chat {
-  @apply bg-component text-level1;
+  @apply fcr-bg-component fcr-text-level1;
   outline: none !important;
   resize: none !important;
   border: none !important;
@@ -115,7 +115,7 @@ textarea.input-chat {
   margin-bottom: 70px !important;
 }
 .fcr-hx-input-chat::-webkit-input-placeholder {
-  @apply text-level3;
+  @apply fcr-text-level3;
   position: relative;
   top: unset;
 }
@@ -134,7 +134,7 @@ textarea.input-chat {
 }
 
 .fcr-hx-app .fcr-hx-send-btn {
-  @apply bg-brand;
+  @apply fcr-bg-brand;
   position: absolute;
   right: 8px;
   bottom: 13px;
@@ -143,10 +143,10 @@ textarea.input-chat {
   border-radius: 15px !important;
 }
 .chat-icon-popover .ant-popover-inner {
-  @apply bg-component;
+  @apply fcr-bg-component;
 }
 .chat-icon-popover .ant-popover-arrow {
-  @apply border-component !important;
+  @apply fcr-border-component !important;
 }
 .fcr-hx-emoji-container {
   width: 212px;
@@ -171,7 +171,7 @@ textarea.input-chat {
 }
 
 .fcr-hx-question-text {
-  @apply text-level3;
+  @apply fcr-text-level3;
 }
 
 .chat-question-container {

@@ -1,0 +1,19 @@
+.fcr-polling-input-list {
+  width: 100%;
+  margin-bottom: 10px;
+}
+
+.fcr-polling-input-list .fcr-textarea:not(:first-child) {
+  margin-top: 10px;
+}
+
+.fcr-polling-remove-icon {
+  @apply fcr-text-red-6;
+  cursor: pointer;
+}
+
+.fcr-polling-remove-icon--disabled {
+  @apply fcr-text-red-6;
+  opacity: 0.5;
+  cursor: not-allowed;
+}

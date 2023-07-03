@@ -5,9 +5,7 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../../../../components/svg-i
 import { useStore } from '../../../../hooks/useStore';
 import { ThumbsUp } from '../thumbs-up';
 import { emojis } from '../../../../utils/emoji';
-
 import './index.css';
-import { ComponentLevelRulesMobile } from '../../../../../../../../../agora-classroom-sdk/src/infra/capabilities/config';
 import { useI18n } from 'agora-common-libs';
 import { useClickAnywhere } from '../../../../utils/hooks';
 import classNames from 'classnames';
@@ -74,7 +72,7 @@ export const FcrChatRoomH5Inputs = observer(
             visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
             opacity: landscapeToolBarVisible ? 1 : 0,
             transition: 'visibility .2s, opacity .2s',
-            zIndex: ComponentLevelRulesMobile.Level1,
+            zIndex: 1,
             background:
               isLandscape && (showEmoji || inputFocus)
                 ? '#fff'
@@ -249,7 +247,7 @@ const EmojiContainer = observer(
         className={classNames('fcr-chatroom-mobile-input-emoji-container', {
           'fcr-chatroom-mobile-input-emoji-container-landscape': isLandscape,
         })}
-        style={{ zIndex: ComponentLevelRulesMobile.Level3 }}>
+        style={{ zIndex: 20 }}>
         {emojis.map((emoji) => {
           return (
             <div

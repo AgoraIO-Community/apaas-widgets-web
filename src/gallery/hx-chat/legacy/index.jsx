@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'agora-common-libs';
