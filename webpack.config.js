@@ -18,8 +18,8 @@ const config = {
   },
   resolve: {
     alias: {
-      '@components': path.resolve(ROOT_PATH, 'agora-scenario-ui-kit/src/components'),
-      '@ui-kit-utils': path.resolve(ROOT_PATH, 'agora-scenario-ui-kit/src/utils'),
+      '@components': 'agora-scenario-ui-kit/src/components',
+      '@ui-kit-utils': 'agora-scenario-ui-kit/src/utils',
     },
   },
 };
