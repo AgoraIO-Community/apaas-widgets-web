@@ -62,8 +62,8 @@
     "redux": "4.1.0",
     "twemoji": "13.1.0",
     "white-web-sdk": "2.16.37",
-    "agora-common-libs": "2.8.1",
-    "agora-rte-sdk": "2.8.21"
+    "agora-common-libs": "~2.9.0",
+    "agora-rte-sdk": "~2.9.0"
   },
   "devDependencies": {
     "@types/axios": "0.14.0",
