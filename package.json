@@ -83,6 +83,7 @@
     "postcss-loader": "4.0.3",
     "tailwindcss": "2.0.3",
     "webpackbar": "5.0.0-3",
-    "cross-env": "6.0.3"
+    "cross-env": "6.0.3",
+    "autoprefixer": "10.2.5"
   }
 }
