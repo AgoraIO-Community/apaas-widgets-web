@@ -71,7 +71,8 @@
     "react-virtualized": "9.22.3",
     "tinycolor2": "1.4.2",
     "react-spring": "9.4.4",
-    "svgaplayerweb": "2.3.2"
+    "svgaplayerweb": "2.3.2",
+    "viewerjs": "1.11.3"
   },
   "devDependencies": {
     "crypto-browserify": "3.12.0",

@@ -77,6 +77,10 @@ export enum AgoraExtensionRoomEvent {
   VisibleChanged = 'visible-changed',
   // 布局变化
   LayoutChanged = 'layout-changed',
+  // webview/streamMedia 插件刷新
+  Refresh = 'refresh',
+  // 私聊
+  PrivateChat = 'PrivateChat',
 }
 
 /**

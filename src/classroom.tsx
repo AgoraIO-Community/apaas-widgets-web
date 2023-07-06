@@ -1,14 +1,14 @@
-import { AgoraSelector } from './gallery/answer';
-import { AgoraHXChatWidget as FcrChatroom } from './gallery/chatroom';
-import { AgoraCountdown } from './gallery/counter';
-import { AgoraHXChatWidget } from './gallery/hx-chat';
-import { FcrPollingWidget } from './gallery/polling';
-import { FcrStreamMediaPlayerWidget } from './gallery/stream-media';
-import { AgoraPolling } from './gallery/vote';
-import { FcrWatermarkWidget } from './gallery/watermark';
-import { FcrWebviewWidget } from './gallery/webview';
-import { FcrBoardWidget } from './gallery/whiteboard';
-import { FcrBoardWidget as FcrBoardWidgetV2 } from './gallery/whiteboard-v2';
+import { AgoraSelector } from './gallery/classroom/answer';
+import { AgoraHXChatWidget as FcrChatroom } from './gallery/onlineclass/chatroom';
+import { AgoraCountdown } from './gallery/classroom/counter';
+import { AgoraHXChatWidget } from './gallery/classroom/hx-chat';
+import { FcrPollingWidget } from './gallery/onlineclass/polling';
+import { FcrStreamMediaPlayerWidget } from './gallery/classroom/stream-media';
+import { AgoraPolling } from './gallery/classroom/vote';
+import { FcrWatermarkWidget } from './gallery/classroom/watermark';
+import { FcrWebviewWidget } from './gallery/classroom/webview';
+import { FcrBoardWidget } from './gallery/classroom/whiteboard';
+import { FcrBoardWidget as FcrBoardWidgetV2 } from './gallery/onlineclass/whiteboard-v2';
 import tailwindConfig from '../tailwind.config';
 import '@ui-kit-utils/preflight.css';
 

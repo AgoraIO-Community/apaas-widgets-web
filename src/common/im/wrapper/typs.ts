@@ -27,11 +27,15 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract getMutedUserList(): Promise<string[]>;
   abstract getUserInfoList(userIdList: string[]): Promise<AgoraIMUserInfo[]>;
   abstract setSelfUserInfo(userInfo: AgoraIMUserInfo): Promise<AgoraIMUserInfo>;
-  abstract createTextMessage(msg: string): AgoraIMTextMessage;
-  abstract createImageMessage(params: Partial<AgoraIMImageMessage>): Promise<AgoraIMImageMessage>;
+  abstract createTextMessage(msg: string, receiverList?: AgoraIMUserInfo[]): AgoraIMTextMessage;
+  abstract createImageMessage(
+    params: Partial<AgoraIMImageMessage>,
+    receiverList?: AgoraIMUserInfo[],
+  ): Promise<AgoraIMImageMessage>;
   abstract createCustomMessage(
     action: AgoraIMCmdActionEnum,
     ext?: Partial<AgoraIMMessageExt>,
+    receiverList?: AgoraIMUserInfo[],
   ): AgoraIMCustomMessage;
 
   abstract getChatRoomDetails(): Promise<AgoraIMChatRoomDetails>;
@@ -74,6 +78,7 @@ export interface AgoraIMMessageExt {
   avatarUrl: string;
   muteMember?: string;
   muteNickName?: string;
+  receiverList: AgoraIMUserInfo[];
 }
 export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = AgoraIMMessageExt> {
   id: string;
@@ -83,6 +88,7 @@ export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = Agora
   body?: B;
   ext?: E;
   ts?: number;
+  receiverList?: AgoraIMUserInfo[];
   constructor(params: AgoraIMMessageBase<B, E>) {
     this.id = params.id;
     this.from = params.from;
@@ -91,14 +97,15 @@ export class AgoraIMMessageBase<B = unknown, E extends AgoraIMMessageExt = Agora
     this.body = params.body;
     this.ext = params.ext;
     this.ts = params.ts || new Date().getTime();
+    this.receiverList = params.receiverList;
   }
 }
 export class AgoraIMTextMessage extends AgoraIMMessageBase {
   msg: string;
+
   constructor(params: AgoraIMTextMessage) {
     super(params);
     this.type = AgoraIMMessageType.Text;
-
     this.msg = params.msg;
   }
 }
@@ -113,6 +120,7 @@ export class AgoraIMImageMessage<
   onFileUploadError?(): void;
   onFileUploadProgress?(e: unknown): void;
   onFileUploadComplete?(): void;
+
   constructor(params: AgoraIMImageMessage<E>) {
     super(params);
     this.type = AgoraIMMessageType.Image;
@@ -177,4 +185,5 @@ export interface AgoraIMUserInfo<E extends AgoraIMUserInfoExt = AgoraIMUserInfoE
 
 export interface AgoraIMUserInfoExt {
   role: EduRoleTypeEnum;
+  userUuid: string;
 }

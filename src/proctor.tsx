@@ -1,4 +1,4 @@
-import { FcrWebviewWidget } from './gallery/webview';
+import { FcrWebviewWidget } from './gallery/proctor/webview';
 
 export { FcrWebviewWidget };
 import '@ui-kit-utils/preflight.css';

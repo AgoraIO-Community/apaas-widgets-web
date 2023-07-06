@@ -15,7 +15,7 @@ import {
 } from './typs';
 import websdk, { AgoraChat } from 'agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
-import { convertHXHistoryMessage, convertHXMessage } from './utils';
+import { convertHXMessage } from './utils';
 import { Logger, Log } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 type AgoraChatLog = {
@@ -94,27 +94,6 @@ export class FcrChatRoom extends AgoraIMBase {
       });
     } catch (e) {
       this._logger.error(this._formateLogs({ level: 'error', logs: ['connection open error', e] }));
-      this.setConnectionState(AgoraIMConnectionState.DisConnected);
-      throw e;
-    }
-    const { nickName, avatarUrl, ext } = this.userInfo;
-    try {
-      await this.setSelfUserInfo({
-        nickName: nickName,
-        avatarUrl,
-        ext,
-      });
-    } catch (e) {
-      this._logger.error(
-        this._formateLogs({ level: 'error', logs: ['set self user info error', e] }),
-      );
-      this.setConnectionState(AgoraIMConnectionState.DisConnected);
-      throw e;
-    }
-    try {
-      await this.conn.joinChatRoom({ roomId: this.roomId });
-    } catch (e) {
-      this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
       this.setConnectionState(AgoraIMConnectionState.DisConnected);
       throw e;
     }
@@ -201,63 +180,67 @@ export class FcrChatRoom extends AgoraIMBase {
     });
     return this.userInfo;
   }
-  @Log.silence
-  async getHistoryMessageList(params?: {
-    pageSize?: number | undefined;
-    msgId?: string | number | undefined;
-  }): Promise<AgoraIMMessageBase[]> {
-    const { messages } = await this.conn.getHistoryMessages({
-      targetId: this.roomId,
-      pageSize: params?.pageSize || 50,
-      chatType: 'chatRoom',
-      cursor: params?.msgId,
+  async getHistoryMessageList(): Promise<AgoraIMMessageBase[]> {
+    const messages = await this.conn.fetchHistoryMessages({
+      queue: this.roomId,
+      isGroup: true,
+      count: 50,
     });
     const deletedMessageIds = new Map();
     const msgList: AgoraIMMessageBase[] = [];
-    messages.forEach((msg) => {
+    messages.reverse().forEach((msg) => {
       if (deletedMessageIds.has(msg.id)) return;
       if (msg.type === 'cmd' && msg.action === AgoraIMCmdActionEnum.MsgDeleted) {
         deletedMessageIds.set((msg.ext as { msgId: string }).msgId, true);
       }
-      msgList.push(convertHXHistoryMessage(msg));
+      msgList.push(convertHXMessage(msg));
     });
     return msgList.reverse();
   }
   @Log.silence
-  createTextMessage(msg: string) {
+  createTextMessage(msg: string, receiverList?: AgoraIMUserInfo[]) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
       roomUuid: this.ext.roomUuid,
       role: this.userInfo.ext?.role,
       avatarUrl: this.userInfo.avatarUrl,
+      receiverList: receiverList || [],
     };
     return new AgoraIMTextMessage({
       msg,
       ext: messageExt,
       id: websdk.utils.getUniqueId(),
+      receiverList,
     });
   }
   @Log.silence
-  createCustomMessage(action: AgoraIMCmdActionEnum, ext?: Partial<AgoraIMMessageExt>) {
+  createCustomMessage(
+    action: AgoraIMCmdActionEnum,
+    ext?: Partial<AgoraIMMessageExt>,
+    receiverList?: AgoraIMUserInfo[],
+  ) {
     const baseMessageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
       roomUuid: this.ext.roomUuid,
       role: this.userInfo.ext?.role,
       avatarUrl: this.userInfo.avatarUrl,
+      receiverList: receiverList || [],
     };
     return new AgoraIMCustomMessage({
       action,
       ext: Object.assign(baseMessageExt, ext),
       id: websdk.utils.getUniqueId(),
+      receiverList,
     });
   }
   @Log.silence
-  async createImageMessage(params: Partial<AgoraIMImageMessage>) {
+  async createImageMessage(params: Partial<AgoraIMImageMessage>, receiverList?: AgoraIMUserInfo[]) {
     const messageExt: AgoraIMMessageExt = {
       nickName: this.userInfo.nickName,
       roomUuid: this.ext.roomUuid,
       role: this.userInfo.ext?.role,
       avatarUrl: this.userInfo.avatarUrl,
+      receiverList: receiverList || [],
     };
 
     const imageSize: { width: number; height: number } = await new Promise((resolve) => {
@@ -278,6 +261,7 @@ export class FcrChatRoom extends AgoraIMBase {
       ...imageSize,
       ...params,
       ext: { ...params.ext, ...messageExt },
+      receiverList,
     });
   }
   @Log.silence
@@ -285,14 +269,18 @@ export class FcrChatRoom extends AgoraIMBase {
     let newMsg: AgoraChat.MessageBody | null = null;
     switch (message.type) {
       case AgoraIMMessageType.Text:
-        const { msg: textMsg, ext: textExt } = message as AgoraIMTextMessage;
-
+        const {
+          msg: textMsg,
+          ext: textExt,
+          receiverList: textReceiverList,
+        } = message as AgoraIMTextMessage;
         newMsg = websdk.message.create({
           to: this.roomId,
           msg: textMsg,
           type: 'txt',
           chatType: 'chatRoom',
-          ext: textExt,
+          ext: { ...textExt } as AgoraIMMessageExt,
+          receiverList: textReceiverList?.map((user) => user.userId),
         });
         break;
       case AgoraIMMessageType.Image:
@@ -302,12 +290,14 @@ export class FcrChatRoom extends AgoraIMBase {
           ext: imageExt,
           width,
           height,
+          receiverList: imageReceiverList,
         } = message as AgoraIMImageMessage<AgoraIMMessageExt>;
         newMsg = websdk.message.create({
           to: this.roomId,
           type: 'img',
           chatType: 'chatRoom',
-          ext: imageExt,
+          ext: { ...imageExt } as AgoraIMMessageExt,
+          receiverList: imageReceiverList?.map((user) => user.userId),
           width,
           height,
           file: file
@@ -323,14 +313,19 @@ export class FcrChatRoom extends AgoraIMBase {
         });
         break;
       case AgoraIMMessageType.Custom:
-        const { action: customAction, ext: customExt } = message as AgoraIMCustomMessage;
+        const {
+          action: customAction,
+          ext: customExt,
+          receiverList: customReceiverList,
+        } = message as AgoraIMCustomMessage;
 
         newMsg = websdk.message.create({
           to: this.roomId,
           action: customAction,
           type: 'cmd',
           chatType: 'chatRoom',
-          ext: customExt,
+          ext: { ...customExt } as AgoraIMMessageExt,
+          receiverList: customReceiverList?.map((user) => user.userId),
         });
         break;
       default:
@@ -423,7 +418,28 @@ export class FcrChatRoom extends AgoraIMBase {
         this._logger.error(this._formateLogs({ level: 'error', logs: ['connection error', e] }));
         this.emit(AgoraIMEvents.ErrorOccurred, e);
       },
-      onConnected: () => {
+      onConnected: async () => {
+        const { nickName, avatarUrl, ext } = this.userInfo;
+        try {
+          await this.setSelfUserInfo({
+            nickName: nickName,
+            avatarUrl,
+            ext,
+          });
+        } catch (e) {
+          this._logger.error(
+            this._formateLogs({ level: 'error', logs: ['set self user info error', e] }),
+          );
+          this.setConnectionState(AgoraIMConnectionState.DisConnected);
+          throw e;
+        }
+        try {
+          await this.conn.joinChatRoom({ roomId: this.roomId });
+        } catch (e) {
+          this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
+          this.setConnectionState(AgoraIMConnectionState.DisConnected);
+          throw e;
+        }
         this.setConnectionState(AgoraIMConnectionState.Connected);
       },
       onDisconnected: () => {
