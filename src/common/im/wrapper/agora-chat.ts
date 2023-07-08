@@ -13,7 +13,7 @@ import {
   AgoraIMUserInfo,
   AgoraIMUserInfoExt,
 } from './typs';
-import websdk, { AgoraChat } from 'agora-chat';
+import websdk, { AgoraChat } from './sdk/Agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
 import { convertHXMessage } from './utils';
 import { Logger, Log } from 'agora-rte-sdk';

@@ -81,6 +81,8 @@ export enum AgoraExtensionRoomEvent {
   Refresh = 'refresh',
   // 私聊
   PrivateChat = 'PrivateChat',
+  // widget弹框边界尺寸变化
+  WidgetDialogBoundariesChanged = 'widget-dialog-boundaries-changed',
 }
 
 /**

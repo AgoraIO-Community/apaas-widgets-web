@@ -480,8 +480,9 @@
 }
 .fcr-chat-message-list-item-image {
   @apply fcr-box-border fcr-overflow-hidden;
-  width: 220px;
-  height: 230px;
+  max-width: 220px;
+  max-height: 230px;
+  padding: 0;
 }
 .fcr-chat-message-list-item-image img {
   @apply fcr-cursor-pointer fcr-object-contain;

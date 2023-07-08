@@ -8,7 +8,7 @@ export const layoutContentClassName = 'fcr-layout-content-main-view';
 export const videoRowClassName = 'fcr-layout-content-video-list-row';
 
 export const toolbarClassName = 'fcr-board-toolbar';
-export const windowClassName = 'fcr-board-window-content';
+export const windowClassName = 'netless-whiteboard-wrapper';
 
 export const WINDOW_TITLE_HEIGHT = 28;
 // width / height

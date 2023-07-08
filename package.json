@@ -13,7 +13,7 @@
   "exports": {
     "./classroom": "./lib/classroom.widget.js",
     "./onlineclass": "./lib/onlineclass.widget.js",
-    "./proctor": "./lib/classroom.widget.js"
+    "./proctor": "./lib/proctor.widget.js"
   },
   "typesVersions": {
     "*": {

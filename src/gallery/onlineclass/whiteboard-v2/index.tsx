@@ -2,7 +2,6 @@ import {
   AgoraUiCapable,
   AgoraOnlineclassSDKWidgetBase,
   AgoraWidgetLifecycle,
-  AgoraUiCapableConfirmDialogProps,
   AgoraOnlineclassSDKDialogWidget,
 } from 'agora-common-libs';
 import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum } from 'agora-edu-core';
@@ -31,7 +30,6 @@ import { downloadCanvasImage } from '../../../common/whiteboard-wrapper/utils';
 import {
   BoardUIContext,
   BoardUIContextValue,
-  DraggableHandler,
   ScenePaginationUIContext,
   ScenePaginationUIContextValue,
   ToolbarUIContext,
@@ -221,6 +219,15 @@ export class FcrBoardWidget
         onMessage: () => {
           setTimeout(this.onViewportBoundaryUpdate);
           setTimeout(this._repositionToolbar);
+        },
+      },
+      {
+        messageType: AgoraExtensionRoomEvent.WidgetDialogBoundariesChanged,
+        onMessage: ({ widgetId }: { widgetId: string }) => {
+          if (widgetId === this.widgetId) {
+            setTimeout(this.onViewportBoundaryUpdate);
+            setTimeout(this._repositionToolbar);
+          }
         },
       },
     ];

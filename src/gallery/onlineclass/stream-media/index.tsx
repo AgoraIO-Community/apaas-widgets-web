@@ -5,17 +5,15 @@ import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
 import { bound } from 'agora-rte-sdk';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
-import { AgoraOnlineclassSDKDialogWidget, AgoraWidgetTrackMode } from 'agora-common-libs';
+import {
+  AgoraOnlineclassSDKDialogWidget,
+  AgoraOnlineclassSDKWidgetBase,
+  AgoraWidgetTrackMode,
+} from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 
-const defaultPos = { xaxis: 0.5, yaxis: 0.5 };
-const defaultSize = {
-  width: 0.54,
-  height: 0.71,
-};
-
 export class FcrStreamMediaPlayerWidget
-  extends AgoraEduToolWidget
+  extends AgoraOnlineclassSDKWidgetBase
   implements AgoraOnlineclassSDKDialogWidget
 {
   private static _installationDisposer?: CallableFunction;
@@ -41,6 +39,9 @@ export class FcrStreamMediaPlayerWidget
     const { role } = this.classroomConfig.sessionInfo;
     return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) || this._privilege;
   }
+  get displayName() {
+    return this.webviewTitle;
+  }
   closeable = true;
   minimizable = true;
   fullscreenable = true;
@@ -49,8 +50,9 @@ export class FcrStreamMediaPlayerWidget
   defaultHeight = 600;
   minimizeProperties = {
     minimizedIcon: SvgIconEnum.FCR_FILE_ALF,
-    minimizedKey: 'alf',
+    minimizedKey: 'Online Course',
     minimizedCollapsed: true,
+    minimizedCollapsedIcon: SvgIconEnum.FCR_ALF2,
   };
   get resizable(): boolean {
     return true;
@@ -101,15 +103,12 @@ export class FcrStreamMediaPlayerWidget
       // 打开远端
       controller.setWidegtActive(widgetId, {
         extra,
-        position: defaultPos,
-        size: defaultSize,
       });
       // 打开本地
       controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeActive, {
         widgetId,
         defaults: {
           properties: { extra },
-          trackProperties: { position: defaultPos, size: defaultSize },
         },
       });
     };
@@ -165,31 +164,6 @@ export class FcrStreamMediaPlayerWidget
     const { userUuid } = this.classroomConfig.sessionInfo;
 
     this._privilege = grantedUsers.has(userUuid);
-
-    this.fireControlStateChanged();
-  }
-
-  @bound
-  handleFullScreen() {
-    if (this.track.isCovered) {
-      this.trackController?.updateRemoteTrack(
-        true,
-        { x: defaultPos.xaxis, y: defaultPos.yaxis },
-        {
-          width: defaultSize.width,
-          height: defaultSize.height,
-        },
-      );
-    } else {
-      this.trackController?.updateRemoteTrack(
-        true,
-        { x: 0, y: 0 },
-        {
-          width: 1,
-          height: 1,
-        },
-      );
-    }
   }
 
   render(dom: HTMLElement) {
