@@ -85,7 +85,7 @@ export const useVisibleTools = () => {
       renderItem: () => (
         <ToolbarItem
           tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip="Laser Pen"
+          tooltip="Laser Pointer "
           icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
           onClick={handleToolChange(FcrBoardTool.LaserPointer)}
           isActive={currentTool === FcrBoardTool.LaserPointer}
