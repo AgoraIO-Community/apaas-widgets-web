@@ -480,15 +480,6 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                   'fcr-bg-3-a70': actionVisible,
                 })}>
                 <div>
-                  {!isSelfMessage && (
-                    <Button
-                      onClick={() => {
-                        setPrivateUser(currUser);
-                      }}
-                      size="XXS">
-                      Chat
-                    </Button>
-                  )}
                   {isHost ? (
                     isUserMuted ? (
                       <Button
@@ -519,7 +510,11 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
       )}
 
       <div className="fcr-chat-message-list-item-right">
-        <div className="fcr-chat-message-list-item-extra">
+        <div
+          className={classnames('fcr-chat-message-list-item-extra', {
+            'fcr-chat-message-list-item-extra-private':
+              checkIsPrivateMessage(lastMessage) && isMessageFromHost,
+          })}>
           {isMessageFromHost && showAvatarAndHost && (
             <div className="fcr-chat-message-list-item-host">Host</div>
           )}
@@ -527,7 +522,17 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           <div
             className="fcr-chat-message-list-item-name"
             style={isSelfMessage ? {} : { color: getNameColor(lastMessage.ext?.nickName || '') }}>
-            {lastMessage.ext?.nickName}
+            {!isSelfMessage && currUser ? (
+              <Popover
+                trigger="click"
+                placement="bottomLeft"
+                overlayClassName="fcr-nickname-popover"
+                content={<PrivateChatMenu user={currUser} />}>
+                <span>{lastMessage.ext?.nickName}</span>
+              </Popover>
+            ) : (
+              lastMessage.ext?.nickName
+            )}
           </div>
           {isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
@@ -542,7 +547,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           )}
           {messages[0]?.ts && (
             <div className="fcr-chat-message-list-item-time">
-              {dayjs(messages[0].ts).format('M-D HH:mm')}
+              {dayjs(messages[0].ts).format('HH:mm')}
             </div>
           )}
         </div>
@@ -565,6 +570,22 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
     </div>
   );
 });
+const PrivateChatMenu = observer(
+  (props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> | undefined }) => {
+    const {
+      userStore: { setPrivateUser },
+    } = useStore();
+
+    const handleUploadClick = () => {
+      props.user && setPrivateUser(props.user);
+    };
+    return (
+      <span onClick={handleUploadClick} className="fcr-private-chat-item">
+        Private Chat
+      </span>
+    );
+  },
+);
 const AnnounceMent = observer(() => {
   const {
     widget,
@@ -638,12 +659,20 @@ const PrivateChat = observer(() => {
   return (
     <div className="fcr-private-chat">
       <span>send to:</span>
-      <Popover trigger="click" content={<ChatList />} onVisibleChange={() => setSearchKey('')}>
-        <span className="fcr-private-base-icon fcr-private-name">
+      <Popover
+        overlayClassName="fcr-private-chat-popover"
+        trigger="click"
+        content={<ChatList />}
+        onVisibleChange={() => setSearchKey('')}>
+        <span
+          className={classnames('fcr-private-base-icon fcr-private-name', {
+            'fcr-private-name-active': !!privateUser,
+          })}>
           {privateUser ? privateUser.nickName : 'all'}
           <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={12} />
         </span>
       </Popover>
+      {!!privateUser && <span className="fcr-private-tag">Private</span>}
     </div>
   );
 });
@@ -729,7 +758,9 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
       })}
       onClick={() => user.userId !== localUserId && setPrivateUser(user)}>
       <div className="fcr-chatroom-member-list-item-info">
-        <Avatar size={24} textSize={12} nickName={user.nickName}></Avatar>
+        <div className="fcr-private-chat-list">
+          <Avatar size={24} textSize={12} nickName={user.nickName}></Avatar>
+        </div>
 
         <div className="fcr-chatroom-member-list-item-name">{user.nickName}</div>
       </div>
@@ -838,7 +869,11 @@ const ChatEmoji = () => {
 const ChatMore = () => {
   return (
     <span className="fcr-private-base-icon fcr-private-action-icon">
-      <Popover trigger="click" placement="top" content={<ChatMoreOptions />}>
+      <Popover
+        trigger="click"
+        placement="topRight"
+        overlayClassName="fcr-chat-setting-more"
+        content={<ChatMoreOptions />}>
         <SvgImg type={SvgIconEnum.FCR_MOBILE_MORE} size={24} />
       </Popover>
     </span>
@@ -858,7 +893,7 @@ const ChatMoreOptions = () => {
     );
   };
   return (
-    <div>
+    <>
       <div className="fcr-chat-setting-title">Chat setting</div>
       <div className="fcr-chat-setting-content">
         {isHost && (
@@ -873,7 +908,7 @@ const ChatMoreOptions = () => {
           <AnnouncementTrigger />
         </div>
       </div>
-    </div>
+    </>
   );
 };
 

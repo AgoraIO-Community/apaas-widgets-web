@@ -280,7 +280,9 @@
   padding-bottom: 5px;
   gap: 9px;
 }
-
+.fcr-chat-message-list-item-extra-private {
+  gap: 4px;
+}
 .fcr-chat-message-list-item-name {
   @apply fcr-text-1 fcr-font-medium;
   font-size: 12px;
@@ -288,6 +290,12 @@
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.fcr-chat-message-list-item-placement-left .fcr-chat-message-list-item-name {
+  @apply fcr-cursor-pointer;
+}
+.fcr-chat-message-list-item-placement-left .fcr-chat-message-list-item-name-private {
+  width: 32px;
 }
 .fcr-chat-message-list-item-time {
   @apply fcr-text-2;
@@ -399,21 +407,40 @@
   font-weight: 300;
   font-size: 12px;
 }
+.fcr-private-chat .fcr-private-tag {
+  @apply fcr-text-yellow fcr-text-xs;
+}
+
+.fcr-private-chat-popover .fcr-tooltip-inner {
+  width: 210px !important;
+  height: 177px !important;
+}
 .fcr-private-base-icon {
   @apply fcr-cursor-pointer fcr-flex fcr-justify-center fcr-items-center fcr-bg-block-2;
   min-width: 24px;
   min-height: 24px;
+  margin: 0 1px;
+  border-radius: 6px;
   border-radius: 4px;
   padding: 4px;
   box-sizing: border-box;
   position: relative;
   overflow: hidden;
 }
+.fcr-private-base-icon:hover {
+  @apply fcr-bg-brand-6;
+}
 .fcr-private-action-icon {
   padding: 0;
 }
+.fcr-private-name-active {
+  @apply fcr-bg-brand-6;
+}
 .fcr-private-name {
   @apply fcr-overflow-hidden fcr-whitespace-nowrap;
+}
+.fcr-private-name:hover {
+  @apply fcr-bg-brand-6;
 }
 .fcr-private-chatList {
   @apply fcr-flex fcr-flex-col;
@@ -448,16 +475,26 @@
   flex-shrink: 0;
   font-weight: 600;
 }
+.fcr-chat-setting-more .fcr-tooltip-inner {
+  @apply fcr-box-border fcr-flex fcr-flex-col;
+  width: 175px !important;
+}
 .fcr-chat-setting-title {
   @apply fcr-text-1;
   padding: 10px;
+  padding-left: 18px;
+
   padding-bottom: 0;
   font-weight: 300;
   font-size: 12px;
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 12px;
+  color: rgba(255, 255, 255, 0.8);
 }
 .fcr-chat-setting-content {
-  @apply fcr-flex fcr-flex-col;
-  padding: 0 10px;
+  @apply fcr-flex fcr-flex-col fcr-justify-center fcr-flex-1;
+  padding: 4px 18px;
 }
 .fcr-emoji-content {
   display: grid;
@@ -502,7 +539,7 @@
 }
 .customize-file-sender-popover .fcr-tooltip-inner {
   width: fit-content !important;
-  padding: 12px;
+  padding: 6px !important;
 }
 .fcr-private-file-icon {
   @apply fcr-flex fcr-justify-center fcr-items-center;
@@ -520,5 +557,23 @@
   border-radius: 6px;
 }
 .fcr-files-container span:hover {
+  @apply fcr-bg-brand-6;
+}
+.fcr-private-chat-list .fcr-avatar {
+  background: rgba(245, 101, 92, 1) !important;
+}
+.fcr-nickname-popover .fcr-tooltip-inner {
+  width: fit-content !important;
+  padding: 6px !important;
+}
+.fcr-private-chat-item {
+  @apply fcr-text-2 fcr-text-xs fcr-inline-block fcr-cursor-pointer;
+  width: 100px;
+  padding-left: 8px;
+  height: 32px;
+  line-height: 32px;
+  border-radius: 6px;
+}
+.fcr-private-chat-item:hover {
   @apply fcr-bg-brand-6;
 }
