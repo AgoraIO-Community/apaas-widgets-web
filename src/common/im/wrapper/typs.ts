@@ -29,7 +29,7 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract setSelfUserInfo(userInfo: AgoraIMUserInfo): Promise<AgoraIMUserInfo>;
   abstract createTextMessage(msg: string, receiverList?: AgoraIMUserInfo[]): AgoraIMTextMessage;
   abstract createImageMessage(
-    params: Partial<AgoraIMImageMessage>,
+    params: Exclude<Partial<AgoraIMImageMessage>, 'receiverList'>,
     receiverList?: AgoraIMUserInfo[],
   ): Promise<AgoraIMImageMessage>;
   abstract createCustomMessage(

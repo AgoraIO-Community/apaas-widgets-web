@@ -1,11 +1,13 @@
-import { useContext } from 'react';
+import { useContext, useEffect } from 'react';
 import './style.css';
 import { Toolbar } from './toolbar';
 import { ScenePagination } from './scene-pagination';
 import { BoardUIContext } from './ui-context';
 import { observer } from 'mobx-react';
+import { addResource } from './i18n/config';
 
 export const App = observer(() => {
+  useEffect(addResource, []);
   const {
     observables: { canOperate },
     handleDragOver,

@@ -6,7 +6,7 @@ import { reaction } from 'mobx';
 
 export class PlayerSync {
   private _player: Plyr | null = null;
-  private _isBuffering: boolean = false;
+  private _isBuffering = false;
   private _disposer: (() => void) | null = null;
   constructor(private _widget: FcrStreamMediaPlayerWidget) {}
   get isOwner() {

@@ -117,7 +117,8 @@ export class MessageStore {
           const prevMsg = lastItem[lastItem.length - 1];
           if (
             prevMsg.from === msg.from &&
-            ((prevMsg.ext?.receiverList?.join('') === msg.ext?.receiverList?.join('') &&
+            ((prevMsg.ext?.receiverList?.map((u) => u.userId).join('') ===
+              msg.ext?.receiverList?.map((u) => u.userId).join('') &&
               this.checkIsPrivateMessage(prevMsg) &&
               this.checkIsPrivateMessage(msg)) ||
               (!this.checkIsPrivateMessage(prevMsg) && !this.checkIsPrivateMessage(msg)))
@@ -293,10 +294,12 @@ export class MessageStore {
   }
   @bound
   async sendImageMessage(file: File, receiverList?: AgoraIMUserInfo[]) {
-    const message = await this._fcrChatRoom.createImageMessage({
-      file,
+    const message = await this._fcrChatRoom.createImageMessage(
+      {
+        file,
+      },
       receiverList,
-    });
+    );
     await this._fcrChatRoom.sendMessage(message);
     runInAction(() => {
       message.from = this._fcrChatRoom.userInfo?.userId;

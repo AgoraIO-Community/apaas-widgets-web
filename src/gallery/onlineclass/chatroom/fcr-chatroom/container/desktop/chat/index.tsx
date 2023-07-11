@@ -427,7 +427,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
     fcrChatRoom,
     roomStore: { isHost },
     messageStore: { checkIsPrivateMessage },
-    userStore: { muteList, userList, setPrivateUser },
+    userStore: { muteList, userList },
   } = useStore();
   const { muteUser, unmuteUser } = useMute();
   const lastMessage = messages[messages.length - 1];
@@ -473,15 +473,15 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             )}
 
             <>
-              <div
-                className={classnames('fcr-chat-message-list-item-avatar-action', {
-                  'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
-                  'fcr-bg-transparent': !actionVisible,
-                  'fcr-bg-3-a70': actionVisible,
-                })}>
-                <div>
-                  {isHost ? (
-                    isUserMuted ? (
+              {isHost && (
+                <div
+                  className={classnames('fcr-chat-message-list-item-avatar-action', {
+                    'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
+                    'fcr-bg-transparent': !actionVisible,
+                    'fcr-bg-3-a70': actionVisible,
+                  })}>
+                  <div>
+                    {isUserMuted ? (
                       <Button
                         styleType="danger"
                         size="XXS"
@@ -498,12 +498,10 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                         size="XXS">
                         Mute
                       </Button>
-                    )
-                  ) : (
-                    <></>
-                  )}
+                    )}
+                  </div>
                 </div>
-              </div>
+              )}
             </>
           </div>
         </div>
@@ -742,7 +740,6 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
   const {
     fcrChatRoom,
     userStore: { privateUser, setPrivateUser },
-    roomStore: { isHost },
   } = useStore();
 
   const localUserId = fcrChatRoom.userInfo?.userId || '';
@@ -912,14 +909,18 @@ const ChatMoreOptions = () => {
   );
 };
 
-const MessageImageItem = (props: { message: AgoraIMImageMessage }) => {
+const MessageImageItem = observer((props: { message: AgoraIMImageMessage }) => {
   const imgRef = useRef<HTMLImageElement>(null);
   const imageMessage = props.message;
   const imageUrl =
     imageMessage.url || (imageMessage.file ? URL.createObjectURL(imageMessage.file) : '');
+  const {
+    messageStore: { reRenderMessageList },
+  } = useStore();
   useEffect(() => {
     if (imgRef.current) {
-      const viewer = new Viewer(imgRef.current, {
+      imgRef.current.onload = reRenderMessageList;
+      new Viewer(imgRef.current, {
         toolbar: false,
         title: false,
         navbar: false,
@@ -935,4 +936,4 @@ const MessageImageItem = (props: { message: AgoraIMImageMessage }) => {
       </div>
     </>
   );
-};
+});

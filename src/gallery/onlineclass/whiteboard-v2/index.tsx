@@ -117,7 +117,9 @@ export class FcrBoardWidget
   get widgetName() {
     return 'netlessBoard';
   }
-
+  get displayName() {
+    return 'whiteboard';
+  }
   unload() {
     if (this._outerDom) {
       ReactDOM.unmountComponentAtNode(this._outerDom);

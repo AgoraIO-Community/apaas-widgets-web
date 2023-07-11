@@ -69,6 +69,21 @@ export class FcrChatRoomStore {
     if (connectionState === AgoraIMConnectionState.DisConnected) {
       Logger.error('[FcrChatRoom] connection disConnected');
     }
+    if (connectionState === AgoraIMConnectionState.Connected) {
+      this.roomStore.getChatRoomDetails().then((details) => {
+        const { affiliations } = details;
+        this.userStore.updateUsers(
+          affiliations
+            .filter((item) => !!item.member)
+            .map((item) => {
+              return item.member!;
+            }),
+        );
+      });
+      if (this.roomStore.isHost) this.userStore.getMutedUserList();
+      this.messageStore.getHistoryMessageList();
+      this.messageStore.getAnnouncement();
+    }
   }
   @bound
   private async _joinChatRoom() {
@@ -95,22 +110,8 @@ export class FcrChatRoomStore {
     );
 
     if (error) {
-      console.error(error);
-      // return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
+      Logger.error('[FcrChatRoom] join chat room failed', error);
     }
-    this.roomStore.getChatRoomDetails().then((details) => {
-      const { affiliations } = details;
-      this.userStore.updateUsers(
-        affiliations
-          .filter((item) => !!item.member)
-          .map((item) => {
-            return item.member!;
-          }),
-      );
-    });
-    if (this.roomStore.isHost) this.userStore.getMutedUserList();
-    this.messageStore.getHistoryMessageList();
-    this.messageStore.getAnnouncement();
   }
   destroy() {
     this._removeListeners();
