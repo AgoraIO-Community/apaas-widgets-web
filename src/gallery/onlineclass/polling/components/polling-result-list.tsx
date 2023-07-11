@@ -70,7 +70,9 @@ const PollingResultList: React.FC = observer(() => {
               })}
             />
             <div className="fcr-polling-result-progress-text">
-              <div>{item.content}</div>
+              <div>
+                <pre>{item.content}</pre>
+              </div>
               {showPercent && (
                 <>
                   <div className="fcr-polling-result-count">{item.selectCount}</div>
