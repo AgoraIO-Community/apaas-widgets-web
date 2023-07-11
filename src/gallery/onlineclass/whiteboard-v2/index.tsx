@@ -517,7 +517,8 @@ export class FcrBoardWidget
   }
 
   private _deliverWindowEvents(mainWindow: FcrBoardMainWindow) {
-    mainWindow.on(FcrBoardMainWindowEvent.MountSuccess, () => {
+    mainWindow.on(FcrBoardMainWindowEvent.MountSuccess, async () => {
+      await mainWindow.updateOperationPrivilege(this.hasPrivilege);
       this._resetToolIfNeed();
       if (this._boardMainWindow) {
         this._boardMainWindow.emitPageInfo();
