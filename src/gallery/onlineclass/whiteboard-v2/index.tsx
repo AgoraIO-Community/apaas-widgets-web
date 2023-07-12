@@ -212,6 +212,27 @@ export class FcrBoardWidget
                 this._setDomVisibility(minimized);
                 this._boardContext.observables.minimized = minimized;
               }
+              if (!minimized) {
+                setTimeout(() => {
+                  if (this._boardDom && this._boardMainWindow) {
+                    const aspectRatio = this._boardDom.clientHeight / this._boardDom.clientWidth;
+                    this._mounted = true;
+                    this._boardMainWindow
+                      .mount(this._boardDom, {
+                        containerSizeRatio: aspectRatio,
+                        collectorContainer: this._collectorDom ?? undefined,
+                      })
+                      .catch(() => {
+                        this._mounted = false;
+                      });
+                  }
+                }, 300);
+              } else {
+                if (this._boardMainWindow) {
+                  this._boardMainWindow.destroy();
+                }
+                this._mounted = false;
+              }
             });
           }
         },

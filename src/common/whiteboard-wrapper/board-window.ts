@@ -90,6 +90,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     this._whiteView = view;
     this.preCheck({ wm: false });
     if (this._whiteRoom) {
+      this._destroyed = false;
       await WindowManager.mount({
         room: this._whiteRoom,
         container: view,
@@ -123,9 +124,6 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   @Log.silence
   private preCheck(options: { privilege?: boolean; wm?: boolean } = {}) {
     const { privilege = true, wm = true } = options;
-    if (this._destroyed) {
-      throw Error('The WindowManger instance has been destoryed, cannot operate on it');
-    }
     if (privilege && !this._hasOperationPrivilege) {
       this.logger.warn('Try to operate on board window without operation privilege');
     }
