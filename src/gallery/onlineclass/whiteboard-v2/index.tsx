@@ -981,7 +981,7 @@ export class FcrBoardWidget
   }
 
   private _resetToolIfNeed() {
-    if (this.hasPrivilege && this._mounted) {
+    if (this.hasPrivilege && this._boardMainWindow?.mounted) {
       const { strokeColor, strokeWidth, tool } = this._defaultBoardState;
       this._toolbarContext?.setStrokeColor(strokeColor);
       this._toolbarContext?.setStrokeWidth(strokeWidth);

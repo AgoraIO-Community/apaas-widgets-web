@@ -86,6 +86,10 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     });
   }
 
+  get mounted() {
+    return !!this._windowManager;
+  }
+
   async mount(view: HTMLElement, options: MountOptions) {
     this._whiteView = view;
     this.preCheck({ wm: false });

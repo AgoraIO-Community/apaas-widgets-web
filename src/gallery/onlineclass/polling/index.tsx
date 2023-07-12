@@ -213,7 +213,7 @@ export class FcrPollingWidget
       }),
 
       create: async () => {
-        const { roomUuid } = this.classroomConfig.sessionInfo;
+        const roomUuid = this.classroomStore.connectionStore.sceneId;
 
         context.setActionLoading(true);
         try {
@@ -241,7 +241,8 @@ export class FcrPollingWidget
         }
       },
       submit: async () => {
-        const { roomUuid, userUuid } = this.classroomConfig.sessionInfo;
+        const roomUuid = this.classroomStore.connectionStore.sceneId;
+        const { userUuid } = this.classroomConfig.sessionInfo;
 
         context.setActionLoading(true);
         try {
@@ -255,7 +256,7 @@ export class FcrPollingWidget
         }
       },
       end: () => {
-        const { roomUuid } = this.classroomConfig.sessionInfo;
+        const roomUuid = this.classroomStore.connectionStore.sceneId;
 
         try {
           this.classroomStore.api.stopPolling(roomUuid, `${this._pollId}`);
