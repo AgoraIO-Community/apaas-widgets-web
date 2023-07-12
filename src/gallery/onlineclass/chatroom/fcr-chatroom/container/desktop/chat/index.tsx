@@ -534,13 +534,13 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           </div>
           {isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
-              i said to {lastMessage.ext?.receiverList?.[0].nickName}(
-              <span className="fcr-text-yellow">Private</span>)
+              I said to {lastMessage.ext?.receiverList?.[0].nickName}
+              <span className="fcr-text-yellow">(Private)</span>
             </div>
           )}
           {!isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
-              said to me(<span className="fcr-text-yellow">Private</span>)
+              said to me<span className="fcr-text-yellow">(Private)</span>
             </div>
           )}
           {messages[0]?.ts && (
@@ -656,7 +656,7 @@ const PrivateChat = observer(() => {
   } = useStore();
   return (
     <div className="fcr-private-chat">
-      <span>send to:</span>
+      <span>Send to:</span>
       <Popover
         overlayClassName="fcr-private-chat-popover"
         trigger="click"
@@ -667,7 +667,7 @@ const PrivateChat = observer(() => {
             'fcr-private-name-active': !!privateUser,
           })}>
           {privateUser ? privateUser.nickName : 'all'}
-          <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={12} />
+          <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
         </span>
       </Popover>
       {!!privateUser && <span className="fcr-private-tag">Private</span>}
@@ -677,6 +677,8 @@ const PrivateChat = observer(() => {
 
 const UserList = observer(() => {
   const {
+    fcrChatRoom,
+
     userStore: { searchKey, searchUserList },
   } = useStore();
 
@@ -684,15 +686,17 @@ const UserList = observer(() => {
     <div className="fcr-chatroom-member-list-wrap fcr-chatroom-member-private-list-wrap">
       <div>
         {searchUserList.length === 0 && (
-          <div className="fcr-chatroom-member-list-placeholder">
-            <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={80}></SvgImg>
+          <div className="fcr-chatroom-member-list-empty-placeholder">
+            <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={60}></SvgImg>
             <span>No Data</span>
           </div>
         )}
         {!searchKey && !!searchUserList.length && <AllUserItem />}
-        {searchUserList.map((user) => (
-          <UserItem key={user.userId} user={user}></UserItem>
-        ))}
+        {searchUserList
+          .filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
+          .map((user) => (
+            <UserItem key={user.userId} user={user}></UserItem>
+          ))}
       </div>
     </div>
   );

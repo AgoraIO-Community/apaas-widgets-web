@@ -41,18 +41,15 @@
   display: flex;
   align-items: center;
 }
-.fcr-chat-input-actions-mute-all {
-  margin-right: -10px;
-}
+
 .fcr-chat-input-actions-options span,
 .fcr-chat-input-actions-mute-all span {
-  padding-right: 9px;
   font-size: 12px;
   user-select: none;
-  font-weight: 300;
+  font-weight: 400;
 }
 .fcr-chat-input-actions-mute-all .fcr-switch {
-  transform-origin: 0;
+  transform-origin: right;
 }
 .fcr-chat-input-actions-item {
   @apply fcr-bg-2 fcr-rounded-6;
@@ -214,6 +211,23 @@
   margin: auto;
   pointer-events: none;
 }
+.fcr-chatroom-member-list-empty-placeholder svg {
+  width: 110px;
+}
+.fcr-chatroom-member-list-empty-placeholder {
+  @apply fcr-text-2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 12px;
+  margin: auto;
+  pointer-events: none;
+}
+.fcr-chatroom-member-list-empty-placeholder span {
+  position: relative;
+  top: -10px;
+}
 .fcr-chat-message-list-placeholder span {
   position: relative;
   padding-top: -30px;
@@ -350,7 +364,6 @@
 }
 .fcr-chat-message-list-item-placement-right .fcr-chat-message-list-item-extra {
   display: flex;
-  flex-direction: row-reverse;
 }
 
 .fcr-chat-message-list-item-custom {
@@ -438,6 +451,7 @@
 }
 .fcr-private-name {
   @apply fcr-overflow-hidden fcr-whitespace-nowrap;
+  margin-left: 6px;
 }
 .fcr-private-name:hover {
   @apply fcr-bg-brand-6;
@@ -446,6 +460,7 @@
   @apply fcr-flex fcr-flex-col;
   height: 178px;
   overflow: hidden;
+  padding-right: 3px;
 }
 .fcr-private-chatList .fcr-chatroom-member-private-list-wrap {
   @apply fcr-flex-1;
@@ -494,7 +509,7 @@
 }
 .fcr-chat-setting-content {
   @apply fcr-flex fcr-flex-col fcr-justify-center fcr-flex-1;
-  padding: 4px 18px;
+  padding: 4px 16px;
 }
 .fcr-emoji-content {
   display: grid;
