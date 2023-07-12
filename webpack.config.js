@@ -4,28 +4,36 @@ const baseConfig = require('agora-common-libs/presets/webpack.config.base.js');
 const packConfig = require('agora-common-libs/presets/webpack.config.pack.js');
 const webpack = require('webpack');
 const ROOT_PATH = path.resolve(__dirname, './');
-console.log(webpack.version);
+
+const target = process.env.BUNDLE_TARGET || '';
+const entry = {};
+if (target.includes('classroom')) {
+  entry.classroom = {
+    import: './src/classroom.tsx',
+    chunkLoading: false,
+  };
+}
+if (target.includes('proctor')) {
+  entry.proctor = {
+    import: './src/proctor.tsx',
+    chunkLoading: false,
+  };
+}
+if (target.includes('onlineclass')) {
+  entry.onlineclass = {
+    import: './src/onlineclass.tsx',
+    chunkLoading: false,
+  };
+}
+
 const config = {
-  entry: {
-    onlineclass: {
-      import: './src/onlineclass.tsx',
-      chunkLoading: false,
-    },
-    classroom: {
-      import: './src/classroom.tsx',
-      chunkLoading: false,
-    },
-    proctor: {
-      import: './src/proctor.tsx',
-      chunkLoading: false,
-    },
-  },
+  entry: entry,
   output: {
     path: path.resolve(ROOT_PATH, 'lib'),
     publicPath: './',
     filename: '[name].widget.js',
     libraryTarget: 'umd',
-    clean: true,
+    // clean: true,
     chunkLoading: false,
   },
   optimization: {

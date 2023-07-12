@@ -32,8 +32,10 @@
     "build:types": "tsc -p tsconfig.json",
     "build:docs": "typedoc",
     "pack:npm": "run-s bundle:npm build:types",
-    "bundle:npm": "cross-env NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
-    "ci:build": "run-s bundle:npm"
+    "bundle:npm:classroom": "cross-env BUNDLE_TARGET=classroom NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
+    "bundle:npm:proctor": "cross-env BUNDLE_TARGET=proctor NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
+    "bundle:npm:onlineclass": "cross-env BUNDLE_TARGET=onlineclass NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
+    "ci:build": "run-s bundle:npm:classroom bundle:npm:proctor bundle:npm:onlineclass"
   },
   "dependencies": {
     "@netless/app-slide": "0.2.27",
