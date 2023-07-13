@@ -30,9 +30,14 @@
   padding-left: 10px;
   padding-top: 5px;
   padding-bottom: 5px;
+  justify-content: space-between;
+  overflow: hidden;
 }
 .fcr-chat-input-actions-functions {
-  @apply fcr-flex fcr-flex-1 fcr-gap-1 fcr-justify-end fcr-items-center;
+  @apply fcr-flex fcr-gap-1 fcr-justify-end fcr-items-center;
+  overflow: hidden;
+  flex-shrink: 0;
+  width: 110px;
 }
 .fcr-chat-input-actions-options,
 .fcr-chat-input-actions-mute-all {
@@ -419,9 +424,15 @@
   @apply fcr-text-1 fcr-flex fcr-justify-center fcr-items-center;
   font-weight: 300;
   font-size: 12px;
+  overflow: hidden;
+}
+.fcr-private-chat-label {
+  width: 45px;
 }
 .fcr-private-chat .fcr-private-tag {
   @apply fcr-text-yellow fcr-text-xs;
+  width: 36px;
+  margin-left: 4px;
 }
 
 .fcr-private-chat-popover .fcr-tooltip-inner {
@@ -452,9 +463,20 @@
 .fcr-private-name {
   @apply fcr-overflow-hidden fcr-whitespace-nowrap;
   margin-left: 6px;
+  flex: 1;
+  display: flex;
+}
+.fcr-private-name span {
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 .fcr-private-name:hover {
   @apply fcr-bg-brand-6;
+}
+.fcr-private-name svg {
+  flex-shrink: 0;
 }
 .fcr-private-chatList {
   @apply fcr-flex fcr-flex-col;

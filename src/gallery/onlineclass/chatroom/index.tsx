@@ -19,8 +19,8 @@ export class AgoraHXChatWidget
   }
   onInstall(controller: AgoraWidgetController): void {}
   dragHandleClassName = 'fcr-chatroom-dialog-title';
-  private _width = 270;
-  private _height = 500;
+  private _width = 350;
+  private _height = 600;
   get defaultRect() {
     const clientRect = document.body.getBoundingClientRect();
     return {

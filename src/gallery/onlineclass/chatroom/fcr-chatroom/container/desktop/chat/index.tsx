@@ -99,9 +99,8 @@ const ChatInput = observer(() => {
     <div className="fcr-chat-input-container">
       <div className="fcr-chat-input-wrap">
         <div className="fcr-chat-input-actions">
-          <div className="fcr-chat-input-actions-label">
-            <PrivateChat />
-          </div>
+          <PrivateChat />
+
           <div className="fcr-chat-input-actions-functions">
             <FileSender />
             <ChatEmoji />
@@ -112,17 +111,17 @@ const ChatInput = observer(() => {
           className={classnames('fcr-chat-input', {
             'fcr-chat-input-focus': inputFocus,
           })}>
-          <SvgImg
+          {/* <SvgImg
             className={classnames('fcr-chat-input-send', {
               'fcr-chat-input-send-disabled': sendDisabled,
             })}
             onClick={send}
             type={SvgIconEnum.FCR_SEND}
-            size={32}></SvgImg>
+            size={32}></SvgImg> */}
           <TextArea
             ref={textAreaRef}
             onKeyDown={handleKeyDown}
-            autoSize
+            autoSize={{ minHeight: 72 }}
             maxCount={150}
             onFocusChange={setInputFocus}
             resizable={false}
@@ -538,12 +537,12 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           {isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
               I said to {lastMessage.ext?.receiverList?.[0].nickName}
-              <span className="fcr-text-yellow">(Private)</span>
+              <span className="fcr-text-yellow">&nbsp;(Private)</span>
             </div>
           )}
           {!isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
-              said to me<span className="fcr-text-yellow">(Private)</span>
+              said to me<span className="fcr-text-yellow">&nbsp;(Private)</span>
             </div>
           )}
           {messages[0]?.ts && (
@@ -657,19 +656,28 @@ const PrivateChat = observer(() => {
   const {
     userStore: { privateUser, setSearchKey },
   } = useStore();
+  const [popoverVisible, setPopoverVisible] = useState(false);
+  useEffect(() => {
+    setPopoverVisible(false);
+  }, [privateUser]);
   return (
-    <div className="fcr-private-chat">
-      <span>Send to:</span>
+    <div className="fcr-private-chat fcr-chat-input-actions-label">
+      <span className="fcr-private-chat-label">Send to:</span>
       <Popover
+        visible={popoverVisible}
         overlayClassName="fcr-private-chat-popover"
         trigger="click"
         content={<ChatList />}
-        onVisibleChange={() => setSearchKey('')}>
+        onVisibleChange={(visible) => {
+          setPopoverVisible(visible);
+          setSearchKey('');
+        }}>
         <span
           className={classnames('fcr-private-base-icon fcr-private-name', {
             'fcr-private-name-active': !!privateUser,
           })}>
-          {privateUser ? privateUser.nickName : 'all'}
+          <span>{privateUser ? privateUser.nickName : 'all'}</span>
+
           <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
         </span>
       </Popover>
@@ -681,7 +689,6 @@ const PrivateChat = observer(() => {
 const UserList = observer(() => {
   const {
     fcrChatRoom,
-
     userStore: { searchKey, searchUserList },
   } = useStore();
 
