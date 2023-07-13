@@ -309,7 +309,6 @@
   @apply fcr-rounded-10 fcr-shadow-dialog;
   display: flex !important;
   flex-direction: column;
-  backdrop-filter: blur(25px);
   overflow: hidden;
   height: 100%;
 }

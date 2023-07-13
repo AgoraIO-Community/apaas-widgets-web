@@ -44,41 +44,44 @@ const FcrChatroomDialog = observer(() => {
       setToastInstance(null);
     }
   }, [chatDialogVisible]);
-  return (
-    <FcrChatroomToastContext.Provider value={toastInstance}>
-      <div className="fcr-chatroom-dialog-wrapper">
-        <div
-          ref={dialogContentRef}
-          style={{ width: widget.defaultRect.width, height: widget.defaultRect.height }}
-          className="fcr-chatroom-dialog-content">
-          <div className="fcr-chatroom-dialog-title">
+  return chatDialogVisible
+    ? createPortal(
+        <FcrChatroomToastContext.Provider value={toastInstance}>
+          <div className="fcr-chatroom-dialog-wrapper">
             <div
-              className="fcr-chatroom-dialog-title-close"
-              onClick={() => setChatDialogVisible(false)}>
-              <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
+              ref={dialogContentRef}
+              style={{ width: widget.defaultRect.width, height: widget.defaultRect.height }}
+              className="fcr-chatroom-dialog-content">
+              <div className="fcr-chatroom-dialog-title">
+                <div
+                  className="fcr-chatroom-dialog-title-close"
+                  onClick={() => setChatDialogVisible(false)}>
+                  <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
+                </div>
+                <Tabs
+                  onChange={(key) => setTab(key as 'chat' | 'member')}
+                  activeKey={currentChatTab}
+                  items={[
+                    {
+                      label: 'Chat',
+                      key: 'chat',
+                    },
+                    {
+                      label: `Member (${userList.length})`,
+                      key: 'member',
+                    },
+                  ]}></Tabs>
+              </div>
+              <div className="fcr-chatroom-dialog-tab-inner">
+                {currentChatTab === 'chat' && <FcrChatContainer></FcrChatContainer>}
+                {currentChatTab === 'member' && <FcrChatMemberContainer></FcrChatMemberContainer>}
+              </div>
             </div>
-            <Tabs
-              onChange={(key) => setTab(key as 'chat' | 'member')}
-              activeKey={currentChatTab}
-              items={[
-                {
-                  label: 'Chat',
-                  key: 'chat',
-                },
-                {
-                  label: `Member (${userList.length})`,
-                  key: 'member',
-                },
-              ]}></Tabs>
           </div>
-          <div className="fcr-chatroom-dialog-tab-inner">
-            {currentChatTab === 'chat' && <FcrChatContainer></FcrChatContainer>}
-            {currentChatTab === 'member' && <FcrChatMemberContainer></FcrChatMemberContainer>}
-          </div>
-        </div>
-      </div>
-    </FcrChatroomToastContext.Provider>
-  );
+        </FcrChatroomToastContext.Provider>,
+        document.querySelector('#fcr-chatroom-dialog-slot') as HTMLElement,
+      )
+    : null;
 });
 
 const FcrChatroomTooltip = observer(() => {

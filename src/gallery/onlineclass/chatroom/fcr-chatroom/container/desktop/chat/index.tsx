@@ -517,21 +517,24 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             <div className="fcr-chat-message-list-item-host">Host</div>
           )}
 
-          <div
-            className="fcr-chat-message-list-item-name"
-            style={isSelfMessage ? {} : { color: getNameColor(lastMessage.ext?.nickName || '') }}>
-            {!isSelfMessage && currUser ? (
-              <Popover
-                trigger="click"
-                placement="bottomLeft"
-                overlayClassName="fcr-nickname-popover"
-                content={<PrivateChatMenu user={currUser} />}>
-                <span>{lastMessage.ext?.nickName}</span>
-              </Popover>
-            ) : (
-              lastMessage.ext?.nickName
-            )}
-          </div>
+          {((checkIsPrivateMessage(lastMessage) && !isSelfMessage) ||
+            !checkIsPrivateMessage(lastMessage)) && (
+            <div
+              className="fcr-chat-message-list-item-name"
+              style={isSelfMessage ? {} : { color: getNameColor(lastMessage.ext?.nickName || '') }}>
+              {!isSelfMessage && currUser ? (
+                <Popover
+                  trigger="click"
+                  placement="bottomLeft"
+                  overlayClassName="fcr-nickname-popover"
+                  content={<PrivateChatMenu user={currUser} />}>
+                  <span>{lastMessage.ext?.nickName}</span>
+                </Popover>
+              ) : (
+                lastMessage.ext?.nickName
+              )}
+            </div>
+          )}
           {isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
               I said to {lastMessage.ext?.receiverList?.[0].nickName}
@@ -794,7 +797,7 @@ const FileSender = () => {
         content={<FileSenderContent />}>
         <span className="fcr-private-file-icon">
           <SvgImg type={SvgIconEnum.FCR_FILE} size={18} />
-          <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={12} />
+          <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
         </span>
       </Popover>
     </span>
@@ -895,7 +898,7 @@ const ChatMoreOptions = () => {
   };
   return (
     <>
-      <div className="fcr-chat-setting-title">Chat setting</div>
+      <div className="fcr-chat-setting-title"> {isHost ? 'Chat setting' : 'More'}</div>
       <div className="fcr-chat-setting-content">
         {isHost && (
           <div className="fcr-chat-input-actions-mute-all">

@@ -23,7 +23,7 @@ export const useScroll = () => {
   }, []);
   useEffect(reRenderMessageList, [messageList.length]);
   useEffect(() => {
-    chatDialogVisible && setTimeout(reRenderMessageList, 500);
+    chatDialogVisible && setTimeout(reRenderMessageList, 600);
   }, [chatDialogVisible]);
   const handleScroll = throttle((scrollParams: ScrollParams) => {
     const { scrollHeight, scrollTop, clientHeight } = scrollParams;

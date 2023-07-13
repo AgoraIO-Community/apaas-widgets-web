@@ -162,7 +162,7 @@ export class UserStore {
     await this._fcrChatRoom.unmuteUserList({ userList });
     runInAction(() => {
       this.muteList = this.muteList.filter((user) => {
-        !userList.includes(user);
+        return !userList.includes(user);
       });
     });
   }

@@ -29,6 +29,7 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
+  flex-shrink: 0;
 }
 .fcr-chatroom-member-list-item-avatar {
   @apply fcr-text-white fcr-font-medium fcr-rounded-full fcr-bg-brand-6;

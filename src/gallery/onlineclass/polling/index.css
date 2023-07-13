@@ -1,6 +1,5 @@
 .fcr-polling-container {
   @apply fcr-bg-2 fcr-rounded-16 fcr-shadow-dialog;
-  backdrop-filter: blur(25px);
   position: relative;
 }
 .fcr-polling-question {

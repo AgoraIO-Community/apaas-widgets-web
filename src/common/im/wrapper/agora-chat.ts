@@ -154,10 +154,19 @@ export class FcrChatRoom extends AgoraIMBase {
     });
   }
   async getUserInfoList(userIdList: string[]): Promise<AgoraIMUserInfo[]> {
-    const { data } = await this.conn.fetchUserInfoById(userIdList);
-    const userList = data || {};
-    return Object.keys(userList).map((userId) => {
-      const user: AgoraChat.UpdateOwnUserInfoParams = userList[userId];
+    const newArr = userIdList.reduce((acc, cur, index) => {
+      const groupIndex = Math.floor(index / 100);
+      if (!acc[groupIndex]) {
+        acc[groupIndex] = [];
+      }
+      acc[groupIndex].push(cur);
+      return acc;
+    }, [] as string[][]);
+    const res = await Promise.all(newArr.map((item) => this.conn.fetchUserInfoById(item)));
+    const newUserList: Record<string, AgoraChat.UpdateOwnUserInfoParams> = {};
+    res.forEach((i) => Object.assign(newUserList, i.data));
+    return Object.keys(newUserList).map((userId) => {
+      const user: AgoraChat.UpdateOwnUserInfoParams = newUserList[userId];
       return {
         userId,
         nickName: user.nickname || '',
@@ -170,7 +179,6 @@ export class FcrChatRoom extends AgoraIMBase {
     userInfo: Partial<Exclude<AgoraIMUserInfo, 'userId'>>,
   ): Promise<AgoraIMUserInfo> {
     this.userInfo = Object.assign(this.userInfo, userInfo);
-
     await this.conn.updateUserInfo({
       nickname: this.userInfo.nickName,
       avatarurl: this.userInfo.avatarUrl,
@@ -332,6 +340,8 @@ export class FcrChatRoom extends AgoraIMBase {
         break;
     }
     if (!newMsg) return Promise.reject();
+    //@ts-ignore
+    newMsg.time = newMsg.ts;
     const res = await this.conn.send(newMsg);
     message.id = res.serverMsgId;
     return message;

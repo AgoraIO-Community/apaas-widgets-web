@@ -13,7 +13,10 @@ export class AgoraHXChatWidget
   private _easemobUserId?: string;
   private _dom?: HTMLElement;
   private _rendered = false;
-
+  slotDom?: HTMLElement;
+  get dialogRenderDom() {
+    return this._dom;
+  }
   onInstall(controller: AgoraWidgetController): void {}
   dragHandleClassName = 'fcr-chatroom-dialog-title';
   private _width = 270;
@@ -117,9 +120,9 @@ export class AgoraHXChatWidget
   }
 
   unload(): void {
-    if (this._dom) {
-      ReactDOM.unmountComponentAtNode(this._dom);
-      this._dom = undefined;
+    if (this.slotDom) {
+      ReactDOM.unmountComponentAtNode(this.slotDom);
+      this.slotDom = undefined;
     }
   }
 

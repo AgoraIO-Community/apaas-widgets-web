@@ -44,9 +44,9 @@
 
 .fcr-chat-input-actions-options span,
 .fcr-chat-input-actions-mute-all span {
-  font-size: 12px;
+  font-size: 13px;
   user-select: none;
-  font-weight: 400;
+  font-weight: 300;
 }
 .fcr-chat-input-actions-mute-all .fcr-switch {
   transform-origin: right;
@@ -497,19 +497,17 @@
 .fcr-chat-setting-title {
   @apply fcr-text-1;
   padding: 10px;
-  padding-left: 18px;
+  padding-left: 14px;
 
-  padding-bottom: 0;
+  padding-bottom: 8px;
   font-weight: 300;
   font-size: 12px;
-  font-weight: 400;
-  font-size: 10px;
   line-height: 12px;
   color: rgba(255, 255, 255, 0.8);
 }
 .fcr-chat-setting-content {
   @apply fcr-flex fcr-flex-col fcr-justify-center fcr-flex-1;
-  padding: 4px 16px;
+  padding: 4px 15px;
 }
 .fcr-emoji-content {
   display: grid;

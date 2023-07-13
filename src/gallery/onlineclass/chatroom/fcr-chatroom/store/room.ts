@@ -18,7 +18,6 @@ export class RoomStore {
   @observable chatDialogVisible = false;
   @action.bound
   setChatDialogVisible(visible: boolean) {
-    this.chatDialogVisible = visible;
     this._widget.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
       widgetId: this._widget.widgetId,
       visible,
@@ -35,7 +34,7 @@ export class RoomStore {
   @action.bound
   private _handleWidgetVisibleChanged(message: { widgetId: string; visible: boolean }) {
     if (message.widgetId === this._widget.widgetId) {
-      this.setChatDialogVisible(message.visible);
+      this.chatDialogVisible = message.visible;
     }
   }
   @observable

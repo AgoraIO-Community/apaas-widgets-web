@@ -18,7 +18,6 @@
   flex-direction: column;
   position: relative;
   overflow: hidden;
-  backdrop-filter: blur(25px);
 }
 .fcr-chatroom-dialog-content .fcr-toast-container-content > span {
   font-size: 12px;
