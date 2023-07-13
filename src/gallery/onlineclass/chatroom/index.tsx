@@ -120,9 +120,9 @@ export class AgoraHXChatWidget
   }
 
   unload(): void {
-    if (this.slotDom) {
-      ReactDOM.unmountComponentAtNode(this.slotDom);
-      this.slotDom = undefined;
+    if (this._dom) {
+      ReactDOM.unmountComponentAtNode(this._dom);
+      this._dom = undefined;
     }
   }
 
