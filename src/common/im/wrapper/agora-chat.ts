@@ -340,8 +340,7 @@ export class FcrChatRoom extends AgoraIMBase {
         break;
     }
     if (!newMsg) return Promise.reject();
-    //@ts-ignore
-    newMsg.time = newMsg.ts;
+
     const res = await this.conn.send(newMsg);
     message.id = res.serverMsgId;
     return message;
