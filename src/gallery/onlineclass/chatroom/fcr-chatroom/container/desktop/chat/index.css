@@ -76,7 +76,7 @@
 }
 .fcr-chat-input-send {
   position: absolute;
-  right: 10px;
+  right: 2px;
 
   bottom: 2px;
   margin: auto;
@@ -126,6 +126,7 @@
 .fcr-chat-input .fcr-textarea textarea {
   line-height: 18px;
   padding: 9px 12px;
+  padding-right: 23px;
 }
 .fcr-chat-announcement {
   @apply fcr-rounded-8 fcr-bg-4;

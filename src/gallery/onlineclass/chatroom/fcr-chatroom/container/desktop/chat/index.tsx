@@ -111,13 +111,13 @@ const ChatInput = observer(() => {
           className={classnames('fcr-chat-input', {
             'fcr-chat-input-focus': inputFocus,
           })}>
-          {/* <SvgImg
+          <SvgImg
             className={classnames('fcr-chat-input-send', {
               'fcr-chat-input-send-disabled': sendDisabled,
             })}
             onClick={send}
             type={SvgIconEnum.FCR_SEND}
-            size={32}></SvgImg> */}
+            size={30}></SvgImg>
           <TextArea
             ref={textAreaRef}
             onKeyDown={handleKeyDown}
