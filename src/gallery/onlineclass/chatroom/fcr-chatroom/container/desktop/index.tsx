@@ -10,7 +10,11 @@ import { FcrChatContainer } from './chat';
 import { FcrChatMemberContainer } from './member';
 import { createPortal } from 'react-dom';
 import { Scheduler } from 'agora-rte-sdk';
-import { AgoraIMTextMessage } from '../../../../../../common/im/wrapper/typs';
+import {
+  AgoraIMImageMessage,
+  AgoraIMMessageType,
+  AgoraIMTextMessage,
+} from '../../../../../../common/im/wrapper/typs';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 export const FcrChatRoomDesktop = () => {
   return (
@@ -87,7 +91,7 @@ const FcrChatroomDialog = observer(() => {
 const FcrChatroomTooltip = observer(() => {
   const {
     roomStore: { chatDialogVisible, setChatDialogVisible },
-    messageStore: { lastUnreadTextMessage, messageListScrollToBottom },
+    messageStore: { lastUnreadMessage, messageListScrollToBottom },
   } = useStore();
   const [tooltipVisible, setTooltipVisible] = useState(false);
   const tooltipVisibelTaskRef = useRef<Scheduler.Task | null>(null);
@@ -96,12 +100,12 @@ const FcrChatroomTooltip = observer(() => {
     tooltipVisibelTaskRef.current?.stop();
   };
   useEffect(() => {
-    if (!chatDialogVisible && lastUnreadTextMessage) {
+    if (!chatDialogVisible && lastUnreadMessage) {
       tooltipVisibelTaskRef.current?.stop();
       setTooltipVisible(true);
       tooltipVisibelTaskRef.current = Scheduler.shared.addDelayTask(hideToolTip, 6000);
     }
-  }, [lastUnreadTextMessage]);
+  }, [lastUnreadMessage]);
   useEffect(() => {
     if (chatDialogVisible) {
       hideToolTip();
@@ -114,7 +118,7 @@ const FcrChatroomTooltip = observer(() => {
       content={
         <FcrChatroomTooltipContent
           onClick={() => setChatDialogVisible(true)}
-          message={lastUnreadTextMessage}></FcrChatroomTooltipContent>
+          message={lastUnreadMessage}></FcrChatroomTooltipContent>
       }
       visible={tooltipVisible}
       onClose={hideToolTip}>
@@ -127,16 +131,29 @@ const FcrChatroomTooltipContent = ({
   message,
   onClick,
 }: {
-  message: AgoraIMTextMessage | null;
+  message: AgoraIMTextMessage | AgoraIMImageMessage | null;
   onClick: () => void;
 }) => {
+  const msg =
+    message?.type === AgoraIMMessageType.Image
+      ? '[Image Message]'
+      : (message as AgoraIMTextMessage)?.msg;
+  const isPrivateMessage = message?.ext?.receiverList && message?.ext?.receiverList.length > 0;
   return (
     <div className="fcr-chatroom-tooltip-content" onClick={onClick}>
       <Avatar size={32} textSize={10} nickName={message?.ext?.nickName || ''}></Avatar>
 
       <div className="fcr-chatroom-tooltip-content-text">
-        <div className="fcr-chatroom-tooltip-content-from">From {message?.ext?.nickName}</div>
-        <div className="fcr-chatroom-tooltip-content-from">{message?.msg}</div>
+        <div className="fcr-chatroom-tooltip-content-from">
+          <span>From {message?.ext?.nickName}</span>
+
+          {isPrivateMessage && (
+            <span className="fcr-chatroom-tooltip-content-from-private">&nbsp;(Private)</span>
+          )}
+        </div>
+        <div className="fcr-chatroom-tooltip-content-from">
+          <span>{msg}</span>
+        </div>
       </div>
     </div>
   );

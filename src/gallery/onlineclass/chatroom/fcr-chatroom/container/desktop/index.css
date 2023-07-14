@@ -64,9 +64,13 @@
   overflow: hidden;
 }
 .fcr-chatroom-tooltip-content-from {
+  display: flex;
+}
+.fcr-chatroom-tooltip-content-from span:not(.fcr-chatroom-tooltip-content-from-private) {
   overflow: hidden;
   white-space: nowrap;
   text-overflow: ellipsis;
+  line-height: 15px;
 }
 .fcr-chatroom-dialog-title-close {
   @apply fcr-rounded-full;
@@ -82,4 +86,9 @@
 }
 .fcr-chatroom-dialog-title-close:hover {
   @apply fcr-bg-brand-6;
+}
+.fcr-chatroom-tooltip-content-from-private {
+  @apply fcr-text-yellow;
+  flex: 1;
+  flex-shrink: 0;
 }

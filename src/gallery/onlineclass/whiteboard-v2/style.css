@@ -304,6 +304,10 @@
 }
 
 /* board window */
+.board-widget-app .telebox-maximized .netless-app-slide-btn-sidebar {
+  position: relative;
+  left: 190px;
+}
 
 .fcr-board-draggable-window {
   @apply fcr-rounded-10 fcr-shadow-dialog;

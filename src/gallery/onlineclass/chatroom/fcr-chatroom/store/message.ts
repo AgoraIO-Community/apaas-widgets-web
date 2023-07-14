@@ -32,10 +32,10 @@ export class MessageStore {
   }
   @observable historyMessageLoaded = false;
 
-  @observable lastUnreadTextMessage: AgoraIMTextMessage | null = null;
+  @observable lastUnreadMessage: AgoraIMTextMessage | AgoraIMImageMessage | null = null;
   @action.bound
-  setLastUnreadTextMessage(message: AgoraIMTextMessage) {
-    this.lastUnreadTextMessage = message;
+  setLastUnreadMessage(message: AgoraIMTextMessage | AgoraIMImageMessage) {
+    this.lastUnreadMessage = message;
   }
 
   @observable messageInputText = '';
@@ -157,10 +157,10 @@ export class MessageStore {
               deletedMessageIds.set(deletedMessageId, true);
             }
             if (
-              msg.type === AgoraIMMessageType.Text &&
+              (msg.type === AgoraIMMessageType.Text || msg.type === AgoraIMMessageType.Image) &&
               msg.from !== this._fcrChatRoom.userInfo?.userId
             ) {
-              this.setLastUnreadTextMessage(msg as AgoraIMTextMessage);
+              this.setLastUnreadMessage(msg);
             }
           });
           runInAction(() => {

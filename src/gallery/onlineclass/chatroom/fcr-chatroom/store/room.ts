@@ -4,7 +4,7 @@ import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typ
 import { ClassState, EduRoleTypeEnum } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
-import { bound } from 'agora-rte-sdk';
+import { Logger, bound } from 'agora-rte-sdk';
 
 export class RoomStore {
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
@@ -136,10 +136,17 @@ export class RoomStore {
   }
   @bound
   async setAllMute(mute: boolean) {
-    if (mute) {
-      return this._fcrChatRoom.muteAllUserList();
-    } else {
-      return this._fcrChatRoom.unmuteAllUserList();
+    try {
+      if (mute) {
+        await this._fcrChatRoom.muteAllUserList();
+      } else {
+        await this._fcrChatRoom.unmuteAllUserList();
+      }
+      runInAction(() => {
+        this.allMuted = mute;
+      });
+    } catch (err) {
+      Logger.error('[Fcr-chatroom] set all mute error', err);
     }
   }
   @action.bound
