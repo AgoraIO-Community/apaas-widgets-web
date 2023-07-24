@@ -1,8 +1,13 @@
-import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs';
-import { AgoraWidgetController, Platform } from 'agora-edu-core';
+import {
+  chatEmojiEnabled,
+  chatMuteAllEnabled,
+  chatPictureEnabled,
+  AgoraOnlineclassSDKWidgetBase,
+  AgoraWidgetLifecycle,
+} from 'agora-common-libs';
+import type { AgoraWidgetController } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
-import { AgoraOnlineclassSDKWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 
 export class AgoraHXChatWidget
@@ -57,7 +62,7 @@ export class AgoraHXChatWidget
       imgIcon = false;
     }
 
-    if (this.classroomConfig.platform === Platform.H5) {
+    if (this.classroomConfig.platform === 'H5') {
       visibleBtnSend = false;
       visibleEmoji = false;
       inputBoxStatus = 'inline';

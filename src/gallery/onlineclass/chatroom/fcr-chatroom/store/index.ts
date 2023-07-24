@@ -8,7 +8,8 @@ import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
 import { RoomStore } from './room';
-import { bound, Logger, retryAttempt } from 'agora-rte-sdk';
+import { retryAttempt } from 'agora-rte-sdk/lib/core/utils/utils';
+import { bound, Logger } from 'agora-common-libs';
 import to from 'await-to-js';
 
 export class FcrChatRoomStore {

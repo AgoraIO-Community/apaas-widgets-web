@@ -1,4 +1,4 @@
-import { bound, Lodash, Scheduler } from 'agora-rte-sdk';
+import { bound, Lodash, Scheduler } from 'agora-common-libs';
 import { observable, action, runInAction, computed, reaction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {

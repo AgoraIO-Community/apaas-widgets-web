@@ -4,13 +4,15 @@ import { PollingUIContext, PollingUIContextValue } from './ui-context';
 import { DialogWrapper } from './components/dialog-wrapper';
 import { PollingResultInfo, PollingState, PollingType } from './type';
 import { action, observable, runInAction } from 'mobx';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
+import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import {
   AgoraDraggableWidget,
   AgoraOnlineclassSDKWidgetBase,
   AgoraWidgetLifecycle,
   bound,
+  transI18n,
 } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 
@@ -235,7 +237,7 @@ export class FcrPollingWidget
             observables.pollingState = PollingState.POLLING_END;
           });
         } catch (e) {
-          this.ui.addToast('Cannot create poll as something is wrong', 'error');
+          this.ui.addToast(transI18n('fcr_poll_create_server_error'), 'error');
         } finally {
           context.setActionLoading(false);
         }
@@ -250,7 +252,7 @@ export class FcrPollingWidget
             selectIndex: Array.from(observables.selectedOptions),
           });
         } catch (e) {
-          this.ui.addToast('Cannot submit poll as something is wrong', 'error');
+          this.ui.addToast(transI18n('fcr_poll_submit_server_error'), 'error');
         } finally {
           context.setActionLoading(false);
         }
@@ -261,7 +263,7 @@ export class FcrPollingWidget
         try {
           this.classroomStore.api.stopPolling(roomUuid, `${this._pollId}`);
         } catch (e) {
-          this.ui.addToast('Cannot submit poll as something is wrong', 'error');
+          this.ui.addToast(transI18n('fcr_poll_submit_server_error'), 'error');
         }
       },
       setMinimize: action((minimize: boolean) => {
@@ -318,7 +320,7 @@ export class FcrPollingWidget
         minimized: true,
         widgetId: this.widgetId,
         minimizeProperties: {
-          minimizedTooltip: 'Poll',
+          minimizedTooltip: transI18n('fcr_poll_title'),
           minimizedIcon: SvgIconEnum.FCR_V2_VOTE,
           minimizedKey: this.widgetId,
           minimizedCollapsed: false,

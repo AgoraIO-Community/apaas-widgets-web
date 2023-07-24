@@ -7,7 +7,8 @@ import { Button } from '@components/button';
 import { useMute } from '../../../hooks/useMute';
 import { Avatar } from '@components/avatar';
 import { useState } from 'react';
-import { AgoraIMUserInfo, AgoraIMUserInfoExt } from 'src/common/im/wrapper/typs';
+import { AgoraIMUserInfo, AgoraIMUserInfoExt } from ' ../../src/common/im/wrapper/typs';
+import { useI18n } from 'agora-common-libs';
 export const FcrChatMemberContainer = () => {
   return (
     <div className="fcr-chatroom-member-container">
@@ -21,6 +22,7 @@ const UserList = observer(() => {
   const {
     userStore: { searchUserList },
   } = useStore();
+  const transI18n = useI18n();
 
   return (
     <div className="fcr-chatroom-member-list-wrap">
@@ -28,7 +30,7 @@ const UserList = observer(() => {
         {searchUserList.length === 0 && (
           <div className="fcr-chatroom-member-list-placeholder">
             <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={200}></SvgImg>
-            <span>No Data</span>
+            <span>{transI18n('fcr_chat_no_data')}</span>
           </div>
         )}
         {searchUserList.map((user) => (
@@ -43,6 +45,7 @@ const SearchInput = observer(() => {
   const {
     userStore: { searchKey, setSearchKey },
   } = useStore();
+  const transI18n = useI18n();
   return (
     <div className="fcr-chatroom-member-list-search">
       <Input
@@ -50,7 +53,7 @@ const SearchInput = observer(() => {
         value={searchKey}
         onChange={setSearchKey}
         iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
-        placeholder="Search"
+        placeholder={transI18n('fcr_chat_label_search')}
       />
     </div>
   );
@@ -63,6 +66,7 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
     roomStore: { isHost },
     messageStore: { setTab },
   } = useStore();
+  const transI18n = useI18n();
   const { muteUser, unmuteUser } = useMute();
   const localUserId = fcrChatRoom.userInfo?.userId || '';
   const [hover, setHover] = useState(false);
@@ -89,7 +93,7 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
             }}
             shape="rounded"
             size="XXS">
-            Private Chat
+            {transI18n('fcr_chat_label_private_chat')}
           </Button>
         )}
         {enableUserAction &&
@@ -101,7 +105,7 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
               styleType="danger"
               shape="rounded"
               size="XXS">
-              Unmute
+              {transI18n('fcr_chat_button_unmute')}
             </Button>
           ) : (
             <Button
@@ -110,7 +114,7 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
                 muteUser(user);
               }}
               size="XXS">
-              Mute
+              {transI18n('fcr_chat_button_mute')}
             </Button>
           ))}
       </div>

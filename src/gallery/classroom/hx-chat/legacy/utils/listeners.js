@@ -8,7 +8,9 @@ import {
   announcementNotice,
   roomUserMute,
 } from '../redux/actions/roomAction';
-import _ from 'lodash';
+import throttle from 'lodash/throttle';
+import get from 'lodash/get';
+import cloneDeep from 'lodash/cloneDeep';
 import { message } from 'antd';
 import { CHAT_TABS_KEYS, MUTE_CONFIG } from '../contants';
 import WebIM from './WebIM';
@@ -22,7 +24,7 @@ export const createListener = (store) => {
   const createListen = (new_IM_Data, appkey) => {
     const { apis } = store.getState();
 
-    const dispatchMessageAction = _.throttle(() => {
+    const dispatchMessageAction = throttle(() => {
       const temp = [...messageArr];
       messageArr = [];
       store.dispatch(messageAction(temp, { isHistory: false }));
@@ -106,7 +108,7 @@ export const createListener = (store) => {
         const roleType = store.getState().propsData?.roleType;
         const isAdmins = roleType === ROLE.teacher.id || roleType === ROLE.assistant.id;
         if (new_IM_Data.chatRoomId !== message.gid) return;
-        const roomUserList = _.get(store.getState(), 'room.roomUsers');
+        const roomUserList = get(store.getState(), 'room.roomUsers');
         const showChat = store.getState().showChat;
         const currentLoginUser = store.getState().propsData.userUuid;
         switch (message.type) {
@@ -116,7 +118,7 @@ export const createListener = (store) => {
             messageFromArr.push(message.from);
             intervalId && clearInterval(intervalId);
             intervalId = setTimeout(() => {
-              let users = _.cloneDeep(messageFromArr);
+              let users = cloneDeep(messageFromArr);
               messageFromArr = [];
               apis.userInfoAPI.getUserInfo({ member: users });
             }, 500);

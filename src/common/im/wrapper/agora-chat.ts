@@ -1,3 +1,4 @@
+import { Logger, Log } from 'agora-common-libs';
 import {
   AgoraIMBase,
   AgoraIMChatRoomDetails,
@@ -16,7 +17,6 @@ import {
 import websdk, { AgoraChat } from './sdk/Agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
 import { convertHXMessage } from './utils';
-import { Logger, Log } from 'agora-rte-sdk';
 import dayjs from 'dayjs';
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;

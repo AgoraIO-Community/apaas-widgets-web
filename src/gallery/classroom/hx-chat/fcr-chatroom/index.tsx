@@ -1,4 +1,3 @@
-import { Platform } from 'agora-edu-core';
 import { Provider } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { AgoraHXChatWidget } from '..';
@@ -24,7 +23,7 @@ export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {
       storeRef.current.destroy();
     };
   }, []);
-  return platform === Platform.H5 ? (
+  return platform === 'H5' ? (
     <Provider store={storeRef.current}>
       <FcrChatRoomH5></FcrChatRoomH5>
     </Provider>

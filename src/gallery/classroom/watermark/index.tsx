@@ -1,4 +1,5 @@
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
+import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import ReactDOM from 'react-dom';

@@ -7,9 +7,9 @@ import AppH5 from './mobile/app';
 
 import { PluginStore } from './store';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
-import { AgoraWidgetController, EduRoleTypeEnum, Platform } from 'agora-edu-core';
-import { transI18n } from 'agora-common-libs';
-import { ThemeProvider } from 'agora-common-libs';
+import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import { transI18n, ThemeProvider } from 'agora-common-libs';
 import { addResource } from './i18n/config';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 
@@ -82,7 +82,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
   }
   locate(): HTMLElement | null | undefined {
     const { platform } = this.classroomConfig;
-    if (platform === Platform.H5)
+    if (platform === 'H5')
       return document.querySelector('.fcr-countdown-mobile-widget') as HTMLElement;
   }
   render(dom: HTMLElement) {
@@ -92,7 +92,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
     ReactDOM.render(
       <Provider store={this._store}>
         <ThemeProvider value={this.theme}>
-          {platform === Platform.H5 ? (
+          {platform === 'H5' ? (
             <AppH5 widget={this} />
           ) : (
             <WidgetModal

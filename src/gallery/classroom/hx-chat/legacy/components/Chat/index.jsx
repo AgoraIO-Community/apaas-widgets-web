@@ -13,7 +13,9 @@ import { announcementNotice } from '../../redux/actions/roomAction';
 // import minimize from '../../themes/img/minimize.png';
 import minimize from '../../themes/svg/minimize.svg';
 import notice from '../../themes/img/notice.png';
-import _ from 'lodash';
+import get from 'lodash/get';
+import concat from 'lodash/concat';
+import assign from 'lodash/assign';
 import './index.css';
 
 const { TabPane } = Tabs;
@@ -24,16 +26,16 @@ export const Chat = () => {
   const [roomUserList, setRoomUserList] = useState([]);
   const state = useSelector((state) => state);
   const store = useStore();
-  const isLogin = _.get(state, 'isLogin');
-  const announcement = _.get(state, 'room.announcement', '');
-  const showRed = _.get(state, 'showRed');
-  const showAnnouncementNotice = _.get(state, 'showAnnouncementNotice');
-  const roleType = _.get(state, 'propsData.roleType', '');
-  const roomUsers = _.get(state, 'room.roomUsers', []);
-  const roomUsersInfo = _.get(state, 'room.roomUsersInfo', {});
-  const showChat = _.get(state, 'showChat');
-  const showMIniIcon = _.get(state, 'isShowMiniIcon');
-  const configUIVisible = _.get(state, 'configUIVisible');
+  const isLogin = get(state, 'isLogin');
+  const announcement = get(state, 'room.announcement', '');
+  const showRed = get(state, 'showRed');
+  const showAnnouncementNotice = get(state, 'showAnnouncementNotice');
+  const roleType = get(state, 'propsData.roleType', '');
+  const roomUsers = get(state, 'room.roomUsers', []);
+  const roomUsersInfo = get(state, 'room.roomUsersInfo', {});
+  const showChat = get(state, 'showChat');
+  const showMIniIcon = get(state, 'isShowMiniIcon');
+  const configUIVisible = get(state, 'configUIVisible');
   const isTabKey = state?.isTabKey;
   // 直接在 propsData 中取值
   const isTeacher =
@@ -54,22 +56,22 @@ export const Chat = () => {
         let role = val && val.ext && JSON.parse(val.ext).role;
         switch (role) {
           case 1:
-            newVal = _.assign(val, { id: item });
+            newVal = assign(val, { id: item });
             _speakerTeacher.push(newVal);
             break;
           case 2:
-            newVal = _.assign(val, { id: item });
+            newVal = assign(val, { id: item });
             _student.push(newVal);
             break;
           case 3:
-            newVal = _.assign(val, { id: item });
+            newVal = assign(val, { id: item });
             _assistant.push(newVal);
             break;
           default:
             break;
         }
       });
-      setRoomUserList(_.concat(_speakerTeacher, _student));
+      setRoomUserList(concat(_speakerTeacher, _student));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomUsers, roomUsersInfo]);

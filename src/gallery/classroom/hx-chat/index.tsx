@@ -1,6 +1,13 @@
-import { chatEmojiEnabled, chatMuteAllEnabled, chatPictureEnabled } from 'agora-common-libs';
+import {
+  chatEmojiEnabled,
+  chatMuteAllEnabled,
+  chatPictureEnabled,
+  AgoraWidgetBase,
+  AgoraWidgetLifecycle,
+} from 'agora-common-libs';
 import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
-import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum, Platform } from 'agora-edu-core';
+import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
 import { observer } from 'mobx-react';
@@ -8,7 +15,6 @@ import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
 import { FcrChatRoomApp } from './fcr-chatroom';
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
 
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;
@@ -170,7 +176,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
       imgIcon = false;
     }
 
-    if (this.classroomConfig.platform === Platform.H5) {
+    if (this.classroomConfig.platform === 'H5') {
       visibleBtnSend = false;
       visibleEmoji = false;
       inputBoxStatus = 'inline';
@@ -219,7 +225,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
   private _renderApp() {
     const { platform } = this.classroomConfig;
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
-      if (platform === Platform.H5) {
+      if (platform === 'H5') {
         ReactDOM.render(<FcrChatRoomApp widget={this} />, this._dom);
       } else {
         ReactDOM.render(<App widget={this} />, this._dom);
@@ -231,7 +237,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
 
   locate() {
     const { platform } = this.classroomConfig;
-    if (platform === Platform.H5) {
+    if (platform === 'H5') {
       return document.querySelector('.widget-slot-chat-mobile') as HTMLElement;
     }
     return document.querySelector('.widget-slot-chat') as HTMLElement;
@@ -242,7 +248,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
 
     this._dom = dom;
 
-    const cls = classNames({ 'chat-panel': platform !== Platform.H5 }, 'h-full');
+    const cls = classNames({ 'chat-panel': platform !== 'H5' }, 'h-full');
 
     this._dom.className = cls;
 

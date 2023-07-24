@@ -1,7 +1,7 @@
 import ImageViewer from '../image-viewer';
-import { useI18n } from 'agora-common-libs';
-import { EduRoleTypeEnum } from 'agora-edu-core';
-import { throttle } from 'lodash';
+import { useI18n, Scheduler } from 'agora-common-libs';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import throttle from 'lodash/throttle';
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useCallback, useMemo } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
@@ -16,7 +16,6 @@ import {
 } from '../../../../../../../../common/im/wrapper/typs';
 import { useStore } from '../../../../hooks/useStore';
 import './index.css';
-import { Scheduler } from 'agora-rte-sdk';
 export const MessageList = observer(() => {
   const {
     messageStore: {

@@ -1,9 +1,8 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 import PollingButtonGroup from './components/polling-button-group';
 import PollingResultList from './components/polling-result-list';
 import PollingInputList from './components/polling-input-list';
 import './index.css';
-
 import { TextArea } from '@components/textarea';
 import { Radio, RadioGroup } from '@components/radio';
 import { observer } from 'mobx-react';
@@ -12,6 +11,9 @@ import { PollingUIContext } from './ui-context';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
+import { useI18n } from 'agora-common-libs';
+import { addResource } from './i18n/config';
+
 type ActionIcon = {
   icon: SvgIconEnum;
   iconColor?: string;
@@ -38,26 +40,31 @@ const PollingQuestion: React.FC = observer(() => {
   const isInput = useMemo(() => pollingState == PollingState.POLLING_EDIT, [pollingState]);
   const showProgressLabel = !isOwner;
   const progressStatus = pollingState === PollingState.POLLING_SUBMIT_END ? 'ended' : 'in-progress';
+  const transI18n = useI18n();
   return (
     <div className="fcr-polling-question">
       <div className="fcr-polling-title">
-        {'Polling'}
+        {transI18n('fcr_poll_title')}
         {showProgressLabel && (
           <div
             className={classnames(
               'fcr-polling-title-label',
               `fcr-polling-title-label-${progressStatus}`,
             )}>
-            {progressStatus === 'ended' ? 'Ended' : 'In Progress'}
+            {progressStatus === 'ended'
+              ? transI18n('fcr_poll_state_ended')
+              : transI18n('fcr_poll_state_in_progress')}
           </div>
         )}
       </div>
       {isInput ? (
         <>
-          <div className="fcr-polling-question-hint fcr-drag-cancel">Please set the question.</div>
+          <div className="fcr-polling-question-hint fcr-drag-cancel">
+            {transI18n('fcr_poll_input_placeholder')}
+          </div>
           <div className="fcr-polling-input">
             <TextArea
-              placeholder="Please Enter..."
+              placeholder={transI18n('fcr_poll_enter_placeholder')}
               maxCount={100}
               value={question}
               onChange={onInputChange}
@@ -70,8 +77,8 @@ const PollingQuestion: React.FC = observer(() => {
               onChange={(value) => {
                 onClikSingleMuti(value as PollingType);
               }}>
-              <Radio value={PollingType.SINGLE} label="Single"></Radio>
-              <Radio value={PollingType.MULTI} label="Muti-select"></Radio>
+              <Radio value={PollingType.SINGLE} label={transI18n('fcr_poll_single')}></Radio>
+              <Radio value={PollingType.MULTI} label={transI18n('fcr_poll_multi')}></Radio>
             </RadioGroup>
           </div>
         </>
@@ -103,6 +110,8 @@ export const Polling: React.FC = observer(() => {
     onMinimize,
     onClose,
   } = useContext(PollingUIContext);
+  useEffect(addResource, []);
+  const transI18n = useI18n();
   const closeDisable = pollingState === PollingState.POLLING_END;
   const handleMouseDown = (e: React.MouseEvent) => {
     e.stopPropagation();
@@ -112,7 +121,7 @@ export const Polling: React.FC = observer(() => {
       icon: SvgIconEnum.FCR_MINUS,
       onClick: () => onMinimize(true),
       onMouseDown: handleMouseDown,
-      tooltipContent: 'Minimization',
+      tooltipContent: transI18n('fcr_poll_minimization'),
     },
   ];
   if (canClose) {
@@ -124,8 +133,8 @@ export const Polling: React.FC = observer(() => {
       onMouseDown: handleMouseDown,
       disable: closeDisable,
       tooltipContent: closeDisable
-        ? 'Please end the current round of voting before closing the polls.'
-        : 'Close',
+        ? transI18n('fcr_poll_unable_to_close')
+        : transI18n('fcr_poll_close'),
     });
   }
   return (

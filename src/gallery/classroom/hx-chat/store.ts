@@ -1,4 +1,4 @@
-import { EduRoomTypeEnum, Platform } from 'agora-edu-core';
+import { EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import { action, autorun, observable, runInAction } from 'mobx';
 import { AgoraHXChatWidget } from '.';
 import { OrientationEnum } from './type';
@@ -17,7 +17,7 @@ export class WidgetChatUIStore {
 
   constructor(private _widget: AgoraHXChatWidget) {
     const { sessionInfo, platform } = _widget.classroomConfig;
-    const isH5 = platform === Platform.H5;
+    const isH5 = platform === 'H5';
     this.handleOrientationchange();
     autorun(() => {
       let isFullSize = false;

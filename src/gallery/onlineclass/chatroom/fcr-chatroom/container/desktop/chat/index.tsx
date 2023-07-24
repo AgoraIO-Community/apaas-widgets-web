@@ -3,7 +3,7 @@ import { TextArea } from '@components/textarea';
 import { Button } from '@components/button';
 import { Switch } from '@components/switch';
 import { observer } from 'mobx-react';
-import { useContext, useEffect, useImperativeHandle, useMemo, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useStore } from '../../../hooks/useStore';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classnames from 'classnames';
@@ -21,17 +21,16 @@ import {
 import { useI18n } from 'agora-common-libs';
 import { ToolTip } from '@components/tooltip';
 import { useScroll } from '../../../hooks/useScroll';
-import { EduRoleTypeEnum } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { Avatar } from '@components/avatar';
 import { Popover } from '@components/popover';
 import { useMute } from '../../../hooks/useMute';
-
 import { FcrChatroomToastContext } from '..';
 import dayjs from 'dayjs';
 import { AutoSizer, CellMeasurer, List, ListRowProps } from 'react-virtualized';
 import { getNameColor } from '@components/avatar/helper';
 import { Input } from '@components/input';
-import { AgoraIMUserInfo, AgoraIMUserInfoExt } from 'src/common/im/wrapper/typs';
+import { AgoraIMUserInfo, AgoraIMUserInfoExt } from '../../../../../../../common/im/wrapper/typs';
 import { emojis } from '../../../utils/emoji';
 
 export const FcrChatContainer = observer(() => {
@@ -68,6 +67,7 @@ const ChatInput = observer(() => {
     },
     userStore: { privateUser },
   } = useStore();
+  const transI18n = useI18n();
   const sendDisabled = !messageInputText;
   const send = () => {
     if (sendDisabled) return;
@@ -126,7 +126,7 @@ const ChatInput = observer(() => {
             onFocusChange={setInputFocus}
             resizable={false}
             showCount={false}
-            placeholder="Enter a message..."
+            placeholder={transI18n('fcr_chat_enter_message_placehoder')}
             value={messageInputText}
             onChange={setMessageInputText}></TextArea>
         </div>
@@ -139,10 +139,15 @@ const MutedInput = observer(() => {
     userStore: { userMuted },
     roomStore: { allMuted },
   } = useStore();
-  const muteText = allMuted ? 'All muted' : userMuted ? 'You are muted by teacher' : '';
+  const transI18n = useI18n();
+  const muteText = allMuted
+    ? transI18n('fcr_chat_label_all_mute')
+    : userMuted
+    ? transI18n('fcr_chat_you_are_muted_by_teacher)')
+    : '';
   return (
     <div className="fcr-chat-muted-input-container">
-      <ToolTip placement="top" content={"Muted, can't send messages"}>
+      <ToolTip placement="top" content={transI18n('fcr_chat_tips_student_all_muted')}>
         <div className="fcr-chat-muted-input">
           <AnnouncementTrigger></AnnouncementTrigger>
           <div className="fcr-chat-muted-input-text">
@@ -159,6 +164,7 @@ const AnnouncementTrigger = observer(() => {
     messageStore: { showAnnouncement, setShowAnnouncement, setShowAnnouncementInput, announcement },
     roomStore: { isHost },
   } = useStore();
+  const transI18n = useI18n();
   const disabled = !isHost && !announcement;
   const [tootipVisible, setTootipVisible] = useState(false);
   return (
@@ -171,7 +177,7 @@ const AnnouncementTrigger = observer(() => {
         }
         setTootipVisible(visible);
       }}
-      content={disabled && 'No announcement'}>
+      content={disabled && transI18n('fcr_chat_label_no_announcement')}>
       <div
         onClick={() => {
           if (isHost && !announcement) {
@@ -202,12 +208,13 @@ const AnnouncementInput = observer(() => {
     },
   } = useStore();
   const toast = useContext(FcrChatroomToastContext);
+  const transI18n = useI18n();
 
   return (
     <div className="fcr-chat-announcement-input-wrap">
       <div className="fcr-chat-announcement-input">
         <div className="fcr-chat-announcement-input-title">
-          Announcement
+          {transI18n('fcr_chat_label_announcement')}
           <div className="fcr-chat-announcement-close">
             <SvgImg
               onClick={() => setShowAnnouncementInput(false)}
@@ -220,13 +227,13 @@ const AnnouncementInput = observer(() => {
             value={announcementInputText}
             onChange={setAnnouncementInputText}
             maxCount={150}
-            placeholder={'Enter ...'}
+            placeholder={transI18n('fcr_chat_inputbox_placeholder')}
             resizable={false}></TextArea>
         </div>
       </div>
       <div className="fcr-chat-announcement-submit">
         <Button size="XS" styleType="gray" onClick={() => setShowAnnouncementInput(false)}>
-          Cancel
+          {transI18n('fcr_chat_button_announcement_cancel')}
         </Button>
         <Button
           size="XS"
@@ -234,14 +241,14 @@ const AnnouncementInput = observer(() => {
             await updateAnnouncement(announcementInputText);
             toast?.open({
               toastProps: {
-                content: 'Announcement submit successfully',
+                content: transI18n('fcr_chat_tips_announcement_send_successfully'),
                 type: 'normal',
                 size: 'small',
               },
             });
             setShowAnnouncementInput(false);
           }}>
-          Submit
+          {transI18n('fcr_chat_button_announcement_send')}
         </Button>
       </div>
     </div>
@@ -260,9 +267,10 @@ const UnreadMessageLabel = observer(() => {
   const {
     messageStore: { unreadMessageCount, messageListScrollToBottom },
   } = useStore();
+  const transI18n = useI18n();
   return unreadMessageCount > 0 ? (
     <div onClick={messageListScrollToBottom} className="fcr-chat-message-unread-message">
-      {unreadMessageCount} new message(s)
+      {transI18n('fcr_chat_tips_new_messages', { reason1: `${unreadMessageCount}` })}
     </div>
   ) : null;
 });
@@ -270,6 +278,7 @@ const MessageList = observer(() => {
   const {
     messageStore: { renderableMessageList, listCache, messageListScrollToBottom },
   } = useStore();
+  const transI18n = useI18n();
   const { listRef, handleScroll } = useScroll();
   const renderMessage = (
     messages:
@@ -317,12 +326,13 @@ const MessageList = observer(() => {
   useEffect(() => {
     messageListScrollToBottom();
   }, []);
+
   return (
     <div className="fcr-chat-message-list">
       {renderableMessageList.length === 0 && (
         <div className="fcr-chat-message-list-placeholder">
           <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={200}></SvgImg>
-          <span>No Message</span>
+          <span>{transI18n('fcr_chat_label_no_message')}</span>
         </div>
       )}
       <AutoSizer>
@@ -351,38 +361,37 @@ const CmdMessageItem = observer(({ message }: { message: AgoraIMCustomMessage })
   const { fcrChatRoom } = useStore();
   const selfUserId = fcrChatRoom.userInfo?.userId;
   const isSelfAction = message.from === fcrChatRoom.userInfo?.userId;
-  const msgNickName = isSelfAction
-    ? `${fcrChatRoom.userInfo?.nickName}(you)`
-    : `${message.ext?.nickName}`;
-  const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
-    const transI18n = useI18n();
+  const transI18n = useI18n();
 
+  const convertCmdMessageAction = (action: AgoraIMCmdActionEnum) => {
     switch (action) {
       case AgoraIMCmdActionEnum.AllUserMuted:
-        return 'The teacher mute all';
+        return transI18n('fcr_chat_tips_teacher_mute_all');
       case AgoraIMCmdActionEnum.AllUserUnmuted:
-        return 'The teacher unmute all';
+        return transI18n('fcr_chat_teacher_unmute_all');
       case AgoraIMCmdActionEnum.UserMuted:
         if (isSelfAction) {
           return (
             <>
               <span>{message.ext?.muteNickName}</span>
-              was mute by you
+              {transI18n('fcr_chat_tips_teacher_mute_student')}
             </>
           );
         }
         if (message.ext?.muteMember === selfUserId) {
           return (
             <>
-              <span>{message.ext?.muteNickName} (you)</span>
-              was mute by teacher
+              <span>
+                {message.ext?.muteNickName} ({transI18n('fcr_chat_you')})
+              </span>
+              {transI18n('fcr_chat_tips_mute_student')}
             </>
           );
         } else {
           return (
             <>
               <span>{message.ext?.muteNickName}</span>
-              was mute by teacher
+              {transI18n('fcr_chat_tips_mute_student')}
             </>
           );
         }
@@ -392,22 +401,24 @@ const CmdMessageItem = observer(({ message }: { message: AgoraIMCustomMessage })
           return (
             <>
               <span>{message.ext?.muteNickName}</span>
-              was unmute by you
+              {transI18n('fcr_chat_tips_teacher_unmute_student')}
             </>
           );
         }
         if (message.ext?.muteMember === selfUserId) {
           return (
             <>
-              <span>{message.ext?.muteNickName} (you)</span>
-              was unmute by teacher
+              <span>
+                {message.ext?.muteNickName} ({transI18n('fcr_chat_you')})
+              </span>
+              {transI18n('fcr_chat_tips_unmute_student')}
             </>
           );
         } else {
           return (
             <>
               <span>{message.ext?.muteNickName}</span>
-              was unmute by teacher
+              {transI18n('fcr_chat_tips_unmute_student')}
             </>
           );
         }
@@ -428,6 +439,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
     messageStore: { checkIsPrivateMessage },
     userStore: { muteList, userList },
   } = useStore();
+  const transI18n = useI18n();
   const { muteUser, unmuteUser } = useMute();
   const lastMessage = messages[messages.length - 1];
 
@@ -487,7 +499,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                         onClick={() => {
                           if (currUser) unmuteUser(currUser);
                         }}>
-                        Unmute
+                        {transI18n('fcr_chat_button_unmute')}
                       </Button>
                     ) : (
                       <Button
@@ -495,7 +507,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                           if (currUser) muteUser(currUser);
                         }}
                         size="XXS">
-                        Mute
+                        {transI18n('fcr_chat_button_mute')}
                       </Button>
                     )}
                   </div>
@@ -536,13 +548,14 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           )}
           {isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
-              I said to {lastMessage.ext?.receiverList?.[0].nickName}
-              <span className="fcr-text-yellow">&nbsp;(Private)</span>
+              {transI18n('fcr_chat_label_i_said_to')} {lastMessage.ext?.receiverList?.[0].nickName}
+              <span className="fcr-text-yellow">&nbsp;({transI18n('fcr_chat_label_private')})</span>
             </div>
           )}
           {!isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
-              said to me<span className="fcr-text-yellow">&nbsp;(Private)</span>
+              {transI18n('fcr_chat_label_said_to_me')}
+              <span className="fcr-text-yellow">&nbsp;({transI18n('fcr_chat_label_private')})</span>
             </div>
           )}
           {messages[0]?.ts && (
@@ -575,13 +588,14 @@ const PrivateChatMenu = observer(
     const {
       userStore: { setPrivateUser },
     } = useStore();
+    const transI18n = useI18n();
 
     const handleUploadClick = () => {
       props.user && setPrivateUser(props.user);
     };
     return (
       <span onClick={handleUploadClick} className="fcr-private-chat-item">
-        Private Chat
+        {transI18n('fcr_chat_label_private_chat')}
       </span>
     );
   },
@@ -598,6 +612,7 @@ const AnnounceMent = observer(() => {
     },
     roomStore: { isHost },
   } = useStore();
+  const transI18n = useI18n();
   const hideAnnouncement = () => setShowAnnouncement(false);
 
   return showAnnouncement ? (
@@ -608,7 +623,7 @@ const AnnounceMent = observer(() => {
         </div>
       )}
 
-      <div className="fcr-chat-announcement-title">Announcement</div>
+      <div className="fcr-chat-announcement-title">{transI18n('fcr_chat_label_announcement')}</div>
       <div
         className="fcr-chat-announcement-content"
         dangerouslySetInnerHTML={{ __html: announcement }}></div>
@@ -621,16 +636,19 @@ const AnnounceMent = observer(() => {
               type="secondary"
               onClick={() => {
                 widget.ui.addConfirmDialog({
-                  title: 'Delete Confirmation',
-                  content: 'Are you sure to delete the announcement?',
+                  title: transI18n('fcr_chat_label_announcement_del_confirm'),
+                  content: transI18n('fcr_chat_tips_announcement_del_content'),
                   okButtonProps: { styleType: 'danger' },
                   onOk: async () => {
                     await updateAnnouncement('');
-                    widget.ui.addToast('Delete announcement successfully', 'success');
+                    widget.ui.addToast(
+                      transI18n('fcr_chat_tips_announcement_del_success'),
+                      'success',
+                    );
                   },
                 });
               }}>
-              Delete
+              {transI18n('fcr_chat_button_announcement_delete')}
             </Button>
             <Button
               size="XXS"
@@ -639,12 +657,12 @@ const AnnounceMent = observer(() => {
                 setShowAnnouncementInput(true);
                 setShowAnnouncement(false);
               }}>
-              Modify
+              {transI18n('fcr_chat_button_announcement_modify')}
             </Button>
           </>
         ) : (
           <Button size="XXS" onClick={hideAnnouncement}>
-            Got it
+            {transI18n('fcr_chat_button_announcement_got')}
           </Button>
         )}
       </div>
@@ -656,13 +674,14 @@ const PrivateChat = observer(() => {
   const {
     userStore: { privateUser, setSearchKey },
   } = useStore();
+  const transI18n = useI18n();
   const [popoverVisible, setPopoverVisible] = useState(false);
   useEffect(() => {
     setPopoverVisible(false);
   }, [privateUser]);
   return (
     <div className="fcr-private-chat fcr-chat-input-actions-label">
-      <span className="fcr-private-chat-label">Send to:</span>
+      <span className="fcr-private-chat-label">{transI18n('fcr_chat_label_send_to')}:</span>
       <Popover
         visible={popoverVisible}
         overlayClassName="fcr-private-chat-popover"
@@ -676,12 +695,14 @@ const PrivateChat = observer(() => {
           className={classnames('fcr-private-base-icon fcr-private-name', {
             'fcr-private-name-active': !!privateUser,
           })}>
-          <span>{privateUser ? privateUser.nickName : 'all'}</span>
+          <span>{privateUser ? privateUser.nickName : transI18n('fcr_chat_option_all')}</span>
 
           <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
         </span>
       </Popover>
-      {!!privateUser && <span className="fcr-private-tag">Private</span>}
+      {!!privateUser && (
+        <span className="fcr-private-tag">{transI18n('fcr_chat_label_private')}</span>
+      )}
     </div>
   );
 });
@@ -691,6 +712,7 @@ const UserList = observer(() => {
     fcrChatRoom,
     userStore: { searchKey, searchUserList },
   } = useStore();
+  const transI18n = useI18n();
 
   return (
     <div className="fcr-chatroom-member-list-wrap fcr-chatroom-member-private-list-wrap">
@@ -698,7 +720,7 @@ const UserList = observer(() => {
         {searchUserList.length === 0 && (
           <div className="fcr-chatroom-member-list-empty-placeholder">
             <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={60}></SvgImg>
-            <span>No Data</span>
+            <span>{transI18n('fcr_chat_no_data')}</span>
           </div>
         )}
         {!searchKey && !!searchUserList.length && <AllUserItem />}
@@ -716,6 +738,7 @@ const SearchInput = observer(() => {
   const {
     userStore: { searchKey, setSearchKey },
   } = useStore();
+  const transI18n = useI18n();
   return (
     <div className="fcr-chatroom-member-list-search">
       <Input
@@ -723,7 +746,7 @@ const SearchInput = observer(() => {
         value={searchKey}
         onChange={setSearchKey}
         iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
-        placeholder="Search"
+        placeholder={transI18n('fcr_chat_label_search')}
       />
     </div>
   );
@@ -733,6 +756,7 @@ const AllUserItem = observer(() => {
   const {
     userStore: { setPrivateUser },
   } = useStore();
+  const transI18n = useI18n();
   return (
     <div
       key="all-user"
@@ -744,7 +768,7 @@ const AllUserItem = observer(() => {
             <SvgImg type={SvgIconEnum.FCR_PEOPLE} size={24} />
           </span>
         </div>
-        <div className="fcr-chatroom-member-list-item-name">All</div>
+        <div className="fcr-chatroom-member-list-item-name">{transI18n('fcr_chat_option_all')}</div>
       </div>
     </div>
   );
@@ -755,6 +779,7 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
     fcrChatRoom,
     userStore: { privateUser, setPrivateUser },
   } = useStore();
+  const transI18n = useI18n();
 
   const localUserId = fcrChatRoom.userInfo?.userId || '';
   const [hover, setHover] = useState(false);
@@ -778,7 +803,7 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
 
       <div className="fcr-chatroom-member-list-item-tags">
         {privateUser && user.userId === privateUser.userId && (
-          <span className="item-tag">Private</span>
+          <span className="item-tag">{transI18n('fcr_chat_label_private')}</span>
         )}
       </div>
     </div>
@@ -817,6 +842,7 @@ const FileSenderContent = () => {
     messageStore: { sendImageMessage },
     userStore: { privateUser },
   } = useStore();
+  const transI18n = useI18n();
   const handleFileInputChange = () => {
     const file = fileInputRef.current?.files?.[0];
     if (file) {
@@ -829,7 +855,7 @@ const FileSenderContent = () => {
   };
   return (
     <div className="fcr-files-container">
-      <span onClick={handleUploadClick}>Send Image</span>
+      <span onClick={handleUploadClick}>{transI18n('fcr_chat_button_send_image')}</span>
       <input
         ref={fileInputRef}
         onChange={handleFileInputChange}
@@ -896,6 +922,7 @@ const ChatMoreOptions = () => {
     messageStore: { sendCustomMessage },
     roomStore: { allMuted, setAllMute, isHost },
   } = useStore();
+  const transI18n = useI18n();
 
   const handleAllMute = async (mute: boolean) => {
     await setAllMute(mute);
@@ -905,17 +932,20 @@ const ChatMoreOptions = () => {
   };
   return (
     <>
-      <div className="fcr-chat-setting-title"> {isHost ? 'Chat setting' : 'More'}</div>
+      <div className="fcr-chat-setting-title">
+        {' '}
+        {isHost ? transI18n('fcr_chat_label_chat_setting') : transI18n('fcr_chat_more')}
+      </div>
       <div className="fcr-chat-setting-content">
         {isHost && (
           <div className="fcr-chat-input-actions-mute-all">
-            <span>All Chat Muted</span>
+            <span>{transI18n('fcr_chat_label_student_all_muted')}</span>
             <Switch onChange={handleAllMute} value={allMuted}></Switch>
           </div>
         )}
 
         <div className="fcr-chat-input-actions-options">
-          <span>Announcement</span>
+          <span>{transI18n('fcr_chat_label_announcement')}</span>
           <AnnouncementTrigger />
         </div>
       </div>

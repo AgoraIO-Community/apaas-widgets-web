@@ -1,4 +1,10 @@
-import _ from 'lodash';
+import assign from 'lodash/assign';
+import uniq from 'lodash/uniq';
+import remove from 'lodash/remove';
+import isArray from 'lodash/isArray';
+import omit from 'lodash/omit';
+import uniqBy from 'lodash/uniqBy';
+
 import { CHAT_TABS_KEYS, MUTE_CONFIG, LOCAL_RETAIN_HISTORY_COUNT } from '../contants';
 let defaultState = {
   propsData: {}, // props 值
@@ -79,15 +85,15 @@ const reducer = (state = defaultState, action) => {
       if (action.option === 'addMember') {
         ary = ary.concat(data, ...state.room.roomUsers);
       } else if (action.option === 'removeMember') {
-        _.remove(state.room.roomUsers, (v) => {
+        remove(state.room.roomUsers, (v) => {
           return v == data;
         });
         ary = state.room.roomUsers;
-        userInfo = _.omit(userInfo, data);
+        userInfo = omit(userInfo, data);
       } else {
         ary = state.room.roomUsers.concat(data);
       }
-      let newAry = _.uniq(ary);
+      let newAry = uniq(ary);
       return {
         ...state,
         room: {
@@ -114,7 +120,7 @@ const reducer = (state = defaultState, action) => {
         },
       };
     case 'ROOM_USERS_INFO':
-      let newInfo = _.assign({}, state.room.roomUsersInfo, data);
+      let newInfo = assign({}, state.room.roomUsersInfo, data);
       return {
         ...state,
         room: {
@@ -135,7 +141,7 @@ const reducer = (state = defaultState, action) => {
 
       let dataArray = data;
 
-      if (!_.isArray(data)) {
+      if (!isArray(data)) {
         dataArray = [data];
       }
 
@@ -151,7 +157,7 @@ const reducer = (state = defaultState, action) => {
 
       msgs = msgs.filter((item) => !msgIds.includes(item.id));
 
-      newMsgs = _.uniqBy(msgs, 'id');
+      newMsgs = uniqBy(msgs, 'id');
       newMsgs = newMsgs.slice(newMsgs.length - LOCAL_RETAIN_HISTORY_COUNT, newMsgs.length);
       return {
         ...state,
@@ -191,7 +197,7 @@ const reducer = (state = defaultState, action) => {
         },
       };
     case 'CLEAR_STORE':
-      return _.assign({}, defaultState);
+      return assign({}, defaultState);
     case 'SELECT_TAB_ACTION':
       return {
         ...state,

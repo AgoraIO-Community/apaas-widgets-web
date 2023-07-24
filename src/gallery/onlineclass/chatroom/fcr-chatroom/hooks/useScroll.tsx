@@ -1,4 +1,4 @@
-import { throttle } from 'lodash';
+import throttle from 'lodash/throttle';
 import { useEffect, useRef } from 'react';
 import { useStore } from './useStore';
 import { List, ScrollParams } from 'react-virtualized';

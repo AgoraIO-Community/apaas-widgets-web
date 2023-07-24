@@ -1,5 +1,5 @@
-import { EduRoleTypeEnum } from 'agora-edu-core';
-import { bound, Lodash, Scheduler } from 'agora-rte-sdk';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import { bound, Lodash, Scheduler } from 'agora-common-libs';
 import { action, autorun, computed, observable, reaction, runInAction } from 'mobx';
 import { computedFn } from 'mobx-utils';
 import { AgoraSelector } from '.';
@@ -377,6 +377,4 @@ export class PluginStore {
   setList(list: any[]) {
     this.rslist = list;
   }
-
-  
 }

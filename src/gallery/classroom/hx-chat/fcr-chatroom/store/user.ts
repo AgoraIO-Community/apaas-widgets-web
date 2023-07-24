@@ -1,8 +1,8 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
-import { EduRoleTypeEnum, iterateMap } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
-import { Scheduler, bound } from 'agora-rte-sdk';
+import { Scheduler, bound } from 'agora-common-libs';
 
 enum UserMutedState {
   Unmuted = 0,

@@ -1,9 +1,8 @@
-import { EduRoleTypeEnum } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { Toast } from '../../../components/toast';
 import { action, autorun, computed, observable, runInAction } from 'mobx';
 import { AgoraPolling } from '.';
-import { transI18n } from 'agora-common-libs';
-import { bound } from 'agora-rte-sdk';
+import { transI18n, bound } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { OrientationEnum } from '../hx-chat/type';
 

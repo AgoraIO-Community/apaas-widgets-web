@@ -9,7 +9,7 @@ import { createContext, useEffect, useRef, useState } from 'react';
 import { FcrChatContainer } from './chat';
 import { FcrChatMemberContainer } from './member';
 import { createPortal } from 'react-dom';
-import { Scheduler } from 'agora-rte-sdk';
+import { Scheduler, useI18n } from 'agora-common-libs';
 import {
   AgoraIMImageMessage,
   AgoraIMMessageType,
@@ -48,6 +48,8 @@ const FcrChatroomDialog = observer(() => {
       setToastInstance(null);
     }
   }, [chatDialogVisible]);
+
+  const transI18n = useI18n();
   return chatDialogVisible
     ? createPortal(
         <FcrChatroomToastContext.Provider value={toastInstance}>
@@ -67,11 +69,11 @@ const FcrChatroomDialog = observer(() => {
                   activeKey={currentChatTab}
                   items={[
                     {
-                      label: 'Chat',
+                      label: transI18n('fcr_chat_option_chat'),
                       key: 'chat',
                     },
                     {
-                      label: `Member (${userList.length})`,
+                      label: transI18n('fcr_chat_option_member', { reason1: `${userList.length}` }),
                       key: 'member',
                     },
                   ]}></Tabs>
@@ -134,6 +136,7 @@ const FcrChatroomTooltipContent = ({
   message: AgoraIMTextMessage | AgoraIMImageMessage | null;
   onClick: () => void;
 }) => {
+  const transI18n = useI18n();
   const msg =
     message?.type === AgoraIMMessageType.Image
       ? '[Image Message]'
@@ -145,10 +148,11 @@ const FcrChatroomTooltipContent = ({
 
       <div className="fcr-chatroom-tooltip-content-text">
         <div className="fcr-chatroom-tooltip-content-from">
-          <span>From {message?.ext?.nickName}</span>
-
+          <span>{transI18n('fcr_chat_message_from', { reason1: message?.ext?.nickName })}</span>
           {isPrivateMessage && (
-            <span className="fcr-chatroom-tooltip-content-from-private">&nbsp;(Private)</span>
+            <span className="fcr-chatroom-tooltip-content-from-private">
+              &nbsp;({transI18n('fcr_chat_label_private')})
+            </span>
           )}
         </div>
         <div className="fcr-chatroom-tooltip-content-from">

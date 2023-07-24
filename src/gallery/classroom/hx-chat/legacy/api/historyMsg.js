@@ -1,7 +1,7 @@
 import WebIM from '../utils/WebIM';
 import { messageAction } from '../redux/actions/messageAction';
 import { HISTORY_COUNT } from '../contants';
-import _ from 'lodash';
+import reverse from 'lodash/reverse';
 
 export class ChatHistoryAPI {
   store = null;
@@ -16,7 +16,7 @@ export class ChatHistoryAPI {
       isGroup: true,
       count: HISTORY_COUNT,
       success: (res) => {
-        const historyMsg = _.reverse(res);
+        const historyMsg = reverse(res);
         let deleteMsgId = [];
         historyMsg.map((val, key) => {
           const {

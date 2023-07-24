@@ -3,13 +3,19 @@ import {
   AgoraOnlineclassSDKWidgetBase,
   AgoraWidgetLifecycle,
   AgoraOnlineclassSDKDialogWidget,
+  bound,
+  Lodash,
+  Log,
+  Logger,
+  transI18n,
+  FcrUIConfig,
+  FcrTheme,
 } from 'agora-common-libs';
-import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum } from 'agora-edu-core';
-import { bound, Lodash, Log, Logger } from 'agora-rte-sdk';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import type { AgoraWidgetController, EduClassroomStore } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 import { reaction, IReactionDisposer, observable, action, runInAction } from 'mobx';
-import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrBoardRoom } from '../../../common/whiteboard-wrapper/board-room';
 import { FcrBoardMainWindow } from '../../../common/whiteboard-wrapper/board-window';
@@ -38,8 +44,6 @@ import {
 import { App } from './app';
 import tinycolor from 'tinycolor2';
 import { FcrBoardFactory } from '../../../common/whiteboard-wrapper/factory';
-import { DialogProgressApi } from '../../../components/progress';
-import { FcrUIConfig, FcrTheme } from 'agora-common-libs';
 import {
   WINDOW_ASPECT_RATIO,
   WINDOW_MIN_SIZE,
@@ -437,13 +441,7 @@ export class FcrBoardWidget
     const mainWindow = this._boardMainWindow;
 
     if (mainWindow) {
-      mainWindow.getSnapshotImage(background, (progress: number) => {
-        if (progress !== 100) {
-          DialogProgressApi.show({ key: 'saveImage', progress: 1, width: 100, auto: true });
-        } else {
-          DialogProgressApi.destroy('saveImage');
-        }
-      });
+      mainWindow.getSnapshotImage(background);
     }
   }
 
@@ -566,15 +564,15 @@ export class FcrBoardWidget
       )}.jpg`;
 
       downloadCanvasImage(canvas, fileName);
-      this.ui.addToast(transI18n('toast2.save_success'));
+      this.ui.addToast(transI18n('fcr_savecanvas_tips_save_successfully'));
     });
     mainWindow.on(FcrBoardMainWindowEvent.Failure, (reason) => {
       this.logger.error('operation failure, reason: ', reason);
       if (reason === FcrBoardMainWindowFailureReason.ResourceWindowAlreadyOpened) {
-        this.ui.addToast(transI18n('edu_error.600074'), 'error');
+        this.ui.addToast(transI18n('fcr_board_resource_already_opened'), 'error');
       }
       if (reason === FcrBoardMainWindowFailureReason.SnapshotFailure) {
-        this.ui.addToast(transI18n('toast2.save_error'));
+        this.ui.addToast(transI18n('fcr_board_snapshot_save_error'));
       }
     });
   }
@@ -848,21 +846,12 @@ export class FcrBoardWidget
       this._toolbarContext.observables.undoSteps = steps;
     }
   }
-  @bound
-  private _saveSnapshot(canvas: HTMLCanvasElement) {
-    const fileName = `${this.classroomConfig.sessionInfo.roomName}_${dayjs().format(
-      'YYYYMMDD_HHmmSSS',
-    )}.jpg`;
-    downloadCanvasImage(canvas, fileName);
-    this.ui.addToast(transI18n('toast2.save_success'), 'success');
-  }
 
   private _connectObservables() {
     const mainWindow = this._boardMainWindow;
     mainWindow?.on(FcrBoardMainWindowEvent.PageInfoUpdated, this._updatePageInfo);
     mainWindow?.on(FcrBoardMainWindowEvent.RedoStepsUpdated, this._updateRedo);
     mainWindow?.on(FcrBoardMainWindowEvent.UndoStepsUpdated, this._updateUndo);
-    mainWindow?.on(FcrBoardMainWindowEvent.SnapshotSuccess, this._saveSnapshot);
   }
 
   @bound

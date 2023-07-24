@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom';
 import { App } from './app';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
-import { bound } from 'agora-rte-sdk';
-import { AgoraWidgetTrackMode } from 'agora-common-libs';
+import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import { AgoraWidgetTrackMode, bound } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 
 const defaultPos = { xaxis: 0.5, yaxis: 0.5 };

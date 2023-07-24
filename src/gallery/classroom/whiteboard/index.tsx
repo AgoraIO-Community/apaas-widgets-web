@@ -1,15 +1,20 @@
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
-import { AgoraWidgetController, EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core';
-import { bound, Log, Logger } from 'agora-rte-sdk';
+import {
+  AgoraWidgetBase,
+  AgoraWidgetLifecycle,
+  transI18n,
+  bound,
+  Log,
+  Logger,
+} from 'agora-common-libs';
+import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 import { reaction, IReactionDisposer } from 'mobx';
-import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrBoardFactory } from '../../../common/whiteboard-wrapper/factory';
 import { FcrBoardRoom } from '../../../common/whiteboard-wrapper/board-room';
 import { FcrBoardMainWindow } from '../../../common/whiteboard-wrapper/board-window';
-
 import {
   BoardWindowAnimationOptions,
   FcrBoardRegion,

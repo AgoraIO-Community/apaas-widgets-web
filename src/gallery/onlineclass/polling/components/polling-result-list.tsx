@@ -6,12 +6,14 @@ import { PollingUIContext } from '../ui-context';
 import { observer } from 'mobx-react';
 import { PollingState } from '../type';
 import './polling-result-list.css';
+import { useI18n } from 'agora-common-libs';
 
 const PollingResultList: React.FC = observer(() => {
   const {
     observables: { resultInfo, selectedOptions, isOwner, pollingState, selectIndex, userCount },
     setSelectedOptions,
   } = useContext(PollingUIContext);
+  const transI18n = useI18n();
 
   // single or muti
   const onClickItem = (index: number) => {
@@ -91,7 +93,9 @@ const PollingResultList: React.FC = observer(() => {
           {resultInfo.isMuti ? 'Muti-select' : 'Single'}
         </div>
       ) : (
-        <div className="fcr-polling-result-person-count">{userCount} people participated</div>
+        <div className="fcr-polling-result-person-count">
+          {userCount} {transI18n('fcr_poll_people_participated')}
+        </div>
       )}
     </>
   );

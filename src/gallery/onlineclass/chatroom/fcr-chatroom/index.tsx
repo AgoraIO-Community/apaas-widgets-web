@@ -2,10 +2,8 @@ import { Provider } from 'mobx-react';
 import { useEffect, useMemo, useRef } from 'react';
 import { AgoraHXChatWidget } from '..';
 import { FcrChatRoomStore } from './store';
-import im_CN from '../../../classroom/hx-chat/locales/zh_CN';
-import im_US from '../../../classroom/hx-chat/locales/en_US';
-import { addResourceBundle } from 'agora-common-libs';
 import { FcrChatRoomDesktop } from './container/desktop';
+import { addResource } from './i18n';
 
 export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {
   const { imConfig } = widget;
@@ -16,8 +14,7 @@ export const FcrChatRoomApp = ({ widget }: { widget: AgoraHXChatWidget }) => {
     new FcrChatRoomStore(widget, appKey, imConfig?.chatRoomId || ''),
   );
   useEffect(() => {
-    addResourceBundle('zh', im_CN);
-    addResourceBundle('en', im_US);
+    addResource();
     return () => {
       storeRef.current.destroy();
     };

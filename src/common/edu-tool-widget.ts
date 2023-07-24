@@ -3,8 +3,9 @@ import {
   AgoraWidgetBase,
   AgoraWidgetLifecycle,
   AgoraWidgetTrackMode,
+  bound,
 } from 'agora-common-libs';
-import {
+import type {
   AgoraWidgetController,
   AgoraWidgetTrack,
   Dimensions,
@@ -12,7 +13,6 @@ import {
   Track,
   TrackOptions,
 } from 'agora-edu-core';
-import { bound } from 'agora-rte-sdk';
 import { AgoraExtensionWidgetEvent } from '../events';
 
 /**

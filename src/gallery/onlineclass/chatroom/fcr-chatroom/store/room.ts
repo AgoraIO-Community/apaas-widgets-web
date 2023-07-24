@@ -1,10 +1,11 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
-import { ClassState, EduRoleTypeEnum } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import { ClassState } from 'agora-edu-core/lib/stores/domain/common/room/type';
 import dayjs from 'dayjs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
-import { Logger, bound } from 'agora-rte-sdk';
+import { Logger, bound } from 'agora-common-libs';
 
 export class RoomStore {
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {

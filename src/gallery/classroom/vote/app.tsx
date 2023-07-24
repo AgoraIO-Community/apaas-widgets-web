@@ -1,4 +1,4 @@
-import { isEmpty } from 'lodash';
+import isEmpty from 'lodash/isEmpty';
 import { observer } from 'mobx-react';
 import React from 'react';
 import { CheckBox } from '../../../components/checkbox';

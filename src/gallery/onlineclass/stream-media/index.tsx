@@ -1,14 +1,14 @@
 import ReactDOM from 'react-dom';
 import { App } from './app';
-import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
-import { AgoraWidgetController, EduRoleTypeEnum } from 'agora-edu-core';
-import { bound } from 'agora-rte-sdk';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import type { AgoraWidgetController } from 'agora-edu-core';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import {
   AgoraOnlineclassSDKDialogWidget,
   AgoraOnlineclassSDKWidgetBase,
   AgoraWidgetTrackMode,
+  bound,
 } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 

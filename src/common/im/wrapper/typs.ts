@@ -1,5 +1,5 @@
-import { EduRoleTypeEnum } from 'agora-edu-core';
-import { AGEventEmitter } from 'agora-rte-sdk';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import { AGEventEmitter } from 'agora-common-libs';
 
 export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEventEmitter {
   connectionState: AgoraIMConnectionState = AgoraIMConnectionState.DisConnected;

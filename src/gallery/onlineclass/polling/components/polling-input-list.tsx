@@ -5,6 +5,7 @@ import { PollingUIContext } from '../ui-context';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './polling-input-list.css';
 import { POLL_INPUT_MIN_COUNT } from '../type';
+import { useI18n } from 'agora-common-libs';
 
 const PollingInputList: React.FC = observer(() => {
   const {
@@ -12,6 +13,7 @@ const PollingInputList: React.FC = observer(() => {
     updateOption,
     removeOption,
   } = useContext(PollingUIContext);
+  const transI18n = useI18n();
 
   const isAllowedToRemove = options.length > POLL_INPUT_MIN_COUNT;
 
@@ -43,7 +45,7 @@ const PollingInputList: React.FC = observer(() => {
               />
             }
             maxLength={50}
-            placeholder={'Please Enter...'}
+            placeholder={transI18n('fcr_poll_input_option')}
             defaultValue={content}
             onChange={handleChange}
           />

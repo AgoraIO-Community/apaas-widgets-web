@@ -1,12 +1,11 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
-import { ClassState } from 'agora-edu-core';
+import { ClassState } from 'agora-edu-core/lib/stores/domain/common/room/type';
 import dayjs from 'dayjs';
-
-import { AgoraRteEventType, bound, Scheduler } from 'agora-rte-sdk';
+import { AgoraRteEventType } from 'agora-rte-sdk/lib/core/processor/type';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
-import { transI18n } from 'agora-common-libs';
+import { transI18n, bound, Scheduler } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
 export class RoomStore {

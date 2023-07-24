@@ -1,4 +1,4 @@
-import { EduRoleTypeEnum } from 'agora-edu-core';
+import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { action, autorun, computed, observable } from 'mobx';
 import { AgoraCountdown } from '.';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
