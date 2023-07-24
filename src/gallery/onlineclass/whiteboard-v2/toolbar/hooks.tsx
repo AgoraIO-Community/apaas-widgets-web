@@ -13,6 +13,7 @@ import max from 'lodash/max';
 import { AdditionToolPickerItem } from './extra-tool-picker';
 import { ToolbarUIContext } from '../ui-context';
 import { FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
+import { useI18n } from 'agora-common-libs';
 
 export const useVisibleTools = () => {
   const {
@@ -20,6 +21,7 @@ export const useVisibleTools = () => {
     setTool,
     saveDraft,
   } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
 
   const handleToolChange = (tool: FcrBoardTool) => {
     return () => {
@@ -31,7 +33,7 @@ export const useVisibleTools = () => {
       renderItem: () => (
         <ToolbarItem
           tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip="Clicker"
+          tooltip={transI18n('fcr_board_tool_clicker')}
           icon={SvgIconEnum.FCR_WHITEBOARD_MOUSE}
           onClick={handleToolChange(FcrBoardTool.Clicker)}
           isActive={currentTool === FcrBoardTool.Clicker}
@@ -42,7 +44,7 @@ export const useVisibleTools = () => {
       renderItem: () => (
         <ToolbarItem
           tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip="Selector"
+          tooltip={transI18n('fcr_board_tool_selector')}
           icon={SvgIconEnum.FCR_WHITECHOOSE}
           onClick={handleToolChange(FcrBoardTool.Selector)}
           isActive={currentTool === FcrBoardTool.Selector}
@@ -59,7 +61,7 @@ export const useVisibleTools = () => {
       renderItem: () => (
         <ToolbarItem
           tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip="Text"
+          tooltip={transI18n('fcr_board_tool_text')}
           icon={SvgIconEnum.FCR_WHITEBOARD_TEXT}
           onClick={handleToolChange(FcrBoardTool.Text)}
           isActive={currentTool === FcrBoardTool.Text}
@@ -71,7 +73,7 @@ export const useVisibleTools = () => {
         return (
           <ToolbarItem
             tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-            tooltip="Drag"
+            tooltip={transI18n('fcr_board_tool_drag')}
             icon={SvgIconEnum.FCR_WHITEBOARD_MOVESUBJECTS}
             onClick={handleToolChange(FcrBoardTool.Hand)}
             isActive={currentTool === FcrBoardTool.Hand}
@@ -86,7 +88,7 @@ export const useVisibleTools = () => {
       renderItem: () => (
         <ToolbarItem
           tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip="Laser Pointer "
+          tooltip={transI18n('fcr_board_tool_laser_pointer')}
           icon={SvgIconEnum.FCR_WHITEBOARD_LASERPEN}
           onClick={handleToolChange(FcrBoardTool.LaserPointer)}
           isActive={currentTool === FcrBoardTool.LaserPointer}
@@ -107,7 +109,7 @@ export const useVisibleTools = () => {
       renderItem: () => (
         <ToolbarItem
           tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip="Save"
+          tooltip={transI18n('fcr_board_tool_save')}
           icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
           onClick={saveDraft}
           isActive={false}

@@ -5,6 +5,7 @@ import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
 import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
+import { useI18n } from 'agora-common-libs';
 
 const penIconMap = {
   [FcrBoardShape.Curve]: SvgIconEnum.FCR_WHITEBOARD_PED_CURVE,
@@ -16,7 +17,7 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
     observables: { currentShape, lastPen, toolbarDockPosition },
     setPen,
   } = useContext(ToolbarUIContext);
-
+  const transI18n = useI18n();
   const handlePenToolChange = (shapeTool: FcrBoardShape) => {
     return () => {
       setPen(shapeTool);
@@ -33,7 +34,7 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   return (
     <ExpansionToolbarItem
       isActive={isActive}
-      tooltip="Pen"
+      tooltip={transI18n('fcr_board_tool_pen')}
       icon={icon}
       onClick={handlePenToolChange(clickShape)}
       tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}

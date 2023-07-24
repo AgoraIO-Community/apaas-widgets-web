@@ -4,17 +4,19 @@ import { ExpansionToolbarItem } from '.';
 import { useVisibleTools } from './hooks';
 import React, { useContext } from 'react';
 import { ToolbarUIContext } from '../ui-context';
+import { useI18n } from 'agora-common-libs';
 
 export const AdditionToolPickerItem = observer(() => {
   const {
     observables: { toolbarDockPosition },
   } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
   const isActive = false;
 
   return (
     <ExpansionToolbarItem
       isActive={isActive}
-      tooltip="Extra"
+      tooltip={transI18n('fcr_board_tool_extra')}
       icon={SvgIconEnum.FCR_SUBTRACT}
       tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}

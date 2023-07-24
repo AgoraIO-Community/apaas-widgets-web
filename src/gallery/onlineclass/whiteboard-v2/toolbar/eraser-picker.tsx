@@ -6,18 +6,20 @@ import { ExpansionToolbarItem } from '.';
 import classNames from 'classnames';
 import { FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
+import { useI18n } from 'agora-common-libs';
 
 export const EraserPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
     observables: { currentTool, toolbarDockPosition },
   } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
 
   const isActive = currentTool === FcrBoardTool.Eraser;
 
   return (
     <ExpansionToolbarItem
       isActive={isActive}
-      tooltip="Eraser"
+      tooltip={transI18n('fcr_board_tool_eraser')}
       tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       icon={SvgIconEnum.FCR_WHITEBOARD_ERASER}

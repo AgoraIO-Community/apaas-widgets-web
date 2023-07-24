@@ -4,15 +4,17 @@ import { ExpansionToolbarItem } from '.';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { isElectron } from 'agora-rte-sdk/lib/core/utils/utils';
 import { ToolbarUIContext } from '../ui-context';
+import { useI18n } from 'agora-common-libs';
 
 export const ScreenCapturePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
     observables: { toolbarDockPosition },
   } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
   return isElectron() ? (
     <ExpansionToolbarItem
       isActive={false}
-      tooltip="Screen"
+      tooltip={transI18n('fcr_board_tool_screen')}
       popoverPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
       icon={SvgIconEnum.FCR_WIHITEBOARD_SLICE}
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"

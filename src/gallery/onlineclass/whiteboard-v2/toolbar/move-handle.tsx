@@ -6,9 +6,11 @@ import { useDrag, State } from '@use-gesture/react';
 import { useSpring, animated } from '@react-spring/web';
 import classNames from 'classnames';
 import { ToolbarUIContext } from '../ui-context';
+import { useI18n } from 'agora-common-libs';
 
 export const MoveHandleItem = () => {
   const { setToolbarPosition, observables } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
   const bind = useDrag((p) => {
     const [mx, my] = (p as unknown as State['drag'])!.movement;
 
@@ -20,7 +22,7 @@ export const MoveHandleItem = () => {
     <div {...bind()}>
       <ToolbarItem
         tooltipPlacement={observables.toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-        tooltip="Move"
+        tooltip={transI18n('fcr_board_tool_move')}
         icon={SvgIconEnum.FCR_WHITEBOARD_MOVE}
         className="fcr-board-toolbar-handle"
         isActive={false}

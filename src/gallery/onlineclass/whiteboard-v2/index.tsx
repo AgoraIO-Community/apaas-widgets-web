@@ -122,7 +122,7 @@ export class FcrBoardWidget
     return 'netlessBoard';
   }
   get displayName() {
-    return 'whiteboard';
+    return transI18n('fcr_board_display_name');
   }
   unload() {
     if (this._outerDom) {
@@ -147,16 +147,16 @@ export class FcrBoardWidget
     const handleOpen = (toggle: boolean) => {
       const widgetId = this.widgetId;
       if (toggle) {
-        // 打开远端
+        // set the widget to be active
         controller.setWidegtActive(widgetId);
-        // 打开本地
+        // open the widget locally
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeActive, {
           widgetId,
         });
       } else {
-        // 关闭远端
+        // set the widget to be inactive
         controller.setWidgetInactive(widgetId);
-        // 关闭本地
+        // close the widget locally
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId,
         });
@@ -184,9 +184,6 @@ export class FcrBoardWidget
     };
   }
 
-  /**
-   * 组件创建
-   */
   onCreate(props: any, userProps: any) {
     this._isInitialUser = userProps.initial;
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
@@ -270,27 +267,9 @@ export class FcrBoardWidget
       });
     };
 
-    // 处理
     this._checkBoard(props);
-    // 处理授权列表变更
-    this._checkPrivilege(props);
-    // 处理讲台隐藏/显示，重新计算白板宽高比
-    this._disposers.push(
-      reaction(
-        () => !!(this.classroomStore.roomStore.flexProps?.stage ?? true),
-        () => {
-          const { _boardDom } = this;
-          if (_boardDom) {
-            // wait until the UI rerenders, then actual dimensions can be obtained
-            setTimeout(() => {
-              const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
 
-              this._boardMainWindow?.setAspectRatio(aspectRatio);
-            });
-          }
-        },
-      ),
-    );
+    this._checkPrivilege(props);
     this._disposers.push(
       reaction(
         () => this.classroomStore.roomStore.flexProps?.boardBackgroundImage,
@@ -300,9 +279,6 @@ export class FcrBoardWidget
     this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
   }
 
-  /**
-   * 组件销毁
-   */
   onDestroy() {
     this._leave();
     this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
@@ -613,20 +589,11 @@ export class FcrBoardWidget
     return contentAreaSize;
   }
 
-  /**
-   * 房间属性变更
-   * @param props
-   */
   onPropertiesUpdate(props: any) {
-    // 处理
     this._checkBoard(props);
-    // 处理授权列表变更
     this._checkPrivilege(props);
   }
-  /**
-   * 用户属性变更
-   * @param props
-   */
+
   onUserPropertiesUpdate(userProps: any) {
     this._isInitialUser = userProps.initial;
   }

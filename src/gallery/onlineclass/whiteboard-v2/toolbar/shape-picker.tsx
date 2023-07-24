@@ -5,6 +5,7 @@ import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
 import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
+import { useI18n } from 'agora-common-libs';
 
 const shapeIconMap = {
   [FcrBoardShape.Arrow]: SvgIconEnum.FCR_WHITEBOARD_SHAP_ARROW,
@@ -20,6 +21,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
     observables: { toolbarDockPosition, currentShape, lastShape },
     setShape,
   } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
   const handleShapeToolChange = (shapeTool: FcrBoardShape) => {
     return () => {
       setShape(shapeTool);
@@ -45,7 +47,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
   return (
     <ExpansionToolbarItem
       isActive={isActive}
-      tooltip="Shape"
+      tooltip={transI18n('fcr_board_tool_shape')}
       icon={icon}
       onClick={handleShapeToolChange(clickShape)}
       tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
