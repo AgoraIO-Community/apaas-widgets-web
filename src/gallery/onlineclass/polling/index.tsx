@@ -237,7 +237,7 @@ export class FcrPollingWidget
             observables.pollingState = PollingState.POLLING_END;
           });
         } catch (e) {
-          this.ui.addToast(transI18n('fcr_poll_create_server_error'), 'error');
+          this.ui.addToast(transI18n('fcr_poll_something_wrong'), 'error');
         } finally {
           context.setActionLoading(false);
         }
@@ -252,7 +252,7 @@ export class FcrPollingWidget
             selectIndex: Array.from(observables.selectedOptions),
           });
         } catch (e) {
-          this.ui.addToast(transI18n('fcr_poll_submit_server_error'), 'error');
+          this.ui.addToast(transI18n('fcr_poll_something_wrong'), 'error');
         } finally {
           context.setActionLoading(false);
         }
@@ -263,7 +263,7 @@ export class FcrPollingWidget
         try {
           this.classroomStore.api.stopPolling(roomUuid, `${this._pollId}`);
         } catch (e) {
-          this.ui.addToast(transI18n('fcr_poll_submit_server_error'), 'error');
+          this.ui.addToast(transI18n('fcr_poll_something_wrong'), 'error');
         }
       },
       setMinimize: action((minimize: boolean) => {

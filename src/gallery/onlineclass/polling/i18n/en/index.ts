@@ -7,8 +7,6 @@ export default {
   fcr_poll_end: 'End',
   fcr_poll_input_placeholder: 'Please input the question',
   fcr_poll_input_option: 'Please input choices',
-  fcr_poll_create_server_error: 'Cannot create poll as something is wrong',
-  fcr_poll_submit_server_error: 'Cannot submit poll as something is wrong',
   fcr_poll_state_ended: 'Ended',
   fcr_poll_state_in_progress: 'In Progress',
   fcr_poll_enter_placeholder: 'Please enter...',
@@ -16,4 +14,5 @@ export default {
   fcr_poll_close: 'Close',
   fcr_poll_unable_to_close: 'Please end the current round of voting before closing the polls.',
   fcr_poll_people_participated: 'people participated',
+  fcr_poll_something_wrong: 'Something is wrong',
 };
