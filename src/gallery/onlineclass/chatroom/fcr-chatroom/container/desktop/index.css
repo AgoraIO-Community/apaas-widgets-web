@@ -72,6 +72,10 @@
   text-overflow: ellipsis;
   line-height: 15px;
 }
+.fcr-chatroom-tooltip-content-from span:not(.fcr-chatroom-tooltip-content-from-private) span {
+  font-weight: 700;
+}
+
 .fcr-chatroom-dialog-title-close {
   @apply fcr-rounded-full;
   position: absolute;

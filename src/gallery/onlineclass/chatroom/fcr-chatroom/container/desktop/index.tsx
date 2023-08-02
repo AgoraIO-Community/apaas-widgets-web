@@ -148,7 +148,10 @@ const FcrChatroomTooltipContent = ({
 
       <div className="fcr-chatroom-tooltip-content-text">
         <div className="fcr-chatroom-tooltip-content-from">
-          <span>{transI18n('fcr_chat_message_from', { reason1: message?.ext?.nickName })}</span>
+          <span>
+            {transI18n('fcr_chat_message_from')}
+            <span>{message?.ext?.nickName}</span>
+          </span>
           {isPrivateMessage && (
             <span className="fcr-chatroom-tooltip-content-from-private">
               &nbsp;({transI18n('fcr_chat_label_private')})

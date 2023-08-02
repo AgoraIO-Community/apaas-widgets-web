@@ -31,7 +31,7 @@ export default {
   fcr_chat_tips_announcement_del_success: 'Delete announcement successfully',
   fcr_chat_more: 'More',
   fcr_chat_no_data: 'No data',
-  fcr_chat_message_from: 'From {reason1}',
+  fcr_chat_message_from: 'From ',
   fcr_chat_label_search: 'Search',
   fcr_chat_button_mute: 'Mute',
   fcr_chat_button_unmute: 'Unmute',
