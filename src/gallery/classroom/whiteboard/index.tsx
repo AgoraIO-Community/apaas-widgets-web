@@ -7,7 +7,6 @@ import {
   Logger,
 } from 'agora-common-libs';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
 import { reaction, IReactionDisposer } from 'mobx';
@@ -175,8 +174,8 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
             if (!isNumber(flexProps.area)) {
               // 1v1和大班课默认讲台不开启
               if (
-                this.classroomConfig.sessionInfo.roomType === EduRoomTypeEnum.Room1v1Class ||
-                this.classroomConfig.sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass
+                this.classroomConfig.sessionInfo.roomType === 0 ||
+                this.classroomConfig.sessionInfo.roomType === 2
               ) {
                 return LayoutMaskCode.None;
               }
@@ -516,7 +515,7 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
   get hasPrivilege() {
     const { userUuid, role } = this.classroomConfig.sessionInfo;
     const granted = this._grantedUsers.has(userUuid);
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) ? true : granted;
+    return [1, 3].includes(role) ? true : granted;
   }
 
   /**
