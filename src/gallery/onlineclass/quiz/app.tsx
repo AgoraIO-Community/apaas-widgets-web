@@ -22,8 +22,7 @@ import { useEffect, useRef, useState } from 'react';
 import dayjs from 'dayjs';
 import { Progress } from '@components/progress';
 import { themeVal } from '@ui-kit-utils/tailwindcss';
-import { throttle } from 'lodash';
-const colors = themeVal('colors');
+import throttle from 'lodash/throttle';
 
 export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
@@ -53,6 +52,8 @@ export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
 };
 const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
+  const colors = themeVal('colors');
+
   const isSubmit = widget.userProperties.popupQuizId === widget.roomProperties.extra?.popupQuizId;
 
   const { options, selectOption, selectedOptions, deselectOption } = useQuizSelect(
@@ -201,6 +202,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
 };
 const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
+  const colors = themeVal('colors');
 
   const {
     options,
