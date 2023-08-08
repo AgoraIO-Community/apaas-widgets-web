@@ -13,29 +13,17 @@ import {
 } from './hooks';
 import dayjs from 'dayjs';
 import { useI18n } from 'agora-common-libs';
-import { addResource } from './i18n/config';
+import { EduToolDialog } from '../common/dialog';
 type TimeFormat = {
   tensOfMinutes: number;
   minutes: number;
   tensOfSeconds: number;
   seconds: number;
 };
-type ActionIcon = {
-  icon: SvgIconEnum;
-  iconColor?: string;
-  onClick: (e: React.MouseEvent) => void;
-  onMouseDown?: (e: React.MouseEvent) => void;
-  onMouseUp?: (e: React.MouseEvent) => void;
-  disable?: boolean;
-  tooltipContent?: string;
-};
-const handleMouseDown = (e: React.MouseEvent) => {
-  e.stopPropagation();
-};
+
 export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   const transI18n = useI18n();
   const { minimized } = useCountdownMinimized(widget);
-  const [seconds, setSeconds] = useState(0);
   const {
     duration,
     setDuration,
@@ -43,31 +31,16 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     setTotalDuration,
     status: remoteStatus,
   } = useCountdownRemoteStatus(widget);
-
-  const { current, start, stop, pause, status } = useCountdown(seconds, remoteStatus);
+  const [seconds, setSeconds] = useState(0);
+  const { current, start, stop, pause, status } = useCountdown(duration, remoteStatus);
   const isStopped = status === CountdownStatus.STOPPED;
-  useEffect(() => {
-    addResource();
-  }, []);
-  useEffect(() => {
-    setSeconds(duration);
-  }, [duration]);
+
   useEffect(() => {
     if (minimized) {
       widget.setMinimize(true, { current });
     }
   }, [minimized, current]);
-  useEffect(() => {
-    if (remoteStatus === CountdownStatus.RUNNING) {
-      start();
-    }
-    if (remoteStatus === CountdownStatus.STOPPED) {
-      stop();
-    }
-    if (remoteStatus === CountdownStatus.PAUSED) {
-      pause();
-    }
-  }, [remoteStatus]);
+
   useEffect(() => {
     if (isStopped && widget.hasPrivilege) {
       handleStop();
@@ -75,16 +48,18 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   }, [isStopped]);
 
   const handleStart = () => {
+    if (seconds <= 0) return;
     widget.setActive({
       extra: {
         state: 1,
         startTime: Date.now() + widget.classroomStore.roomStore.clientServerTimeShift,
-        duration: current,
-        totalDuration: current,
+        duration: seconds,
+        totalDuration: seconds,
       },
     });
+    setDuration(seconds);
     start();
-    setTotalDuration(current);
+    setTotalDuration(seconds);
   };
   const handleResume = () => {
     widget.updateWidgetProperties({
@@ -117,83 +92,42 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     });
   };
 
-  const actions: ActionIcon[] = [
-    {
-      icon: SvgIconEnum.FCR_MINUS,
-      onClick: () => widget.setMinimize(true, { current: 0 }),
-      onMouseDown: handleMouseDown,
-      tooltipContent: transI18n('fcr_countdown_timer_minimization'),
-    },
-  ];
-  if (widget.hasPrivilege) {
-    actions.push({
-      icon: SvgIconEnum.FCR_CLOSE,
-      onClick: widget.handleClose,
-      onMouseDown: handleMouseDown,
-      disable: status !== CountdownStatus.STOPPED,
-      tooltipContent:
-        status !== CountdownStatus.STOPPED
-          ? transI18n('fcr_countdown_timer_tips_close')
-          : transI18n('fcr_countdown_timer_close'),
-    });
-  }
   return (
-    <div className="fcr-countdown-container">
-      <div className="fcr-countdown-title">{transI18n('fcr_countdown_timer_title')}</div>
-      <div
-        className={classnames('fcr-countdown-container-bg', {
-          'fcr-countdown-container-bg-active':
-            !widget.hasPrivilege || status !== CountdownStatus.STOPPED,
-        })}></div>
+    <EduToolDialog
+      showClose={widget.hasPrivilege}
+      showMinus
+      minusProps={{
+        tooltipContent: transI18n('fcr_countdown_timer_minimization'),
+      }}
+      onMinusClick={() => widget.setMinimize(true, { current })}
+      closeProps={{
+        disabled: status !== CountdownStatus.STOPPED,
+        tooltipContent:
+          status !== CountdownStatus.STOPPED
+            ? transI18n('fcr_countdown_timer_tips_close')
+            : transI18n('fcr_countdown_timer_close'),
+      }}
+      onCloseClick={widget.handleClose}>
+      <div className="fcr-countdown-container">
+        <div className="fcr-countdown-title">{transI18n('fcr_countdown_timer_title')}</div>
+        <div
+          className={classnames('fcr-countdown-container-bg', {
+            'fcr-countdown-container-bg-active':
+              !widget.hasPrivilege || status !== CountdownStatus.STOPPED,
+          })}></div>
 
-      <div className="fcr-countdown-dialog-actions">
-        {actions.map((action, index) => {
-          const { tooltipContent, disable, onMouseDown, onMouseUp, icon, iconColor, onClick } =
-            action;
-          const [tooltipVisible, setTooltipVisible] = useState(false);
-          const onVisibleChange = (visible: boolean) => {
-            if (!tooltipContent) {
-              setTooltipVisible(false);
-              return;
-            }
-            setTooltipVisible(visible);
-          };
-          return (
-            <ToolTip
-              visible={tooltipVisible}
-              content={tooltipContent}
-              onVisibleChange={onVisibleChange}
-              key={index}>
-              <div
-                onClick={(e) => {
-                  !disable && onClick(e);
-                }}
-                onMouseDown={onMouseDown}
-                onMouseUp={onMouseUp}
-                className={classnames('fcr-countdown-dialog-action-icon', {
-                  'fcr-countdown-dialog-action-icon-disable': disable,
-                })}>
-                <SvgImg
-                  type={icon}
-                  size={14}
-                  colors={{ iconPrimary: iconColor || 'currentColor' }}></SvgImg>
-              </div>
-            </ToolTip>
-          );
-        })}
+        <FcrCountdown
+          current={status === CountdownStatus.STOPPED ? seconds : current}
+          total={totalDuration}
+          onStart={handleStart}
+          onPause={handlePause}
+          onResume={handleResume}
+          onStop={handleStop}
+          onChange={setSeconds}
+          status={status}
+          widget={widget}></FcrCountdown>
       </div>
-
-      <FcrCountdown
-        current={current}
-        total={totalDuration}
-        onStart={handleStart}
-        onPause={handlePause}
-        onResume={handleResume}
-        onStop={handleStop}
-        onChange={setSeconds}
-        status={status}
-        widget={widget}></FcrCountdown>
-    </div>
+    </EduToolDialog>
   );
 };
 

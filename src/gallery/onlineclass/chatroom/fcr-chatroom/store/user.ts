@@ -1,10 +1,10 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
-import { iterateMap } from 'agora-edu-core/lib/utils/collection';
+
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
 import { bound } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent } from '../../../../../events';
+import { iterateMap } from 'agora-common-libs';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -42,9 +42,9 @@ export class UserStore {
     return this.userList
       .filter((user) => user.nickName.includes(this.searchKey))
       .sort((a, b) => {
-        if (a.ext.role === EduRoleTypeEnum.teacher) return -1;
+        if (a.ext.role === 1) return -1;
 
-        if (this.muteList.includes(a.userId) && b.ext.role !== EduRoleTypeEnum.teacher) return -1;
+        if (this.muteList.includes(a.userId) && b.ext.role !== 1) return -1;
 
         return 0;
       });
@@ -58,10 +58,7 @@ export class UserStore {
     const users = await this._fcrChatRoom.getUserInfoList(userUuids);
     runInAction(() => {
       users.forEach((user) => {
-        if (
-          user.ext.role === EduRoleTypeEnum.teacher ||
-          user.ext.role === EduRoleTypeEnum.student
-        ) {
+        if (user.ext.role === 1 || user.ext.role === 2) {
           this.userMap.set(user.userId, user);
         }
       });

@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom';
 import { App } from './app';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
@@ -37,7 +36,7 @@ export class FcrStreamMediaPlayerWidget
   @computed
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) || this._privilege;
+    return [1, 3].includes(role) || this._privilege;
   }
   get displayName() {
     return this.webviewTitle;
@@ -140,6 +139,10 @@ export class FcrStreamMediaPlayerWidget
     });
 
     this.broadcast(AgoraExtensionWidgetEvent.RequestGrantedList, this.widgetId);
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this.widgetId,
+      visible: true,
+    });
   }
 
   onPropertiesUpdate(properties: any) {

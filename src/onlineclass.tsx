@@ -4,6 +4,8 @@ import { FcrBoardWidget as FcrBoardWidgetV2 } from './gallery/onlineclass/whiteb
 import { FcrWebviewWidget } from './gallery/onlineclass/webview';
 import { FcrStreamMediaPlayerWidget } from './gallery/onlineclass/stream-media';
 import { FcrCountdownWidget } from './gallery/onlineclass/countdown';
+import { FcrPopupQuizWidget } from './gallery/onlineclass/quiz';
+
 export {
   FcrChatroom,
   FcrBoardWidgetV2,
@@ -11,6 +13,7 @@ export {
   FcrWebviewWidget,
   FcrStreamMediaPlayerWidget,
   FcrCountdownWidget,
+  FcrPopupQuizWidget,
 };
 import tailwindConfig from '../tailwind.config';
 import { setTailwindConfig } from '@ui-kit-utils/tailwindcss';

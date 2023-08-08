@@ -5,7 +5,6 @@ import { DialogWrapper } from './components/dialog-wrapper';
 import { PollingResultInfo, PollingState, PollingType } from './type';
 import { action, observable, runInAction } from 'mobx';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import {
   AgoraDraggableWidget,
@@ -15,6 +14,7 @@ import {
   transI18n,
 } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
+import { addResource } from './i18n/config';
 
 export class FcrPollingWidget
   extends AgoraOnlineclassSDKWidgetBase
@@ -62,8 +62,19 @@ export class FcrPollingWidget
   get minHeight() {
     return 332;
   }
-  onInstall(controller: AgoraWidgetController): void {}
-  onUninstall(controller: AgoraWidgetController): void {}
+  onInstall(controller: AgoraWidgetController) {
+    addResource();
+
+    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+      id: this.widgetName,
+      name: transI18n('fcr_poll_title'),
+      iconType: SvgIconEnum.FCR_V2_VOTE,
+    });
+  }
+
+  onUninstall(controller: AgoraWidgetController) {
+    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
+  }
   render(dom: HTMLElement) {
     this._dom = dom;
     ReactDOM.render(
@@ -92,7 +103,7 @@ export class FcrPollingWidget
 
   get isTeacher() {
     const { role } = this.classroomConfig.sessionInfo;
-    return role === EduRoleTypeEnum.teacher;
+    return role === 1;
   }
 
   get startedState() {

@@ -12,7 +12,6 @@ import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import { useI18n } from 'agora-common-libs';
-import { addResource } from './i18n/config';
 
 type ActionIcon = {
   icon: SvgIconEnum;
@@ -110,7 +109,6 @@ export const Polling: React.FC = observer(() => {
     onMinimize,
     onClose,
   } = useContext(PollingUIContext);
-  useEffect(addResource, []);
   const transI18n = useI18n();
   const closeDisable = pollingState === PollingState.POLLING_END;
   const handleMouseDown = (e: React.MouseEvent) => {

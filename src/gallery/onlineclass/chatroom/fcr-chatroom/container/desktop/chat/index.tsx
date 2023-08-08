@@ -21,7 +21,6 @@ import {
 import { useI18n } from 'agora-common-libs';
 import { ToolTip } from '@components/tooltip';
 import { useScroll } from '../../../hooks/useScroll';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { Avatar } from '@components/avatar';
 import { Popover } from '@components/popover';
 import { useMute } from '../../../hooks/useMute';
@@ -444,7 +443,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
   const lastMessage = messages[messages.length - 1];
 
   const isSelfMessage = lastMessage.from === fcrChatRoom.userInfo?.userId;
-  const isMessageFromHost = lastMessage.ext?.role === EduRoleTypeEnum.teacher;
+  const isMessageFromHost = lastMessage.ext?.role === 1;
   const renderPlacement = isSelfMessage ? 'right' : 'left';
   const showAvatarAndHost = renderPlacement === 'left';
   const [actionVisible, setActionVisible] = useState(false);

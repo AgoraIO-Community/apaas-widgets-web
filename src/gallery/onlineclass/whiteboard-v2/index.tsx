@@ -11,7 +11,6 @@ import {
   FcrUIConfig,
   FcrTheme,
 } from 'agora-common-libs';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import type { AgoraWidgetController, EduClassroomStore } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
@@ -186,6 +185,10 @@ export class FcrBoardWidget
 
   onCreate(props: any, userProps: any) {
     this._isInitialUser = userProps.initial;
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this.widgetId,
+      visible: true,
+    });
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),
     );
@@ -571,7 +574,7 @@ export class FcrBoardWidget
   get hasPrivilege() {
     const { userUuid, role } = this.classroomConfig.sessionInfo;
     const granted = this._grantedUsers.has(userUuid);
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) ? true : granted;
+    return [1, 3].includes(role) ? true : granted;
   }
 
   get contentAreaSize() {

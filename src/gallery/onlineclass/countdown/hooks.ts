@@ -22,9 +22,9 @@ export const countdownRmoteStatusMap = {
 };
 export const useCountdown = (
   duration: number,
-  initialStatus: CountdownStatus,
+  remoteStatus: CountdownStatus,
 ): UseCountdownReturnType => {
-  const [status, setStatus] = useState(initialStatus);
+  const [status, setStatus] = useState(remoteStatus);
   const [current, setCurrent] = useState(duration);
   const requestRef = useRef<number>();
   const prevTimeRef = useRef<number>(0);
@@ -44,6 +44,7 @@ export const useCountdown = (
         stop();
         newCurrent = 0;
       }
+
       setCurrent(newCurrent);
       currentRef.current = newCurrent;
       prevTimeRef.current = currentTime;
@@ -70,11 +71,20 @@ export const useCountdown = (
     setCurrent(0);
     requestRef.current && cancelAnimationFrame(requestRef.current);
   };
+
   useEffect(() => {
     setCurrent(duration);
     currentRef.current = duration;
-  }, [duration]);
-
+    if (remoteStatus === CountdownStatus.RUNNING) {
+      start();
+    }
+    if (remoteStatus === CountdownStatus.STOPPED) {
+      stop();
+    }
+    if (remoteStatus === CountdownStatus.PAUSED) {
+      pause();
+    }
+  }, [remoteStatus, duration]);
   useEffect(() => {
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
@@ -85,42 +95,56 @@ export const useCountdown = (
 };
 
 export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
-  const [duration, setDuration] = useState(widget.roomProperties.extra?.duration || 0);
+  const checkRemoteStarted = () => {
+    const { extra } = widget.roomProperties;
+    if (!extra?.startTime) return false;
+    const serverTimeCalcByLocalTime =
+      Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
+    const direction = serverTimeCalcByLocalTime - (extra.startTime + extra.duration * 1000); // 判断方向
+    return direction < 0;
+  };
+  const formatRemoteStatus = () => {
+    const formatedStatus =
+      countdownRmoteStatusMap[
+        widget.roomProperties.extra?.state as keyof typeof countdownRmoteStatusMap
+      ];
+    return formatedStatus !== CountdownStatus.PAUSED
+      ? checkRemoteStarted()
+        ? CountdownStatus.RUNNING
+        : CountdownStatus.STOPPED
+      : CountdownStatus.PAUSED;
+  };
+  const calcRemoteDuration = () => {
+    const { extra } = widget.roomProperties;
+
+    const serverTimeCalcByLocalTime =
+      Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
+    const duration = extra?.duration
+      ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
+      : 0;
+    return duration;
+  };
+
+  const [status, setStatus] = useState(formatRemoteStatus());
+  const [duration, setDuration] = useState(calcRemoteDuration());
   const [totalDuration, setTotalDuration] = useState(
     widget.roomProperties.extra?.totalDuration || 0,
   );
-  const [status, setStatus] = useState(
-    countdownRmoteStatusMap[
-      widget.roomProperties.extra?.state as keyof typeof countdownRmoteStatusMap
-    ] || CountdownStatus.STOPPED,
-  );
-
   useEffect(() => {
     return autorun(() => {
       const { extra } = widget.roomProperties;
-      if (extra) {
-        const { extra } = widget.roomProperties;
-
-        if (extra.startTime) {
-          const serverTimeCalcByLocalTime =
-            Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
-          const direction = serverTimeCalcByLocalTime - (extra.startTime + extra.duration * 1000); // 判断方向
-
-          if (direction < 0) {
-            const duration =
-              extra.duration -
-              Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000);
-            setDuration(duration);
-          }
-        } else {
-          setDuration(extra.duration || 0);
+      if (extra?.startTime) {
+        if (checkRemoteStarted()) {
+          const duration = calcRemoteDuration();
+          setDuration(duration);
         }
-
-        if (extra.totalDuration) {
-          setTotalDuration(extra.totalDuration || 0);
-        }
-        setStatus(countdownRmoteStatusMap[extra.state as keyof typeof countdownRmoteStatusMap]);
+      } else {
+        setDuration(extra.duration || 0);
       }
+      if (extra.totalDuration) {
+        setTotalDuration(extra.totalDuration || 0);
+      }
+      setStatus(formatRemoteStatus());
     });
   }, []);
   return {

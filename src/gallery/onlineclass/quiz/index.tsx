@@ -11,11 +11,11 @@ import {
   transI18n,
 } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../events';
-import { FcrCountdownApp } from './app';
+import { FcrPopupQuizApp } from './app';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 
-export class FcrCountdownWidget
+export class FcrPopupQuizWidget
   extends AgoraOnlineclassSDKWidgetBase
   implements AgoraWidgetLifecycle, AgoraDraggableWidget
 {
@@ -24,8 +24,8 @@ export class FcrCountdownWidget
   @observable
   userProperties: any = {};
   private _dom?: HTMLElement;
-  private _width = 230;
-  private _height = 242;
+  private _width = this.hasPrivilege ? 500 : 230;
+  private _height = this.hasPrivilege ? 315 : 172;
 
   get defaultRect() {
     const clientRect = document.body.getBoundingClientRect();
@@ -37,17 +37,17 @@ export class FcrCountdownWidget
     };
   }
   get widgetName(): string {
-    return 'countdown';
+    return 'popupQuiz';
   }
 
   get zContainer(): 0 | 10 {
     return 0;
   }
   get dragHandleClassName(): string {
-    return 'fcr-countdown-container';
+    return 'fcr-popup-quiz-container-bg';
   }
-  get dragCancelClassName() {
-    return 'fcr-countdown';
+  get dragCancelClassName(): string {
+    return 'fcr-popup-quiz-student-select';
   }
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
@@ -55,30 +55,30 @@ export class FcrCountdownWidget
   }
   onInstall(controller: AgoraWidgetController) {
     addResource();
+
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
-      name: transI18n('fcr_countdown_timer_title'),
-      iconType: SvgIconEnum.FCR_V2_TIMER,
+      name: transI18n('fcr_popup_quiz'),
+      iconType: SvgIconEnum.FCR_V2_ANSWER,
     });
   }
 
   onUninstall(controller: AgoraWidgetController) {
     controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
+    this.setVisible(false);
   }
 
   @action
   onCreate(properties: any, userProperties: any) {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
-      widgetId: this.widgetId,
-      visible: true,
-    });
     this.roomProperties = properties;
     this.userProperties = userProperties;
+    this.setVisible(this.roomProperties?.extra?.answerState !== 2 || this.hasPrivilege);
   }
 
   @action
   onPropertiesUpdate(properties: any) {
     this.roomProperties = properties;
+    this.setVisible(this.roomProperties?.extra?.answerState !== 2 || this.hasPrivilege);
   }
   @action
   onUserPropertiesUpdate(userProperties: any) {
@@ -87,7 +87,7 @@ export class FcrCountdownWidget
 
   render(dom: HTMLElement) {
     this._dom = dom;
-    ReactDOM.render(<FcrCountdownApp widget={this}></FcrCountdownApp>, dom);
+    ReactDOM.render(<FcrPopupQuizApp widget={this}></FcrPopupQuizApp>, dom);
   }
   locate() {
     return null;
@@ -99,22 +99,16 @@ export class FcrCountdownWidget
     }
   }
   @bound
-  setMinimize(
-    minimized = true,
-    extra: {
-      current: number;
-    },
-  ) {
+  setMinimize(minimized = true) {
     if (minimized) {
       this.widgetController.broadcast(AgoraExtensionWidgetEvent.Minimize, {
         minimized: true,
         widgetId: this.widgetId,
         minimizeProperties: {
-          minimizedTooltip: transI18n('fcr_poll_title'),
-          minimizedIcon: SvgIconEnum.FCR_V2_TIMER,
+          minimizedTooltip: 'Quiz',
+          minimizedIcon: SvgIconEnum.FCR_V2_ANSWER,
           minimizedKey: this.widgetId,
           minimizedCollapsed: false,
-          extra,
         },
       });
     } else {
@@ -132,6 +126,13 @@ export class FcrCountdownWidget
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, this.widgetId);
 
     this.deleteWidget();
+  }
+  @bound
+  setVisible(visible: boolean) {
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this.widgetId,
+      visible: visible,
+    });
   }
   onDestroy() {}
 }
