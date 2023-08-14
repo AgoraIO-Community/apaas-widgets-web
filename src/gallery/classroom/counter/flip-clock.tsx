@@ -18,7 +18,7 @@ const FlipClock = ({ duration, caution }: { duration: number; caution: boolean }
   }, [duration]);
 
   return (
-    <div className="flex gap-1 justify-center">
+    <div className="fcr-flex fcr-gap-1 fcr-justify-center">
       <FlipCard number={clock[0]} caution={caution} />
       <FlipCard number={clock[1]} caution={caution} />
       <div className="flip-card-time-unit">:</div>

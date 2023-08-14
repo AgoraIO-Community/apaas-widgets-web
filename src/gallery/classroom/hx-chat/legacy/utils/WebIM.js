@@ -2,7 +2,6 @@ import websdk from 'agora-chat';
 import config from './WebIMConfig';
 
 export const initIMSDK = (appkey) => {
-  let WebIM = window.WebIM || {};
   WebIM.config = config;
   WebIM.config.appkey = appkey;
   if (WebIM.conn) {
@@ -27,4 +26,4 @@ export const initIMSDK = (appkey) => {
   WebIM.conn = new websdk.connection(options);
 };
 
-export default window.WebIM;
+export const WebIM = window.WebIM || {};

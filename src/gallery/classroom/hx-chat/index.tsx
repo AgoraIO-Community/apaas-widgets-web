@@ -248,7 +248,7 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
 
     this._dom = dom;
 
-    const cls = classNames({ 'chat-panel': platform !== 'H5' }, 'h-full');
+    const cls = classNames({ 'chat-panel': platform !== 'H5' }, 'fcr-h-full');
 
     this._dom.className = cls;
 
@@ -259,9 +259,9 @@ export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLif
     const dom = this._dom;
     if (dom) {
       if (hide) {
-        dom.classList.add('min-w-0');
+        dom.classList.add('fcr-min-w-0');
       } else {
-        dom.classList.remove('min-w-0');
+        dom.classList.remove('fcr-min-w-0');
       }
     }
   }

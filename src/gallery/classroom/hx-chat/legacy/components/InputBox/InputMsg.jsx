@@ -14,6 +14,7 @@ import isElctronPlatform from '../../utils/platform';
 import { Button } from '../Button';
 import './index.css';
 import ScreenshotMenu from './Screenshot';
+import { WebIM } from '../../utils/WebIM';
 
 // 展示表情
 export const ShowEomji = ({ getEmoji }) => {
@@ -110,8 +111,8 @@ export const InputMsg = ({ allMutePermission }) => {
       message.error(transI18n('chat.enter_content_is_empty'));
       return;
     }
-    let id = window.WebIM.conn.getUniqueId(); // 生成本地消息id
-    let msg = new window.WebIM.message('txt', id); // 创建文本消息
+    let id = WebIM.conn.getUniqueId(); // 生成本地消息id
+    let msg = new WebIM.message('txt', id); // 创建文本消息
     let option = {
       msg: content, // 消息内容
       to: roomId, // 接收消息对象(聊天室id)
@@ -141,7 +142,7 @@ export const InputMsg = ({ allMutePermission }) => {
     };
     msg.set(option);
     setContent('');
-    window.WebIM.conn.send(msg.body);
+    WebIM.conn.send(msg.body);
     setInputStatus(false);
     store.dispatch(setQuestioinStateAction(false));
     inputRef.current.blur();

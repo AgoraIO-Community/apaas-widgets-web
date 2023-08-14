@@ -1,4 +1,4 @@
-import WebIM from '../utils/WebIM';
+import { WebIM } from '../utils/WebIM';
 import { userStatusAction } from '../redux/actions/presenceAction';
 export class PresenceAPI {
     store = null;

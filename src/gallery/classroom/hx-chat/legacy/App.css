@@ -23,6 +23,10 @@
   cursor: pointer;
 }
 
+.fcr-hx-show-chat-icon:hover {
+  @apply fcr-bg-brand;
+}
+
 .fcr-hx-show-chat-icon:hover path {
   fill: #fff;
 }

@@ -1,4 +1,4 @@
-import WebIM from '../utils/WebIM';
+import { WebIM } from '../utils/WebIM';
 import { roomAllMute, roomUserMute, isUserMute } from '../redux/actions/roomAction';
 import { SET_ALL_MUTE, REMOVE_ALL_MUTE, MUTE_USER, UNMUTE_USER, MUTE_CONFIG } from '../contants';
 import http from './base';

@@ -10,8 +10,8 @@ const App = observer(({ widget }: { widget: FcrWatermarkWidget }) => {
   const widgetStore = widget.widgetStore as WidgetWatermarkUIStore;
   return widgetStore.visible ? (
     <WaterMark
-      className="h-full"
-      markClassName="h-full"
+      className="fcr-h-full"
+      markClassName="fcr-h-full"
       zIndex={999}
       content={widgetStore.content}></WaterMark>
   ) : null;
@@ -71,7 +71,7 @@ export class FcrWatermarkWidget extends AgoraWidgetBase implements AgoraWidgetLi
   render(dom: HTMLElement): void {
     this._dom = dom;
     const cls = classNames({
-      'h-full': 1,
+      'fcr-h-full': 1,
     });
     this._dom.className = cls;
     this._renderApp();

@@ -1,4 +1,4 @@
-import WebIM from '../utils/WebIM';
+import { WebIM } from '../utils/WebIM';
 export class LoginAPI {
   store = null;
   constructor(store) {

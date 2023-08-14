@@ -89,7 +89,7 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
         <FlipClock duration={duration} caution={!pluginStore.showSetting && caution} />
       </MaskCountDown>
       {pluginStore.showSetting && (
-        <div className="text-center mt-3.5">
+        <div className="fcr-text-center fcr-mt-3.5">
           <div style={{ width: '180px', height: '40px', marginLeft: 'auto', marginRight: 'auto' }}>
             <Input
               value={pluginStore.number}
@@ -117,7 +117,7 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
             />
           </div>
           <Button
-            className="btn-rewrite-disabled mt-3.5"
+            className="btn-rewrite-disabled fcr-mt-3.5"
             onClick={handleSetting}
             disabled={
               (pluginStore.number !== null && pluginStore.number > 3600) ||

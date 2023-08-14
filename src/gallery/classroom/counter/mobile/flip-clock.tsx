@@ -18,14 +18,14 @@ const FlipClock = ({ duration, caution }: { duration: number; caution: boolean }
   }, [duration]);
 
   return (
-    <div className="flex justify-center">
-      <div className="flex flip-card-mobile-wrap">
+    <div className="fcr-flex fcr-justify-center">
+      <div className="fcr-flex flip-card-mobile-wrap">
         <FlipCard number={clock[0]} caution={caution} />
         <FlipCard number={clock[1]} caution={caution} />
       </div>
 
       <div className="flip-card-mobile-time-unit">:</div>
-      <div className="flex flip-card-mobile-wrap">
+      <div className="fcr-flex flip-card-mobile-wrap">
         <FlipCard number={clock[2]} caution={caution} />
         <FlipCard number={clock[3]} caution={caution} />
       </div>

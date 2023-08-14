@@ -8,7 +8,7 @@ import {
   roomInfo,
   roomUsers,
 } from '../redux/actions/roomAction';
-import WebIM from '../utils/WebIM';
+import { WebIM } from '../utils/WebIM';
 export class ChatRoomAPI {
   store = null;
   chatHistoryAPI = null;

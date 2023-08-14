@@ -13,7 +13,7 @@ import get from 'lodash/get';
 import cloneDeep from 'lodash/cloneDeep';
 import { message } from 'antd';
 import { CHAT_TABS_KEYS, MUTE_CONFIG } from '../contants';
-import WebIM from './WebIM';
+import { WebIM } from './WebIM';
 import { ROLE, TEXT_MESSAGE_THROTTLE_TIME_MS } from '../contants';
 
 export const createListener = (store) => {

@@ -12,7 +12,7 @@ import { useI18n } from 'agora-common-libs';
 import { themeContext } from 'agora-common-libs';
 
 const App = observer(() => (
-  <div className="h-full w-full overflow-hidden" style={{ padding: '21px 14px' }}>
+  <div className="fcr-h-full fcr-w-full fcr-overflow-hidden" style={{ padding: '21px 14px' }}>
     <Content />
     <AnswerBtns />
   </div>
@@ -114,7 +114,7 @@ const ResultDetail = observer(() => {
         </TableHeader>
         <Table className="table-container">
           {pluginStore.rslist.map((student: any) => (
-            <Row className={'border-bottom-width-1'} key={student.ownerUserUuid}>
+            <Row className={'fcr-border-bottom-width-1'} key={student.ownerUserUuid}>
               {['ownerUserName', 'lastCommitTime', 'selectedItems'].map(
                 (col: string, idx: number) => (
                   <Col
@@ -209,7 +209,7 @@ const AwardButton: FC<{ onAward: (type: 'winner' | 'all') => void; children: Rea
 
   return (
     <div className="award-wrap">
-      <div className={'award-list' + (listVisible ? '' : ' hidden')}>
+      <div className={'award-list' + (listVisible ? '' : ' fcr-hidden')}>
         <ul>
           <li
             onClick={() => {
@@ -231,7 +231,7 @@ const AwardButton: FC<{ onAward: (type: 'winner' | 'all') => void; children: Rea
         onClick={() => {
           setListVisible(!listVisible);
         }}>
-        <div className="flex justify-center">
+        <div className="fcr-flex fcr-justify-center">
           <span
             style={{
               display: 'inline-block',

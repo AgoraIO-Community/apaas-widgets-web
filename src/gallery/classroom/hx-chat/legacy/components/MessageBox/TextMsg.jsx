@@ -4,6 +4,7 @@ import { ROLE, MSG_TYPE } from '../../contants';
 import { transI18n } from 'agora-common-libs';
 import { messageAction } from '../../redux/actions/messageAction';
 import delete_icon from '../../themes/img/delete.png';
+import { WebIM } from '../../utils/WebIM';
 import './index.css';
 
 // 聊天页面
@@ -39,7 +40,7 @@ export const TextMsg = ({ item }) => {
 
   // 删除消息
   const deleteMsg = (recallId) => {
-    var id = window.WebIM.conn.getUniqueId(); //生成本地消息id
+    var id = WebIM.conn.getUniqueId(); //生成本地消息id
     var msg = new window.WebIM.message('cmd', id); //创建命令消息
     msg.set({
       to: roomId, //接收消息对象
@@ -63,7 +64,7 @@ export const TextMsg = ({ item }) => {
         console.log('Fail'); //如禁言、拉黑后发送消息会失败
       },
     });
-    window.WebIM.conn.send(msg.body);
+    WebIM.conn.send(msg.body);
   };
 
   return (

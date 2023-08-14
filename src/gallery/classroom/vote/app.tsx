@@ -13,7 +13,7 @@ import { useI18n } from 'agora-common-libs';
 const MAX_LENGTH = 50;
 
 const App = () => (
-  <div className="w-full" style={{ padding: '21px 14px' }}>
+  <div className="fcr-w-full" style={{ padding: '21px 14px' }}>
     <Title />
     <Content />
     <VoteBtns />
@@ -66,7 +66,7 @@ const Title = observer(() => {
           </div>
         </>
       ) : (
-        <div className="vote-question break-all">{pluginStore.title} </div>
+        <div className="vote-question fcr-break-all">{pluginStore.title} </div>
       )}
     </>
   );
@@ -176,7 +176,7 @@ const ResultSection = observer(() => {
             <span className="result-cursor">{index + 1}.</span>
             <div className="result-info-container">
               <div className="result-info">
-                <span className="vote-text break-all" title={value}>
+                <span className="vote-text fcr-break-all" title={value}>
                   {value}
                 </span>{' '}
                 <span className="vote-text-percentage">
@@ -225,7 +225,7 @@ const SelectionSection = observer(() => {
               />
             )}
           </div>
-          <div className="selection-text break-all" title={option}>
+          <div className="selection-text fcr-break-all" title={option}>
             {option}
           </div>
         </label>

@@ -1,6 +1,6 @@
 import { userInfoAction } from '../redux/actions/userAction';
 import { roomUsersInfo } from '../redux/actions/roomAction';
-import WebIM from '../utils/WebIM';
+import { WebIM } from '../utils/WebIM';
 
 export class UserInfoAPI {
   store = null;

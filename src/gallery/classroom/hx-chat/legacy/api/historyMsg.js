@@ -1,4 +1,4 @@
-import WebIM from '../utils/WebIM';
+import { WebIM } from '../utils/WebIM';
 import { messageAction } from '../redux/actions/messageAction';
 import { HISTORY_COUNT } from '../contants';
 import reverse from 'lodash/reverse';

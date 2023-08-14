@@ -180,7 +180,7 @@ export class FcrStreamMediaPlayerWidget extends AgoraEduToolWidget {
 
   render(dom: HTMLElement) {
     this._dom = dom;
-    dom.classList.add('h-full');
+    dom.classList.add('fcr-h-full');
     ReactDOM.render(<App widget={this} />, dom);
   }
 

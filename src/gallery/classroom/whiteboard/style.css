@@ -1,8 +1,7 @@
 .netless-whiteboard-wrapper {
-  @apply fcr-bg-foreground fcr-border-divider;
+  @apply fcr-bg-foreground fcr-border-divider fcr-border;
   height: 100%;
   width: 100%;
-  border: 1px solid;
   border-radius: 4px;
 }
 
