@@ -81,16 +81,17 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
     }
   };
   const { selectedCount = 0, totalCount, averageAccuracy } = widget.roomProperties.extra || {};
+  const inProgress = status === QuizStatus.STARTED && !widget.isAudience;
   return (
     <div
       className={classnames('fcr-popup-quiz', 'fcr-popup-quiz-student', {
         'fcr-popup-quiz-in-progress': status !== QuizStatus.INITIALIZED,
       })}
       style={{
-        height: status === QuizStatus.STARTED ? (options.length > 4 ? 214 : 172) : 180,
+        height: inProgress ? (options.length > 4 ? 214 : 172) : 180,
       }}>
       <div
-        style={{ height: status === QuizStatus.STARTED ? (options.length > 4 ? 149 : 101) : 100 }}
+        style={{ height: inProgress ? (options.length > 4 ? 149 : 101) : 100 }}
         className={classnames('fcr-popup-quiz-container-bg')}>
         <div className="fcr-popup-quiz-title">
           {transI18n('fcr_popup_quiz')}
@@ -98,7 +99,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
             <span>{dayjs.duration(duration).format('HH:mm:ss')}</span>
           )}
         </div>
-        {status === QuizStatus.STARTED && (
+        {inProgress && (
           <div
             className="fcr-popup-quiz-student-select"
             style={{ pointerEvents: editing ? 'all' : 'none' }}>
@@ -125,7 +126,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
             })}
           </div>
         )}
-        {status === QuizStatus.ENDED && (
+        {!inProgress && (
           <div className="fcr-popup-quiz-student-answer">
             <div>
               <div className="fcr-popup-quiz-student-answer-label">
@@ -157,7 +158,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
         )}
       </div>
       <div className="fcr-popup-quiz-in-progress-student-container">
-        {status === QuizStatus.STARTED && (
+        {inProgress && (
           <div className="fcr-popup-quiz-in-progress-student-btns">
             {editing ? (
               <>
@@ -181,7 +182,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
             )}
           </div>
         )}
-        {status === QuizStatus.ENDED && (
+        {!inProgress && (
           <>
             <div className="fcr-popup-quiz-student-answer-overview">
               <div className="fcr-popup-quiz-student-answer-label">

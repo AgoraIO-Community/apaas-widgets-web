@@ -10,14 +10,22 @@ import { useI18n } from 'agora-common-libs';
 
 const PollingResultList: React.FC = observer(() => {
   const {
-    observables: { resultInfo, selectedOptions, isOwner, pollingState, selectIndex, userCount },
+    observables: {
+      resultInfo,
+      selectedOptions,
+      isOwner,
+      pollingState,
+      selectIndex,
+      userCount,
+      isAudience,
+    },
     setSelectedOptions,
   } = useContext(PollingUIContext);
   const transI18n = useI18n();
 
   // single or muti
   const onClickItem = (index: number) => {
-    if (!resultInfo || isOwner || pollingState === PollingState.POLLING_SUBMIT_END) {
+    if (!resultInfo || isAudience || isOwner || pollingState === PollingState.POLLING_SUBMIT_END) {
       return;
     }
     if (resultInfo.isMuti) {
@@ -52,7 +60,7 @@ const PollingResultList: React.FC = observer(() => {
     <>
       {resultInfo.optionList.map((item, index) => {
         const selected = selectIndex?.includes(item.id) || selectedOptions.has(item.id);
-        const showPercent = selectIndex || isOwner;
+        const showPercent = selectIndex || isOwner || isAudience;
         return (
           <div
             key={item.id}
@@ -65,7 +73,7 @@ const PollingResultList: React.FC = observer(() => {
             })}>
             <div
               style={{
-                width: `${selectIndex || isOwner ? item.percent * 100 : 100}%`,
+                width: `${selectIndex || isOwner || isAudience ? item.percent * 100 : 100}%`,
               }}
               className={classnames('fcr-polling-result-progress', {
                 'fcr-polling-result-progress-selected': selected,
@@ -88,7 +96,7 @@ const PollingResultList: React.FC = observer(() => {
         );
       })}
 
-      {PollingState.POLLING_SUBMIT === pollingState && !selectIndex ? (
+      {PollingState.POLLING_SUBMIT === pollingState && !selectIndex && !isAudience ? (
         <div className={classnames('fcr-polling-result-person-count', 'fcr-polling-result-center')}>
           {resultInfo.isMuti ? 'Muti-select' : 'Single'}
         </div>

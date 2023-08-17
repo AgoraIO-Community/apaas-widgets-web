@@ -6,6 +6,7 @@ const pollingUIContextDefaultValue = {
     pollingState: PollingState.POLLING_EDIT,
     pollingType: PollingType.SINGLE,
     isOwner: false,
+    isAudience: false,
     question: '',
     options: [] as PollingInputData[],
     selectedOptions: new Set<number>(),

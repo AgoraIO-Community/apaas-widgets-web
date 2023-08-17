@@ -32,9 +32,15 @@ export class FcrCountdownWidget
     return {
       width: this._width,
       height: this._height,
-      x: clientRect.width / 2 - this._width / 2,
-      y: clientRect.height / 2 - this._height / 2,
+      x: this.isAudience
+        ? clientRect.width - this._width - 10
+        : clientRect.width / 2 - this._width / 2,
+      y: this.isAudience ? 45 : clientRect.height / 2 - this._height / 2,
     };
+  }
+  get isAudience() {
+    const { role } = this.classroomConfig.sessionInfo;
+    return role === 0;
   }
   get widgetName(): string {
     return 'countdown';
@@ -43,9 +49,11 @@ export class FcrCountdownWidget
   get zContainer(): 0 | 10 {
     return 0;
   }
+
   get dragHandleClassName(): string {
     return 'fcr-countdown-container';
   }
+
   get dragCancelClassName() {
     return 'fcr-countdown';
   }

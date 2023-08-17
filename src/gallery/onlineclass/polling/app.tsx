@@ -90,11 +90,13 @@ const PollingQuestion: React.FC = observer(() => {
 
 const PollingList: React.FC = observer(() => {
   const {
-    observables: { pollingState, isOwner, selectIndex },
+    observables: { pollingState, isOwner, selectIndex, isAudience },
   } = useContext(PollingUIContext);
-  const showButtonGroup = isOwner
-    ? PollingState.POLLING_SUBMIT_END !== pollingState
-    : !selectIndex && PollingState.POLLING_SUBMIT_END !== pollingState;
+  const showButtonGroup =
+    !isAudience &&
+    (isOwner
+      ? PollingState.POLLING_SUBMIT_END !== pollingState
+      : !selectIndex && PollingState.POLLING_SUBMIT_END !== pollingState);
   return (
     <div className="fcr-polling-list-container">
       {PollingState.POLLING_EDIT === pollingState ? <PollingInputList /> : <PollingResultList />}

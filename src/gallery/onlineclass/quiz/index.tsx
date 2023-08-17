@@ -32,8 +32,8 @@ export class FcrPopupQuizWidget
     return {
       width: this._width,
       height: this._height,
-      x: clientRect.width / 2 - this._width / 2,
-      y: clientRect.height / 2 - this._height / 2,
+      x: this.isAudience ? 250 : clientRect.width / 2 - this._width / 2,
+      y: this.isAudience ? 45 : clientRect.height / 2 - this._height / 2,
     };
   }
   get widgetName(): string {
@@ -52,6 +52,10 @@ export class FcrPopupQuizWidget
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
     return role === 1;
+  }
+  get isAudience() {
+    const { role } = this.classroomConfig.sessionInfo;
+    return role === 0;
   }
   onInstall(controller: AgoraWidgetController) {
     addResource();
