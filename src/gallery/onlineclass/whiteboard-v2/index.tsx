@@ -1,8 +1,6 @@
 import {
   AgoraUiCapable,
-  AgoraOnlineclassSDKWidgetBase,
-  AgoraWidgetLifecycle,
-  AgoraOnlineclassSDKDialogWidget,
+  AgoraOnlineclassWidget,
   bound,
   Lodash,
   Log,
@@ -58,12 +56,10 @@ import {
   windowClassName,
 } from './utils';
 import { SvgIconEnum } from '@components/svg-img';
+import { MultiWindowWidgetDialog } from '../common/dialog/multi-window';
 
 @Log.attach({ proxyMethods: false })
-export class FcrBoardWidget
-  extends AgoraOnlineclassSDKWidgetBase
-  implements AgoraWidgetLifecycle, AgoraOnlineclassSDKDialogWidget
-{
+export class FcrBoardWidget extends AgoraOnlineclassWidget {
   logger!: Logger;
   protected static _installationDisposer?: CallableFunction;
   protected static _animationOptions: BoardWindowAnimationOptions;
@@ -93,17 +89,35 @@ export class FcrBoardWidget
     strokeColor: '#fed130',
     strokeWidth: 2,
   };
-
-  minimizable = true;
-  closeable = true;
-  fullscreenable = true;
-  defaultFullscreen = true;
+  get resizable(): boolean {
+    return true;
+  }
+  get minimizable(): boolean {
+    return true;
+  }
+  get fullscreenable(): boolean {
+    return true;
+  }
+  get closeable(): boolean {
+    return true;
+  }
+  get defaultFullscreen(): boolean {
+    return true;
+  }
+  get refreshable(): boolean {
+    return false;
+  }
   defaultWidth = WINDOW_MIN_SIZE.width;
   defaultHeight = WINDOW_MIN_SIZE.height;
 
-  minimizeProperties = {
-    minimizedIcon: SvgIconEnum.FCR_WHITEBOARD,
-  };
+  get minimizedProperties() {
+    return {
+      minimizedIcon: SvgIconEnum.FCR_WHITEBOARD,
+    };
+  }
+  get boundaryClassName(): string {
+    return 'fcr-classroom-viewport';
+  }
   get minWidth() {
     return WINDOW_MIN_SIZE.width;
   }
@@ -614,7 +628,14 @@ export class FcrBoardWidget
       <BoardUIContext.Provider value={this._createBoardUIContext()}>
         <ToolbarUIContext.Provider value={this._createToolbarUIContext()}>
           <ScenePaginationUIContext.Provider value={this._createScenePaginationUIContext()}>
-            <App />
+            <MultiWindowWidgetDialog
+              widget={this}
+              closeable={this.hasPrivilege}
+              refreshable={false}
+              fullscreenable
+              minimizable>
+              <App />
+            </MultiWindowWidgetDialog>
           </ScenePaginationUIContext.Provider>
         </ToolbarUIContext.Provider>
       </BoardUIContext.Provider>,

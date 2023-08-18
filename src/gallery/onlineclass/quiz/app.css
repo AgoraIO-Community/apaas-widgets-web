@@ -15,13 +15,11 @@
   @apply fcr-rounded-16 fcr-bg-4;
   height: 76px;
   width: 100%;
-
   transition: height 0.2s;
   padding: 15px;
   gap: 15px;
   display: flex;
   flex-direction: column;
-  cursor: move;
 }
 .fcr-popup-quiz-in-progress .fcr-popup-quiz-container-bg {
   height: 115px;

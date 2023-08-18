@@ -5,7 +5,7 @@ import { observer } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import { WaterMark } from '../../../components/watermark';
 import { WidgetWatermarkUIStore } from './store';
-import { AgoraWidgetBase, AgoraWidgetLifecycle } from 'agora-common-libs';
+import { AgoraCloudClassWidget } from 'agora-common-libs';
 const App = observer(({ widget }: { widget: FcrWatermarkWidget }) => {
   const widgetStore = widget.widgetStore as WidgetWatermarkUIStore;
   return widgetStore.visible ? (
@@ -17,7 +17,7 @@ const App = observer(({ widget }: { widget: FcrWatermarkWidget }) => {
   ) : null;
 });
 
-export class FcrWatermarkWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
+export class FcrWatermarkWidget extends AgoraCloudClassWidget {
   private _dom?: HTMLElement;
   private _widgetStore = new WidgetWatermarkUIStore(this);
   private _rendered = false;

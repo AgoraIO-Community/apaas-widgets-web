@@ -2,8 +2,7 @@ import {
   chatEmojiEnabled,
   chatMuteAllEnabled,
   chatPictureEnabled,
-  AgoraWidgetBase,
-  AgoraWidgetLifecycle,
+  AgoraCloudClassWidget,
 } from 'agora-common-libs';
 import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
 import type { AgoraWidgetController } from 'agora-edu-core';
@@ -141,7 +140,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   );
 });
 
-export class AgoraHXChatWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
+export class AgoraHXChatWidget extends AgoraCloudClassWidget {
   private _imConfig?: { chatRoomId: string; appName: string; orgName: string };
   private _easemobUserId?: string;
   private _dom?: HTMLElement;

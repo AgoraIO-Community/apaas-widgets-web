@@ -139,10 +139,10 @@ export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
           setDuration(duration);
         }
       } else {
-        setDuration(extra.duration || 0);
+        setDuration(extra?.duration || 0);
       }
-      if (extra.totalDuration) {
-        setTotalDuration(extra.totalDuration || 0);
+      if (extra?.totalDuration) {
+        setTotalDuration(extra?.totalDuration || 0);
       }
       setStatus(formatRemoteStatus());
     });

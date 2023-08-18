@@ -3,22 +3,14 @@ import { App } from './app';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
-import {
-  AgoraOnlineclassSDKDialogWidget,
-  AgoraOnlineclassSDKWidgetBase,
-  AgoraWidgetTrackMode,
-  bound,
-} from 'agora-common-libs';
+import { AgoraOnlineclassWidget, bound } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 
-export class FcrStreamMediaPlayerWidget
-  extends AgoraOnlineclassSDKWidgetBase
-  implements AgoraOnlineclassSDKDialogWidget
-{
+export class FcrStreamMediaPlayerWidget extends AgoraOnlineclassWidget {
   private static _installationDisposer?: CallableFunction;
   private _dom?: HTMLElement;
   private _webviewUrl?: string;
-  private _webviewTitle?: string;
+  private _webviewTitle = '';
   private _privilege = false;
   @observable
   private _state?: {
@@ -41,18 +33,26 @@ export class FcrStreamMediaPlayerWidget
   get displayName() {
     return this.webviewTitle;
   }
-  closeable = true;
-  minimizable = true;
-  fullscreenable = true;
-  refreshable = true;
+
+  get defaultRect(): { x: number; y: number; width: number; height: number } {
+    const clientRect = document.body.getBoundingClientRect();
+    return {
+      width: this.defaultWidth,
+      height: this.defaultHeight,
+      x: clientRect.width / 2 - this.defaultWidth / 2,
+      y: clientRect.height / 2 - this.defaultHeight / 2,
+    };
+  }
   defaultWidth = 800;
   defaultHeight = 600;
-  minimizeProperties = {
-    minimizedIcon: SvgIconEnum.FCR_FILE_ALF,
-    minimizedKey: 'Online Course',
-    minimizedCollapsed: true,
-    minimizedCollapsedIcon: SvgIconEnum.FCR_ALF2,
-  };
+  get minimizedProperties() {
+    return {
+      minimizedIcon: SvgIconEnum.FCR_FILE_ALF,
+      minimizedKey: 'Online Course',
+      minimizedCollapsed: true,
+      minimizedCollapsedIcon: SvgIconEnum.FCR_ALF2,
+    };
+  }
   get resizable(): boolean {
     return true;
   }
@@ -61,9 +61,6 @@ export class FcrStreamMediaPlayerWidget
   }
   get minHeight() {
     return 300;
-  }
-  get trackMode() {
-    return AgoraWidgetTrackMode.TrackPositionAndDimensions;
   }
 
   get webviewUrl() {

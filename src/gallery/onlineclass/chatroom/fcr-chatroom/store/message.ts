@@ -14,7 +14,7 @@ import {
   AgoraIMUserInfo,
 } from '../../../../../common/im/wrapper/typs';
 import { List, CellMeasurerCache } from 'react-virtualized';
-import { AgoraExtensionRoomEvent } from '../../../../../events';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
@@ -36,6 +36,7 @@ export class MessageStore {
   @action.bound
   setLastUnreadMessage(message: AgoraIMTextMessage | AgoraIMImageMessage) {
     this.lastUnreadMessage = message;
+    this._widget.broadcast(AgoraExtensionWidgetEvent.ChatUnreadMessageUpdate, message);
   }
 
   @observable messageInputText = '';

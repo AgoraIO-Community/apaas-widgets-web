@@ -2,6 +2,7 @@ import React, { useEffect, useRef, forwardRef } from 'react';
 import { observer } from 'mobx-react';
 import { FcrWebviewWidget } from '.';
 import { AgoraExtensionRoomEvent } from '../../../events';
+import { MultiWindowWidgetDialog } from '../common/dialog/multi-window';
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -50,23 +51,20 @@ export const Webview = forwardRef<WebviewInterface, { url: string }>(function W(
 
 export const App = observer(({ widget }: { widget: FcrWebviewWidget }) => {
   const webviewRef = React.useRef<WebviewInterface>(null);
-  useEffect(() => {
-    widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.Refresh,
-      onMessage: handleRefresh,
-    });
-    return () => {
-      widget.removeBroadcastListener({
-        messageType: AgoraExtensionRoomEvent.Refresh,
-        onMessage: handleRefresh,
-      });
-    };
-  }, []);
-  const handleRefresh = ({ widgetId }: { widgetId: string }) => {
-    if (widgetId === widget.widgetId) {
-      webviewRef.current?.refresh();
-    }
+
+  const handleRefresh = () => {
+    webviewRef.current?.refresh();
   };
 
-  return <Webview ref={webviewRef} url={widget.webviewUrl ?? ''} />;
+  return (
+    <MultiWindowWidgetDialog
+      refreshable
+      fullscreenable
+      onRefresh={handleRefresh}
+      minimizable
+      closeable={widget.hasPrivilege}
+      widget={widget}>
+      <Webview ref={webviewRef} url={widget.webviewUrl ?? ''} />
+    </MultiWindowWidgetDialog>
+  );
 });

@@ -13,16 +13,23 @@ import {
 } from './hooks';
 import dayjs from 'dayjs';
 import { useI18n } from 'agora-common-libs';
-import { EduToolDialog } from '../common/dialog';
+import { EduToolDialog } from '../common/dialog/base';
 type TimeFormat = {
   tensOfMinutes: number;
   minutes: number;
   tensOfSeconds: number;
   seconds: number;
 };
-
+const defaultTimeFormat: TimeFormat = {
+  tensOfMinutes: 0,
+  minutes: 0,
+  tensOfSeconds: 0,
+  seconds: 0,
+};
 export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   const transI18n = useI18n();
+  const [timeFormat, setTimeFormat] = useState<TimeFormat>(defaultTimeFormat);
+
   const { minimized } = useCountdownMinimized(widget);
   const {
     duration,
@@ -32,12 +39,23 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     status: remoteStatus,
   } = useCountdownRemoteStatus(widget);
   const [seconds, setSeconds] = useState(0);
+
   const { current, start, stop, pause, status } = useCountdown(duration, remoteStatus);
   const isStopped = status === CountdownStatus.STOPPED;
-
+  useEffect(() => {
+    const time = dayjs.duration(current * 1000);
+    const minutes = time.minutes() || 0;
+    const seconds = time.seconds() || 0;
+    setTimeFormat({
+      tensOfMinutes: Math.floor(minutes / 10),
+      minutes: minutes % 10,
+      tensOfSeconds: Math.floor(seconds / 10),
+      seconds: seconds % 10,
+    });
+  }, [current]);
   useEffect(() => {
     if (minimized) {
-      widget.setMinimize(true, { current });
+      widget.setMinimize(true, { ...widget.minimizedProperties, extra: { current } });
     }
   }, [minimized, current]);
 
@@ -78,6 +96,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     setDuration(0);
     setTotalDuration(0);
     setSeconds(0);
+    setTimeFormat(defaultTimeFormat);
     stop();
   };
   const handlePause = () => {
@@ -91,23 +110,22 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
       },
     });
   };
-
+  const progress = Math.ceil(((totalDuration - current) / totalDuration) * 100);
   return (
     <EduToolDialog
-      showClose={widget.hasPrivilege}
-      showMinus
-      minusProps={{
+      widget={widget}
+      minimizeProps={{
+        disabled: false,
         tooltipContent: transI18n('fcr_countdown_timer_minimization'),
       }}
-      onMinusClick={() => widget.setMinimize(true, { current })}
       closeProps={{
-        disabled: status !== CountdownStatus.STOPPED,
-        tooltipContent:
-          status !== CountdownStatus.STOPPED
-            ? transI18n('fcr_countdown_timer_tips_close')
-            : transI18n('fcr_countdown_timer_close'),
+        disabled: !isStopped,
+        tooltipContent: isStopped
+          ? transI18n('fcr_countdown_timer_close')
+          : transI18n('fcr_countdown_timer_tips_close'),
       }}
-      onCloseClick={widget.handleClose}>
+      showClose={widget.hasPrivilege}
+      showMinimize={true}>
       <div className="fcr-countdown-container">
         <div className="fcr-countdown-title">{transI18n('fcr_countdown_timer_title')}</div>
         <div
@@ -117,14 +135,25 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
           })}></div>
 
         <FcrCountdown
-          current={status === CountdownStatus.STOPPED ? seconds : current}
-          total={totalDuration}
+          timeFormat={timeFormat}
+          progress={progress}
           onStart={handleStart}
           onPause={handlePause}
           onResume={handleResume}
           onStop={handleStop}
-          onChange={setSeconds}
+          onChange={(time) => {
+            setTimeFormat(time);
+            setSeconds(
+              dayjs
+                .duration({
+                  minutes: time.tensOfMinutes * 10 + time.minutes,
+                  seconds: time.tensOfSeconds * 10 + time.seconds,
+                })
+                .asSeconds(),
+            );
+          }}
           status={status}
+          danger={current > 0 && current <= 10}
           widget={widget}></FcrCountdown>
       </div>
     </EduToolDialog>
@@ -133,64 +162,41 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
 
 export const FcrCountdown = ({
   widget,
-  current,
+  timeFormat,
   status,
-  total,
   onChange,
   onPause,
   onResume,
   onStart,
   onStop,
+  progress,
+  danger,
 }: {
+  timeFormat: TimeFormat;
   widget: FcrCountdownWidget;
-  current: number;
   status: CountdownStatus;
-  total: number;
-  onChange: (value: number) => void;
+  progress: number;
+  onChange: (timeFormat: TimeFormat) => void;
   onStart: () => void;
   onStop: () => void;
   onPause: () => void;
   onResume: () => void;
+  danger: boolean;
 }) => {
   const transI18n = useI18n();
 
-  const [timeFormat, setTimeFormat] = useState<TimeFormat>({
-    tensOfMinutes: 0,
-    minutes: 0,
-    tensOfSeconds: 0,
-    seconds: 0,
-  });
-  useEffect(() => {
-    const time = dayjs.duration(current * 1000);
-    const minutes = time.minutes() || 0;
-    const seconds = time.seconds() || 0;
-    setTimeFormat({
-      tensOfMinutes: Math.floor(minutes / 10),
-      minutes: minutes % 10,
-      tensOfSeconds: Math.floor(seconds / 10),
-      seconds: seconds % 10,
-    });
-  }, [current]);
   const isStopped = status === CountdownStatus.STOPPED;
   const isPaused = status === CountdownStatus.PAUSED;
-  const progress = Math.ceil(((total - current) / total) * 100);
 
   const handleInputChange = (key: keyof TimeFormat, value: number) => {
-    setTimeFormat((prev) => {
-      const newState = {
-        ...prev,
-        [key]: value < 0 ? 9 : value > 9 ? 0 : value,
-      };
-      onChange(
-        dayjs
-          .duration({
-            minutes: newState.tensOfMinutes * 10 + newState.minutes,
-            seconds: newState.tensOfSeconds * 10 + newState.seconds,
-          })
-          .asSeconds(),
-      );
-      return newState;
-    });
+    const newTime = {
+      ...timeFormat,
+      [key]:
+        key === 'minutes' || key === 'tensOfMinutes' || key === 'seconds'
+          ? Math.min(Math.max(value, 0), 9)
+          : Math.min(Math.max(value, 0), 5),
+    };
+    onChange(newTime);
   };
   return (
     <div
@@ -201,7 +207,7 @@ export const FcrCountdown = ({
         <div className="fcr-countdown-progress">
           <div
             className={classnames('fcr-countdown-progress-inner', {
-              'fcr-countdown-progress-inner-danger': current <= 10,
+              'fcr-countdown-progress-inner-danger': danger,
             })}
             style={{ width: `${progress}%` }}></div>
         </div>
@@ -209,7 +215,7 @@ export const FcrCountdown = ({
 
       <div
         className={classnames('fcr-countdown-inputs', {
-          'fcr-countdown-inputs-danger': !isStopped && current <= 10,
+          'fcr-countdown-inputs-danger': !isStopped && danger,
         })}>
         <FcrCountdownInput
           readOnly={!isStopped || !widget.hasPrivilege}

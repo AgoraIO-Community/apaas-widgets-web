@@ -3,22 +3,13 @@ import { observable, action } from 'mobx';
 
 import type { AgoraWidgetController } from 'agora-edu-core';
 
-import {
-  AgoraDraggableWidget,
-  AgoraOnlineclassSDKWidgetBase,
-  AgoraWidgetLifecycle,
-  bound,
-  transI18n,
-} from 'agora-common-libs';
+import { AgoraOnlineclassWidget, bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrPopupQuizApp } from './app';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 
-export class FcrPopupQuizWidget
-  extends AgoraOnlineclassSDKWidgetBase
-  implements AgoraWidgetLifecycle, AgoraDraggableWidget
-{
+export class FcrPopupQuizWidget extends AgoraOnlineclassWidget {
   @observable
   roomProperties: any = {};
   @observable
@@ -52,6 +43,15 @@ export class FcrPopupQuizWidget
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
     return role === 1;
+  }
+
+  get minimizedProperties() {
+    return {
+      minimizedTooltip: transI18n('fcr_popup_quiz'),
+      minimizedIcon: SvgIconEnum.FCR_V2_ANSWER,
+      minimizedKey: this.widgetId,
+      minimizedCollapsed: false,
+    };
   }
   get isAudience() {
     const { role } = this.classroomConfig.sessionInfo;
@@ -102,29 +102,7 @@ export class FcrPopupQuizWidget
       this._dom = undefined;
     }
   }
-  @bound
-  setMinimize(minimized = true) {
-    if (minimized) {
-      this.widgetController.broadcast(AgoraExtensionWidgetEvent.Minimize, {
-        minimized: true,
-        widgetId: this.widgetId,
-        minimizeProperties: {
-          minimizedTooltip: 'Quiz',
-          minimizedIcon: SvgIconEnum.FCR_V2_ANSWER,
-          minimizedKey: this.widgetId,
-          minimizedCollapsed: false,
-        },
-      });
-    } else {
-      this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
-        minimized: false,
-        widgetId: this.widgetId,
-        minimizeProperties: {
-          minimizedCollapsed: false,
-        },
-      });
-    }
-  }
+
   @bound
   handleClose() {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, this.widgetId);

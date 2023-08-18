@@ -3,34 +3,57 @@ import { ToolTip } from '@components/tooltip';
 import classnames from 'classnames';
 import { FC, PropsWithChildren } from 'react';
 import './index.css';
+import { AgoraOnlineclassWidget } from 'agora-common-libs';
+import { observer } from 'mobx-react';
+import { AgoraExtensionWidgetEvent } from '../../../../../events';
 const handleMouseDown = (e: React.MouseEvent) => {
   e.stopPropagation();
 };
 export type EduToolDialogProps = {
-  showMinus?: boolean;
-  minusProps?: {
-    tooltipContent?: string;
-    disabled?: boolean;
-  };
-  onMinusClick?: (e: React.MouseEvent) => void;
+  widget: AgoraOnlineclassWidget;
   showClose?: boolean;
   closeProps?: { tooltipContent?: string; disabled?: boolean };
-  onCloseClick?: (e: React.MouseEvent) => void;
+  showMinimize?: boolean;
+  minimizeProps?: { tooltipContent?: string; disabled?: boolean };
 };
-export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = (props) => {
-  const { showMinus = false, showClose = false } = props;
+export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = observer((props) => {
+  const {
+    widget,
+    showClose = true,
+    closeProps = {
+      tooltipContent: '',
+      disabled: false,
+    },
+    showMinimize = true,
+    minimizeProps = {
+      tooltipContent: '',
+      disabled: false,
+    },
+  } = props;
+
+  const handleClose = () => {
+    widget.widgetController.broadcast(
+      AgoraExtensionWidgetEvent.WidgetBecomeInactive,
+      widget.widgetId,
+    );
+
+    widget.deleteWidget();
+  };
+  const handleMinimized = () => {
+    widget.setMinimize(true, widget.minimizedProperties);
+  };
   return (
     <div className="fcr-edu-tool-dialog">
       <div className="fcr-edu-tool-dialog-actions">
-        {showMinus && (
-          <ToolTip content={props.minusProps?.tooltipContent}>
+        {showMinimize && (
+          <ToolTip content={minimizeProps.tooltipContent}>
             <div
               onClick={(e) => {
-                !props.minusProps?.disabled && props.onMinusClick?.(e);
+                !minimizeProps.disabled && handleMinimized();
               }}
               onMouseDown={handleMouseDown}
               className={classnames('fcr-edu-tool-dialog-action-icon', {
-                'fcr-edu-tool-dialog-action-icon-disable': props.minusProps?.disabled,
+                'fcr-edu-tool-dialog-action-icon-disable': minimizeProps.disabled,
               })}>
               <SvgImg
                 type={SvgIconEnum.FCR_MINUS}
@@ -40,14 +63,14 @@ export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = (props) 
           </ToolTip>
         )}
         {showClose && (
-          <ToolTip content={props.closeProps?.tooltipContent}>
+          <ToolTip content={closeProps.tooltipContent}>
             <div
               onClick={(e) => {
-                !props.closeProps?.disabled && props.onCloseClick?.(e);
+                !closeProps.disabled && handleClose();
               }}
               onMouseDown={handleMouseDown}
               className={classnames('fcr-edu-tool-dialog-action-icon', {
-                'fcr-edu-tool-dialog-action-icon-disable': props.closeProps?.disabled,
+                'fcr-edu-tool-dialog-action-icon-disable': closeProps.disabled,
               })}>
               <SvgImg
                 type={SvgIconEnum.FCR_CLOSE}
@@ -60,4 +83,4 @@ export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = (props) 
       {props.children}
     </div>
   );
-};
+});

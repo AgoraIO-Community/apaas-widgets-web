@@ -1,4 +1,4 @@
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+import type { EduRoleTypeEnum } from 'agora-edu-core';
 import { AGEventEmitter } from 'agora-common-libs';
 
 export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEventEmitter {

@@ -79,6 +79,7 @@
   justify-content: center;
   position: relative;
   cursor: pointer;
+  user-select: none;
 }
 .fcr-countdown-input-add:not(.fcr-countdown-input-add-readonly) {
   margin-bottom: 5px;
@@ -120,7 +121,6 @@
 }
 .fcr-countdown-container {
   padding: 15px 12px 20px;
-  cursor: move;
 }
 .fcr-countdown-container-bg {
   @apply fcr-rounded-16 fcr-bg-4;

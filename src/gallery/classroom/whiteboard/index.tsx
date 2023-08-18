@@ -1,11 +1,4 @@
-import {
-  AgoraWidgetBase,
-  AgoraWidgetLifecycle,
-  transI18n,
-  bound,
-  Log,
-  Logger,
-} from 'agora-common-libs';
+import { AgoraCloudClassWidget, transI18n, bound, Log, Logger } from 'agora-common-libs';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
@@ -32,7 +25,7 @@ import { DialogProgressApi } from '../../../components/progress';
 import isNumber from 'lodash/isNumber';
 
 @Log.attach({ proxyMethods: false })
-export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecycle {
+export class FcrBoardWidget extends AgoraCloudClassWidget {
   protected static _installationDisposer?: CallableFunction;
   protected static _animationOptions: BoardWindowAnimationOptions;
   logger!: Logger;

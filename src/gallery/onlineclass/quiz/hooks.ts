@@ -66,7 +66,7 @@ export const useQuizStatus = (widget: FcrPopupQuizWidget) => {
   useEffect(() => {
     return autorun(() => {
       const { extra } = widget.roomProperties;
-      const status = extra.answerState as QuizStatus;
+      const status = (extra?.answerState as QuizStatus) || QuizStatus.INITIALIZED;
       setStatus(status);
     });
   }, []);

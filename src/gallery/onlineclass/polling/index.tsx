@@ -5,21 +5,12 @@ import { DialogWrapper } from './components/dialog-wrapper';
 import { PollingResultInfo, PollingState, PollingType } from './type';
 import { action, observable, runInAction } from 'mobx';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { AgoraExtensionWidgetEvent } from '../../../events';
-import {
-  AgoraDraggableWidget,
-  AgoraOnlineclassSDKWidgetBase,
-  AgoraWidgetLifecycle,
-  bound,
-  transI18n,
-} from 'agora-common-libs';
+import { transI18n, AgoraOnlineclassWidget } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
+import { AgoraExtensionWidgetEvent } from '../../../events';
 
-export class FcrPollingWidget
-  extends AgoraOnlineclassSDKWidgetBase
-  implements AgoraWidgetLifecycle, AgoraDraggableWidget
-{
+export class FcrPollingWidget extends AgoraOnlineclassWidget {
   protected _listenerDisposer?: CallableFunction;
   private _dom?: HTMLElement;
   private _context: PollingUIContextValue = this._createUIContext();
@@ -36,9 +27,14 @@ export class FcrPollingWidget
       y: this.isAudience ? 45 : clientRect.height / 2 - this._height / 2,
     };
   }
-  minimizeProperties = {
-    minimizedIcon: SvgIconEnum.FCR_WHITEBOARD,
-  };
+  get minimizedProperties() {
+    return {
+      minimizedTooltip: transI18n('fcr_poll_title'),
+      minimizedIcon: SvgIconEnum.FCR_V2_VOTE,
+      minimizedKey: this.widgetId,
+      minimizedCollapsed: false,
+    };
+  }
   get draggable() {
     return true;
   }
@@ -55,13 +51,6 @@ export class FcrPollingWidget
     return 'fcr-classroom-viewport';
   }
 
-  get minWidth() {
-    return 230;
-  }
-
-  get minHeight() {
-    return 332;
-  }
   onInstall(controller: AgoraWidgetController) {
     addResource();
 
@@ -130,8 +119,6 @@ export class FcrPollingWidget
   }
 
   onUserPropertiesUpdate(userProperties: any) {
-    console.log('onUserPropertiesUpdate', userProperties);
-
     runInAction(() => {
       if (userProperties.pollId === this._pollId) {
         this._context.observables.selectIndex = userProperties?.selectIndex;
@@ -140,12 +127,11 @@ export class FcrPollingWidget
   }
 
   onPropertiesUpdate(properties: any) {
-    console.log('onPropertiesUpdate', properties);
     this._updateContext(properties);
   }
 
   onDestroy() {
-    this._setMinimize(false);
+    this.setMinimize(false);
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
 
     if (this._listenerDisposer) {
@@ -317,7 +303,7 @@ export class FcrPollingWidget
         });
         this.handleClose();
       },
-      onMinimize: this._setMinimize,
+      onMinimize: this.setMinimize,
     };
 
     return context;
@@ -326,30 +312,5 @@ export class FcrPollingWidget
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, this.widgetId);
 
     this.deleteWidget();
-  }
-  @bound
-  private _setMinimize(minimized = true) {
-    this._context.setMinimize(minimized);
-
-    if (minimized) {
-      this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
-        minimized: true,
-        widgetId: this.widgetId,
-        minimizeProperties: {
-          minimizedTooltip: transI18n('fcr_poll_title'),
-          minimizedIcon: SvgIconEnum.FCR_V2_VOTE,
-          minimizedKey: this.widgetId,
-          minimizedCollapsed: false,
-        },
-      });
-    } else {
-      this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
-        minimized: false,
-        widgetId: this.widgetId,
-        minimizeProperties: {
-          minimizedCollapsed: false,
-        },
-      });
-    }
   }
 }

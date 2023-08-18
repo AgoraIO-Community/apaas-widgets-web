@@ -369,7 +369,6 @@ export class FcrChatRoom extends AgoraIMBase {
     pageNum: number;
     pageSize: number;
   }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
-    console.log(params);
     return [];
   }
   async leave(): Promise<void> {

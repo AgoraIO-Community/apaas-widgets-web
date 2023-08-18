@@ -1,5 +1,4 @@
 import { FcrPopupQuizWidget } from '.';
-import { EduToolDialog } from '../common/dialog';
 import classnames from 'classnames';
 import { useI18n } from 'agora-common-libs';
 import './app.css';
@@ -23,6 +22,7 @@ import dayjs from 'dayjs';
 import { Progress } from '@components/progress';
 import { themeVal } from '@ui-kit-utils/tailwindcss';
 import throttle from 'lodash/throttle';
+import { EduToolDialog } from '../common/dialog/base';
 
 export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
@@ -30,7 +30,9 @@ export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
 
   return (
     <EduToolDialog
+      widget={widget}
       showClose={widget.hasPrivilege}
+      showMinimize
       closeProps={{
         disabled: status === QuizStatus.STARTED,
         tooltipContent:
@@ -38,10 +40,10 @@ export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
             ? transI18n('fcr_popup_quiz_widget_close')
             : transI18n('fcr_popup_quiz_close'),
       }}
-      onCloseClick={widget.handleClose}
-      onMinusClick={() => widget.setMinimize(true)}
-      minusProps={{ tooltipContent: transI18n('fcr_popup_quiz_minimization') }}
-      showMinus>
+      minimizeProps={{
+        disabled: false,
+        tooltipContent: transI18n('fcr_popup_quiz_minimization'),
+      }}>
       {widget.hasPrivilege ? (
         <TeacherQuiz widget={widget}></TeacherQuiz>
       ) : (

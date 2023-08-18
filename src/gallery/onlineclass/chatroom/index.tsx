@@ -2,28 +2,28 @@ import {
   chatEmojiEnabled,
   chatMuteAllEnabled,
   chatPictureEnabled,
-  AgoraOnlineclassSDKWidgetBase,
-  AgoraWidgetLifecycle,
+  AgoraOnlineclassWidget,
 } from 'agora-common-libs';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
 import { FcrChatRoomApp } from './fcr-chatroom';
 import { AgoraExtensionWidgetEvent } from '../../../events';
+import { FcrChatRoomStore } from './fcr-chatroom/store';
 
-export class AgoraHXChatWidget
-  extends AgoraOnlineclassSDKWidgetBase
-  implements AgoraWidgetLifecycle
-{
+export class AgoraHXChatWidget extends AgoraOnlineclassWidget {
   private _imConfig?: { chatRoomId: string; appName: string; orgName: string };
   private _easemobUserId?: string;
   private _dom?: HTMLElement;
   private _rendered = false;
+  store: FcrChatRoomStore | null = null;
   slotDom?: HTMLElement;
   get dialogRenderDom() {
     return this._dom;
   }
   onInstall(controller: AgoraWidgetController): void {}
-  dragHandleClassName = 'fcr-chatroom-dialog-title';
+  get dragHandleClassName(): string {
+    return 'fcr-chatroom-dialog-title';
+  }
   private _width = 350;
   private _height = 600;
   get defaultRect() {
@@ -35,7 +35,12 @@ export class AgoraHXChatWidget
       y: clientRect.height - this._height - 60,
     };
   }
-
+  get minimizable() {
+    return false;
+  }
+  get closeable() {
+    return false;
+  }
   get widgetName(): string {
     return 'easemobIM';
   }
@@ -89,7 +94,8 @@ export class AgoraHXChatWidget
   onCreate(properties: any, userProperties: any) {
     this._easemobUserId = userProperties?.userId;
     this._imConfig = properties?.extra;
-
+    const appKey = this._imConfig?.orgName + '#' + this._imConfig?.appName;
+    this.store = new FcrChatRoomStore(this, appKey, this._imConfig?.chatRoomId || '');
     this._renderApp();
   }
 
@@ -103,10 +109,12 @@ export class AgoraHXChatWidget
     this._renderApp();
   }
 
-  onDestroy(): void {}
+  onDestroy(): void {
+    this.store?.destroy();
+  }
 
   private _renderApp() {
-    if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
+    if (this.imConfig && this.easemobUserId && this._dom) {
       ReactDOM.render(<FcrChatRoomApp widget={this} />, this._dom);
       this._rendered = true;
     }
@@ -130,6 +138,5 @@ export class AgoraHXChatWidget
       this._dom = undefined;
     }
   }
-
   onUninstall(controller: AgoraWidgetController): void {}
 }

@@ -3,22 +3,13 @@ import { observable, action } from 'mobx';
 
 import type { AgoraWidgetController } from 'agora-edu-core';
 
-import {
-  AgoraDraggableWidget,
-  AgoraOnlineclassSDKWidgetBase,
-  AgoraWidgetLifecycle,
-  bound,
-  transI18n,
-} from 'agora-common-libs';
+import { AgoraOnlineclassWidget, bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrCountdownApp } from './app';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 
-export class FcrCountdownWidget
-  extends AgoraOnlineclassSDKWidgetBase
-  implements AgoraWidgetLifecycle, AgoraDraggableWidget
-{
+export class FcrCountdownWidget extends AgoraOnlineclassWidget {
   @observable
   roomProperties: any = {};
   @observable
@@ -26,7 +17,17 @@ export class FcrCountdownWidget
   private _dom?: HTMLElement;
   private _width = 230;
   private _height = 242;
-
+  get minimizedProperties() {
+    return {
+      minimizedTooltip: transI18n('fcr_countdown_timer_title'),
+      minimizedIcon: SvgIconEnum.FCR_V2_TIMER,
+      minimizedKey: this.widgetId,
+      minimizedCollapsed: false,
+      extra: {
+        current: 0,
+      },
+    };
+  }
   get defaultRect() {
     const clientRect = document.body.getBoundingClientRect();
     return {
@@ -106,40 +107,6 @@ export class FcrCountdownWidget
       this._dom = undefined;
     }
   }
-  @bound
-  setMinimize(
-    minimized = true,
-    extra: {
-      current: number;
-    },
-  ) {
-    if (minimized) {
-      this.widgetController.broadcast(AgoraExtensionWidgetEvent.Minimize, {
-        minimized: true,
-        widgetId: this.widgetId,
-        minimizeProperties: {
-          minimizedTooltip: transI18n('fcr_poll_title'),
-          minimizedIcon: SvgIconEnum.FCR_V2_TIMER,
-          minimizedKey: this.widgetId,
-          minimizedCollapsed: false,
-          extra,
-        },
-      });
-    } else {
-      this.broadcast(AgoraExtensionWidgetEvent.Minimize, {
-        minimized: false,
-        widgetId: this.widgetId,
-        minimizeProperties: {
-          minimizedCollapsed: false,
-        },
-      });
-    }
-  }
-  @bound
-  handleClose() {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, this.widgetId);
 
-    this.deleteWidget();
-  }
   onDestroy() {}
 }
