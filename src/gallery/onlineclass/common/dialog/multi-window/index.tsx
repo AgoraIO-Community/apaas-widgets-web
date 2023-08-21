@@ -5,6 +5,7 @@ import { ToolTip } from '@components/tooltip';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './index.css';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
+import { FcrBoardWidget } from '../../../whiteboard-v2';
 
 interface MultiWindowWidgetDialogProps extends PropsWithChildren {
   widget: AgoraOnlineclassWidget;
@@ -26,12 +27,20 @@ export const MultiWindowWidgetDialog = observer(
     const transI18n = useI18n();
 
     const handleClose = () => {
-      widget.widgetController.broadcast(
-        AgoraExtensionWidgetEvent.WidgetBecomeInactive,
-        widget.widgetId,
-      );
+      if (widget instanceof FcrBoardWidget) {
+        widget.setInactive();
+        // close the widget locally
+        widget.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
+          widgetId: widget.widgetId,
+        });
+      } else {
+        widget.widgetController.broadcast(
+          AgoraExtensionWidgetEvent.WidgetBecomeInactive,
+          widget.widgetId,
+        );
 
-      widget.deleteWidget();
+        widget.deleteWidget();
+      }
     };
     const handleMinimize = () => {
       widget.setMinimize(true, widget.minimizedProperties);

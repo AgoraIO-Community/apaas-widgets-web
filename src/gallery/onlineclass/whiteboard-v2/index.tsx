@@ -113,6 +113,7 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
   get minimizedProperties() {
     return {
       minimizedIcon: SvgIconEnum.FCR_WHITEBOARD,
+      minimizedTooltip: transI18n('fcr_board_display_name'),
     };
   }
   get boundaryClassName(): string {
@@ -155,7 +156,18 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
     //@ts-ignore
     window.boardWidget = this;
   }
-
+  @bound
+  onEntered(): void {
+    this.mount();
+    this._repositionToolbar();
+  }
+  @bound
+  onExited(): void {
+    if (this._mounted && this._boardMainWindow) {
+      this._boardMainWindow.destroy();
+    }
+    this._mounted = false;
+  }
   onInstall(controller: AgoraWidgetController): void {
     const handleOpen = (toggle: boolean) => {
       const widgetId = this.widgetId;
@@ -230,27 +242,6 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
                 this._setDomVisibility(minimized);
                 this._boardContext.observables.minimized = minimized;
               }
-              if (!minimized) {
-                setTimeout(() => {
-                  if (this._boardDom && this._boardMainWindow) {
-                    const aspectRatio = this._boardDom.clientHeight / this._boardDom.clientWidth;
-                    this._mounted = true;
-                    this._boardMainWindow
-                      .mount(this._boardDom, {
-                        containerSizeRatio: aspectRatio,
-                        collectorContainer: this._collectorDom ?? undefined,
-                      })
-                      .catch(() => {
-                        this._mounted = false;
-                      });
-                  }
-                }, 300);
-              } else {
-                if (this._boardMainWindow) {
-                  this._boardMainWindow.destroy();
-                }
-                this._mounted = false;
-              }
             });
           }
         },
@@ -283,7 +274,6 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
         this.removeBroadcastListener(listener);
       });
     };
-
     this._checkBoard(props);
 
     this._checkPrivilege(props);
@@ -308,7 +298,6 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
 
   private _checkBoard(props: any) {
     const { boardAppId, boardId, boardRegion, boardToken } = props.extra || {};
-
     if (!this._initialized && boardAppId && boardId && boardRegion && boardToken) {
       const { userUuid: userId, userName } = this.classroomConfig.sessionInfo;
 
@@ -677,7 +666,6 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
           resizeObserver.observe(this._boardDom);
 
           this._boardDomResizeObserver = resizeObserver;
-
           this.mount();
         } else {
           this._boardDomResizeObserver?.disconnect();
@@ -917,7 +905,7 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
 
       if (containerDom && toolbarDom) {
         this._updateDockPlacement();
-        this._updateMaxVisibleTools();
+        setTimeout(this._updateMaxVisibleTools);
         // wait until the UI rerenders, then actual dimensions can be obtained
         setTimeout(this._updateDockPosition);
       }
@@ -947,7 +935,8 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
             );
           }
         } else {
-          const availableHeight = containerClientRect.height - verticalPadding - defaultToolsRetain;
+          const availableHeight =
+            containerClientRect.height - verticalPadding - defaultToolsRetain - sceneNavHeight;
           toolbarContext.observables.maxCountVisibleTools = Math.floor(
             availableHeight / heightPerTool,
           );

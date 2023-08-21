@@ -60,7 +60,7 @@ const PollingResultList: React.FC = observer(() => {
     <>
       {resultInfo.optionList.map((item, index) => {
         const selected = selectIndex?.includes(item.id) || selectedOptions.has(item.id);
-        const showPercent = selectIndex || isOwner || isAudience;
+        const showPercent = !!selectIndex || isOwner || isAudience;
         return (
           <div
             key={item.id}
@@ -69,16 +69,18 @@ const PollingResultList: React.FC = observer(() => {
             }}
             style={{ cursor: selectIndex || isOwner ? 'default' : 'pointer' }}
             className={classnames('fcr-polling-result-item', {
-              'fcr-polling-result-item-selected': selected,
+              'fcr-polling-result-item-selected': selected && !selectIndex,
             })}>
-            <div
-              style={{
-                width: `${selectIndex || isOwner || isAudience ? item.percent * 100 : 100}%`,
-              }}
-              className={classnames('fcr-polling-result-progress', {
-                'fcr-polling-result-progress-selected': selected,
-              })}
-            />
+            {showPercent && (
+              <div
+                style={{
+                  width: `${showPercent ? item.percent * 100 : 100}%`,
+                }}
+                className={classnames('fcr-polling-result-progress', {
+                  'fcr-polling-result-progress-selected': selected,
+                })}
+              />
+            )}
             <div className="fcr-polling-result-progress-text">
               <div>
                 <pre>{item.content}</pre>

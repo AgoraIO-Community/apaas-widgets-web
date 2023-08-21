@@ -1,15 +1,13 @@
 .fcr-polling-result-item {
-  @apply fcr-border-1 fcr-rounded-4;
-  background-color: rgba(67, 67, 78, 0.5);
+  @apply fcr-border-1 fcr-rounded-4 fcr-bg-4-a50;
   position: relative;
-  border-width: 1px;
   overflow: hidden;
 }
 .fcr-polling-result-item-selected {
-  @apply fcr-border-brand-6;
+  @apply fcr-bg-brand;
 }
 .fcr-polling-result-progress {
-  @apply fcr-bg-4;
+  @apply fcr-bg-5;
   position: absolute;
   top: 0;
   left: 0;
@@ -28,7 +26,7 @@
   font-size: 12px;
   display: flex;
   gap: 12px;
-  padding: 8px 10px;
+  padding: 9px 10px;
   width: 100%;
   align-items: center;
   justify-content: center;

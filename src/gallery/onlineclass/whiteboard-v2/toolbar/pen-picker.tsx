@@ -14,7 +14,7 @@ const penIconMap = {
 
 export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { currentShape, lastPen, toolbarDockPosition },
+    observables: { currentShape, lastPen, toolbarDockPosition, currentColor },
     setPen,
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
@@ -42,6 +42,7 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<PenPickerPanel />}
       popoverOffset={offset}
+      extensionMarkProps={{ colors: { iconPrimary: currentColor } }}
     />
   );
 });

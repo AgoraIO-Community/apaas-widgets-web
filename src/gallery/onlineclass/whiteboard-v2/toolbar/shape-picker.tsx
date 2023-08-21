@@ -18,7 +18,7 @@ const shapeIconMap = {
 
 export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { toolbarDockPosition, currentShape, lastShape },
+    observables: { toolbarDockPosition, currentShape, lastShape, currentColor },
     setShape,
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
@@ -55,6 +55,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<ShapePickerPanel />}
       popoverOffset={offset}
+      extensionMarkProps={{ colors: { iconPrimary: currentColor } }}
     />
   );
 });

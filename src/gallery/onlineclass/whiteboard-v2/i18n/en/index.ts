@@ -19,5 +19,5 @@ export default {
   fcr_board_new_page: 'New page',
   fcr_board_show_pageration: 'Show Pageration',
   fcr_board_hide_pageration: 'Hide Pageration',
-  fcr_board_display_name: 'whiteboard',
+  fcr_board_display_name: 'Whiteboard',
 };

@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { SvgIconEnum, SvgImg } from '@components/svg-img';
+import { SvgIconEnum, SvgImg, SvgImgProps } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import { PopoverWithTooltip } from '@components/popover';
 import React, { FC, useState } from 'react';
@@ -72,6 +72,7 @@ export const ExpansionToolbarItem: FC<{
   onClick?: () => void;
   isActive: boolean;
   extensionMark?: boolean;
+  extensionMarkProps?: Partial<SvgImgProps>;
   popoverOffset?: number;
 }> = ({
   tooltip,
@@ -83,6 +84,7 @@ export const ExpansionToolbarItem: FC<{
   popoverOverlayClassName,
   isActive,
   extensionMark = true,
+  extensionMarkProps,
   popoverOffset = 6,
 }) => {
   const cls = classNames('fcr-board-toolbar-item-surrounding', {
@@ -106,6 +108,7 @@ export const ExpansionToolbarItem: FC<{
             type={SvgIconEnum.FCR_WHITEBOARD_LOWERRIGHTARROW}
             size={4}
             className="fcr-board-toolbar-expansion-icon"
+            {...extensionMarkProps}
           />
         )}
       </div>

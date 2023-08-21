@@ -819,13 +819,22 @@ const ChatList = () => {
 };
 
 const FileSender = () => {
+  const [popoverVisible, setPopoverVisible] = useState(false);
   return (
     <span className="fcr-private-base-icon">
       <Popover
+        visible={popoverVisible}
+        onVisibleChange={setPopoverVisible}
         overlayClassName="customize-file-sender-popover"
         trigger="click"
         placement="topRight"
-        content={<FileSenderContent />}>
+        content={
+          <FileSenderContent
+            onChange={() => {
+              setPopoverVisible(false);
+            }}
+          />
+        }>
         <span className="fcr-private-file-icon">
           <SvgImg type={SvgIconEnum.FCR_FILE} size={18} />
           <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
@@ -835,7 +844,7 @@ const FileSender = () => {
   );
 };
 
-const FileSenderContent = () => {
+const FileSenderContent = ({ onChange }: { onChange: () => void }) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const {
     messageStore: { sendImageMessage },
@@ -845,6 +854,7 @@ const FileSenderContent = () => {
   const handleFileInputChange = () => {
     const file = fileInputRef.current?.files?.[0];
     if (file) {
+      onChange();
       sendImageMessage(file, privateUser ? [privateUser] : undefined);
     }
   };
