@@ -44,7 +44,7 @@ export class FcrCountdownWidget extends AgoraOnlineclassWidget {
     return role === 0;
   }
   get widgetName(): string {
-    return 'countdown';
+    return 'countdownTimer';
   }
 
   get zContainer(): 0 | 10 {
