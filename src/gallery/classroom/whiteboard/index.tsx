@@ -468,15 +468,15 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       )}.jpg`;
 
       downloadCanvasImage(canvas, fileName);
-      this.ui.addToast('Save successfully');
+      this.ui.addToast(transI18n('fcr_savecanvas_tips_save_successfully'));
     });
     mainWindow.on(FcrBoardMainWindowEvent.Failure, (reason) => {
       this.logger.error('operation failure, reason: ', reason);
       if (reason === FcrBoardMainWindowFailureReason.ResourceWindowAlreadyOpened) {
-        this.ui.addToast(transI18n('edu_error.600074'), 'error');
+        this.ui.addToast(transI18n('fcr_board_resource_already_opened'), 'error');
       }
       if (reason === FcrBoardMainWindowFailureReason.SnapshotFailure) {
-        this.ui.addToast(transI18n('toast2.save_error'));
+        this.ui.addToast(transI18n('fcr_savecanvas_tips_fail_to_save'));
       }
     });
   }

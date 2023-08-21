@@ -39,8 +39,8 @@ export class AgoraSelector extends AgoraEduToolWidget {
     return 150;
   }
 
-  onInstall(controller: AgoraWidgetController) {
-    addResource();
+  async onInstall(controller: AgoraWidgetController) {
+    await addResource();
     if (controller.classroomConfig.sessionInfo.roomType !== EduRoomTypeEnum.RoomBigClass) {
       controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
         id: this.widgetName,

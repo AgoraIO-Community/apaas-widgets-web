@@ -38,8 +38,8 @@ export class AgoraPolling extends AgoraEduToolWidget {
     return 283;
   }
 
-  onInstall(controller: AgoraWidgetController) {
-    addResource();
+  async onInstall(controller: AgoraWidgetController) {
+    await addResource();
     if (controller.classroomConfig.sessionInfo.roomType !== EduRoomTypeEnum.Room1v1Class) {
       controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
         id: this.widgetName,

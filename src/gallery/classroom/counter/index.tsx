@@ -41,8 +41,8 @@ export class AgoraCountdown extends AgoraEduToolWidget {
     return 144;
   }
 
-  onInstall(controller: AgoraWidgetController) {
-    addResource();
+  async onInstall(controller: AgoraWidgetController) {
+    await addResource();
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: transI18n('widget_countdown.appName'),

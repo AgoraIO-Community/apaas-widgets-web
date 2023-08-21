@@ -10,7 +10,9 @@ import tailwindConfig from '../tailwind.config';
 import '@ui-kit-utils/preflight.css';
 
 import { setTailwindConfig } from '@ui-kit-utils/tailwindcss';
+import './thirdparty-preset';
 setTailwindConfig(tailwindConfig);
+
 export {
   AgoraSelector,
   AgoraCountdown,

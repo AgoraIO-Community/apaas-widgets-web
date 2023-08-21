@@ -1,1 +1,18 @@
-export default {};
+export default {
+  fcr_poll_title: '投票',
+  fcr_poll_submit: '投票',
+  fcr_poll_multi: '多选',
+  fcr_poll_single: '单选',
+  fcr_poll_start: '开始投票',
+  fcr_poll_end: '结束投票',
+  fcr_poll_input_placeholder: '请输入投票内容',
+  fcr_poll_input_option: '请输入选项',
+  fcr_poll_state_ended: '已结束',
+  fcr_poll_state_in_progress: '进行中',
+  fcr_poll_enter_placeholder: '请输入',
+  fcr_poll_minimization: '最小化',
+  fcr_poll_close: '关闭',
+  fcr_poll_unable_to_close: '关闭前，请结束本轮投票。',
+  fcr_poll_people_participated: '参与人数',
+  fcr_poll_something_wrong: '发生错误',
+};
