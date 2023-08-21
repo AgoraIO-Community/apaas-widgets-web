@@ -115,6 +115,8 @@ export enum AgoraExtensionWidgetEvent {
   BoardDragOver = 'board-drag-over',
   // 白板文件放入事件
   BoardDrop = 'board-drop',
+  // 白板中打开的课件列表变更
+  BoardOpenedCoursewareListChanged = 'board-opened-courseware-list-changed',
   // Widget 即将打开
   WidgetBecomeActive = 'widget-become-active',
   // Widget 即将关闭

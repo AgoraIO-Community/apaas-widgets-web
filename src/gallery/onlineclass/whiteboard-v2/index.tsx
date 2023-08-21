@@ -568,6 +568,9 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
         this.ui.addToast(transI18n('fcr_board_snapshot_save_error'));
       }
     });
+    mainWindow.on(FcrBoardMainWindowEvent.OpenedCoursewareListChanged, (list) => {
+      this.broadcast(AgoraExtensionWidgetEvent.BoardOpenedCoursewareListChanged, list);
+    });
   }
 
   private async _checkPrivilege(props: any) {

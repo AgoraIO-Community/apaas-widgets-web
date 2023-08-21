@@ -82,6 +82,7 @@ export interface FcrBoardRoomEventEmitter {
 }
 
 export enum FcrBoardMainWindowEvent {
+  OpenedCoursewareListChanged = 'opened-courseware-list-changed',
   PageInfoUpdated = 'page-info-updated',
   RedoStepsUpdated = 'redo-steps-updated',
   UndoStepsUpdated = 'undo-steps-updated',

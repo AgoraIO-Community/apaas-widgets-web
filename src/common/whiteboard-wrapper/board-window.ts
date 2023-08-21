@@ -29,6 +29,7 @@ import {
   FcrBoardMediaWindowConfig,
 } from './type';
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
+import isEqual from 'lodash/isEqual';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
@@ -327,8 +328,11 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   }
 
   private _checkRepeatWindow(title: string) {
-    const curResources = Object.values(this._windowManager?.apps || []);
-    const opened = curResources.find(({ options }) => options?.title === title);
+    const curResources = Object.values(this._windowManager?.apps || {});
+    const opened = curResources.find((app) => {
+      const { options } = app;
+      return options?.title === title;
+    });
     if (opened) {
       this._eventBus.emit(
         FcrBoardMainWindowEvent.Failure,
@@ -476,6 +480,10 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   private _addWindowManagerEventListeners() {
     const windowManager = this._windowManager;
 
+    const curResources = Object.values(this._windowManager?.apps || {});
+
+    let prevCoursewareList = curResources.map(({ options }) => options.scenePath);
+
     windowManager?.emitter.on('mainViewSceneIndexChange', (showIndex) => {
       this.emitPageInfo();
     });
@@ -488,6 +496,21 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     windowManager?.emitter.on('canRedoStepsChange', (steps) => {
       this._eventBus.emit(FcrBoardMainWindowEvent.RedoStepsUpdated, steps);
     });
+
+    windowManager?.emitter.on('focusedChange', () => {
+      setTimeout(() => {
+        const curResources = Object.values(this._windowManager?.apps || {});
+
+        const coursewareList = curResources.map(({ options }) => options.scenePath);
+        if (!isEqual(prevCoursewareList, coursewareList)) {
+          prevCoursewareList = coursewareList;
+          console.log(prevCoursewareList);
+          this._eventBus.emit(FcrBoardMainWindowEvent.OpenedCoursewareListChanged, coursewareList);
+        }
+      });
+    });
+
+    this._eventBus.emit(FcrBoardMainWindowEvent.OpenedCoursewareListChanged, prevCoursewareList);
   }
 
   @Log.trace
@@ -552,6 +575,10 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     }
   }
 
+  on(
+    eventName: FcrBoardMainWindowEvent.OpenedCoursewareListChanged,
+    cb: (coursewareList: string[]) => void,
+  ): void;
   on(
     eventName: FcrBoardMainWindowEvent.MountSuccess,
     cb: (windowManager: WindowManager) => void,
