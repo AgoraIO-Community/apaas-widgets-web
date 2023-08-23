@@ -14,7 +14,7 @@ import {
   AgoraIMUserInfo,
   AgoraIMUserInfoExt,
 } from './typs';
-import websdk, { AgoraChat } from './sdk/Agora-chat';
+import websdk, { AgoraChat } from './sdk/agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
 import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
