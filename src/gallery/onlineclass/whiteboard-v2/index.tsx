@@ -57,6 +57,8 @@ import {
 } from './utils';
 import { SvgIconEnum } from '@components/svg-img';
 import { MultiWindowWidgetDialog } from '../common/dialog/multi-window';
+import { addResource } from './i18n/config';
+import { DialogProgressApi } from '../../../components/progress';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraOnlineclassWidget {
@@ -169,6 +171,7 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
     this._mounted = false;
   }
   onInstall(controller: AgoraWidgetController): void {
+    addResource();
     const handleOpen = (toggle: boolean) => {
       const widgetId = this.widgetId;
       if (toggle) {
@@ -423,7 +426,13 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
     const mainWindow = this._boardMainWindow;
 
     if (mainWindow) {
-      mainWindow.getSnapshotImage(background);
+      mainWindow.getSnapshotImage(background, (progress) => {
+        if (progress !== 100) {
+          DialogProgressApi.show({ key: 'saveImage', progress: 1, width: 100, auto: true });
+        } else {
+          DialogProgressApi.destroy('saveImage');
+        }
+      });
     }
   }
 
@@ -487,6 +496,7 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
 
     boardRoom.on(FcrBoardRoomEvent.JoinFailure, (e) => {
       this.logger.error('Fcr board join failure', e);
+      this.ui.addToast(transI18n('fcr_board_cannot_join_room'), 'warning');
     });
 
     boardRoom.on(FcrBoardRoomEvent.ConnectionStateChanged, (state) => {

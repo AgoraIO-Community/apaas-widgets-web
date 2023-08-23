@@ -26,6 +26,7 @@ import {
   FcrBoardShape,
 } from './type';
 import { convertToFcrBoardToolShape, hexColorToWhiteboardColor, textColors } from './helper';
+import { retryAttempt } from 'agora-rte-sdk/lib/core/utils/utils';
 
 @Log.attach()
 export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
@@ -35,6 +36,7 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
   private _boardView?: FcrBoardMainWindow;
   private _eventBus: AGEventEmitter = new AGEventEmitter();
   private _connState: BoardConnectionState = BoardConnectionState.Disconnected;
+  private _joined = false;
 
   constructor(
     private _appId: string,
@@ -74,6 +76,7 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
   }
 
   async join(config: FcrBoardRoomJoinConfig) {
+    this._joined = true;
     if (this._connState !== BoardConnectionState.Disconnected) {
       return;
     }
@@ -104,28 +107,54 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
 
     try {
       this.logger.info('Join board room with params', joinParams);
-      const room = await this._client.joinRoom(joinParams, {
-        onPhaseChanged: this._handleConnectionStateUpdated,
-        onRoomStateChanged: this._handleRoomStateUpdated,
-      });
 
-      this._room = room;
+      const retriesMax = 10;
+      await retryAttempt(
+        async () => {
+          const room = await this._client.joinRoom(joinParams, {
+            onPhaseChanged: this._handleConnectionStateUpdated,
+            onRoomStateChanged: this._handleRoomStateUpdated,
+          });
 
-      if (config.hasOperationPrivilege) {
-        room.setViewMode(ViewMode.Broadcaster);
-      } else {
-        room.setViewMode(ViewMode.Follower);
-      }
+          this._room = room;
 
-      this._boardView = new FcrBoardMainWindow(room, config.hasOperationPrivilege, this._options);
+          if (config.hasOperationPrivilege) {
+            room.setViewMode(ViewMode.Broadcaster);
+          } else {
+            room.setViewMode(ViewMode.Follower);
+          }
 
-      this._eventBus.emit(FcrBoardRoomEvent.JoinSuccess, this._boardView);
+          this._boardView = new FcrBoardMainWindow(
+            room,
+            config.hasOperationPrivilege,
+            this._options,
+          );
+
+          this._eventBus.emit(FcrBoardRoomEvent.JoinSuccess, this._boardView);
+        },
+        [],
+        {
+          retriesMax,
+        },
+      )
+        .fail(async ({ error, timeFn, currentRetry }) => {
+          this.logger.info(
+            `failed to join board room, error: ${error.message}, current retry: ${currentRetry}`,
+          );
+          if (this._joined) {
+            await timeFn();
+          }
+          this.logger.info(`continue attemptting? ${this._joined}`);
+          return this._joined;
+        })
+        .exec();
     } catch (e) {
       this._eventBus.emit(FcrBoardRoomEvent.JoinFailure, e);
     }
   }
 
   async leave() {
+    this._joined = false;
     if (this._room) {
       this._room.disconnect();
       this._room = undefined;

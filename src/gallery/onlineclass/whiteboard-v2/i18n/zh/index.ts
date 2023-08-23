@@ -20,4 +20,6 @@ export default {
   fcr_board_show_pageration: '显示页码',
   fcr_board_hide_pageration: '隐藏页码',
   fcr_board_display_name: '白板',
+  fcr_savecanvas_tips_saving: '正在导出，请稍后...',
+  fcr_board_cannot_join_room: '加入白板房间失败，请重新进入教室',
 };

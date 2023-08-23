@@ -561,3 +561,19 @@
 .netless-whiteboard-wrapper .telebox-titles-tab:not(:last-child) {
   border-right: none;
 }
+
+.fcr-progress-saveImage {
+  @apply fcr-bg-block-4 !important;
+}
+
+.fcr-progress-saveImage .fcr-progress {
+  background: rgba(47, 47, 47, 0.98);
+}
+
+.fcr-progress-saveImage .fcr-progress .fcr-progress-inner {
+  height: 100%;
+}
+
+.fcr-progress-saveImage .dialog-progress-tip {
+  @apply fcr-text-1 !important;
+}

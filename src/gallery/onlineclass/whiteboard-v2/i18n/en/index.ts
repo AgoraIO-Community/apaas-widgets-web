@@ -20,4 +20,7 @@ export default {
   fcr_board_show_pageration: 'Show Pageration',
   fcr_board_hide_pageration: 'Hide Pageration',
   fcr_board_display_name: 'Whiteboard',
+  fcr_savecanvas_tips_saving: 'outputing, please wait',
+  fcr_board_cannot_join_room:
+    'Cannot join whiteboard room after times of attemptting, please rejoin classroom',
 };

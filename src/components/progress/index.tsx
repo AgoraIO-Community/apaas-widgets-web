@@ -33,12 +33,12 @@ export const Progress: React.FC<ProgressProps> = ({
     [`${className}`]: !!className,
   });
 
-  const bgCls = classnames({
-    [`overflow-hidden h-2 text-xs flex rounded bg-${type}-bg`]: 1,
+  const bgCls = classnames('fcr-progress', {
+    [`fcr-overflow-hidden fcr-h-2 fcr-text-xs fcr-flex fcr-rounded bg-${type}-bg`]: 1,
     ['progress-height']: 1,
   });
 
-  const fgCls = classnames({
+  const fgCls = classnames('fcr-progress-inner', {
     [`bg-${type}-fg`]: 1,
   });
 
@@ -59,7 +59,10 @@ export const Progress: React.FC<ProgressProps> = ({
   );
 };
 
-type ProgressListItem = Pick<ProgressProps, 'width' | 'progress'> & { key: string; auto?: boolean };
+type ProgressListItem = Pick<ProgressProps, 'width' | 'progress'> & {
+  key: string;
+  auto?: boolean;
+};
 
 interface ProgressListRef {
   show: (dialog: ProgressListItem) => void;
@@ -98,8 +101,8 @@ const ProgressList = forwardRef<ProgressListRef>((_, ref) => {
   return (
     <div className="dialog-progress-container">
       {progressList.map((progress) => (
-        <div className="dialog-progress-item" key={progress.key}>
-          <span className="dialog-progress-tip">{transI18n('toast2.saving')}</span>
+        <div className={`dialog-progress-item fcr-progress-${progress.key}`} key={progress.key}>
+          <span className="dialog-progress-tip">{transI18n('fcr_savecanvas_tips_saving')}</span>
           <div className="fcr-flex fcr-items-center fcr-gap-2">
             <ProgressWarpper
               key={progress.key}

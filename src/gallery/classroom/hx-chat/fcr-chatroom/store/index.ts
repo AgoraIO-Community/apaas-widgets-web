@@ -83,11 +83,21 @@ export class FcrChatRoomStore {
   @bound
   private async _init() {
     const [error] = await to(
-      retryAttempt(async () => {
-        await this._joinChatRoom();
-      }, [])
-        .fail(({ error }: { error: Error }) => {
-          Logger.error(error.message);
+      retryAttempt(
+        async () => {
+          await this._joinChatRoom();
+        },
+        [],
+        { retriesMax: 10 },
+      )
+        .fail(async ({ error, timeFn, currentRetry }) => {
+          Logger.error(
+            'failed to join chatroom, error:',
+            error.message,
+            ', current retry:',
+            currentRetry,
+          );
+          await timeFn();
           return true;
         })
         .exec(),

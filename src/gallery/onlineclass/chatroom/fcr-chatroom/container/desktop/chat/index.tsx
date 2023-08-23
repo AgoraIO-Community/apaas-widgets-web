@@ -101,7 +101,8 @@ const ChatInput = observer(() => {
           <PrivateChat />
 
           <div className="fcr-chat-input-actions-functions">
-            <FileSender />
+            {/* <FileSender /> */}
+            <ChatPicture />
             <ChatEmoji />
             <ChatMore />
           </div>
@@ -899,6 +900,40 @@ const EmojiContent = observer(() => {
         );
       })}
     </div>
+  );
+});
+
+const ChatPicture = observer(() => {
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const {
+    messageStore: { sendImageMessage },
+    userStore: { privateUser },
+  } = useStore();
+  const handleFileInputChange = () => {
+    const file = fileInputRef.current?.files?.[0];
+    if (file) {
+      sendImageMessage(file, privateUser ? [privateUser] : undefined);
+    }
+  };
+  const handleUploadClick = () => {
+    fileInputRef.current?.focus();
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <span className="fcr-private-base-icon fcr-private-action-icon">
+      <div className="fcr-files-container">
+        <SvgImg onClick={handleUploadClick} type={SvgIconEnum.FCR_PICTURE} size={24} />
+        <input
+          ref={fileInputRef}
+          onChange={handleFileInputChange}
+          accept="image/*"
+          type="file"
+          style={{ display: 'none' }}
+        />
+      </div>
+      {/* </Popover> */}
+    </span>
   );
 });
 

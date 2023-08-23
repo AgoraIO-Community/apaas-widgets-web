@@ -21,7 +21,6 @@ import { downloadCanvasImage } from '../../../common/whiteboard-wrapper/utils';
 import { BoardUIContext } from './ui-context';
 import { App } from './app';
 import { DialogProgressApi } from '../../../components/progress';
-
 import isNumber from 'lodash/isNumber';
 
 @Log.attach({ proxyMethods: false })
@@ -409,7 +408,8 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     });
 
     boardRoom.on(FcrBoardRoomEvent.JoinFailure, (e) => {
-      this.logger.error('Fcr board join failure', e);
+      this.logger.error('Fcr board join failure, error:', e.message);
+      this.ui.addToast(transI18n('fcr_board_cannot_join_room'), 'warning');
     });
 
     boardRoom.on(FcrBoardRoomEvent.ConnectionStateChanged, (state) => {
@@ -432,6 +432,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       // this.broadcast(FcrBoardRoomEvent.ConnectionStateChanged, state);
       this.broadcast(AgoraExtensionWidgetEvent.BoardMemberStateChanged, state);
     });
+
     boardRoom.join(joinConfig);
   }
 
