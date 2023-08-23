@@ -1,6 +1,6 @@
 import { ChangeEventHandler, FC, useEffect, useState } from 'react';
 import { FcrCountdownWidget } from '.';
-import isNan from 'lodash/isNaN';
+import isNaN from 'lodash/isNaN';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './app.css';
@@ -55,7 +55,6 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     });
   }, [current]);
   useEffect(() => {
-    
     if (minimized) {
       widget.setMinimize(true, { ...widget.minimizedProperties, extra: { current } });
     }
@@ -184,6 +183,9 @@ export const FcrCountdown = ({
   const isPaused = status === CountdownStatus.PAUSED;
 
   const handleInputChange = (key: keyof TimeFormat, value: number) => {
+    if (key === 'tensOfSeconds' && value > 6) {
+      value = 0;
+    }
     const newTime = {
       ...timeFormat,
       [key]:
@@ -280,9 +282,11 @@ type FcrCountdownInputProps = {
 const FcrCountdownInput: FC<FcrCountdownInputProps> = (props) => {
   const { value, onChange, readOnly } = props;
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
-    const value = Number(e.target.value);
-    if (isNan(value)) return;
-    onChange(value);
+    const input = e.target.value;
+    const oldVal = value.toString();
+    const num = Number(input.includes(oldVal) ? input.replace(oldVal, '') : value);
+    if (isNaN(num)) return;
+    onChange(num);
   };
   return (
     <div className="fcr-countdown-input-wrapper">
@@ -296,7 +300,7 @@ const FcrCountdownInput: FC<FcrCountdownInputProps> = (props) => {
         <SvgImg type={SvgIconEnum.FCR_COUNTDOWN_UP} size={32}></SvgImg>
       </div>
       <div className="fcr-countdown-input">
-        <input value={value} readOnly={readOnly} maxLength={1} onChange={handleChange}></input>
+        <input value={value} readOnly={readOnly} onChange={handleChange}></input>
       </div>
       <div
         className={classnames('fcr-countdown-input-minus', {

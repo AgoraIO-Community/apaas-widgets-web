@@ -112,12 +112,17 @@ export class MessageStore {
   get renderableMessageList() {
     const combinedList: (AgoraIMMessageBase | AgoraIMMessageBase[] | string)[] = [];
     let lastTimestamp = 0;
+
     this.messageList.forEach((msg) => {
       if (msg.type === AgoraIMMessageType.Custom) {
         combinedList.push(msg);
       } else {
         const lastItem = combinedList[combinedList.length - 1];
         const timestamp = msg.ts || 0;
+        const isToday = dayjs(timestamp).isSame(dayjs(), 'day');
+        const isThisYear = dayjs(timestamp).isSame(dayjs(), 'year');
+        const format = isToday ? 'HH:mm' : isThisYear ? 'MM-DD HH:mm' : 'YYYY-MM-DD HH:mm';
+
         if (lastItem instanceof Array) {
           const prevMsg = lastItem[lastItem.length - 1];
           if (
@@ -129,20 +134,18 @@ export class MessageStore {
               (!this.checkIsPrivateMessage(prevMsg) && !this.checkIsPrivateMessage(msg)))
           ) {
             if (timestamp - lastTimestamp > this._messageGapTime) {
-              combinedList.push(dayjs(timestamp).format('HH:mm'));
+              combinedList.push(dayjs(timestamp).format(format));
               combinedList.push([msg]);
             } else {
               lastItem.push(msg);
             }
           } else {
-            combinedList.push(dayjs(timestamp).format('HH:mm'));
-
+            combinedList.push(dayjs(timestamp).format(format));
             combinedList.push([msg]);
           }
         } else {
           if (timestamp - lastTimestamp > this._messageGapTime) {
-            combinedList.push(dayjs(timestamp).format('HH:mm'));
-
+            combinedList.push(dayjs(timestamp).format(format));
             combinedList.push([msg]);
           } else {
             combinedList.push([msg]);

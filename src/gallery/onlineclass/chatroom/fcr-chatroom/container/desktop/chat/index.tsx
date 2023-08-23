@@ -296,7 +296,7 @@ const MessageList = observer(() => {
           key={message.id}
           message={messages as AgoraIMCustomMessage}></CmdMessageItem>
       ) : (
-        <div className="fcr-chat-message-list-item-time">{message}</div>
+        <div className="fcr-chat-message-list-time">{message}</div>
       );
     }
   };

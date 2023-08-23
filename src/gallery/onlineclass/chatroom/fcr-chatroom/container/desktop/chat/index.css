@@ -317,11 +317,15 @@
 .fcr-chat-message-list-item-placement-left .fcr-chat-message-list-item-name-private {
   width: 32px;
 }
-.fcr-chat-message-list-item-time {
+.fcr-chat-message-list-item-time,
+.fcr-chat-message-list-time {
   @apply fcr-text-2;
   font-weight: 200;
   font-size: 12px;
   white-space: nowrap;
+}
+.fcr-chat-message-list-time {
+  font-weight: 700;
 }
 .fcr-chat-message-list-item-content {
   @apply fcr-text-1 fcr-rounded-8 fcr-bg-4;
