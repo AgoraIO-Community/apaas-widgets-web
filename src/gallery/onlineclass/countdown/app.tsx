@@ -7,6 +7,7 @@ import './app.css';
 import { ToolTip } from '@components/tooltip';
 import {
   CountdownStatus,
+  timeToSeconds,
   useCountdown,
   useCountdownMinimized,
   useCountdownRemoteStatus,
@@ -14,7 +15,7 @@ import {
 import dayjs from 'dayjs';
 import { useI18n } from 'agora-common-libs';
 import { EduToolDialog } from '../common/dialog/base';
-type TimeFormat = {
+export type TimeFormat = {
   tensOfMinutes: number;
   minutes: number;
   tensOfSeconds: number;
@@ -22,7 +23,7 @@ type TimeFormat = {
 };
 const defaultTimeFormat: TimeFormat = {
   tensOfMinutes: 0,
-  minutes: 0,
+  minutes: 5,
   tensOfSeconds: 0,
   seconds: 0,
 };
@@ -38,7 +39,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     setTotalDuration,
     status: remoteStatus,
   } = useCountdownRemoteStatus(widget);
-  const [seconds, setSeconds] = useState(0);
+  const [seconds, setSeconds] = useState(timeToSeconds(timeFormat));
 
   const { current, start, stop, pause, status } = useCountdown(duration, remoteStatus);
   const isStopped = status === CountdownStatus.STOPPED;
@@ -54,6 +55,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     });
   }, [current]);
   useEffect(() => {
+    
     if (minimized) {
       widget.setMinimize(true, { ...widget.minimizedProperties, extra: { current } });
     }
@@ -93,9 +95,9 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     widget.updateWidgetProperties({
       extra: { state: 0, startTime: 0, duration: 0, totalDuration: 0 },
     });
-    setDuration(0);
-    setTotalDuration(0);
-    setSeconds(0);
+    setDuration(timeToSeconds(defaultTimeFormat));
+    setTotalDuration(timeToSeconds(defaultTimeFormat));
+    setSeconds(timeToSeconds(defaultTimeFormat));
     setTimeFormat(defaultTimeFormat);
     stop();
   };
@@ -143,14 +145,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
           onStop={handleStop}
           onChange={(time) => {
             setTimeFormat(time);
-            setSeconds(
-              dayjs
-                .duration({
-                  minutes: time.tensOfMinutes * 10 + time.minutes,
-                  seconds: time.tensOfSeconds * 10 + time.seconds,
-                })
-                .asSeconds(),
-            );
+            setSeconds(timeToSeconds(time));
           }}
           status={status}
           danger={current > 0 && current <= 10}
@@ -193,8 +188,8 @@ export const FcrCountdown = ({
       ...timeFormat,
       [key]:
         key === 'minutes' || key === 'tensOfMinutes' || key === 'seconds'
-          ? Math.min(Math.max(value, 0), 9)
-          : Math.min(Math.max(value, 0), 5),
+          ? ((value % 10) + 10) % 10
+          : ((value % 6) + 6) % 6,
     };
     onChange(newTime);
   };

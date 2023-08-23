@@ -504,7 +504,6 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         const coursewareList = curResources.map(({ options }) => options.scenePath);
         if (!isEqual(prevCoursewareList, coursewareList)) {
           prevCoursewareList = coursewareList;
-          console.log(prevCoursewareList);
           this._eventBus.emit(FcrBoardMainWindowEvent.OpenedCoursewareListChanged, coursewareList);
         }
       });

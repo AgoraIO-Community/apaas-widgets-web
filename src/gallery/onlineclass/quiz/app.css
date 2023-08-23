@@ -249,9 +249,11 @@
 .fcr-popup-quiz-student-answer-overview {
   padding-bottom: 6px;
 }
+
 .fcr-popup-quiz-table-cell-name {
   padding-left: 12px;
 }
+
 .fcr-popup-quiz-answer-correct {
   @apply fcr-text-green;
 }
@@ -306,6 +308,10 @@
 }
 .fcr-poppu-quiz-reward-action-item svg {
   flex-shrink: 0;
+}
+.fcr-popup-quiz-in-progress-action-reward .fcr-button {
+  width: 72px;
+  min-width: 72px;
 }
 .fcr-popup-quiz-host-revise-select-container {
   display: flex;

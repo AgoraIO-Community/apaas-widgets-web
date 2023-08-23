@@ -55,7 +55,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<ShapePickerPanel />}
       popoverOffset={offset}
-      extensionMarkProps={{ colors: { iconPrimary: currentColor } }}
+      iconProps={{ colors: { iconPrimary: currentColor } }}
     />
   );
 });

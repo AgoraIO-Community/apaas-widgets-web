@@ -69,7 +69,6 @@ export class FcrPopupQuizWidget extends AgoraOnlineclassWidget {
 
   onUninstall(controller: AgoraWidgetController) {
     controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
-    this.setVisible(false);
   }
 
   @action

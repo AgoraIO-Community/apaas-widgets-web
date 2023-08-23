@@ -15,11 +15,13 @@ import {
 } from '../../../../../common/im/wrapper/typs';
 import { List, CellMeasurerCache } from 'react-virtualized';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
+import dayjs from 'dayjs';
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListRef: List | null = null;
+  private _messageGapTime = 5 * 60 * 1000;
   listCache = new CellMeasurerCache({
     // defaultWidth: 200,
     minHeight: 30,
@@ -108,12 +110,14 @@ export class MessageStore {
 
   @computed
   get renderableMessageList() {
-    const combinedList: (AgoraIMMessageBase | AgoraIMMessageBase[])[] = [];
+    const combinedList: (AgoraIMMessageBase | AgoraIMMessageBase[] | string)[] = [];
+    let lastTimestamp = 0;
     this.messageList.forEach((msg) => {
       if (msg.type === AgoraIMMessageType.Custom) {
         combinedList.push(msg);
       } else {
         const lastItem = combinedList[combinedList.length - 1];
+        const timestamp = msg.ts || 0;
         if (lastItem instanceof Array) {
           const prevMsg = lastItem[lastItem.length - 1];
           if (
@@ -124,13 +128,27 @@ export class MessageStore {
               this.checkIsPrivateMessage(msg)) ||
               (!this.checkIsPrivateMessage(prevMsg) && !this.checkIsPrivateMessage(msg)))
           ) {
-            lastItem.push(msg);
+            if (timestamp - lastTimestamp > this._messageGapTime) {
+              combinedList.push(dayjs(timestamp).format('HH:mm'));
+              combinedList.push([msg]);
+            } else {
+              lastItem.push(msg);
+            }
           } else {
+            combinedList.push(dayjs(timestamp).format('HH:mm'));
+
             combinedList.push([msg]);
           }
         } else {
-          combinedList.push([msg]);
+          if (timestamp - lastTimestamp > this._messageGapTime) {
+            combinedList.push(dayjs(timestamp).format('HH:mm'));
+
+            combinedList.push([msg]);
+          } else {
+            combinedList.push([msg]);
+          }
         }
+        lastTimestamp = timestamp;
       }
     });
 

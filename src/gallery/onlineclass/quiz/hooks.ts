@@ -61,12 +61,12 @@ export const useQuizSelect = (
 };
 export const useQuizStatus = (widget: FcrPopupQuizWidget) => {
   const [status, setStatus] = useState<QuizStatus>(
-    widget.roomProperties.extra?.answerState || QuizStatus.INITIALIZED,
+    widget.roomProperties.extra?.answerState ?? QuizStatus.INITIALIZED,
   );
   useEffect(() => {
     return autorun(() => {
       const { extra } = widget.roomProperties;
-      const status = (extra?.answerState as QuizStatus) || QuizStatus.INITIALIZED;
+      const status = (extra?.answerState as QuizStatus) ?? QuizStatus.INITIALIZED;
       setStatus(status);
     });
   }, []);
@@ -93,6 +93,8 @@ export const useAnswerList = (widget: FcrPopupQuizWidget, status: QuizStatus) =>
     let task: Scheduler.Task | null = null;
     if (widget.hasPrivilege) {
       if (status === QuizStatus.STARTED) {
+        setAnswerList([]);
+        updateAnswerList();
         task = Scheduler.shared.addIntervalTask(async () => {
           await updateAnswerList();
         }, Scheduler.Duration.second(3));
@@ -131,12 +133,11 @@ export const useQuizDuration = (widget: FcrPopupQuizWidget) => {
       const timestampGap = widget.classroomStore.roomStore.clientServerTimeShift;
       const startTime = widget.roomProperties.extra?.receiveQuestionTime || 0;
       const status = widget.roomProperties.extra?.answerState || QuizStatus.INITIALIZED;
+      task?.stop();
       if (status === QuizStatus.STARTED) {
         task = Scheduler.shared.addIntervalTask(() => {
           setDuration(Date.now() + timestampGap - startTime);
         }, Scheduler.Duration.second(1));
-      } else {
-        task?.stop();
       }
     });
     return () => {

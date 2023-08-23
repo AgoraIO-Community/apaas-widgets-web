@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { autorun } from 'mobx';
 import { FcrCountdownWidget } from '.';
 import { AgoraExtensionRoomEvent } from '../../../events';
+import { TimeFormat } from './app';
+import dayjs from 'dayjs';
 
 type UseCountdownReturnType = {
   current: number;
@@ -168,4 +170,13 @@ export const useCountdownMinimized = (widget: FcrCountdownWidget) => {
     });
   }, []);
   return { minimized };
+};
+
+export const timeToSeconds = (time: TimeFormat) => {
+  return dayjs
+    .duration({
+      minutes: time.tensOfMinutes * 10 + time.minutes,
+      seconds: time.tensOfSeconds * 10 + time.seconds,
+    })
+    .asSeconds();
 };

@@ -66,6 +66,8 @@ export const ExpansionToolbarItem: FC<{
   tooltip: string;
   popoverContent: React.ReactNode;
   icon: SvgIconEnum;
+  iconProps?: Partial<Omit<SvgImgProps, 'type'>>;
+
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   popoverPlacement?: 'top' | 'bottom' | 'left' | 'right';
   popoverOverlayClassName?: string;
@@ -86,6 +88,7 @@ export const ExpansionToolbarItem: FC<{
   extensionMark = true,
   extensionMarkProps,
   popoverOffset = 6,
+  iconProps,
 }) => {
   const cls = classNames('fcr-board-toolbar-item-surrounding', {
     'fcr-board-toolbar-item-surrounding--active': isActive,
@@ -102,7 +105,7 @@ export const ExpansionToolbarItem: FC<{
         visible: true,
       }}>
       <div className={cls} onClick={onClick}>
-        <SvgImg type={icon} size={28} />
+        <SvgImg {...iconProps} type={icon} size={28} />
         {extensionMark && (
           <SvgImg
             type={SvgIconEnum.FCR_WHITEBOARD_LOWERRIGHTARROW}

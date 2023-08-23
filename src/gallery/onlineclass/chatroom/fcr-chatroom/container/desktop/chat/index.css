@@ -533,15 +533,21 @@
   padding: 4px 15px;
 }
 .fcr-emoji-content {
-  display: grid;
-  grid-template-columns: repeat(5, 1fr);
-  justify-content: center;
+  display: flex;
+  justify-content: left;
   align-items: center;
-  height: 200px;
   overflow: auto;
+  padding: 20px;
+  gap: 21px;
+  flex-wrap: wrap;
+  user-select: none;
 }
 .fcr-emoji-content div {
-  @apply fcr-cursor-pointer fcr-text-base fcr-text-center;
+  @apply fcr-cursor-pointer fcr-text-center;
+  width: 25px;
+  height: 25px;
+  font-size: 25px;
+  line-height: 25px;
 }
 .fcr-chat-private-tag {
   @apply fcr-text-1;
@@ -612,4 +618,8 @@
 }
 .fcr-private-chat-item:hover {
   @apply fcr-bg-brand-6;
+}
+.fcr-chatroom-emoji-overlay .fcr-tooltip-inner::-webkit-scrollbar {
+  background: transparent;
+  width: 0;
 }

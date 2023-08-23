@@ -42,7 +42,7 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
       popoverContent={<PenPickerPanel />}
       popoverOffset={offset}
-      extensionMarkProps={{ colors: { iconPrimary: currentColor } }}
+      iconProps={{ colors: { iconSecondary: currentColor } }}
     />
   );
 });

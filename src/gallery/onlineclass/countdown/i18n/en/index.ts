@@ -1,5 +1,5 @@
 export default {
-  fcr_countdown_timer_title: 'Countdown timer',
+  fcr_countdown_timer_title: 'Countdown Timer',
   fcr_countdown_timer_tips_start: 'Start',
   fcr_countdown_timer_unit_second: '(second)',
   fcr_countdown_timer_tips_pause: 'Pause',

@@ -1,6 +1,6 @@
 export default {
   fcr_chat_option_chat: '聊天',
-  fcr_chat_option_member: 'Mem成员（{reason1}）',
+  fcr_chat_option_member: '成员（{reason1}）',
   fcr_chat_label_announcement: '公告',
   fcr_chat_label_no_message: '还没有消息',
   fcr_chat_label_chat_setting: '聊天设置',

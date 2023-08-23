@@ -283,17 +283,20 @@ const MessageList = observer(() => {
   const renderMessage = (
     messages:
       | AgoraIMMessageBase<unknown, AgoraIMMessageExt>
-      | AgoraIMMessageBase<unknown, AgoraIMMessageExt>[],
+      | AgoraIMMessageBase<unknown, AgoraIMMessageExt>[]
+      | string,
   ) => {
     if (messages instanceof Array) {
       const lastMessage = messages[messages.length - 1];
       return <MessageListItem key={lastMessage.id} messages={messages}></MessageListItem>;
     } else {
       const message = messages;
-      return (
+      return message instanceof AgoraIMMessageBase ? (
         <CmdMessageItem
           key={message.id}
           message={messages as AgoraIMCustomMessage}></CmdMessageItem>
+      ) : (
+        <div className="fcr-chat-message-list-item-time">{message}</div>
       );
     }
   };
@@ -311,7 +314,7 @@ const MessageList = observer(() => {
               className={classnames('fcr-chat-message-list-item-wrap', {
                 'fcr-chat-message-list-item-wrap-center': isSingleMsg,
               })}
-              key={lastMsg.id}
+              key={lastMsg instanceof AgoraIMMessageBase ? lastMsg.id : lastMsg}
               ref={registerChild as any}
               style={{
                 ...style,
@@ -940,7 +943,19 @@ const ChatPicture = observer(() => {
 const ChatEmoji = () => {
   return (
     <span className="fcr-private-base-icon fcr-private-action-icon">
-      <Popover trigger="click" placement="topRight" content={<EmojiContent />}>
+      <Popover
+        overlayClassName="fcr-chatroom-emoji-overlay"
+        overlayInnerStyle={{
+          width: 298,
+          height: 278,
+          position: 'relative',
+          left: 42,
+          overflow: 'auto',
+        }}
+        trigger="click"
+        placement="topRight"
+        overlayOffset={10}
+        content={<EmojiContent />}>
         <SvgImg type={SvgIconEnum.FCR_EMO} size={24} />
       </Popover>
     </span>

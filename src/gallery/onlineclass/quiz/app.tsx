@@ -190,7 +190,10 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
               <div className="fcr-popup-quiz-student-answer-label">
                 {transI18n('fcr_popup_quiz_accuracy')}:
               </div>
-              <div className="fcr-popup-quiz-student-answer-value">{averageAccuracy}%</div>
+              <div className="fcr-popup-quiz-student-answer-value">
+                {averageAccuracy}
+                <span className="fcr-text-2">%</span>
+              </div>
             </div>
             <Progress
               backgroundColor={colors['block-3']}
@@ -250,7 +253,13 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
 
       if (chartContainerRef.current && !chartRef.current) {
         chartRef.current = new Bar(chartContainerRef.current, {
-          tooltip: false,
+          interactions: [{ type: 'active-region', enable: false }],
+          tooltip: {
+            showMarkers: false,
+            customContent: (title, data) => {
+              return `<div>${data[0]?.value}%</div>`;
+            },
+          },
           barStyle: {
             radius: [25, 25, 0, 0],
             fill: 'l(0) 0:#0056FD  1:#E5EEFF',
@@ -260,6 +269,7 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
             style: {
               fill: 'white',
             },
+
             formatter: (data) => {
               return data.name;
             },
@@ -271,6 +281,7 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
           xField: 'value',
           yField: 'name',
           yAxis: {
+            top: true,
             label: null,
           },
           data: data,
@@ -331,7 +342,6 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
   const { extra } = widget.roomProperties;
   const selectedCount = extra?.selectedCount || 0;
   const totalCount = extra?.totalCount || 0;
-
   return (
     <div
       className={classnames('fcr-popup-quiz', {
@@ -358,17 +368,19 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
                 <div className="fcr-popup-quiz-data-detail-label">
                   {transI18n('fcr_popup_quiz_accuracy')}:
                 </div>
-                <div className="fcr-popup-quiz-data-detail-value">{`${Math.floor(
-                  (extra?.averageAccuracy || 0) * 100,
-                )}%`}</div>
+                <div className="fcr-popup-quiz-data-detail-value">
+                  {`${Math.floor((extra?.averageAccuracy || 0) * 100)}`}{' '}
+                  <span className="fcr-text-2">%</span>
+                </div>
               </div>
               <div>
                 <div className="fcr-popup-quiz-data-detail-label">
                   {transI18n('fcr_popup_quiz_submission')}:
                 </div>
-                <div className="fcr-popup-quiz-data-detail-value">{`${extra?.selectedCount || 0}/${
-                  extra?.totalCount || 0
-                }`}</div>
+                <div className="fcr-popup-quiz-data-detail-value">
+                  {`${extra?.selectedCount || 0}`}{' '}
+                  <span className="fcr-text-2">{`/ ${extra?.totalCount || 0}`}</span>
+                </div>
               </div>
             </div>
             <div className="fcr-popup-quiz-data-detail">
@@ -474,9 +486,13 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
                     },
                   },
                   {
-                    title: transI18n('fcr_popup_quiz_student_answer'),
+                    title: (
+                      <div className="fcr-popup-quiz-table-cell-answer">
+                        {transI18n('fcr_popup_quiz_student_answer')}
+                      </div>
+                    ),
                     dataIndex: 'selectedItems',
-                    align: 'left',
+                    align: 'center',
                     width: 80,
                     render: (answer: string[], record) => {
                       return (
@@ -493,22 +509,23 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
             </div>
           </div>
           <div className="fcr-popup-quiz-in-progress-actions">
-            <div>
+            <div className="fcr-popup-quiz-in-progress-action-reward">
               <QuizRewardPopover widget={widget}></QuizRewardPopover>
             </div>
 
             <div>
-              {status === QuizStatus.STARTED && (
-                <ReviseQuizSelectPopover widget={widget}></ReviseQuizSelectPopover>
+              {status === QuizStatus.STARTED ? (
+                <>
+                  <ReviseQuizSelectPopover widget={widget}></ReviseQuizSelectPopover>
+                  <Button size="XS" onClick={handleStop} styleType="danger">
+                    {transI18n('fcr_popup_quiz_end_answer')}
+                  </Button>
+                </>
+              ) : (
+                <Button size="XS" onClick={handleRestart}>
+                  {transI18n('fcr_popup_quiz_start_again')}
+                </Button>
               )}
-              <Button
-                size="XS"
-                onClick={status === QuizStatus.STARTED ? handleStop : handleRestart}
-                styleType="danger">
-                {status === QuizStatus.STARTED
-                  ? transI18n('fcr_popup_quiz_end_answer')
-                  : transI18n('fcr_popup_quiz_start_again')}
-              </Button>
             </div>
           </div>
         </div>
