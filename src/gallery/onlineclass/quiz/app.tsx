@@ -318,6 +318,17 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
       chartRef.current = null;
     }
   }, [status, answerList]);
+  useEffect(() => {
+    if (status === QuizStatus.INITIALIZED) {
+      widget.updateSize(
+        widget.hasPrivilege ? widget.teacherInitializeSize : widget.studentInitializeSize,
+      );
+    } else {
+      widget.updateSize(
+        widget.hasPrivilege ? widget.teacherInProgressSize : widget.studentInitializeSize,
+      );
+    }
+  }, [status]);
   const handleStart = async () => {
     const body = {
       correctItems: selectedOptions,

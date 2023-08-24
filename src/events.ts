@@ -153,4 +153,8 @@ export enum AgoraExtensionWidgetEvent {
   SetMinimize = 'set-minimize',
   //设置插件全屏
   SetFullscreen = 'set-fullscreen',
+  //设置插件尺寸
+  UpdateSize = 'update-size',
+  //设置插件位置
+  UpdatePosition = 'update-position',
 }

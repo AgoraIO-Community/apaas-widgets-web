@@ -14,9 +14,26 @@ export class FcrPopupQuizWidget extends AgoraOnlineclassWidget {
   roomProperties: any = {};
   @observable
   userProperties: any = {};
+
+  studentInitializeSize = {
+    width: 230,
+    height: 172,
+  };
+  teacherInitializeSize = {
+    width: 390,
+    height: 306,
+  };
+  teacherInProgressSize = {
+    width: 500,
+    height: 525,
+  };
   private _dom?: HTMLElement;
-  private _width = this.hasPrivilege ? 500 : 230;
-  private _height = this.hasPrivilege ? 315 : 172;
+  private _width = this.hasPrivilege
+    ? this.teacherInitializeSize.width
+    : this.studentInitializeSize.width;
+  private _height = this.hasPrivilege
+    ? this.teacherInitializeSize.height
+    : this.studentInitializeSize.height;
 
   get defaultRect() {
     const clientRect = document.body.getBoundingClientRect();
@@ -57,8 +74,8 @@ export class FcrPopupQuizWidget extends AgoraOnlineclassWidget {
     const { role } = this.classroomConfig.sessionInfo;
     return role === 0;
   }
-  onInstall(controller: AgoraWidgetController) {
-    addResource();
+  async onInstall(controller: AgoraWidgetController) {
+    await addResource();
 
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,

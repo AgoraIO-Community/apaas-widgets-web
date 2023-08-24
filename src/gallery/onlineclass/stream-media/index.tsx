@@ -51,6 +51,7 @@ export class FcrStreamMediaPlayerWidget extends AgoraOnlineclassWidget {
       minimizedKey: 'Online Course',
       minimizedCollapsed: true,
       minimizedCollapsedIcon: SvgIconEnum.FCR_ALF2,
+      minimizedTooltip: this.displayName,
     };
   }
   get resizable(): boolean {

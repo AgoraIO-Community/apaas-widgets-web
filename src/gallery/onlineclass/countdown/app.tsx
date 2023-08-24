@@ -45,7 +45,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   const isStopped = status === CountdownStatus.STOPPED;
   useEffect(() => {
     const time = dayjs.duration(current * 1000);
-    const minutes = time.minutes() || 0;
+    const minutes = time.asMinutes() || 0;
     const seconds = time.seconds() || 0;
     setTimeFormat({
       tensOfMinutes: Math.floor(minutes / 10),

@@ -1,7 +1,7 @@
 .fcr-edu-tool-dialog {
   @apply fcr-bg-2 fcr-rounded-16 fcr-shadow-dialog;
   position: relative;
-  transition: height 0.3s;
+  transition: all 0.3s;
   overflow: hidden;
 }
 .fcr-edu-tool-dialog-actions {

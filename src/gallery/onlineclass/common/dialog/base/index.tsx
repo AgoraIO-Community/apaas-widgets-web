@@ -1,11 +1,12 @@
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import classnames from 'classnames';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useEffect } from 'react';
 import './index.css';
 import { AgoraOnlineclassWidget } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { AgoraExtensionWidgetEvent } from '../../../../../events';
+import { addResource } from '../i18n/config';
 const handleMouseDown = (e: React.MouseEvent) => {
   e.stopPropagation();
 };
@@ -30,7 +31,9 @@ export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = observer
       disabled: false,
     },
   } = props;
-
+  useEffect(() => {
+    addResource();
+  }, []);
   const handleClose = () => {
     widget.widgetController.broadcast(
       AgoraExtensionWidgetEvent.WidgetBecomeInactive,

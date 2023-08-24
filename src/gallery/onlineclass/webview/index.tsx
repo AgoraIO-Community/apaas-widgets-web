@@ -43,6 +43,7 @@ export class FcrWebviewWidget extends AgoraOnlineclassWidget {
       minimizedKey: 'Online Course',
       minimizedCollapsed: true,
       minimizedCollapsedIcon: SvgIconEnum.FCR_ALF2,
+      minimizedTooltip: this.displayName,
     };
   }
   get minWidth() {
