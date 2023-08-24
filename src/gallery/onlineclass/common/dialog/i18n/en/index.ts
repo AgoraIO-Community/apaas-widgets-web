@@ -1,4 +1,5 @@
 export default {
+  //****************** 插件Widget ******************
   fcr_widget_close: 'Close',
   fcr_widget_refresh: 'Refresh',
   fcr_widget_minimization: 'Minimization',
