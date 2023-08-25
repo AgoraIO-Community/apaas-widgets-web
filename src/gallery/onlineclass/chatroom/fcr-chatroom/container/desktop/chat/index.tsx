@@ -143,7 +143,7 @@ const MutedInput = observer(() => {
   const muteText = allMuted
     ? transI18n('fcr_chat_label_all_mute')
     : userMuted
-    ? transI18n('fcr_chat_you_are_muted_by_teacher)')
+    ? transI18n('fcr_chat_you_are_muted_by_teacher')
     : '';
   return (
     <div className="fcr-chat-muted-input-container">

@@ -16,6 +16,9 @@ export default {
   //发起投票按钮标题
   fcr_poll_start: 'Start',
 
+  //结束投票按钮标题
+  fcr_poll_end: 'End',
+
   //提示输入投票内容
   fcr_poll_input_placeholder: 'Please input the question',
 

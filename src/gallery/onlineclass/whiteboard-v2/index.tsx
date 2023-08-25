@@ -430,7 +430,7 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
         if (progress !== 100) {
           DialogProgressApi.show({ key: 'saveImage', progress: 1, width: 100, auto: true });
         } else {
-          DialogProgressApi.destroy('saveImage');
+          // DialogProgressApi.destroy('saveImage');
         }
       });
     }

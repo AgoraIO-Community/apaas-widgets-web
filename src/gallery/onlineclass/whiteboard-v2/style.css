@@ -564,6 +564,7 @@
 
 .fcr-progress-saveImage {
   @apply fcr-bg-block-4 !important;
+  text-align: left;
 }
 
 .fcr-progress-saveImage .fcr-progress {
@@ -576,4 +577,7 @@
 
 .fcr-progress-saveImage .dialog-progress-tip {
   @apply fcr-text-1 !important;
+}
+.fcr-progress-saveImage .dialog-progress-tip ~ div {
+  margin-top: 4px;
 }
