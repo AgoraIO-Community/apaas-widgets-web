@@ -15,6 +15,8 @@ import {
 import dayjs from 'dayjs';
 import { useI18n } from 'agora-common-libs';
 import { EduToolDialog } from '../common/dialog/base';
+import { AgoraExtensionWidgetEvent } from '../../../events';
+
 export type TimeFormat = {
   tensOfMinutes: number;
   minutes: number;
@@ -41,7 +43,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   } = useCountdownRemoteStatus(widget);
   const [seconds, setSeconds] = useState(timeToSeconds(timeFormat));
 
-  const { current, start, stop, pause, status } = useCountdown(duration, remoteStatus);
+  const { current, start, stop, pause, status } = useCountdown(duration, remoteStatus, widget);
   const isStopped = status === CountdownStatus.STOPPED;
   useEffect(() => {
     const time = dayjs.duration(current * 1000);
@@ -65,10 +67,17 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
       handleStop();
     }
   }, [isStopped]);
-
-  const handleStart = () => {
+  useEffect(() => {
+    widget.broadcast(AgoraExtensionWidgetEvent.CountdownTimerStateChanged, {
+      current,
+      state: widget.hasPrivilege ? CountdownStatus[status] : CountdownStatus[remoteStatus],
+      tooltip: widget.minimizedProperties.minimizedTooltip,
+      icon: widget.minimizedProperties.minimizedIcon,
+    });
+  }, [status, remoteStatus, current]);
+  const handleStart = async () => {
     if (seconds <= 0) return;
-    widget.setActive({
+    await widget.setActive({
       extra: {
         state: 1,
         startTime: Date.now() + widget.classroomStore.roomStore.clientServerTimeShift,
@@ -77,21 +86,21 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
       },
     });
     setDuration(seconds);
-    start();
+    start(seconds);
     setTotalDuration(seconds);
   };
-  const handleResume = () => {
-    widget.updateWidgetProperties({
+  const handleResume = async () => {
+    await widget.updateWidgetProperties({
       extra: {
         state: 1,
         startTime: Date.now() + widget.classroomStore.roomStore.clientServerTimeShift,
         duration: current,
       },
     });
-    start();
+    start(current);
   };
-  const handleStop = () => {
-    widget.updateWidgetProperties({
+  const handleStop = async () => {
+    await widget.updateWidgetProperties({
       extra: { state: 0, startTime: 0, duration: 0, totalDuration: 0 },
     });
     setDuration(timeToSeconds(defaultTimeFormat));
@@ -100,10 +109,9 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     setTimeFormat(defaultTimeFormat);
     stop();
   };
-  const handlePause = () => {
+  const handlePause = async () => {
     pause();
-
-    widget.updateWidgetProperties({
+    await widget.updateWidgetProperties({
       extra: {
         state: 2,
         startTime: 0,
@@ -265,8 +273,18 @@ export const FcrCountdown = ({
         </div>
       )}
       <div className="fcr-countdown-actions">
-        <ToolTip placement="bottom" content={transI18n('fcr_countdown_timer_tips_start')}>
-          <div className="fcr-countdown-actions-start" onClick={onStart}>
+        <ToolTip
+          placement="bottom"
+          content={
+            timeToSeconds(timeFormat) <= 0
+              ? transI18n('fcr_countdown_timer_tips_duration')
+              : transI18n('fcr_countdown_timer_tips_start')
+          }>
+          <div
+            className={classnames('fcr-countdown-actions-start', {
+              'fcr-countdown-actions-start-disable': timeToSeconds(timeFormat) <= 0,
+            })}
+            onClick={onStart}>
             <SvgImg type={SvgIconEnum.FCR_RECORDING_PLAY} size={28}></SvgImg>
           </div>
         </ToolTip>

@@ -112,6 +112,10 @@
   justify-content: center;
   align-items: center;
 }
+.fcr-countdown-actions-start-disable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 .fcr-countdown-actions-stop {
   @apply fcr-bg-transparent fcr-border-white;
 }

@@ -7,6 +7,8 @@ import { AgoraOnlineclassWidget } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { AgoraExtensionWidgetEvent } from '../../../../../events';
 import { addResource } from '../i18n/config';
+addResource();
+
 const handleMouseDown = (e: React.MouseEvent) => {
   e.stopPropagation();
 };
@@ -31,9 +33,7 @@ export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = observer
       disabled: false,
     },
   } = props;
-  useEffect(() => {
-    addResource();
-  }, []);
+
   const handleClose = () => {
     widget.widgetController.broadcast(
       AgoraExtensionWidgetEvent.WidgetBecomeInactive,

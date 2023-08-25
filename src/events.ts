@@ -157,4 +157,6 @@ export enum AgoraExtensionWidgetEvent {
   UpdateSize = 'update-size',
   //设置插件位置
   UpdatePosition = 'update-position',
+  //更新倒计时状态
+  CountdownTimerStateChanged = 'countdown-timer-state-changed',
 }

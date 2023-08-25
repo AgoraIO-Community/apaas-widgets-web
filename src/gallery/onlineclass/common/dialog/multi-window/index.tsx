@@ -7,7 +7,7 @@ import './index.css';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { FcrBoardWidget } from '../../../whiteboard-v2';
 import { addResource } from '../i18n/config';
-
+addResource();
 interface MultiWindowWidgetDialogProps extends PropsWithChildren {
   widget: AgoraOnlineclassWidget;
   fullscreenable?: boolean;
@@ -24,9 +24,7 @@ export const MultiWindowWidgetDialog = observer(
   ) {
     const [fullscreen, setFullscreen] = useState(widget.defaultFullscreen);
     const refreshRef = useRef<HTMLLIElement>(null);
-    useEffect(() => {
-      addResource();
-    }, []);
+
     const transI18n = useI18n();
 
     const handleClose = () => {

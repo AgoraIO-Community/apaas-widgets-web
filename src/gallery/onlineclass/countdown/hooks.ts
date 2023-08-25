@@ -4,27 +4,25 @@ import { FcrCountdownWidget } from '.';
 import { AgoraExtensionRoomEvent } from '../../../events';
 import { TimeFormat } from './app';
 import dayjs from 'dayjs';
+import RewardSound from './assets/countdown.mp3';
 
 type UseCountdownReturnType = {
   current: number;
-  start: () => void;
+  start: (startTime?: number) => void;
   stop: () => void;
   pause: () => void;
   status: CountdownStatus;
 };
 export enum CountdownStatus {
-  RUNNING = 'running',
-  PAUSED = 'paused',
-  STOPPED = 'stopped',
+  STOPPED = 0,
+  RUNNING = 1,
+  PAUSED = 2,
 }
-export const countdownRmoteStatusMap = {
-  0: CountdownStatus.STOPPED,
-  1: CountdownStatus.RUNNING,
-  2: CountdownStatus.PAUSED,
-};
+
 export const useCountdown = (
   duration: number,
   remoteStatus: CountdownStatus,
+  widget: FcrCountdownWidget,
 ): UseCountdownReturnType => {
   const [status, setStatus] = useState(remoteStatus);
   const [current, setCurrent] = useState(duration);
@@ -42,6 +40,10 @@ export const useCountdown = (
 
     if (elapsedTime >= intervalDuration) {
       let newCurrent = currentRef.current - Math.floor(elapsedTime / intervalDuration);
+      if (newCurrent < 5 && newCurrent >= 0) {
+        const audioElement = new Audio(RewardSound);
+        audioElement.play();
+      }
       if (newCurrent <= 0) {
         stop();
         newCurrent = 0;
@@ -56,8 +58,10 @@ export const useCountdown = (
     }
   };
 
-  const start = () => {
-    if (duration > 0) {
+  const start = (startTime: number = duration) => {
+    if (startTime > 0) {
+      setCurrent(startTime);
+      currentRef.current = startTime;
       setStatus(CountdownStatus.RUNNING);
       prevTimeRef.current = performance.now();
       requestRef.current = requestAnimationFrame(animate);
@@ -73,10 +77,7 @@ export const useCountdown = (
     setCurrent(0);
     requestRef.current && cancelAnimationFrame(requestRef.current);
   };
-
-  useEffect(() => {
-    setCurrent(duration);
-    currentRef.current = duration;
+  const followRemoteStatus = (remoteStatus: CountdownStatus) => {
     if (remoteStatus === CountdownStatus.RUNNING) {
       start();
     }
@@ -86,8 +87,19 @@ export const useCountdown = (
     if (remoteStatus === CountdownStatus.PAUSED) {
       pause();
     }
+  };
+
+  useEffect(() => {
+    setCurrent(duration);
+    currentRef.current = duration;
+    if (!widget.hasPrivilege) {
+      followRemoteStatus(remoteStatus);
+    }
   }, [remoteStatus, duration]);
   useEffect(() => {
+    setCurrent(duration);
+    currentRef.current = duration;
+    followRemoteStatus(remoteStatus);
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
@@ -106,10 +118,7 @@ export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
     return direction < 0;
   };
   const formatRemoteStatus = () => {
-    const formatedStatus =
-      countdownRmoteStatusMap[
-        widget.roomProperties.extra?.state as keyof typeof countdownRmoteStatusMap
-      ];
+    const formatedStatus = widget.roomProperties.extra?.state as number;
     return formatedStatus !== CountdownStatus.PAUSED
       ? checkRemoteStarted()
         ? CountdownStatus.RUNNING
