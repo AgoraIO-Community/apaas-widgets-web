@@ -82,7 +82,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
       setEditing(true);
     }
   };
-  const { selectedCount = 0, totalCount, averageAccuracy } = widget.roomProperties.extra || {};
+  const { selectedCount = 0, totalCount, averageAccuracy = 0 } = widget.roomProperties.extra || {};
   const inProgress = status === QuizStatus.STARTED && !widget.isAudience;
   return (
     <div
@@ -191,7 +191,7 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
                 {transI18n('fcr_popup_quiz_accuracy')}:
               </div>
               <div className="fcr-popup-quiz-student-answer-value">
-                {averageAccuracy}
+                {Math.floor(averageAccuracy * 100)}
                 <span className="fcr-text-2">%</span>
               </div>
             </div>
