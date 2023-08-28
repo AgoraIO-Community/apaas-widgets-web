@@ -202,9 +202,10 @@
   min-width: 90px;
 }
 
-.fcr-popup-quiz-student {
+.fcr-popup-quiz-student.fcr-popup-quiz-in-progress {
   width: 230px;
 }
+
 .fcr-popup-quiz-student .fcr-popup-quiz-container-bg {
   height: 101px;
 }
