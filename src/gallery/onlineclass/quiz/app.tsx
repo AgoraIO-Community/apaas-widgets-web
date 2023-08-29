@@ -467,6 +467,7 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
               <Table
                 scroll={{ y: 314 }}
                 data={answerList}
+                rowKey={(data) => data.ownerUserUuid}
                 columns={[
                   {
                     title: (
@@ -668,11 +669,22 @@ const ReviseQuizSelect = ({
   onClose: () => void;
 }) => {
   const transI18n = useI18n();
-
+  const [loading, setLoading] = useState(false);
   const { options, selectOption, selectedOptions, deselectOption } = useQuizSelect(
     widget.roomProperties.extra?.items || [],
     widget.roomProperties.extra?.correctItems || [],
   );
+  const handleReviseCorrectItems = async () => {
+    const popupQuizId = widget.roomProperties.extra.popupQuizId;
+    const roomId = widget.classroomStore.connectionStore.sceneId;
+    setLoading(true);
+    await widget.classroomStore.api
+      .updateAnswerCorrectItems(roomId, popupQuizId, selectedOptions)
+      .finally(() => {
+        setLoading(false);
+      });
+    onClose();
+  };
   return (
     <div className="fcr-popup-quiz-host-revise-select-container">
       <div onClick={onClose} className="fcr-popup-quiz-host-revise-select-close">
@@ -704,7 +716,13 @@ const ReviseQuizSelect = ({
         <Button size="XS" block shape="rounded" styleType="gray" onClick={onClose}>
           {transI18n('fcr_popup_quiz_change_cancel')}
         </Button>
-        <Button size="XS" block shape="rounded" onClick={onClose}>
+        <Button
+          size="XS"
+          loading={loading}
+          disabled={loading || selectedOptions.length <= 0}
+          block
+          shape="rounded"
+          onClick={handleReviseCorrectItems}>
           {transI18n('fcr_popup_quiz_change_save')}
         </Button>
       </div>

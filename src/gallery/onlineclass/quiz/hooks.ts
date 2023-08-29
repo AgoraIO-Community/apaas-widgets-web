@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { autorun } from 'mobx';
 import { FcrPopupQuizWidget } from '.';
 import throttle from 'lodash/throttle';
@@ -51,7 +51,7 @@ export const useQuizSelect = (
 
   return {
     options,
-    selectedOptions,
+    selectedOptions: selectedOptions.slice().sort(),
     addOption,
     removeOption,
     selectOption,
@@ -85,32 +85,33 @@ export type QuizAnswerListItem = {
 };
 export const useAnswerList = (widget: FcrPopupQuizWidget, status: QuizStatus) => {
   const [answerList, setAnswerList] = useState<QuizAnswerListItem[]>([]);
+  const taskRef = useRef<Scheduler.Task | null>(null);
   const updateAnswerList = async () => {
     const list = await fetchAnswerList(widget);
     setAnswerList(list as QuizAnswerListItem[]);
   };
   useEffect(() => {
-    let task: Scheduler.Task | null = null;
     if (widget.hasPrivilege) {
-      if (status === QuizStatus.STARTED) {
+      if (status === QuizStatus.INITIALIZED) {
         setAnswerList([]);
+      }
+      if (status === QuizStatus.STARTED) {
         updateAnswerList();
-        task = Scheduler.shared.addIntervalTask(async () => {
+        taskRef.current = Scheduler.shared.addIntervalTask(async () => {
           await updateAnswerList();
         }, Scheduler.Duration.second(3));
       }
       if (status === QuizStatus.ENDED) {
-        task?.stop();
+        taskRef.current?.stop();
         updateAnswerList();
       }
     }
     return () => {
-      task?.stop();
+      taskRef.current?.stop();
     };
   }, [status]);
   return {
     answerList,
-    fetchAnswerList,
   };
 };
 export const fetchAnswerList = throttle(async (widget: FcrPopupQuizWidget) => {
