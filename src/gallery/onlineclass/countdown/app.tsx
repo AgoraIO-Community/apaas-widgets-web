@@ -49,13 +49,15 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
     const time = dayjs.duration(current * 1000);
     const minutes = time.asMinutes() || 0;
     const seconds = time.seconds() || 0;
-    setTimeFormat({
-      tensOfMinutes: Math.floor(minutes / 10),
-      minutes: minutes % 10,
-      tensOfSeconds: Math.floor(seconds / 10),
-      seconds: seconds % 10,
-    });
-  }, [current]);
+    if (status) {
+      setTimeFormat({
+        tensOfMinutes: Math.floor(minutes / 10),
+        minutes: Math.floor(minutes % 10),
+        tensOfSeconds: Math.floor(seconds / 10),
+        seconds: Math.floor(seconds % 10),
+      });
+    }
+  }, [current, status]);
   useEffect(() => {
     if (minimized) {
       widget.setMinimize(true, { ...widget.minimizedProperties, extra: { current } });

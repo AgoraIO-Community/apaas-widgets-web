@@ -54,6 +54,7 @@ export const useCountdown = (
       prevTimeRef.current = currentTime;
     }
     if (currentRef.current > 0) {
+      requestRef.current && cancelAnimationFrame(requestRef.current);
       requestRef.current = requestAnimationFrame(animate);
     }
   };
@@ -64,6 +65,7 @@ export const useCountdown = (
       currentRef.current = startTime;
       setStatus(CountdownStatus.RUNNING);
       prevTimeRef.current = performance.now();
+      requestRef.current && cancelAnimationFrame(requestRef.current);
       requestRef.current = requestAnimationFrame(animate);
     }
   };
