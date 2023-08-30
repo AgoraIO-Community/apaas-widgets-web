@@ -23,8 +23,8 @@ import { Progress } from '@components/progress';
 import { themeVal } from '@ui-kit-utils/tailwindcss';
 import throttle from 'lodash/throttle';
 import { EduToolDialog } from '../common/dialog/base';
-
-export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
+import { observer } from 'mobx-react';
+export const FcrPopupQuizApp = observer(({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
   const { status } = useQuizStatus(widget);
 
@@ -51,8 +51,8 @@ export const FcrPopupQuizApp = ({ widget }: { widget: FcrPopupQuizWidget }) => {
       )}
     </EduToolDialog>
   );
-};
-const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
+});
+const StudentQuiz = observer(({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
   const colors = themeVal('colors');
 
@@ -205,8 +205,8 @@ const StudentQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
       </div>
     </div>
   );
-};
-const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
+});
+const TeacherQuiz = observer(({ widget }: { widget: FcrPopupQuizWidget }) => {
   const transI18n = useI18n();
   const colors = themeVal('colors');
 
@@ -544,7 +544,7 @@ const TeacherQuiz = ({ widget }: { widget: FcrPopupQuizWidget }) => {
       )}
     </div>
   );
-};
+});
 
 export const QuizRewardPopover = ({ widget }: { widget: FcrPopupQuizWidget }) => {
   const [popoverVisible, setPopoverVisible] = useState(false);
