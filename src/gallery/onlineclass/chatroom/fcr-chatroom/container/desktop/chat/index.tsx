@@ -447,7 +447,9 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
   const lastMessage = messages[messages.length - 1];
 
   const isSelfMessage = lastMessage.from === fcrChatRoom.userInfo?.userId;
-  const isMessageFromHost = lastMessage.ext?.role === 1;
+  const isMessageFromTeacher = lastMessage.ext?.role === 1;
+  const isMessageFromAssistant = lastMessage.ext?.role === 3;
+
   const renderPlacement = isSelfMessage ? 'right' : 'left';
   const showAvatarAndHost = renderPlacement === 'left';
   const [actionVisible, setActionVisible] = useState(false);
@@ -474,7 +476,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
       className={classnames(
         'fcr-chat-message-list-item',
         `fcr-chat-message-list-item-placement-${renderPlacement}`,
-        { 'fcr-chat-message-list-item-placement-host': isMessageFromHost },
+        { 'fcr-chat-message-list-item-placement-host': isMessageFromTeacher },
       )}>
       {showAvatarAndHost && (
         <div className="fcr-chat-message-list-item-left">
@@ -487,7 +489,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             )}
 
             <>
-              {isHost && (
+              {isHost && !isMessageFromTeacher && !isMessageFromAssistant && (
                 <div
                   className={classnames('fcr-chat-message-list-item-avatar-action', {
                     'fcr-chat-message-list-item-avatar-action-visible': actionVisible,
@@ -525,9 +527,9 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
         <div
           className={classnames('fcr-chat-message-list-item-extra', {
             'fcr-chat-message-list-item-extra-private':
-              checkIsPrivateMessage(lastMessage) && isMessageFromHost,
+              checkIsPrivateMessage(lastMessage) && isMessageFromTeacher,
           })}>
-          {isMessageFromHost && showAvatarAndHost && (
+          {isMessageFromTeacher && showAvatarAndHost && (
             <div className="fcr-chat-message-list-item-host">Host</div>
           )}
 

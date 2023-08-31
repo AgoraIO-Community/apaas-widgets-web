@@ -70,7 +70,8 @@ const UserItem = observer((props: { user: AgoraIMUserInfo<AgoraIMUserInfoExt> })
   const { muteUser, unmuteUser } = useMute();
   const localUserId = fcrChatRoom.userInfo?.userId || '';
   const [hover, setHover] = useState(false);
-  const enableUserAction = isHost && user.userId !== localUserId && hover;
+  const enableUserAction =
+    isHost && user.ext.role !== 1 && user.ext.role !== 3 && user.userId !== localUserId && hover;
   const muted = muteList.includes(user.userId);
   return (
     <div

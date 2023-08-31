@@ -87,12 +87,16 @@ export class FcrPollingWidget extends AgoraOnlineclassWidget {
     return 'poll';
   }
   get hasPrivilege() {
-    return this.isTeacher;
+    return this.isTeacher || this.isAssistant;
   }
 
   get isTeacher() {
     const { role } = this.classroomConfig.sessionInfo;
     return role === 1;
+  }
+  get isAssistant() {
+    const { role } = this.classroomConfig.sessionInfo;
+    return role === 3;
   }
   get isAudience() {
     const { role } = this.classroomConfig.sessionInfo;
@@ -100,7 +104,7 @@ export class FcrPollingWidget extends AgoraOnlineclassWidget {
   }
 
   get startedState() {
-    return this.isTeacher ? PollingState.POLLING_END : PollingState.POLLING_SUBMIT;
+    return this.hasPrivilege ? PollingState.POLLING_END : PollingState.POLLING_SUBMIT;
   }
 
   onCreate(properties: any, userProperties: any) {
@@ -195,7 +199,7 @@ export class FcrPollingWidget extends AgoraOnlineclassWidget {
       isActionLoading: false,
       pollingState: PollingState.POLLING_EDIT,
       pollingType: PollingType.SINGLE,
-      isOwner: this.isTeacher,
+      isOwner: this.hasPrivilege,
       isAudience: this.isAudience,
       question: '',
       options: [
@@ -207,7 +211,7 @@ export class FcrPollingWidget extends AgoraOnlineclassWidget {
       minimize: false,
       selectIndex: null,
       userCount: 0,
-      canClose: this.isTeacher,
+      canClose: this.hasPrivilege,
     });
 
     const context = {

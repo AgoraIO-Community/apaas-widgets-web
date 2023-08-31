@@ -59,7 +59,7 @@ export class FcrPopupQuizWidget extends AgoraOnlineclassWidget {
   }
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return role === 1;
+    return role === 1 || role === 3;
   }
 
   get minimizedProperties() {

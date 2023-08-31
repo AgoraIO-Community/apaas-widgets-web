@@ -22,6 +22,7 @@ import { BoardUIContext } from './ui-context';
 import { App } from './app';
 import { DialogProgressApi } from '../../../components/progress';
 import isNumber from 'lodash/isNumber';
+import { addResource } from './i18n/config';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraCloudClassWidget {
@@ -123,6 +124,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
    * 组件创建
    */
   onCreate(props: any, userProps: any) {
+    addResource();
     this._isInitialUser = userProps.initial;
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),

@@ -12,7 +12,9 @@ export class RoomStore {
 
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
 
-  isHost = this._widget.classroomConfig.sessionInfo.role === 1;
+  isHost =
+    this._widget.classroomConfig.sessionInfo.role === 1 ||
+    this._widget.classroomConfig.sessionInfo.role === 3;
 
   @observable chatDialogVisible = false;
   @action.bound
