@@ -29,97 +29,66 @@ const defaultTimeFormat: TimeFormat = {
   tensOfSeconds: 0,
   seconds: 0,
 };
+
 export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   const transI18n = useI18n();
   const [timeFormat, setTimeFormat] = useState<TimeFormat>(defaultTimeFormat);
 
   const { minimized } = useCountdownMinimized(widget);
-  const {
-    duration,
-    setDuration,
-    totalDuration,
-    setTotalDuration,
-    status: remoteStatus,
-  } = useCountdownRemoteStatus(widget);
-  const [seconds, setSeconds] = useState(timeToSeconds(timeFormat));
+  const { duration, totalDuration, status: remoteStatus } = useCountdownRemoteStatus(widget);
 
-  const { current, start, stop, pause, status } = useCountdown(duration, remoteStatus, widget);
-  const isStopped = status === CountdownStatus.STOPPED;
+  const { current } = useCountdown(duration, remoteStatus);
+  const isStopped = remoteStatus === CountdownStatus.STOPPED;
+  const roomId = widget.classroomStore.connectionStore.sceneId;
   useEffect(() => {
     const time = dayjs.duration(current * 1000);
     const minutes = time.asMinutes() || 0;
     const seconds = time.seconds() || 0;
-    if (status) {
+    if (remoteStatus !== CountdownStatus.STOPPED) {
       setTimeFormat({
         tensOfMinutes: Math.floor(minutes / 10),
         minutes: Math.floor(minutes % 10),
         tensOfSeconds: Math.floor(seconds / 10),
         seconds: Math.floor(seconds % 10),
       });
+    } else {
+      widget.hasPrivilege
+        ? setTimeFormat(defaultTimeFormat)
+        : setTimeFormat({
+            tensOfMinutes: 0,
+            minutes: 0,
+            tensOfSeconds: 0,
+            seconds: 0,
+          });
     }
-  }, [current, status]);
+    widget.broadcast(AgoraExtensionWidgetEvent.CountdownTimerStateChanged, {
+      current,
+      state: remoteStatus,
+      tooltip: widget.minimizedProperties.minimizedTooltip,
+      icon: widget.minimizedProperties.minimizedIcon,
+    });
+  }, [current, remoteStatus]);
   useEffect(() => {
     if (minimized) {
       widget.setMinimize(true, { ...widget.minimizedProperties, extra: { current } });
     }
   }, [minimized, current]);
 
-  useEffect(() => {
-    if (isStopped && widget.hasPrivilege) {
-      handleStop();
-    }
-  }, [isStopped]);
-  useEffect(() => {
-    widget.broadcast(AgoraExtensionWidgetEvent.CountdownTimerStateChanged, {
-      current,
-      state: widget.hasPrivilege ? CountdownStatus[status] : CountdownStatus[remoteStatus],
-      tooltip: widget.minimizedProperties.minimizedTooltip,
-      icon: widget.minimizedProperties.minimizedIcon,
-    });
-  }, [status, remoteStatus, current]);
   const handleStart = async () => {
+    const seconds = timeToSeconds(timeFormat);
     if (seconds <= 0) return;
-    await widget.setActive({
-      extra: {
-        state: 1,
-        startTime: Date.now() + widget.classroomStore.roomStore.clientServerTimeShift,
-        duration: seconds,
-        totalDuration: seconds,
-      },
-    });
-    setDuration(seconds);
-    start(seconds);
-    setTotalDuration(seconds);
+    await widget.classroomStore.api.startCountdownTimer(roomId, seconds);
   };
+  const countdownTimerId = widget.roomProperties.extra?.countdownTimerId;
+
   const handleResume = async () => {
-    await widget.updateWidgetProperties({
-      extra: {
-        state: 1,
-        startTime: Date.now() + widget.classroomStore.roomStore.clientServerTimeShift,
-        duration: current,
-      },
-    });
-    start(current);
+    await widget.classroomStore.api.resumeCountdownTimer(roomId, countdownTimerId);
   };
   const handleStop = async () => {
-    await widget.updateWidgetProperties({
-      extra: { state: 0, startTime: 0, duration: 0, totalDuration: 0 },
-    });
-    setDuration(timeToSeconds(defaultTimeFormat));
-    setTotalDuration(timeToSeconds(defaultTimeFormat));
-    setSeconds(timeToSeconds(defaultTimeFormat));
-    setTimeFormat(defaultTimeFormat);
-    stop();
+    await widget.classroomStore.api.stopCountdownTimer(roomId, countdownTimerId);
   };
   const handlePause = async () => {
-    pause();
-    await widget.updateWidgetProperties({
-      extra: {
-        state: 2,
-        startTime: 0,
-        duration: current,
-      },
-    });
+    await widget.classroomStore.api.pauseCountdownTimer(roomId, countdownTimerId);
   };
   const progress = Math.ceil(((totalDuration - current) / totalDuration) * 100);
   return (
@@ -142,7 +111,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
         <div
           className={classnames('fcr-countdown-container-bg', {
             'fcr-countdown-container-bg-active':
-              !widget.hasPrivilege || status !== CountdownStatus.STOPPED,
+              !widget.hasPrivilege || remoteStatus !== CountdownStatus.STOPPED,
           })}></div>
 
         <FcrCountdown
@@ -154,10 +123,9 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
           onStop={handleStop}
           onChange={(time) => {
             setTimeFormat(time);
-            setSeconds(timeToSeconds(time));
           }}
-          status={status}
-          danger={current > 0 && current <= 10}
+          status={remoteStatus}
+          danger={current <= 10}
           widget={widget}></FcrCountdown>
       </div>
     </EduToolDialog>
@@ -304,7 +272,10 @@ const FcrCountdownInput: FC<FcrCountdownInputProps> = (props) => {
   const handleChange: ChangeEventHandler<HTMLInputElement> = (e) => {
     const input = e.target.value;
     const oldVal = value.toString();
-    const num = Number(input.includes(oldVal) ? input.replace(oldVal, '') : value);
+    const num =
+      input.length === 1
+        ? Number(input)
+        : Number(input.includes(oldVal) ? input.replace(oldVal, '') : value);
     if (isNaN(num)) return;
     onChange(num);
   };

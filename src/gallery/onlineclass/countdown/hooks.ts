@@ -8,7 +8,7 @@ import RewardSound from './assets/countdown.mp3';
 
 type UseCountdownReturnType = {
   current: number;
-  start: (startTime?: number) => void;
+  start: () => void;
   stop: () => void;
   pause: () => void;
   status: CountdownStatus;
@@ -22,7 +22,6 @@ export enum CountdownStatus {
 export const useCountdown = (
   duration: number,
   remoteStatus: CountdownStatus,
-  widget: FcrCountdownWidget,
 ): UseCountdownReturnType => {
   const [status, setStatus] = useState(remoteStatus);
   const [current, setCurrent] = useState(duration);
@@ -59,15 +58,11 @@ export const useCountdown = (
     }
   };
 
-  const start = (startTime: number = duration) => {
-    if (startTime > 0) {
-      setCurrent(startTime);
-      currentRef.current = startTime;
-      setStatus(CountdownStatus.RUNNING);
-      prevTimeRef.current = performance.now();
-      requestRef.current && cancelAnimationFrame(requestRef.current);
-      requestRef.current = requestAnimationFrame(animate);
-    }
+  const start = () => {
+    setStatus(CountdownStatus.RUNNING);
+    prevTimeRef.current = performance.now();
+    requestRef.current && cancelAnimationFrame(requestRef.current);
+    requestRef.current = requestAnimationFrame(animate);
   };
 
   const pause = () => {
@@ -94,70 +89,43 @@ export const useCountdown = (
   useEffect(() => {
     setCurrent(duration);
     currentRef.current = duration;
-    if (!widget.hasPrivilege) {
-      followRemoteStatus(remoteStatus);
-    }
-  }, [remoteStatus, duration]);
-  useEffect(() => {
-    setCurrent(duration);
-    currentRef.current = duration;
     followRemoteStatus(remoteStatus);
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
-  }, []);
+  }, [remoteStatus, duration]);
 
   return { current: Math.ceil(current), start, stop, pause, status };
 };
 
 export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
-  const checkRemoteStarted = () => {
-    const { extra } = widget.roomProperties;
-    if (!extra?.startTime) return false;
-    const serverTimeCalcByLocalTime =
-      Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
-    const direction = serverTimeCalcByLocalTime - (extra.startTime + extra.duration * 1000); // 判断方向
-    return direction < 0;
-  };
-  const formatRemoteStatus = () => {
-    const formatedStatus = widget.roomProperties.extra?.state as number;
-    return formatedStatus !== CountdownStatus.PAUSED
-      ? checkRemoteStarted()
-        ? CountdownStatus.RUNNING
-        : CountdownStatus.STOPPED
-      : CountdownStatus.PAUSED;
-  };
   const calcRemoteDuration = () => {
     const { extra } = widget.roomProperties;
 
     const serverTimeCalcByLocalTime =
       Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
-    const duration = extra?.duration
-      ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
-      : 0;
+    const duration = extra?.startTime
+      ? extra?.duration
+        ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
+        : 0
+      : extra.duration;
     return duration;
   };
-
-  const [status, setStatus] = useState(formatRemoteStatus());
-  const [duration, setDuration] = useState(calcRemoteDuration());
+  const [status, setStatus] = useState(CountdownStatus.STOPPED);
+  const [duration, setDuration] = useState(0);
   const [totalDuration, setTotalDuration] = useState(
     widget.roomProperties.extra?.totalDuration || 0,
   );
   useEffect(() => {
     return autorun(() => {
       const { extra } = widget.roomProperties;
-      if (extra?.startTime) {
-        if (checkRemoteStarted()) {
-          const duration = calcRemoteDuration();
-          setDuration(duration);
+      if (extra) {
+        setDuration(calcRemoteDuration());
+        if (extra.totalDuration) {
+          setTotalDuration(extra.totalDuration || 0);
         }
-      } else {
-        setDuration(extra?.duration || 0);
+        setStatus(extra.state);
       }
-      if (extra?.totalDuration) {
-        setTotalDuration(extra?.totalDuration || 0);
-      }
-      setStatus(formatRemoteStatus());
     });
   }, []);
   return {
