@@ -109,7 +109,7 @@ export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
         ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
         : 0
       : extra.duration;
-    return duration;
+    return Math.max(duration, 0);
   };
   const [status, setStatus] = useState(CountdownStatus.STOPPED);
   const [duration, setDuration] = useState(0);

@@ -282,7 +282,8 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
     this._checkPrivilege(props);
     this._disposers.push(
       reaction(
-        () => this.classroomStore.roomStore.flexProps?.boardBackgroundImage,
+        () => this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage,
+
         this._setBackgourndImage,
       ),
     );
@@ -973,7 +974,7 @@ export class FcrBoardWidget extends AgoraOnlineclassWidget {
   }
   @bound
   private _setBackgourndImage() {
-    const imageUrl = this.classroomStore.roomStore.flexProps?.boardBackgroundImage;
+    const imageUrl = this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage;
     if (imageUrl && this._boardDom) {
       this._boardDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
     }

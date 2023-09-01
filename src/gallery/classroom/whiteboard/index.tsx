@@ -198,7 +198,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
     this._disposers.push(
       reaction(
-        () => this.classroomStore.roomStore.flexProps?.backgroundImage,
+        () => this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage,
         this.setBackgourndImage,
       ),
     );
@@ -563,7 +563,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   @bound
   setBackgourndImage() {
-    const imageUrl = this.classroomStore.roomStore.flexProps?.backgroundImage;
+    const imageUrl = this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage;
     if (imageUrl && this._outerDom) {
       this._outerDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
     }
