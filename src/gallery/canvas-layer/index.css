@@ -1,0 +1,26 @@
+.canvas-layer {
+  background: url(./assets/English-Grammar-BCG-Banner.png);
+  background-size: 100% 100%;
+}
+
+.disallow-drawing,
+.disallow-drawing * {
+  pointer-events: none !important;
+}
+
+.netless-whiteboard.cursor-pencil {
+  cursor: url(./assets/cursor.png), pointer !important;
+}
+
+.netless-window-manager-cursor-mid .cursor-image-wrapper {
+  width: 50px;
+  height: 50px;
+  background-image: url(./assets/cursor.png);
+}
+.netless-window-manager-cursor-mid .cursor-image-wrapper img {
+  display: none;
+}
+
+.netless-window-manager-cursor-mid .netless-window-manager-cursor-name {
+  display: none;
+}

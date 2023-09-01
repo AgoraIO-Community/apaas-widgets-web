@@ -337,6 +337,11 @@ export class FcrBoardWidget extends AgoraWidgetBase implements AgoraWidgetLifecy
 
     this.logger.info('create board client with config', config);
 
+    console.log('initArgs', this._initArgs);
+
+    // prevent default whiteboard connecting to server
+    return;
+
     this._boardRoom = FcrBoardFactory.createBoardRoom({
       appId: this._initArgs?.appId || '',
       region: this._initArgs?.region || FcrBoardRegion.CN,

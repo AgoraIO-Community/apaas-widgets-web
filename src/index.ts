@@ -9,3 +9,4 @@ export { FcrWebviewWidget } from './gallery/webview';
 export { FcrBoardWidget } from './gallery/whiteboard';
 export { FcrStreamMediaPlayerWidget } from './gallery/stream-media';
 export { FcrWatermarkWidget } from './gallery/watermark';
+export { FcrCanvasLayerWidget } from './gallery/canvas-layer';
