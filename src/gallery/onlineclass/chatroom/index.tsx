@@ -10,7 +10,7 @@ import { FcrChatRoomApp } from './fcr-chatroom';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrChatRoomStore } from './fcr-chatroom/store';
 
-export class AgoraHXChatWidget extends AgoraOnlineclassWidget {
+export class FcrChatroomWidget extends AgoraOnlineclassWidget {
   private _imConfig?: { chatRoomId: string; appName: string; orgName: string };
   private _easemobUserId?: string;
   private _dom?: HTMLElement;

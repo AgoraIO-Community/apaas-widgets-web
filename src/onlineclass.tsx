@@ -1,4 +1,4 @@
-import { AgoraHXChatWidget as FcrChatroom } from './gallery/onlineclass/chatroom';
+import { FcrChatroomWidget as FcrChatroom } from './gallery/onlineclass/chatroom';
 import { FcrPollingWidget } from './gallery/onlineclass/polling';
 import { FcrBoardWidget as FcrBoardWidgetV2 } from './gallery/onlineclass/whiteboard-v2';
 import { FcrWebviewWidget } from './gallery/onlineclass/webview';
