@@ -11,9 +11,9 @@
     "lib"
   ],
   "exports": {
-    "./classroom": "./lib/classroom.widget.js",
-    "./onlineclass": "./lib/onlineclass.widget.js",
-    "./proctor": "./lib/proctor.widget.js"
+    "./classroom": "./lib/edu_widget.bundle.js",
+    "./onlineclass": "./lib/onlineclass_widget.bundle.js",
+    "./proctor": "./lib/proctor_widget.bundle.js"
   },
   "typesVersions": {
     "*": {

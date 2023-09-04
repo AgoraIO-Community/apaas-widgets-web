@@ -8,19 +8,19 @@ const ROOT_PATH = path.resolve(__dirname, './');
 const target = process.env.BUNDLE_TARGET || '';
 const entry = {};
 if (target.includes('classroom')) {
-  entry.classroom = {
+  entry['edu_widget'] = {
     import: './src/classroom.tsx',
     chunkLoading: false,
   };
 }
 if (target.includes('proctor')) {
-  entry.proctor = {
+  entry['proctor_widget'] = {
     import: './src/proctor.tsx',
     chunkLoading: false,
   };
 }
 if (target.includes('onlineclass')) {
-  entry.onlineclass = {
+  entry['onlineclass_widget'] = {
     import: './src/onlineclass.tsx',
     chunkLoading: false,
   };
@@ -31,7 +31,7 @@ const config = {
   output: {
     path: path.resolve(ROOT_PATH, 'lib'),
     publicPath: './',
-    filename: '[name].widget.js',
+    filename: '[name].bundle.js',
     libraryTarget: 'umd',
     // clean: true,
     chunkLoading: false,
