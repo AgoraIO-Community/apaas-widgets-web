@@ -104,7 +104,7 @@ export class FcrCanvasLayerWidget extends AgoraEduToolWidget {
 
   @action.bound
   private _syncCounter(properties: any) {
-    this.counter = properties.extra.counter || 0;
+    this.counter = properties.extra?.counter || 0;
   }
 
   @action.bound
