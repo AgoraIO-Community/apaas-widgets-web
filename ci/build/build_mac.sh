@@ -33,7 +33,7 @@ fi
 
 download_packages $source_root $build_branch "${lib_dependencies[*]}" "${lib_versions[*]}" "${lib_branches[*]}"
 
-make_monorepo $source_root "../agora-scenario-ui-kit-desktop"
+make_monorepo $source_root "../fcr-ui-kit-desktop"
 
 install_packages $source_root
 
