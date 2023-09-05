@@ -1,7 +1,7 @@
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import classnames from 'classnames';
-import { FC, PropsWithChildren, useEffect } from 'react';
+import { FC, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import './index.css';
 import { AgoraOnlineclassWidget } from 'agora-common-libs';
 import { observer } from 'mobx-react';
@@ -20,6 +20,8 @@ export type EduToolDialogProps = {
   minimizeProps?: { tooltipContent?: string; disabled?: boolean };
 };
 export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = observer((props) => {
+  const [isMinimized, setIsMinimized] = useState(false);
+  const containerRef = useRef<HTMLDivElement>(null);
   const {
     widget,
     showClose = true,
@@ -33,7 +35,45 @@ export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = observer
       disabled: false,
     },
   } = props;
-
+  const handleMinimizedChanged = ({
+    widgetId,
+    minimized,
+  }: {
+    minimized: boolean;
+    widgetId: string;
+  }) => {
+    if (widget.widgetId === widgetId) {
+      setIsMinimized(minimized);
+    }
+  };
+  useEffect(() => {
+    if (containerRef.current) {
+      const observer = new ResizeObserver(() => {
+        if (!isMinimized) {
+          widget.updateSize({
+            width: containerRef.current?.clientWidth ?? 0,
+            height: containerRef.current?.clientHeight ?? 0,
+          });
+        }
+      });
+      observer.observe(containerRef.current);
+      return () => {
+        observer.disconnect();
+      };
+    }
+  }, [isMinimized]);
+  useEffect(() => {
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.SetMinimize,
+      onMessage: handleMinimizedChanged,
+    });
+    return () => {
+      widget.removeBroadcastListener({
+        messageType: AgoraExtensionWidgetEvent.SetMinimize,
+        onMessage: handleMinimizedChanged,
+      });
+    };
+  }, []);
   const handleClose = () => {
     widget.widgetController.broadcast(
       AgoraExtensionWidgetEvent.WidgetBecomeInactive,
@@ -83,7 +123,7 @@ export const EduToolDialog: FC<PropsWithChildren<EduToolDialogProps>> = observer
           </ToolTip>
         )}
       </div>
-      {props.children}
+      <div ref={containerRef}>{props.children}</div>
     </div>
   );
 });

@@ -12,6 +12,8 @@ import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import { useI18n } from 'agora-common-libs';
+import { EduToolDialog } from '../common/dialog/base';
+import { FcrPollingWidget } from '.';
 
 type ActionIcon = {
   icon: SvgIconEnum;
@@ -105,81 +107,31 @@ const PollingList: React.FC = observer(() => {
   );
 });
 
-export const Polling: React.FC = observer(() => {
+export const Polling: React.FC<{ widget: FcrPollingWidget }> = observer(({ widget }) => {
   const {
     observables: { pollingState, canClose },
-    onMinimize,
-    onClose,
   } = useContext(PollingUIContext);
   const transI18n = useI18n();
   const closeDisable = pollingState === PollingState.POLLING_END;
-  const handleMouseDown = (e: React.MouseEvent) => {
-    e.stopPropagation();
-  };
-  const actions: ActionIcon[] = [
-    {
-      icon: SvgIconEnum.FCR_MINUS,
-      onClick: () => onMinimize(true),
-      onMouseDown: handleMouseDown,
-      tooltipContent: transI18n('fcr_poll_minimization'),
-    },
-  ];
-  if (canClose) {
-    actions.push({
-      icon: SvgIconEnum.FCR_CLOSE,
-      onClick: () => {
-        onClose();
-      },
-      onMouseDown: handleMouseDown,
-      disable: closeDisable,
-      tooltipContent: closeDisable
-        ? transI18n('fcr_poll_unable_to_close')
-        : transI18n('fcr_poll_close'),
-    });
-  }
-  return (
-    <React.Fragment>
-      <div className="fcr-polling-container">
-        <div className="fcr-widget-dialog-actions">
-          {actions.map((action, index) => {
-            const { tooltipContent, disable, onMouseDown, onMouseUp, icon, iconColor, onClick } =
-              action;
-            const [tooltipVisible, setTooltipVisible] = useState(false);
-            const onVisibleChange = (visible: boolean) => {
-              if (!tooltipContent) {
-                setTooltipVisible(false);
-                return;
-              }
-              setTooltipVisible(visible);
-            };
-            return (
-              <ToolTip
-                visible={tooltipVisible}
-                content={tooltipContent}
-                onVisibleChange={onVisibleChange}
-                key={index}>
-                <div
-                  onClick={(e) => {
-                    !disable && onClick(e);
-                  }}
-                  onMouseDown={onMouseDown}
-                  onMouseUp={onMouseUp}
-                  className={classnames('fcr-widget-dialog-action-icon', {
-                    'fcr-widget-dialog-action-icon-disable': disable,
-                  })}>
-                  <SvgImg
-                    type={icon}
-                    size={14}
-                    colors={{ iconPrimary: iconColor || 'currentColor' }}></SvgImg>
-                </div>
-              </ToolTip>
-            );
-          })}
-        </div>
 
+  return (
+    <EduToolDialog
+      widget={widget}
+      showMinimize
+      minimizeProps={{
+        tooltipContent: transI18n('fcr_poll_minimization'),
+      }}
+      showClose={canClose}
+      closeProps={{
+        disabled: closeDisable,
+        tooltipContent: closeDisable
+          ? transI18n('fcr_poll_unable_to_close')
+          : transI18n('fcr_poll_close'),
+      }}>
+      <>
         <PollingQuestion />
         <PollingList />
-      </div>
-    </React.Fragment>
+      </>
+    </EduToolDialog>
   );
 });

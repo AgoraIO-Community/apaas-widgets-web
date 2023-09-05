@@ -42,7 +42,7 @@ export class FcrPollingWidget extends AgoraOnlineclassWidget {
     return false;
   }
   get dragHandleClassName() {
-    return 'fcr-polling-container';
+    return 'fcr-polling-title';
   }
   get dragCancelClassName() {
     return 'fcr-drag-cancel';
@@ -69,7 +69,7 @@ export class FcrPollingWidget extends AgoraOnlineclassWidget {
     ReactDOM.render(
       <PollingUIContext.Provider value={this._context}>
         <DialogWrapper>
-          <Polling />
+          <Polling widget={this} />
         </DialogWrapper>
       </PollingUIContext.Provider>,
       this._dom,
