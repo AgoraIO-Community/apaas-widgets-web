@@ -19,7 +19,7 @@ export class FcrChatRoomStore {
   roomStore: RoomStore;
   constructor(private _widget: AgoraHXChatWidget, appKey: string, roomId: string) {
     const easemobUserId = this._widget.easemobUserId || '';
-    const { userName, role } = this._widget.classroomConfig.sessionInfo;
+    const { userName, role, userUuid } = this._widget.classroomConfig.sessionInfo;
 
     this.fcrChatRoom = AgoraIM.createIMwithType('easemob', {
       appKey,
@@ -29,7 +29,7 @@ export class FcrChatRoomStore {
         nickName: userName,
         avatarUrl:
           'https://download-sdk.oss-cn-beijing.aliyuncs.com/downloads/IMDemo/avatar/Image1.png',
-        ext: { role },
+        ext: { role, userUuid },
       },
       ext: {
         roomUuid: this._widget.classroomConfig.sessionInfo.roomUuid,
