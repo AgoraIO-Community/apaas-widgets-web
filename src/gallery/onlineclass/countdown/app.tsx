@@ -39,7 +39,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
 
   const { current } = useCountdown(duration, remoteStatus);
   const isStopped = remoteStatus === CountdownStatus.STOPPED;
-  const roomId = widget.classroomStore.connectionStore.sceneId;
+  const roomId = widget.classroomStore.connectionStore.scene?.sceneId || '0';
   useEffect(() => {
     const time = dayjs.duration(current * 1000);
     const minutes = time.asMinutes() || 0;
