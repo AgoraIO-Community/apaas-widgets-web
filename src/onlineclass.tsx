@@ -1,13 +1,13 @@
 import { FcrChatroomWidget as FcrChatroom } from './gallery/onlineclass/chatroom';
 import { FcrPollingWidget } from './gallery/onlineclass/polling';
-import { FcrBoardWidget as FcrBoardWidgetV2 } from './gallery/onlineclass/whiteboard-v2';
+import { FcrBoardWidget } from './gallery/onlineclass/whiteboard';
 import { FcrWebviewWidget } from './gallery/onlineclass/webview';
 import { FcrStreamMediaPlayerWidget } from './gallery/onlineclass/stream-media';
 import { FcrCountdownWidget } from './gallery/onlineclass/countdown';
 import { FcrPopupQuizWidget } from './gallery/onlineclass/quiz';
 export {
   FcrChatroom,
-  FcrBoardWidgetV2,
+  FcrBoardWidget,
   FcrPollingWidget,
   FcrWebviewWidget,
   FcrStreamMediaPlayerWidget,

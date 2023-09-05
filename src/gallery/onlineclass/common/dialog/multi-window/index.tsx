@@ -5,7 +5,7 @@ import { ToolTip } from '@components/tooltip';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './index.css';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
-import { FcrBoardWidget } from '../../../whiteboard-v2';
+import { FcrBoardWidget } from '../../../whiteboard';
 import { addResource } from '../i18n/config';
 addResource();
 interface MultiWindowWidgetDialogProps extends PropsWithChildren {
