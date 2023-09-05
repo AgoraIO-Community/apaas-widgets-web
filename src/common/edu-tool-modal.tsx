@@ -19,10 +19,14 @@ export const ControlledModal: FC<
       setControlled(widget.controlled);
     };
 
-    widget.addControlStateListener(handleChange);
+    if (widget.addControlStateListener) {
+      widget.addControlStateListener(handleChange);
+    }
 
     return () => {
-      widget.removeControlStateListener(handleChange);
+      if (widget.removeControlStateListener) {
+        widget.removeControlStateListener(handleChange);
+      }
     };
   }, []);
 
