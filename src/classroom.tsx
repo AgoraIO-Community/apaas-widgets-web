@@ -6,6 +6,8 @@ import { AgoraPolling } from './gallery/classroom/vote';
 import { FcrWatermarkWidget } from './gallery/classroom/watermark';
 import { FcrWebviewWidget } from './gallery/classroom/webview';
 import { FcrBoardWidget } from './gallery/classroom/whiteboard';
+import { ExampleWidget } from './gallery/example/app';
+import { RollbookWidget } from './gallery/rollbook';
 import tailwindConfig from '../tailwind.config';
 import '@ui-kit-utils/preflight.css';
 
@@ -22,4 +24,6 @@ export {
   FcrWatermarkWidget,
   FcrWebviewWidget,
   FcrBoardWidget,
+  ExampleWidget,
+  RollbookWidget,
 };
