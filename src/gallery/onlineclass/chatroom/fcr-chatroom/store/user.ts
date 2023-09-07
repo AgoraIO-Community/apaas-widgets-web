@@ -115,7 +115,7 @@ export class UserStore {
   private _updateUserMutedState(muted: UserMutedState) {
     const { userUuid } = this._widget.classroomConfig.sessionInfo;
     const { updateUserProperties } = this._widget.classroomStore.userStore;
-    const roomUuid = this._widget.classroomStore.connectionStore.scene?.sceneId || '';
+    const scene = this._widget.classroomStore.connectionStore.scene;
     updateUserProperties(
       [
         {
@@ -128,7 +128,7 @@ export class UserStore {
           },
         },
       ],
-      roomUuid,
+      scene,
     );
   }
 
