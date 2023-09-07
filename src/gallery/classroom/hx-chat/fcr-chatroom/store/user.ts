@@ -34,21 +34,25 @@ export class UserStore {
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
   }
-
+  @bound
   private _updateUserMutedState(muted: UserMutedState) {
     const { userUuid } = this._widget.classroomConfig.sessionInfo;
     const { updateUserProperties } = this._widget.classroomStore.userStore;
-    updateUserProperties([
-      {
-        userUuid,
-        properties: {
-          mute: muted,
+    const roomUuid = this._widget.classroomStore.connectionStore.scene?.sceneId || '';
+    updateUserProperties(
+      [
+        {
+          userUuid,
+          properties: {
+            mute: muted,
+          },
+          cause: {
+            mute: muted ? 'mute' : 'unmute',
+          },
         },
-        cause: {
-          mute: muted ? 'mute' : 'unmute',
-        },
-      },
-    ]);
+      ],
+      roomUuid,
+    );
   }
 
   @action.bound

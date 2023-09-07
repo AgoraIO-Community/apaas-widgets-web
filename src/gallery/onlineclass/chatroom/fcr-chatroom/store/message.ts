@@ -1,6 +1,6 @@
 import { bound, Lodash, Scheduler } from 'agora-common-libs';
 import { observable, action, runInAction, computed, reaction } from 'mobx';
-import { AgoraHXChatWidget } from '../..';
+import { FcrChatroomWidget } from '../..';
 import {
   AgoraIMBase,
   AgoraIMCmdActionEnum,
@@ -68,7 +68,7 @@ export class MessageStore {
   @observable unreadMessageCount = 0;
   @observable messageList: AgoraIMMessageBase[] = [];
   @observable announcement = '';
-  constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
+  constructor(private _widget: FcrChatroomWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
   }
 

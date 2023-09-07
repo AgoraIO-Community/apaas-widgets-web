@@ -1,4 +1,4 @@
-import { AgoraHXChatWidget } from '../..';
+import { FcrChatroomWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
 import dayjs from 'dayjs';
@@ -6,7 +6,7 @@ import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../
 import { Logger, bound } from 'agora-common-libs';
 
 export class RoomStore {
-  constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
+  constructor(private _widget: FcrChatroomWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
   }
 

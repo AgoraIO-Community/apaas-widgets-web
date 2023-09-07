@@ -596,7 +596,7 @@ export const QuizReward = ({
           return { userUuid: ownerUserUuid, changeReward: 1 };
         });
       if (args.length > 0) {
-        await widget.classroomStore.roomStore.sendRewards(args);
+        await widget.classroomStore.roomStore.sendRewards(args, true);
         onRewardSuccess();
       } else {
         widget.ui.addToast(transI18n('fcr_popup_quiz_reward_correct_nobody'), 'warning');
@@ -606,7 +606,7 @@ export const QuizReward = ({
         return { userUuid: ownerUserUuid, changeReward: 1 };
       });
       if (args.length > 0) {
-        await widget.classroomStore.roomStore.sendRewards(args);
+        await widget.classroomStore.roomStore.sendRewards(args, true);
         onRewardSuccess();
       } else {
         widget.ui.addToast(transI18n('fcr_popup_quiz_reward_all_nobody'), 'warning');

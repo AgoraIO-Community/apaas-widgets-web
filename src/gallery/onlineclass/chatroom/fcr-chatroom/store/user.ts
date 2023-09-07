@@ -1,4 +1,4 @@
-import { AgoraHXChatWidget } from '../..';
+import { FcrChatroomWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
 
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
@@ -49,7 +49,7 @@ export class UserStore {
         return 0;
       });
   }
-  constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
+  constructor(private _widget: FcrChatroomWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._initUserMuted();
   }
@@ -111,20 +111,25 @@ export class UserStore {
       this.setPrivateUser(privateChatUser);
     }
   }
+  @bound
   private _updateUserMutedState(muted: UserMutedState) {
     const { userUuid } = this._widget.classroomConfig.sessionInfo;
     const { updateUserProperties } = this._widget.classroomStore.userStore;
-    updateUserProperties([
-      {
-        userUuid,
-        properties: {
-          mute: muted,
+    const roomUuid = this._widget.classroomStore.connectionStore.scene?.sceneId || '';
+    updateUserProperties(
+      [
+        {
+          userUuid,
+          properties: {
+            mute: muted,
+          },
+          cause: {
+            mute: muted ? 'mute' : 'unmute',
+          },
         },
-        cause: {
-          mute: muted ? 'mute' : 'unmute',
-        },
-      },
-    ]);
+      ],
+      roomUuid,
+    );
   }
 
   @action.bound

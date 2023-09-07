@@ -4,7 +4,7 @@ import {
   AgoraIMConnectionState,
   AgoraIMEvents,
 } from '../../../../../common/im/wrapper/typs';
-import { AgoraHXChatWidget } from '../..';
+import { FcrChatroomWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
 import { RoomStore } from './room';
@@ -20,7 +20,7 @@ export class FcrChatRoomStore {
   get widget() {
     return this._widget;
   }
-  constructor(private _widget: AgoraHXChatWidget, appKey: string, roomId: string) {
+  constructor(private _widget: FcrChatroomWidget, appKey: string, roomId: string) {
     const easemobUserId = this._widget.easemobUserId || '';
     const { userName, role, userUuid } = this._widget.classroomConfig.sessionInfo;
 
