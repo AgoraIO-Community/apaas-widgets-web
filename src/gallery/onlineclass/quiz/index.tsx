@@ -27,13 +27,24 @@ export class FcrPopupQuizWidget extends AgoraOnlineclassWidget {
     width: 500,
     height: 525,
   };
+  get quizInProgress() {
+    return this.roomProperties.extra?.answerState === 1;
+  }
   private _dom?: HTMLElement;
-  private _width = this.hasPrivilege
-    ? this.teacherInitializeSize.width
-    : this.studentInitializeSize.width;
-  private _height = this.hasPrivilege
-    ? this.teacherInitializeSize.height
-    : this.studentInitializeSize.height;
+  private get _width() {
+    return this.hasPrivilege
+      ? this.quizInProgress
+        ? this.teacherInProgressSize.width
+        : this.teacherInitializeSize.width
+      : this.studentInitializeSize.width;
+  }
+  private get _height() {
+    return this.hasPrivilege
+      ? this.quizInProgress
+        ? this.teacherInProgressSize.height
+        : this.teacherInitializeSize.height
+      : this.studentInitializeSize.height;
+  }
 
   get defaultRect() {
     const clientRect = document.body.getBoundingClientRect();
