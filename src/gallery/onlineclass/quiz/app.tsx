@@ -257,7 +257,8 @@ const TeacherQuiz = observer(({ widget }: { widget: FcrPopupQuizWidget }) => {
           tooltip: {
             showMarkers: false,
             customContent: (title, data) => {
-              return `<div>${data[0]?.value}%</div>`;
+              const value = data[0]?.value || 0;
+              return `<div>${Number(value).toFixed(1)}%</div>`;
             },
           },
           barStyle: {
