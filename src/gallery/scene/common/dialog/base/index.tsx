@@ -3,7 +3,7 @@ import { ToolTip } from '@components/tooltip';
 import classnames from 'classnames';
 import { FC, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import './index.css';
-import { AgoraOnlineclassWidget } from 'agora-common-libs';
+import { FcrUISceneWidget } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { AgoraExtensionWidgetEvent } from '../../../../../events';
 import { addResource } from '../i18n/config';
@@ -13,7 +13,7 @@ const handleMouseDown = (e: React.MouseEvent) => {
   e.stopPropagation();
 };
 export type EduToolDialogProps = {
-  widget: AgoraOnlineclassWidget;
+  widget: FcrUISceneWidget;
   showClose?: boolean;
   closeProps?: { tooltipContent?: string; disabled?: boolean };
   showMinimize?: boolean;

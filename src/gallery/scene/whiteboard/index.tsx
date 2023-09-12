@@ -1,6 +1,6 @@
 import {
   AgoraUiCapable,
-  AgoraOnlineclassWidget,
+  FcrUISceneWidget,
   bound,
   Lodash,
   Log,
@@ -61,7 +61,7 @@ import { addResource } from './i18n/config';
 import { DialogProgressApi } from '../../../components/progress';
 
 @Log.attach({ proxyMethods: false })
-export class FcrBoardWidget extends AgoraOnlineclassWidget {
+export class FcrBoardWidget extends FcrUISceneWidget {
   logger!: Logger;
   protected static _installationDisposer?: CallableFunction;
   protected static _animationOptions: BoardWindowAnimationOptions;

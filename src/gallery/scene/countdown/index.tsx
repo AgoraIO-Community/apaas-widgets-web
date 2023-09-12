@@ -3,13 +3,13 @@ import { observable, action } from 'mobx';
 
 import type { AgoraWidgetController } from 'agora-edu-core';
 
-import { AgoraOnlineclassWidget, bound, transI18n } from 'agora-common-libs';
+import { FcrUISceneWidget,  transI18n } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrCountdownApp } from './app';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 
-export class FcrCountdownWidget extends AgoraOnlineclassWidget {
+export class FcrCountdownWidget extends FcrUISceneWidget {
   @observable
   roomProperties: any = {};
   @observable

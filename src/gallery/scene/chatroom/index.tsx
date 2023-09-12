@@ -2,7 +2,7 @@ import {
   chatEmojiEnabled,
   chatMuteAllEnabled,
   chatPictureEnabled,
-  AgoraOnlineclassWidget,
+  FcrUISceneWidget,
 } from 'agora-common-libs';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import ReactDOM from 'react-dom';
@@ -10,7 +10,7 @@ import { FcrChatRoomApp } from './fcr-chatroom';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrChatRoomStore } from './fcr-chatroom/store';
 
-export class FcrChatroomWidget extends AgoraOnlineclassWidget {
+export class FcrChatroomWidget extends FcrUISceneWidget {
   private _imConfig?: { chatRoomId: string; appName: string; orgName: string };
   private _easemobUserId?: string;
   private _dom?: HTMLElement;

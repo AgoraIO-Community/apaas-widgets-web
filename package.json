@@ -12,7 +12,7 @@
   ],
   "exports": {
     "./classroom": "./lib/edu_widget.bundle.js",
-    "./onlineclass": "./lib/onlineclass_widget.bundle.js",
+    "./scene": "./lib/scene_widget.bundle.js",
     "./proctor": "./lib/proctor_widget.bundle.js"
   },
   "typesVersions": {
@@ -20,8 +20,8 @@
       "classroom": [
         "./lib/agora-plugin-gallery/src/classroom.d.ts"
       ],
-      "onlineclass": [
-        "./lib/agora-plugin-gallery/src/onlineclass.d.ts"
+      "scene": [
+        "./lib/agora-plugin-gallery/src/scene.d.ts"
       ],
       "proctor": [
         "./lib/agora-plugin-gallery/src/proctor.d.ts"
@@ -34,8 +34,8 @@
     "pack:npm": "run-s bundle:npm build:types",
     "bundle:npm:classroom": "cross-env BUNDLE_TARGET=classroom NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
     "bundle:npm:proctor": "cross-env BUNDLE_TARGET=proctor NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
-    "bundle:npm:onlineclass": "cross-env BUNDLE_TARGET=onlineclass NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
-    "ci:build": "run-s bundle:npm:classroom bundle:npm:proctor bundle:npm:onlineclass"
+    "bundle:npm:scene": "cross-env BUNDLE_TARGET=scene NODE_ENV=production NODE_OPTIONS=--max_old_space_size=8192  webpack --config ./webpack.config.js",
+    "ci:build": "run-s bundle:npm:classroom bundle:npm:proctor bundle:npm:scene"
   },
   "dependencies": {
     "@netless/app-slide": "0.2.27",

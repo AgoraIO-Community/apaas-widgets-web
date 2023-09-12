@@ -19,9 +19,9 @@ if (target.includes('proctor')) {
     chunkLoading: false,
   };
 }
-if (target.includes('onlineclass')) {
-  entry['onlineclass_widget'] = {
-    import: './src/onlineclass.tsx',
+if (target.includes('scene')) {
+  entry['scene_widget'] = {
+    import: './src/scene.tsx',
     chunkLoading: false,
   };
 }
@@ -48,8 +48,8 @@ const config = {
   },
   resolve: {
     alias: {
-      '@components': 'agora-scenario-ui-kit/src/components',
-      '@ui-kit-utils': 'agora-scenario-ui-kit/src/utils',
+      '@components': 'fcr-ui-kit/src/components',
+      '@ui-kit-utils': 'fcr-ui-kit/src/utils',
     },
   },
   plugins: [

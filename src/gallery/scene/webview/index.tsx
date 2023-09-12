@@ -1,11 +1,11 @@
 import ReactDOM from 'react-dom';
 import { App } from './app';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { AgoraOnlineclassWidget, bound } from 'agora-common-libs';
+import { FcrUISceneWidget, bound } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { SvgIconEnum } from '@components/svg-img';
 
-export class FcrWebviewWidget extends AgoraOnlineclassWidget {
+export class FcrWebviewWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
   private _dom?: HTMLElement;
   private _webviewUrl?: string;

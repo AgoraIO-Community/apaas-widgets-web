@@ -5,12 +5,12 @@ import { DialogWrapper } from './components/dialog-wrapper';
 import { PollingResultInfo, PollingState, PollingType } from './type';
 import { action, observable, runInAction } from 'mobx';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { transI18n, AgoraOnlineclassWidget } from 'agora-common-libs';
+import { transI18n, FcrUISceneWidget } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 import { AgoraExtensionWidgetEvent } from '../../../events';
 
-export class FcrPollingWidget extends AgoraOnlineclassWidget {
+export class FcrPollingWidget extends FcrUISceneWidget {
   protected _listenerDisposer?: CallableFunction;
   private _dom?: HTMLElement;
   private _context: PollingUIContextValue = this._createUIContext();

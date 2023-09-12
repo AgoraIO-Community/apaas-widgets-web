@@ -1,6 +1,6 @@
 import { observer } from 'mobx-react';
 import { PropsWithChildren, forwardRef, useEffect, useRef, useState } from 'react';
-import { AgoraOnlineclassWidget, useI18n } from 'agora-common-libs';
+import { FcrUISceneWidget, useI18n } from 'agora-common-libs';
 import { ToolTip } from '@components/tooltip';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './index.css';
@@ -9,7 +9,7 @@ import { FcrBoardWidget } from '../../../whiteboard';
 import { addResource } from '../i18n/config';
 addResource();
 interface MultiWindowWidgetDialogProps extends PropsWithChildren {
-  widget: AgoraOnlineclassWidget;
+  widget: FcrUISceneWidget;
   fullscreenable?: boolean;
   closeable?: boolean;
   refreshable?: boolean;

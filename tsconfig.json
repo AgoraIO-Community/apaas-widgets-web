@@ -28,8 +28,8 @@
       "baseUrl": "./",
    
     "paths": {
-      "@components/*": ["../agora-scenario-ui-kit/src/components/*"],
-      "@ui-kit-utils/*": ["../agora-scenario-ui-kit/src/utils/*"]
+      "@components/*": ["../fcr-ui-kit/src/components/*"],
+      "@ui-kit-utils/*": ["../fcr-ui-kit/src/utils/*"]
     },
    
   },
