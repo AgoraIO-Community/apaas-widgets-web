@@ -1,3 +1,5 @@
+import { useSelector, shallowEqual } from 'react-redux';
+
 /*
  ** 时间戳转换成指定格式日期
  ** eg.
@@ -76,3 +78,7 @@ export const dataURLtoBlob = (dataurl) => {
   }
   return new Blob([u8arr], { type: mime });
 };
+
+export function useShallowEqualSelector(selector) {
+  return useSelector(selector, shallowEqual);
+}

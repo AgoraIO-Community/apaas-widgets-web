@@ -1,8 +1,8 @@
-import { useSelector } from 'react-redux';
 import { InputMsg } from './InputMsg';
 import { ROLE } from '../../contants';
 import { transI18n } from 'agora-common-libs';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 const AllMute = () => {
   return (
@@ -21,11 +21,14 @@ const UserMute = () => {
 };
 
 export const InputBox = () => {
-  const state = useSelector((state) => state);
-  const showInputBox = state.configUIVisible.showInputBox;
-  const roleType = state?.propsData.roleType;
-  const isAllMute = state?.room.allMute;
-  const isUserMute = state?.room.isUserMute;
+  const { showInputBox, roleType, isAllMute, isUserMute } = useShallowEqualSelector((state) => {
+    return {
+      showInputBox: state.configUIVisible.showInputBox,
+      roleType: state?.propsData.roleType,
+      isAllMute: state?.room.allMute,
+      isUserMute: state?.room.isUserMute,
+    };
+  });
   const isTeacher = roleType === ROLE.teacher.id;
   const isAssistant = roleType === ROLE.assistant.id;
   const isObserver = roleType === ROLE.observer.id;

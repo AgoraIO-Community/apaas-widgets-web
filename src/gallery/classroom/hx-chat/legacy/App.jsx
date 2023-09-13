@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useEffect, useMemo, useRef } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { initIMSDK } from './utils/WebIM';
 import {
   propsAction,
@@ -18,6 +18,7 @@ import { createListener } from './utils/listeners';
 import './App.css';
 import 'antd/dist/antd.css';
 import { addResourceBundle } from 'agora-common-libs';
+import { useShallowEqualSelector } from './utils'
 
 const App = function (props) {
   const store = useStore();
@@ -30,12 +31,15 @@ const App = function (props) {
 
   // get token config
   const { agoraTokenData } = props;
-  const state = useSelector((state) => state);
-  const apis = state?.apis;
-  const showChat = state?.showChat;
-  const showRed = state?.showRed;
-  const showAnnouncementNotice = state?.showAnnouncementNotice;
-  const configUIVisible = state?.configUIVisible;
+  const { apis, showChat, showRed, showAnnouncementNotice, configUIVisible } = useShallowEqualSelector((state) => {
+    return {
+      apis: state?.apis,
+      showChat: state?.showChat,
+      showRed: state?.showRed,
+      showAnnouncementNotice: state?.showAnnouncementNotice,
+      configUIVisible: state?.configUIVisible
+    }
+  });
   const { createListen } = useMemo(() => {
     return createListener(store);
   }, [store]);

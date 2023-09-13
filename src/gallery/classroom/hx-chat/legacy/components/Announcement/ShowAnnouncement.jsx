@@ -1,11 +1,12 @@
 import { Modal } from 'antd';
 import { useState } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { transI18n } from 'agora-common-libs';
 import { ROLE } from '../../contants';
 import { announcementStatus } from '../../redux/actions/roomAction';
 import announcement from '../../themes/img/announcement.png';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 const Edit = ({ onChangeStatus }) => {
   return (
@@ -22,11 +23,14 @@ const Edit = ({ onChangeStatus }) => {
 export const ShowAnnouncement = () => {
   const [visible, setVisible] = useState(false);
   const store = useStore();
-  const state = useSelector((state) => state);
-  const { apis } = state;
-  const roomId = state.room.info.id;
-  const Announcement = state.room.announcement;
-  const roleType = state?.propsData.roleType;
+  const { apis, roomId, Announcement, roleType } = useShallowEqualSelector((state) => {
+    return {
+      apis: state?.api,
+      roomId: state?.room.info.id,
+      Announcement: state?.room.announcement,
+      roleType: state?.propsData.roleType
+    };
+  });
   // 在propsData 取值
   const isTeacher = roleType === ROLE.teacher.id;
   const isAssistant = roleType === ROLE.assistant.id;

@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { Tabs } from 'antd';
 import { MessageBox } from '../MessageBox';
 import { InputBox } from '../InputBox';
@@ -13,10 +13,10 @@ import { announcementNotice } from '../../redux/actions/roomAction';
 // import minimize from '../../themes/img/minimize.png';
 import minimize from '../../themes/svg/minimize.svg';
 import notice from '../../themes/img/notice.png';
-import get from 'lodash/get';
 import concat from 'lodash/concat';
 import assign from 'lodash/assign';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 const { TabPane } = Tabs;
 
@@ -24,19 +24,30 @@ const { TabPane } = Tabs;
 export const Chat = () => {
   const [tabKey, setTabKey] = useState(CHAT_TABS_KEYS.chat);
   const [roomUserList, setRoomUserList] = useState([]);
-  const state = useSelector((state) => state);
+  const {
+    isLogin,
+    announcement,
+    showRed,
+    showAnnouncementNotice,
+    roleType,
+    roomUsers,
+    roomUsersInfo,
+    showMIniIcon,
+    configUIVisible,
+  } = useShallowEqualSelector((state) => {
+    return {
+      isLogin: _.get(state, 'isLogin'),
+      announcement: _.get(state, 'room.announcement', ''),
+      showRed: _.get(state, 'showRed'),
+      showAnnouncementNotice: _.get(state, 'showAnnouncementNotice'),
+      roleType: _.get(state, 'propsData.roleType', ''),
+      roomUsers: _.get(state, 'room.roomUsers', []),
+      roomUsersInfo: _.get(state, 'room.roomUsersInfo', {}),
+      showMIniIcon: _.get(state, 'isShowMiniIcon'),
+      configUIVisible: _.get(state, 'configUIVisible'),
+    };
+  });
   const store = useStore();
-  const isLogin = get(state, 'isLogin');
-  const announcement = get(state, 'room.announcement', '');
-  const showRed = get(state, 'showRed');
-  const showAnnouncementNotice = get(state, 'showAnnouncementNotice');
-  const roleType = get(state, 'propsData.roleType', '');
-  const roomUsers = get(state, 'room.roomUsers', []);
-  const roomUsersInfo = get(state, 'room.roomUsersInfo', {});
-  const showChat = get(state, 'showChat');
-  const showMIniIcon = get(state, 'isShowMiniIcon');
-  const configUIVisible = get(state, 'configUIVisible');
-  const isTabKey = state?.isTabKey;
   // 直接在 propsData 中取值
   const isTeacher =
     roleType === ROLE.teacher.id || roleType === ROLE.assistant.id || roleType === ROLE.observer.id;
@@ -73,7 +84,6 @@ export const Chat = () => {
       });
       setRoomUserList(concat(_speakerTeacher, _student));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomUsers, roomUsersInfo]);
 
   const hideChatModal = () => {
@@ -127,7 +137,7 @@ export const Chat = () => {
               <span className="fcr-hx-notice-text">{announcement}</span>
             </div>
           )}
-          <MessageBox />
+          {tabKey === CHAT_TABS_KEYS.chat && <MessageBox />}
           <InputBox />
         </TabPane>
         {configUIVisible.memebers && isTeacher && (

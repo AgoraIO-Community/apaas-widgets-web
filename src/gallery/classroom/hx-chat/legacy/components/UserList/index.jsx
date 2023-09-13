@@ -1,4 +1,3 @@
-import { useSelector } from 'react-redux';
 import { Tag, Tooltip } from 'antd';
 import { ROLE } from '../../contants';
 import { transI18n } from 'agora-common-libs';
@@ -6,14 +5,17 @@ import avatarUrl from '../../themes/img/avatar-big@2x.png';
 import muteNo from '../../themes/img/muteNo.png';
 import muteOff from '../../themes/img/muteOff.png';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 // 成员页面
 // eslint-disable-next-line react/prop-types
 export const UserList = ({ roomUserList }) => {
-  const state = useSelector((state) => state);
-  const { apis } = state;
-  // 改成枚举
-  const muteList = state?.room.muteList;
+  const { apis, muteList } = useShallowEqualSelector((state) => {
+    return {
+      apis: state.apis,
+      muteList: state?.room.muteList,
+    };
+  });
   // 禁言
   const mute = (val, userId) => {
     if (val) {

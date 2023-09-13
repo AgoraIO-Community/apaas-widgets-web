@@ -1,19 +1,23 @@
 import { Button, Input } from 'antd';
 import { useState } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { transI18n } from 'agora-common-libs';
 import { ANNOUNCEMENT_SIZE } from '../../contants';
 import { announcementStatus } from '../../redux/actions/roomAction';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 const { TextArea } = Input;
 
 export const EditAnnouncement = () => {
-  const state = useSelector((state) => state);
+  const { apis, roomId, announcement } = useShallowEqualSelector((state) => {
+    return {
+      apis: state?.apis,
+      roomId: state?.room.info.id,
+      announcement: state?.room.announcement,
+    };
+  });
   const store = useStore();
-  const { apis } = state;
-  const roomId = state?.room.info.id;
-  const announcement = state?.room.announcement;
   // 输入公告长度
   const [count, setCount] = useState(announcement.length);
   const [content, setContent] = useState(announcement);

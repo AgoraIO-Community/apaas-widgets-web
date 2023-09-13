@@ -1,4 +1,4 @@
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { Tag, Menu, Dropdown } from 'antd';
 import { ROLE, MSG_TYPE } from '../../contants';
 import { transI18n } from 'agora-common-libs';
@@ -6,15 +6,20 @@ import { messageAction } from '../../redux/actions/messageAction';
 import delete_icon from '../../themes/img/delete.png';
 import { WebIM } from '../../utils/WebIM';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 // 聊天页面
 export const TextMsg = ({ item }) => {
-  const state = useSelector((state) => state);
+  const { roomId, roomUuid, loginUser, roleType, loginNickName } = useShallowEqualSelector((state) => {
+    return {
+      roomId: state?.room.info.id,
+      roomUuid: state?.propsData.roomUuid,
+      loginUser: state?.propsData.userUuid,
+      roleType: state?.propsData.roleType,
+      loginNickName: state?.propsData.userName,
+    };
+  });
   const store = useStore();
-  const roomId = state?.room.info.id;
-  const roomUuid = state?.propsData.roomUuid;
-  const loginUser = state?.propsData.userUuid;
-  const roleType = state?.propsData.roleType;
   const sender = item?.from === loginUser;
   const teacherTag = item?.ext.role === ROLE.teacher.id;
   const assistantTag = item?.ext.role === ROLE.assistant.id;
@@ -22,9 +27,7 @@ export const TextMsg = ({ item }) => {
   const useAvatarUrl = item?.ext.avatarUrl;
   const userNickName = item?.ext.nickName;
   const isQuestion = item?.ext.isQuestion;
-  const loginNickName = state?.propsData.userName;
-  const isTeacher =
-    state.propsData.roleType === ROLE.teacher.id || state.propsData.roleType === ROLE.assistant.id;
+    const isTeacher = roleType === ROLE.teacher.id || roleType === ROLE.assistant.id;
 
   const isSendToAll = item?.ext.range === 3;
   const menu = (

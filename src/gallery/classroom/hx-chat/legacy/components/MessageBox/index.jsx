@@ -1,14 +1,19 @@
-import { useSelector } from 'react-redux';
 import { transI18n } from 'agora-common-libs';
 import noMessage_icon from '../../themes/img/noMessage.png';
 import { MessageList } from './MessageList';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 // 聊天页面
 export const MessageBox = () => {
-  const state = useSelector((state) => state);
-  const msgs = state?.messages;
-  const isHaveNotice = state?.room?.announcement;
+  const { msgs, isHaveNotice, inputBox } = useShallowEqualSelector((state) => {
+    return {
+      msgs: state?.messages,
+      isHaveNotice: state?.room?.announcement,
+      inputBox: state?.configUIVisible.inputBox
+    };
+  })
+
   let isHaveMsg = msgs && msgs.length > 0;
 
   return (
@@ -20,10 +25,10 @@ export const MessageBox = () => {
           style={{
             height: isHaveNotice
               ? `calc(100% - 70px - ${
-                  state?.configUIVisible.inputBox === 'inline' ? '135px' : '200px'
+                  inputBox === 'inline' ? '135px' : '200px'
                 })`
               : `calc(100% - 70px - ${
-                  state?.configUIVisible.inputBox === 'inline' ? '102px' : '158px'
+                  inputBox === 'inline' ? '102px' : '158px'
                 })`,
           }}>
           <MessageList msgs={msgs} />
@@ -34,10 +39,10 @@ export const MessageBox = () => {
           style={{
             height: isHaveNotice
               ? `calc(100% - 70px - ${
-                  state?.configUIVisible.inputBox === 'inline' ? '135px' : '200px'
+                  inputBox === 'inline' ? '135px' : '200px'
                 })`
               : `calc(100% - 70px - ${
-                  state?.configUIVisible.inputBox === 'inline' ? '102px' : '158px'
+                  inputBox === 'inline' ? '102px' : '158px'
                 })`,
           }}>
           <div className="fcr-hx-no-msgs">

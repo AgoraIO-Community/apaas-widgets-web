@@ -1,14 +1,16 @@
 import React, { useState } from 'react';
-import { useSelector } from 'react-redux';
-import { Tag, Dropdown, Modal } from 'antd';
+import { Tag, Modal } from 'antd';
 import { ROLE } from '../../contants';
 import { transI18n } from 'agora-common-libs';
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
 
 export const ImgMsg = ({ item }) => {
-  const state = useSelector((state) => state);
-  const loginUser = state?.propsData.userUuid;
-  const roleType = state?.propsData.roleType;
+  const { loginUser } = useShallowEqualSelector((state) => {
+    return {
+      loginUser: state?.propsData.userUuid
+    };
+  });
   const sender = item?.from === loginUser;
   const teacherTag = item?.ext.role === ROLE.teacher.id;
   const assistantTag = item?.ext.role === ROLE.assistant.id;

@@ -1,7 +1,7 @@
 import { Input, message, Modal, Popover, Radio, Switch } from 'antd';
 import classnames from 'classnames';
 import React, { useRef, useState } from 'react';
-import { useSelector, useStore } from 'react-redux';
+import { useStore } from 'react-redux';
 import { transI18n } from 'agora-common-libs';
 import { MSG_TYPE } from '../../contants';
 import { messageAction } from '../../redux/actions/messageAction';
@@ -15,6 +15,7 @@ import { Button } from '../Button';
 import './index.css';
 import ScreenshotMenu from './Screenshot';
 import { WebIM } from '../../utils/WebIM';
+import { useShallowEqualSelector } from '../../utils';
 
 // 展示表情
 export const ShowEomji = ({ getEmoji }) => {
@@ -37,18 +38,32 @@ export const ShowEomji = ({ getEmoji }) => {
 };
 
 export const InputMsg = ({ allMutePermission }) => {
-  const state = useSelector((state) => state);
+  const {
+    apis,
+    loginUser,
+    roomId,
+    roleType,
+    roomUuid,
+    userNickName,
+    userAvatarUrl,
+    isAllMute,
+    isQuestion,
+    configUIVisible,
+  } = useShallowEqualSelector((state) => {
+    return {
+      apis: state?.apis,
+      loginUser: state?.propsData.userUuid,
+      roomId: state?.room.info.id,
+      roleType: state?.propsData.roleType,
+      roomUuid: state?.propsData.roomUuid,
+      userNickName: state?.propsData.userName,
+      userAvatarUrl: state?.loginUserInfo.avatarurl,
+      isAllMute: state?.room.allMute,
+      isQuestion: state?.isQuestion,
+      configUIVisible: state?.configUIVisible,
+    };
+  });
   const store = useStore();
-  const { apis } = state;
-  const loginUser = state?.propsData.userUuid;
-  const roomId = state?.room.info.id;
-  const roleType = state?.propsData.roleType;
-  const roomUuid = state?.propsData.roomUuid;
-  const userNickName = state?.propsData.userName;
-  const userAvatarUrl = state?.loginUserInfo.avatarurl;
-  const isAllMute = state?.room.allMute;
-  const isQuestion = state?.isQuestion;
-  const configUIVisible = state?.configUIVisible;
   let isElectron = isElctronPlatform();
 
   // 管理输入框内容

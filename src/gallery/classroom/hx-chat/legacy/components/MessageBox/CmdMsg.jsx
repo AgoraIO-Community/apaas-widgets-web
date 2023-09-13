@@ -1,20 +1,24 @@
-import { useSelector } from 'react-redux';
 import { transI18n } from 'agora-common-libs';
 import { ROLE } from '../../contants';
 import icon_cautions from '../../themes/svg/warning.svg';
 
 import './index.css';
+import { useShallowEqualSelector } from '../../utils';
+
 export const CmdMsg = ({ item }) => {
-  const state = useSelector((state) => state);
+  const { isTeahcer, assistantTeacher, currentUserId } = useShallowEqualSelector((state) => {
+    return {
+       isTeahcer: state?.propsData.roleType === ROLE.teacher.id,
+       assistantTeacher: state?.propsData.roleType === ROLE.assistant.id,
+       currentUserId: state?.propsData.userUuid,
+    };
+  });
   const isSetMuteMsg = item?.action === 'setAllMute';
   const isRemoveMuteMsg = item?.action === 'removeAllMute';
   const isMuteUser = item?.action === 'mute';
   const isUnmuteUser = item?.action === 'unmute';
   const isDeleteMsg = item?.action === 'DEL';
-  const isTeahcer = state?.propsData.roleType === ROLE.teacher.id;
-  const assistantTeacher = state?.propsData.roleType === ROLE.assistant.id;
-  const currentUserId = state?.propsData.userUuid;
-  const isMuter = state?.propsData.userUuid === item?.ext.muteMember;
+  const isMuter = currentUserId === item?.ext.muteMember
 
   String.prototype.format = function () {
     if (arguments.length == 0) return this;

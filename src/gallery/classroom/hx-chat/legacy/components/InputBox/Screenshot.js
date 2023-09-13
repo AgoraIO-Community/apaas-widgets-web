@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'antd';
-import { useSelector } from 'react-redux';
 import isElctronPlatform, { ipcElecteonRenderer } from '../../utils/platform';
-import { dataURLtoBlob } from '../../utils';
+import { dataURLtoBlob, useShallowEqualSelector } from '../../utils';
 import { transI18n } from 'agora-common-libs';
 
 const ScreenshotMenu = ({ couterRef }) => {
   const [isCloaking, setIsCloaking] = useState(true);
-  const state = useSelector((state) => state);
-  const { apis } = state;
+  const { apis } = useShallowEqualSelector((state) => {
+    return { apis: state?.apis };
+  });
   let isElectron = isElctronPlatform();
   let ipcRenderer = ipcElecteonRenderer();
 
