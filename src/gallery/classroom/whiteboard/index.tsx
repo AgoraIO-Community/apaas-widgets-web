@@ -198,8 +198,19 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
     this._disposers.push(
       reaction(
-        () => this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage,
-        this.setBackgourndImage,
+        () => {
+          const scene = this.classroomStore.connectionStore.mainRoomScene;
+
+          if (scene) {
+            return this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage;
+          }
+          return undefined;
+        },
+        (backgroundImage) => {
+          if (backgroundImage) {
+            this.setBackgourndImage();
+          }
+        },
       ),
     );
   }

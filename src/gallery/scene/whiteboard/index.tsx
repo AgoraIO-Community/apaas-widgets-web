@@ -282,9 +282,19 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     this._checkPrivilege(props);
     this._disposers.push(
       reaction(
-        () => this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage,
+        () => {
+          const scene = this.classroomStore.connectionStore.mainRoomScene;
 
-        this._setBackgourndImage,
+          if (scene) {
+            return this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage;
+          }
+          return undefined;
+        },
+        (backgroundImage) => {
+          if (backgroundImage) {
+            this._setBackgourndImage();
+          }
+        },
       ),
     );
     this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
