@@ -70,7 +70,7 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   }, [current, remoteStatus]);
   useEffect(() => {
     if (minimized) {
-      widget.setMinimize(true, { ...widget.minimizedProperties, extra: { current } });
+      widget.setMinimize(true, { ...widget.minimizedProperties });
     }
   }, [minimized, current]);
 
