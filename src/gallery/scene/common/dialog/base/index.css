@@ -3,6 +3,7 @@
   position: relative;
   transition: all 0.3s;
   overflow: hidden;
+  display: flex;
 }
 .fcr-edu-tool-dialog-actions {
   position: absolute;
