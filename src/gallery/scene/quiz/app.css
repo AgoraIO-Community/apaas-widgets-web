@@ -60,9 +60,9 @@
   flex: 1;
   display: flex;
   flex-wrap: wrap;
-  padding: 19px 22px;
+  padding: 19px 22px 19px 24px;
   align-items: center;
-  gap: 15px 19px;
+  gap: 15px 18px;
 }
 .fcr-popup-quiz-initialized-actions {
   display: flex;
