@@ -147,11 +147,7 @@ const reducer = (state = defaultState, action) => {
 
       let msgs;
       let newMsgs;
-      if (isHistory) {
-        msgs = dataArray.concat(state.messages);
-      } else {
-        msgs = state.messages.concat(dataArray);
-      }
+      msgs = state.messages.concat(dataArray);
 
       const msgIds = dataArray.filter((msg) => !!msg.ext.msgId).map((msg) => msg.ext.msgId);
 
