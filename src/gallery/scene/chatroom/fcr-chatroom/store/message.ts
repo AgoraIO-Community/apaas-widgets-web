@@ -16,6 +16,7 @@ import {
 import { List, CellMeasurerCache } from 'react-virtualized';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import dayjs from 'dayjs';
+const MAX_MESSAGE_COUNT = 1000;
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
@@ -189,27 +190,30 @@ export class MessageStore {
             }
           });
           runInAction(() => {
-            this.messageList = this.messageList.concat(this._messageQueue).filter((msg) => {
-              if (typeof msg !== 'string') {
-                //过滤被删除消息
-                if (deletedMessageIds.has(msg.id)) return false;
-                //如果是自定义消息
-                // if (msg.type === AgoraIMMessageType.Custom) {
-                //   const customMessage = msg as AgoraIMCustomMessage;
-                //   //如果是单个禁言消息
-                //   if (
-                //     customMessage.action === AgoraIMCmdActionEnum.UserMuted ||
-                //     customMessage.action === AgoraIMCmdActionEnum.UserUnmuted
-                //   ) {
-                //     //如果不是自己的单个禁言消息，过滤
-                //     if (customMessage.ext?.muteMember !== this._fcrChatRoom.userInfo?.userId) {
-                //       return false;
-                //     }
-                //   }
-                // }
-              }
-              return true;
-            });
+            this.messageList = this.messageList
+              .concat(this._messageQueue)
+              .filter((msg) => {
+                if (typeof msg !== 'string') {
+                  //过滤被删除消息
+                  if (deletedMessageIds.has(msg.id)) return false;
+                  //如果是自定义消息
+                  // if (msg.type === AgoraIMMessageType.Custom) {
+                  //   const customMessage = msg as AgoraIMCustomMessage;
+                  //   //如果是单个禁言消息
+                  //   if (
+                  //     customMessage.action === AgoraIMCmdActionEnum.UserMuted ||
+                  //     customMessage.action === AgoraIMCmdActionEnum.UserUnmuted
+                  //   ) {
+                  //     //如果不是自己的单个禁言消息，过滤
+                  //     if (customMessage.ext?.muteMember !== this._fcrChatRoom.userInfo?.userId) {
+                  //       return false;
+                  //     }
+                  //   }
+                  // }
+                }
+                return true;
+              })
+              .slice(-MAX_MESSAGE_COUNT);
 
             if (!this.isBottom) this.unreadMessageCount += this._messageQueue.length;
           });
