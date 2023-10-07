@@ -1,0 +1,131 @@
+.fcr-polling-container {
+  @apply fcr-bg-2 fcr-rounded-16 fcr-shadow-dialog;
+  position: relative;
+}
+.fcr-polling-question {
+  @apply fcr-bg-4;
+  width: 230px;
+
+  border-radius: inherit;
+}
+
+.fcr-polling-title {
+  @apply fcr-text-1 fcr-font-medium;
+  font-size: 13px;
+  line-height: 45px;
+  padding: 0 15px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.fcr-polling-title-label {
+  @apply fcr-rounded-4;
+  height: 18px;
+  line-height: 18px;
+  font-size: 12px;
+  text-align: center;
+  padding: 0 4px;
+  font-weight: 400;
+}
+.fcr-polling-title-label-ended {
+  @apply fcr-bg-red-6 fcr-text-white;
+}
+.fcr-polling-title-label-in-progress {
+  @apply fcr-bg-blue-300 fcr-text-black;
+}
+.fcr-polling-tr-icon {
+  @apply fcr-rounded-full fcr-bg-1;
+  width: 30px;
+  height: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  right: 15px;
+  top: 15px;
+}
+
+.fcr-polling-tr-icon:hover {
+  @apply fcr-bg-brand-6;
+}
+
+.fcr-polling-question-hint {
+  @apply fcr-text-1 fcr-font-regular;
+  font-size: 12px;
+  word-break: break-all;
+  padding: 0 15px;
+  padding-bottom: 15px;
+}
+
+.fcr-polling-input {
+  width: 100%;
+  height: 127px;
+  padding: 0 15px;
+
+  padding-bottom: 10px;
+}
+
+.fcr-polling-input .fcr-textarea {
+  height: 100%;
+}
+
+.fcr-polling-input .fcr-textarea textarea {
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.fcr-polling-input .fcr-textarea-divider {
+  display: none;
+}
+
+.fcr-polling-check {
+  display: flex;
+  justify-content: space-between;
+  /* gap: 24px; */
+  /* padding-bottom: 12px; */
+  padding: 0 15px 12px;
+}
+.fcr-polling-check .fcr-radio-label {
+  padding-left: 4px;
+  overflow: hidden;
+  line-height: 20px;
+}
+.fcr-polling-list-container {
+  padding: 10px 15px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fcr-polling-input-list {
+  width: 100%;
+}
+.fcr-widget-dialog-actions {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.fcr-widget-dialog-action-icon {
+  @apply fcr-rounded-full fcr-bg-1;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-widget-dialog-action-icon:not(.fcr-widget-dialog-action-icon-disable):hover {
+  @apply fcr-bg-brand-6;
+}
+.fcr-widget-dialog-action-icon-disable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.fcr-widget-dialog-action-icon svg {
+  @apply fcr-text-notsb-inverse;
+}

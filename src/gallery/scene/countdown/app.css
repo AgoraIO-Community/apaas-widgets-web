@@ -1,0 +1,176 @@
+.fcr-countdown {
+  width: 100%;
+  height: 192px;
+  padding-top: 25px;
+  padding-bottom: 15px;
+  transition-property: height, padding-top;
+  transition-duration: 0.2s;
+  cursor: default;
+}
+.fcr-countdown-running {
+  height: 81px;
+  padding-top: 15px;
+
+  overflow-y: hidden;
+  overflow-x: visible;
+}
+.fcr-countdown-input-wrapper {
+  display: flex;
+  flex-direction: column;
+  width: fit-content;
+}
+.fcr-countdown-inputs {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  position: relative;
+}
+.fcr-countdown-inputs > span {
+  @apply fcr-text-gray-600;
+  font-size: 50px;
+  font-family: 'DIN Alternate';
+  font-weight: 700;
+}
+.fcr-countdown-inputs > span > svg {
+  width: 5px;
+}
+.fcr-countdown-inputs-mask {
+  @apply fcr-rounded-16 fcr-bg-2-a70;
+  position: absolute;
+  width: 235px;
+  height: 90px;
+  left: 0;
+  bottom: 0;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  gap: 27px;
+  z-index: 1;
+}
+.fcr-countdown:hover .fcr-countdown-inputs-mask {
+  display: flex;
+}
+
+.fcr-countdown-input {
+  @apply fcr-rounded-8 fcr-bg-white fcr-border-1;
+  width: 42px;
+  height: 66px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fcr-countdown-input input {
+  @apply fcr-text-black;
+  width: 30px;
+  height: 50px;
+  line-height: 50px;
+  font-family: 'DIN Alternate';
+  font-size: 50px;
+  font-weight: 700;
+  text-align: center;
+}
+.fcr-countdown-input input:focus {
+  outline: none;
+}
+.fcr-countdown-input-add,
+.fcr-countdown-input-minus {
+  display: flex;
+  justify-content: center;
+  position: relative;
+  cursor: pointer;
+  user-select: none;
+}
+.fcr-countdown-input-add:not(.fcr-countdown-input-add-readonly) {
+  margin-bottom: 5px;
+}
+.fcr-countdown-input-minus:not(.fcr-countdown-input-minus-readonly) {
+  margin-top: 5px;
+}
+.fcr-countdown-input-add svg,
+.fcr-countdown-input-minus svg {
+  height: 20px;
+}
+.fcr-countdown-input-add-readonly svg,
+.fcr-countdown-input-minus-readonly svg {
+  height: 0;
+  transition: height 0.2s;
+}
+.fcr-countdown-actions {
+  display: flex;
+  justify-content: flex-end;
+  padding-top: 15px;
+}
+.fcr-countdown-actions-start,
+.fcr-countdown-actions-stop {
+  @apply fcr-rounded-full fcr-bg-brand-6 fcr-border-brand-6;
+  border-width: 1px;
+  border-style: solid;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-countdown-actions-start-disable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.fcr-countdown-actions-stop {
+  @apply fcr-bg-transparent fcr-border-white;
+}
+.fcr-countdown-actions-start:hover,
+.fcr-countdown-actions-stop:hover {
+  @apply fcr-bg-brand-7 fcr-border-brand-7;
+}
+.fcr-countdown-container {
+  padding: 15px 12px 20px;
+}
+.fcr-countdown-container-bg {
+  @apply fcr-rounded-16 fcr-bg-4;
+  position: absolute;
+  height: 113px;
+  width: 100%;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  transition: height 0.2s;
+}
+.fcr-countdown-container-bg-active {
+  height: 78px;
+}
+.fcr-countdown-title {
+  @apply fcr-text-1;
+  height: 14px;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 800;
+  position: relative;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.fcr-countdown-progress {
+  @apply fcr-bg-1;
+  height: 5px;
+  width: calc(100% - 10px);
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+}
+.fcr-countdown-progress-inner {
+  @apply fcr-bg-brand-6;
+  position: absolute;
+  height: 5px;
+  top: 0;
+  left: 0;
+  transition: width 0.2s;
+}
+.fcr-countdown-progress-inner-danger {
+  @apply fcr-bg-red-7;
+}
+.fcr-countdown-inputs-danger .fcr-countdown-input input {
+  @apply fcr-text-red-7;
+}

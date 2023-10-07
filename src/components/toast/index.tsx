@@ -1,10 +1,9 @@
-import { CSSProperties, FC, useCallback, useEffect, useRef } from 'react';
+import { CSSProperties, FC, PropsWithChildren, useCallback, useEffect, useRef } from 'react';
 import classnames from 'classnames';
 import Notification from 'rc-notification';
 import './index.css';
 import { SvgImg } from '../svg-img';
 import { SvgIconEnum } from '../svg-img/type';
-
 
 export const useMounted = () => {
   const mounted = useRef<boolean>(true);
@@ -16,7 +15,6 @@ export const useMounted = () => {
   }, []);
   return mounted.current;
 };
-
 
 export const useTimeout = (fn: CallableFunction, delay: number) => {
   const mounted = useMounted();
@@ -40,7 +38,6 @@ export const useTimeout = (fn: CallableFunction, delay: number) => {
     };
   }, [timer]);
 };
-
 
 export type ToastCategory = 'success' | 'error' | 'warning';
 
@@ -66,21 +63,17 @@ export interface ToastProps {
   closeToast?: CallableFunction;
   canStop?: boolean;
   className?: string;
-  style?: React.CSSProperties
+  style?: React.CSSProperties;
 }
 
-type ToastType = FC<ToastProps> & {
-  show: (params: ToastProps) => void;
-};
-
-export const Toast: ToastType = ({
+export const Toast: FC<PropsWithChildren<ToastProps>> & { show: (params: ToastProps) => void } = ({
   type = 'success',
   children,
   className,
   closeToast,
   canStop = false,
   ...restProps
-}) => {
+}: PropsWithChildren<ToastProps>) => {
   const toastEl = useRef<HTMLDivElement | null>(null);
   const canStopTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const cls = classnames({
@@ -133,7 +126,7 @@ Toast.show = function ({
   Notification.newInstance({}, (notification) => {
     notification.notice({
       content: (
-        <Toast type={type as 'success' | 'error' | 'warning'} closeToast={() => { }}>
+        <Toast type={type as 'success' | 'error' | 'warning'} closeToast={() => {}}>
           {text}
         </Toast>
       ),

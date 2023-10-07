@@ -1,5 +1,5 @@
 import classnames from 'classnames';
-import { EventHandler, FC, SyntheticEvent, useEffect, useRef } from 'react';
+import { EventHandler, FC, PropsWithChildren, SyntheticEvent, useEffect, useRef } from 'react';
 import './index.css';
 
 type ButtonType = 'primary' | 'secondary' | 'ghost' | 'danger';
@@ -22,11 +22,11 @@ export interface ButtonProps {
   onClick?: EventHandler<SyntheticEvent<HTMLButtonElement>>;
   onMouseOver?: EventHandler<SyntheticEvent<HTMLButtonElement>>;
   onMouseLeave?: EventHandler<SyntheticEvent<HTMLButtonElement>>;
-  icon?: React.ReactElement,
-  className?: string
+  icon?: React.ReactElement;
+  className?: string;
 }
 
-export const Button: FC<ButtonProps> = ({
+export const Button: FC<PropsWithChildren<ButtonProps>> = ({
   type = 'primary',
   size = 'sm',
   disabled,
@@ -66,7 +66,7 @@ export const Button: FC<ButtonProps> = ({
     <button ref={buttonRef} className={`${cls} group`} disabled={disabled} {...restProps}>
       {animate ? <div className="fcr-btn-ripple" ref={rippleRef}></div> : null}
       <div className="absolute top-0 left-0 w-full h-full z-0 bg-black opacity-0 group-hover:opacity-10 focus:opacity-20"></div>
-      <div className='flex items-center justify-center'>
+      <div className="flex items-center justify-center">
         {icon}
         <span style={{ position: 'relative', zIndex: 1 }}>{children}</span>
       </div>

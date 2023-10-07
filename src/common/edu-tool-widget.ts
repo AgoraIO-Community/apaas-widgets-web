@@ -1,11 +1,5 @@
-import {
-  AgoraExtensionWidgetEvent,
-  AgoraTrackSyncedWidget,
-  AgoraWidgetBase,
-  AgoraWidgetLifecycle,
-  AgoraWidgetTrackMode,
-} from 'agora-classroom-sdk';
-import {
+import { AgoraCloudClassWidget, AgoraWidgetTrackMode, bound } from 'agora-common-libs';
+import type {
   AgoraWidgetController,
   AgoraWidgetTrack,
   Dimensions,
@@ -13,16 +7,12 @@ import {
   Track,
   TrackOptions,
 } from 'agora-edu-core';
-import { bound } from 'agora-rte-sdk';
+import { AgoraExtensionWidgetEvent } from '../events';
 
 /**
  * 教学工具 Widget 基类，使用此抽象类作为基类实现可拖拽且轨迹同步的 Widget
  */
-export abstract class AgoraEduToolWidget
-  extends AgoraWidgetBase
-  implements AgoraWidgetLifecycle, AgoraTrackSyncedWidget
-{
-  private _controlStateCallbacks: CallableFunction[] = [];
+export abstract class AgoraEduToolWidget extends AgoraCloudClassWidget {
   onUninstall(controller: AgoraWidgetController) {}
   onInstall(controller: AgoraWidgetController) {}
   onCreate(properties: any, userProperties: any): void {}
@@ -30,7 +20,7 @@ export abstract class AgoraEduToolWidget
   onUserPropertiesUpdate(userProperties: any): void {}
   onDestroy(): void {}
   get track(): Track {
-    return this.trackController?.track!;
+    return this.trackController?.track as Track;
   }
   get zIndex(): number {
     return this.trackController?.zIndex || 0;
@@ -105,20 +95,5 @@ export abstract class AgoraEduToolWidget
 
   get controlled() {
     return this.hasPrivilege;
-  }
-
-  addControlStateListener(cb: (controlled: boolean) => void) {
-    this._controlStateCallbacks.push(cb);
-  }
-
-  removeControlStateListener(cb: (controlled: boolean) => void) {
-    this._controlStateCallbacks = this._controlStateCallbacks.filter((c) => c !== cb);
-  }
-
-  fireControlStateChanged() {
-    const controled = this.controlled;
-    this._controlStateCallbacks.forEach((cb) => {
-      cb(controled);
-    });
   }
 }

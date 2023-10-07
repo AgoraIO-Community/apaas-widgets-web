@@ -1,0 +1,98 @@
+.fcr-chatroom-dialog-wrapper {
+  @apply fcr-rounded-12 fcr-shadow-dialog;
+}
+.fcr-chatroom-dialog-wrap {
+  pointer-events: none;
+}
+
+.fcr-chatroom-dialog-wrap .fcr-dialog-close {
+  @apply fcr-bg-transparent;
+  right: 5px;
+  top: 10px;
+}
+
+.fcr-chatroom-dialog-content {
+  @apply fcr-shadow-line-1-.5 fcr-rounded-12 fcr-bg-2;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+}
+.fcr-chatroom-dialog-content .fcr-toast-container-content > span {
+  font-size: 12px;
+}
+.fcr-chatroom-dialog-title {
+  @apply fcr-bg-4;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  padding-left: 6px;
+  position: relative;
+}
+.fcr-chatroom-dialog-tab-inner {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.fcr-chatroom-avatar {
+  @apply fcr-text-white fcr-font-medium fcr-rounded-full fcr-bg-brand-6;
+  width: 32px;
+  height: 32px;
+  font-size: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  user-select: none;
+}
+.fcr-chatroom-tooltip-content {
+  max-width: 280px;
+  display: flex;
+  gap: 13px;
+  padding-right: 15px;
+  overflow: hidden;
+}
+.fcr-chatroom-tooltip-content-text {
+  @apply fcr-text-1;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  overflow: hidden;
+}
+.fcr-chatroom-tooltip-content-from {
+  display: flex;
+}
+.fcr-chatroom-tooltip-content-from span:not(.fcr-chatroom-tooltip-content-from-private) {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  line-height: 15px;
+}
+.fcr-chatroom-tooltip-content-from span:not(.fcr-chatroom-tooltip-content-from-private) span {
+  font-weight: 700;
+}
+
+.fcr-chatroom-dialog-title-close {
+  @apply fcr-rounded-full;
+  position: absolute;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  right: 8px;
+  top: 10px;
+  cursor: pointer;
+}
+.fcr-chatroom-dialog-title-close:hover {
+  @apply fcr-bg-brand-6;
+}
+.fcr-chatroom-tooltip-content-from-private {
+  @apply fcr-text-yellow;
+  flex: 1;
+  flex-shrink: 0;
+}
