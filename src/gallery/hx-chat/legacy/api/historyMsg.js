@@ -16,7 +16,7 @@ export class ChatHistoryAPI {
       isGroup: true,
       count: HISTORY_COUNT,
       success: (res) => {
-        const historyMsg = _.reverse(res);
+        const historyMsg = res;
         let deleteMsgId = [];
         historyMsg.map((val, key) => {
           const {

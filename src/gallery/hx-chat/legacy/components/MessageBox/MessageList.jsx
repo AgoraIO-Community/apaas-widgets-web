@@ -41,7 +41,7 @@ export const MessageList = (props) => {
     <div style={{ height: '100%' }}>
       <AutoSizer>
         {(autoSizerParams) => {
-          if (mostRecentWidth && mostRecentWidth !== autoSizerParams.width) {
+          if (mostRecentWidth !== autoSizerParams.width) {
             cache.clearAll();
             if (list) {
               list.recomputeRowHeights();
@@ -49,12 +49,12 @@ export const MessageList = (props) => {
           }
 
           mostRecentWidth = autoSizerParams.width;
-
           return (
             <List
               ref={(ref) => {
                 list = ref;
               }}
+              style={{ overflowY: 'scroll' }}
               rowRenderer={getRowRenderer(msgs)}
               deferredMeasurementCache={cache}
               rowHeight={cache.rowHeight}

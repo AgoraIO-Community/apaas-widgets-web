@@ -1,6 +1,6 @@
 .fcr-hx-message-box {
   margin-top: 3px;
-  overflow-y: auto;
+  overflow-y: hidden;
   overflow-x: hidden;
   position: absolute;
   width: 100%;
