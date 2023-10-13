@@ -530,7 +530,9 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
               checkIsPrivateMessage(lastMessage) && isMessageFromTeacher,
           })}>
           {isMessageFromTeacher && showAvatarAndHost && (
-            <div className="fcr-chat-message-list-item-host">Host</div>
+            <div className="fcr-chat-message-list-item-host">
+              {transI18n('fcr_chat_role_teacher')}
+            </div>
           )}
 
           {((checkIsPrivateMessage(lastMessage) && !isSelfMessage) ||

@@ -1,4 +1,5 @@
 export default {
+  fcr_chat_role_teacher: 'Host',
   fcr_chat_option_chat: 'Chat',
   fcr_chat_option_member: 'Member（{reason1}）',
   fcr_chat_label_announcement: 'Announcement',
