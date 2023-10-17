@@ -10,14 +10,14 @@ lib_dependencies=(
 )
 
 lib_versions=(
-    2.9.0
-    2.9.0
-    2.9.0
+    2.9.1
+    2.9.1
+    2.9.3
 )
 lib_branches=(
-    release/2.9.0
-    release/2.9.0
-    release/2.9.0
+    release/2.9.1
+    release/2.9.1
+    release/2.9.3
 )
 
 . ../apaas-cicd-web/utilities/tools.sh
