@@ -8,6 +8,7 @@ import {
   transI18n,
   FcrUIConfig,
   FcrTheme,
+  AGEventEmitter,
 } from 'agora-common-libs';
 import type { AgoraWidgetController, EduClassroomStore } from 'agora-edu-core';
 import dayjs from 'dayjs';
@@ -33,6 +34,8 @@ import { downloadCanvasImage } from '../../../common/whiteboard-wrapper/utils';
 import {
   BoardUIContext,
   BoardUIContextValue,
+  LayerUIContext,
+  LayerUIContextValue,
   ScenePaginationUIContext,
   ScenePaginationUIContextValue,
   ToolbarUIContext,
@@ -59,6 +62,7 @@ import { SvgIconEnum } from '@components/svg-img';
 import { MultiWindowWidgetDialog } from '../common/dialog/multi-window';
 import { addResource } from './i18n/config';
 import { DialogProgressApi } from '../../../components/progress';
+import { ContentLayer, ControlLayer } from './layer';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends FcrUISceneWidget {
@@ -91,6 +95,12 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     strokeColor: '#fed130',
     strokeWidth: 2,
   };
+
+  // keep a join config reference here for rejoin
+  private _joinConfig?: FcrBoardRoomJoinConfig;
+  private _layerContext?: LayerUIContextValue;
+  private _eventBus: AGEventEmitter = new AGEventEmitter();
+
   get resizable(): boolean {
     return true;
   }
@@ -145,6 +155,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       ReactDOM.unmountComponentAtNode(this._outerDom);
       this._outerDom = undefined;
     }
+    this._eventBus.removeAllEventListeners();
   }
 
   constructor(
@@ -320,13 +331,15 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         region: boardRegion,
       };
 
-      this._join({
+      this._joinConfig = {
         roomId: boardId,
         roomToken: boardToken,
         userId,
         userName,
         hasOperationPrivilege: this.hasPrivilege,
-      });
+      };
+      // below line of code was removed to prevent from joining the board room once board window is opened
+      // this._join(this._joinConfig);
 
       this._initialized = true;
     }
@@ -512,6 +525,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
     boardRoom.on(FcrBoardRoomEvent.ConnectionStateChanged, (state) => {
       this.logger.info('Fcr board connection state changed to', state);
+      this._eventBus.emit(FcrBoardRoomEvent.ConnectionStateChanged, state);
       if (state === BoardConnectionState.Disconnected && this._joined) {
         this.logger.info('Fcr board start reconnecting');
         boardRoom.join(joinConfig);
@@ -637,23 +651,49 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   render(dom: HTMLElement): void {
     dom.classList.add(widgetContainerClassName);
     this._outerDom = dom;
+    this._eventBus.on(FcrBoardRoomEvent.ConnectionStateChanged, this._handleConnectionStateChanged);
+
     ReactDOM.render(
       <BoardUIContext.Provider value={this._createBoardUIContext()}>
         <ToolbarUIContext.Provider value={this._createToolbarUIContext()}>
           <ScenePaginationUIContext.Provider value={this._createScenePaginationUIContext()}>
-            <MultiWindowWidgetDialog
-              widget={this}
-              closeable={this.hasPrivilege}
-              refreshable={false}
-              fullscreenable
-              minimizable>
-              <App />
-            </MultiWindowWidgetDialog>
+            <LayerUIContext.Provider value={this._createLayerUIContext()}>
+              <MultiWindowWidgetDialog
+                widget={this}
+                closeable={this.hasPrivilege}
+                refreshable={false}
+                fullscreenable
+                minimizable>
+                <div className="fcr-relative fcr-w-full fcr-h-full">
+                  {/* the layer where you can put your own materials */}
+                  <ContentLayer />
+                  {/* board layer */}
+                  <App />
+                  {/* the layer where you can open or close the board layer */}
+                  <ControlLayer />
+                </div>
+              </MultiWindowWidgetDialog>
+            </LayerUIContext.Provider>
           </ScenePaginationUIContext.Provider>
         </ToolbarUIContext.Provider>
       </BoardUIContext.Provider>,
       dom,
     );
+  }
+
+  @bound
+  private _handleConnectionStateChanged(state: BoardConnectionState) {
+    runInAction(() => {
+      if (this._layerContext) {
+        if (state === BoardConnectionState.Connected) {
+          this._layerContext.observables.boardIsConnected = true;
+          this.mount();
+        } else {
+          this._layerContext.observables.boardIsConnected = false;
+          this.unmount();
+        }
+      }
+    });
   }
 
   @bound
@@ -828,6 +868,26 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     };
 
     return this._paginationContext;
+  }
+
+  private _createLayerUIContext() {
+    const observables = observable({
+      boardIsConnected: false,
+    });
+
+    this._layerContext = {
+      observables,
+      join: () => {
+        if (!this._joined && this._joinConfig) {
+          this._join(this._joinConfig);
+        }
+      },
+      leave: () => {
+        this._leave();
+      },
+    };
+
+    return this._layerContext;
   }
 
   @action.bound

@@ -581,3 +581,60 @@
 .fcr-progress-saveImage .dialog-progress-tip ~ div {
   margin-top: 4px;
 }
+
+/** below styles are for customization */
+.control-layer {
+  position: absolute;
+  bottom: 10px;
+  right: 10px;
+  z-index: 10;
+}
+
+.control-layer button {
+  font-weight: bold;
+  background-color: #000;
+  border: none;
+  color: white;
+  padding: 4px 8px;
+  text-align: center;
+  text-decoration: none;
+  display: inline-block;
+  font-size: 14px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition-duration: 0.4s;
+  outline: 0;
+}
+
+.control-layer button:hover {
+  background-color: #4caf50;
+}
+.canvas-layer {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: url(./assets/English-Grammar-BCG-Banner.png);
+  background-size: 100% 100%;
+}
+
+.disallow-drawing,
+.disallow-drawing * {
+  pointer-events: none !important;
+}
+
+.netless-whiteboard.cursor-pencil {
+  cursor: url(./assets/cursor.png), pointer !important;
+}
+
+.netless-window-manager-cursor-mid .cursor-image-wrapper {
+  width: 50px;
+  height: 50px;
+  background-image: url(./assets/cursor.png);
+}
+.netless-window-manager-cursor-mid .cursor-image-wrapper img {
+  display: none;
+}
+
+.netless-window-manager-cursor-mid .netless-window-manager-cursor-name {
+  display: none;
+}

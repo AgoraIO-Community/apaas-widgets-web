@@ -62,6 +62,14 @@ const scenePaginationUIContextDefault = {
   changePage: (page: number) => {},
 };
 
+const layerUIContextDefault = {
+  observables: {
+    boardIsConnected: false,
+  },
+  join: () => {},
+  leave: () => {},
+};
+
 export const BoardUIContext = createContext(boardUIContextDefault);
 export type BoardUIContextValue = typeof boardUIContextDefault;
 
@@ -70,3 +78,6 @@ export type ToolbarUIContextValue = typeof toolbarUIContextDefault;
 
 export const ScenePaginationUIContext = createContext(scenePaginationUIContextDefault);
 export type ScenePaginationUIContextValue = typeof scenePaginationUIContextDefault;
+
+export const LayerUIContext = createContext(layerUIContextDefault);
+export type LayerUIContextValue = typeof layerUIContextDefault;
