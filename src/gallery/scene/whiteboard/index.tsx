@@ -102,7 +102,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   private _eventBus: AGEventEmitter = new AGEventEmitter();
 
   get resizable(): boolean {
-    return true;
+    return false;
   }
   get minimizable(): boolean {
     return true;
@@ -322,7 +322,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
 
   private _checkBoard(props: any) {
-    const { boardAppId, boardId, boardRegion, boardToken } = props.extra || {};
+    const { boardAppId, boardId, boardRegion, boardToken, boardLayerIsOpened } = props.extra || {};
     if (!this._initialized && boardAppId && boardId && boardRegion && boardToken) {
       const { userUuid: userId, userName } = this.classroomConfig.sessionInfo;
 
@@ -342,6 +342,14 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       // this._join(this._joinConfig);
 
       this._initialized = true;
+    }
+
+    if (boardLayerIsOpened && this._initialized) {
+      if (!this._joined && this._joinConfig) {
+        this._join(this._joinConfig);
+      }
+    } else {
+      this._leave();
     }
   }
 
@@ -667,9 +675,9 @@ export class FcrBoardWidget extends FcrUISceneWidget {
                 <div className="fcr-relative fcr-w-full fcr-h-full">
                   {/* the layer where you can put your own materials */}
                   <ContentLayer />
-                  {/* board layer */}
+                  {/* the board layer */}
                   <App />
-                  {/* the layer where you can open or close the board layer */}
+                  {/* the layer where you can open and close the board layer */}
                   <ControlLayer />
                 </div>
               </MultiWindowWidgetDialog>
@@ -878,12 +886,12 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     this._layerContext = {
       observables,
       join: () => {
-        if (!this._joined && this._joinConfig) {
-          this._join(this._joinConfig);
-        }
+        // update properties of the widget, all remote users will received this update and then connect to the board room
+        this.updateWidgetProperties({ extra: { boardLayerIsOpened: true } });
       },
       leave: () => {
-        this._leave();
+        // update properties of the widget, all remote users will received this update and then disconnect from the board room
+        this.updateWidgetProperties({ extra: { boardLayerIsOpened: false } });
       },
     };
 
