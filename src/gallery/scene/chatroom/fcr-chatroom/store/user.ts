@@ -40,7 +40,7 @@ export class UserStore {
   @computed
   get searchUserList() {
     return this.userList
-      .filter((user) => user.nickName.includes(this.searchKey))
+      .filter((user) => user.nickName.toLowerCase().includes(this.searchKey.toLowerCase()))
       .sort((a, b) => {
         if (a.ext.role === 1) return -1;
 

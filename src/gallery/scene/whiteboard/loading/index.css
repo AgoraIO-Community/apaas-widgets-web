@@ -1,0 +1,72 @@
+.fcr-board-loading {
+  @apply fcr-rounded-10;
+  position: absolute;
+  z-index: 999;
+  display: flex;
+  top: 10px;
+  right: 13px;
+  width: 447px;
+  height: fit-content;
+  transition: all 0.2s;
+  padding: 16px 12px 0 19px;
+  gap: 14px;
+  background: #748bff;
+}
+.fcr-board-loading-minimize {
+  width: fit-content;
+  height: 38px;
+  padding: 0 14px 0;
+  gap: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.fcr-board-loading-img-wrap img {
+  width: 100%;
+  height: 100%;
+  animation: rotate 1s linear infinite;
+  width: 43px;
+  height: 43px;
+}
+.fcr-board-loading-minimize .fcr-board-loading-img-wrap img {
+  width: 22px;
+  height: 22px;
+}
+.fcr-board-loading-text {
+  @apply fcr-text-white;
+  font-size: 14px;
+  line-height: 18px;
+  font-weight: 600;
+  text-shadow: 0px 1px 2px rgba(0, 0, 0, 0.4);
+  white-space: pre-wrap;
+}
+.fcr-board-loading-minimize .fcr-board-loading-text {
+  @apply fcr-text-white;
+  font-size: 14px;
+  line-height: 14px;
+  font-weight: 600;
+}
+.fcr-board-loading-btns {
+  display: flex;
+  gap: 7px;
+  justify-content: flex-end;
+  padding-top: 10px;
+}
+.fcr-board-loading-content {
+  flex: 1;
+  justify-content: space-between;
+  padding-bottom: 10px;
+  display: flex;
+  flex-direction: column;
+}
+.fcr-board-loading-minimize .fcr-board-loading-content {
+  padding-bottom: 0;
+}
+@keyframes rotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(359deg);
+  }
+}

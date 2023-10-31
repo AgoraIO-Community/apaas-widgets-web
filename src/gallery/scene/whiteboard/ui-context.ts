@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { createContext } from 'react';
-import { FcrBoardTool, FcrBoardShape } from '../../../common/whiteboard-wrapper/type';
+import {
+  FcrBoardTool,
+  FcrBoardShape,
+  BoardConnectionState,
+} from '../../../common/whiteboard-wrapper/type';
 
 export interface DraggableHandler {
   getPosition(): { x: number; y: number };
@@ -13,11 +17,14 @@ const boardUIContextDefault = {
   observables: {
     canOperate: false,
     minimized: false,
+    connectionState: BoardConnectionState.Disconnected,
+    joinSuccessed: false,
   },
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
   handleBoardDomLoad: (ref: HTMLDivElement | null) => {},
   handleCollectorDomLoad: (ref: HTMLDivElement | null) => {},
+  handleClose: () => {},
   setPrivilege: (canOperate: boolean) => {},
 };
 

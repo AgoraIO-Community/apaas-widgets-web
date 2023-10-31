@@ -81,7 +81,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   };
   protected _grantedUsers = new Set<string>();
   protected _disposers: IReactionDisposer[] = [];
-
+  private _joinSuccessed = false;
+  private _connectionState: BoardConnectionState = BoardConnectionState.Disconnected;
   private _toolbarContext?: ToolbarUIContextValue;
   private _paginationContext?: ScenePaginationUIContextValue;
   private _boardContext?: BoardUIContextValue;
@@ -472,10 +473,21 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       mainWindow.setAttributes(attributes);
     }
   }
-
+  @action.bound
+  private _setJoinSuccessed(joinSuccessed: boolean) {
+    if (this._boardContext) {
+      this._boardContext.observables.joinSuccessed = joinSuccessed;
+    }
+  }
+  @action.bound
+  private _setConnectionState(state: BoardConnectionState) {
+    this._connectionState = state;
+    if (this._boardContext) {
+      this._boardContext.observables.connectionState = state;
+    }
+  }
   private _join(config: FcrBoardRoomJoinConfig) {
     this._joined = true;
-
     const { roomId, roomToken, userId, userName, hasOperationPrivilege } = config;
 
     this.logger.info('create board client with config', config);
@@ -512,11 +524,16 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
     boardRoom.on(FcrBoardRoomEvent.ConnectionStateChanged, (state) => {
       this.logger.info('Fcr board connection state changed to', state);
-      if (state === BoardConnectionState.Disconnected && this._joined) {
-        this.logger.info('Fcr board start reconnecting');
-        boardRoom.join(joinConfig);
+      this._setConnectionState(state);
+      if (state === BoardConnectionState.Disconnected) {
+        if (this._joined) {
+          this.logger.info('Fcr board start reconnecting');
+          boardRoom.join(joinConfig);
+        }
       }
+
       if (state === BoardConnectionState.Connected) {
+        this._setJoinSuccessed(true);
         if (this._boardMainWindow) {
           this._boardMainWindow.emitPageInfo();
         }
@@ -534,6 +551,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   private _leave() {
     this._joined = false;
+    this._setJoinSuccessed(false);
     if (this._boardRoom) {
       this._boardRoom.leave();
       this._boardRoom = undefined;
@@ -666,6 +684,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       canOperate: this.hasPrivilege,
       minimized: false,
       contentAreaSize: this.contentAreaSize,
+      connectionState: this._connectionState,
+      joinSuccessed: this._joinSuccessed,
     });
 
     this._boardContext = {
@@ -696,7 +716,12 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
         this._collectorDom = ref;
       },
-
+      handleClose: () => {
+        this.setInactive();
+        this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
+          widgetId: this.widgetId,
+        });
+      },
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
         if (this._toolbarContext) {

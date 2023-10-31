@@ -23,4 +23,11 @@ export default {
   fcr_savecanvas_tips_saving: 'outputing, please wait',
   fcr_board_cannot_join_room:
     'Cannot join whiteboard room after times of attemptting, please rejoin classroom',
+  fcr_board_label_connect_board: 'Opening whiteboard, please wait...',
+  fcr_board_label_reconnect_board: 'We are reconnecting the whiteboard for you, please wait...',
+  fcr_board_window_connect_board1: 'We are  reconnecting the whiteboard for you, please wait...',
+  fcr_board_window_connect_board2:
+    "If you haven't connected to the whiteboard for a long time, you can temporarily close the whiteboard and try again later.",
+  fcr_board_button_continue_wait: 'Continue to wait...',
+  fcr_board_button_close_whiteboard: 'Close whiteboard without waiting',
 };

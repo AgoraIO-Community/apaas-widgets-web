@@ -22,4 +22,10 @@ export default {
   fcr_board_display_name: '白板',
   fcr_savecanvas_tips_saving: '正在导出，请稍后...',
   fcr_board_cannot_join_room: '加入白板房间失败，请重新进入教室',
+  fcr_board_label_connect_board: '正在打开白板，请稍后...',
+  fcr_board_label_reconnect_board: '我们正在为您重新连接白板，请等待...',
+  fcr_board_window_connect_board1: '我们正在为您重新连接白板，请等待...',
+  fcr_board_window_connect_board2: '如长时间没有连接上白板，您可以暂时关闭白板，稍后再回来重试。',
+  fcr_board_button_continue_wait: '继续等待...',
+  fcr_board_button_close_whiteboard: '不等待了，关闭白板',
 };

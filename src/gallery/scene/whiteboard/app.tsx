@@ -4,16 +4,20 @@ import { Toolbar } from './toolbar';
 import { ScenePagination } from './scene-pagination';
 import { BoardUIContext } from './ui-context';
 import { observer } from 'mobx-react';
+import { Loading } from './loading';
+import { BoardConnectionState } from '../../../common/whiteboard-wrapper/type';
 
 export const App = observer(() => {
   const {
-    observables: { canOperate },
+    observables: { canOperate, connectionState },
     handleDragOver,
     handleDrop,
     handleBoardDomLoad,
     handleCollectorDomLoad,
   } = useContext(BoardUIContext);
-
+  const loading =
+    connectionState === BoardConnectionState.Connecting ||
+    connectionState === BoardConnectionState.Reconnecting;
   return (
     <>
       <div
@@ -32,6 +36,7 @@ export const App = observer(() => {
       {canOperate && <Toolbar />}
       {/* scene pages  */}
       {canOperate && <ScenePagination />}
+      {loading && <Loading></Loading>}
     </>
   );
 });
