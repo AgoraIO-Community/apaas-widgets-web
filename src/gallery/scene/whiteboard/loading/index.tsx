@@ -10,15 +10,13 @@ import { observer } from 'mobx-react';
 export const Loading = observer(() => {
   const transI18n = useI18n();
   const {
-    observables: { connectionState, joinSuccessed },
+    observables: { connectionState, joinSuccessed, canOperate },
     handleClose,
   } = useContext(BoardUIContext);
   const isReconnecting =
     connectionState === BoardConnectionState.Reconnecting ||
     (connectionState === BoardConnectionState.Connecting && joinSuccessed);
-
-  const [minimize, setMinimize] = useState(!isReconnecting);
-
+  const [minimize, setMinimize] = useState(!isReconnecting || !canOperate);
   const text = isReconnecting ? (
     minimize ? (
       transI18n('fcr_board_label_reconnect_board')
