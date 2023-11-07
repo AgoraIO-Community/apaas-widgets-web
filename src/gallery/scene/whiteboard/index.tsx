@@ -171,10 +171,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
   @bound
   onExited(): void {
-    if (this._mounted && this._boardMainWindow) {
-      this._boardMainWindow.destroy();
-    }
-    this._mounted = false;
+    this.unmount();
+
     runInAction(() => {
       if (this._toolbarContext) {
         this._toolbarContext.observables.layoutReady = false;
@@ -311,6 +309,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   onDestroy() {
     this._leave();
+    this.unmount();
+
     this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
     if (this._listenerDisposer) {
       this._listenerDisposer();
