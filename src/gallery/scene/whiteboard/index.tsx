@@ -171,7 +171,10 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
   @bound
   onExited(): void {
-    this.unmount();
+    if (this._mounted && this._boardMainWindow) {
+      this._boardMainWindow.destroy();
+    }
+    this._mounted = false;
 
     runInAction(() => {
       if (this._toolbarContext) {
