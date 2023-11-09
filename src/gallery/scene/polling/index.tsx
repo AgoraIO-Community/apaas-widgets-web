@@ -94,6 +94,10 @@ export class FcrPollingWidget extends FcrUISceneWidget {
     const { role } = this.classroomConfig.sessionInfo;
     return role === 1;
   }
+  get isStudent() {
+    const { role } = this.classroomConfig.sessionInfo;
+    return role === 2;
+  }
   get isAssistant() {
     const { role } = this.classroomConfig.sessionInfo;
     return role === 3;

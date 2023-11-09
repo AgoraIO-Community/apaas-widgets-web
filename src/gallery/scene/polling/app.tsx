@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
 import PollingButtonGroup from './components/polling-button-group';
 import PollingResultList from './components/polling-result-list';
 import PollingInputList from './components/polling-input-list';
@@ -111,9 +111,19 @@ export const Polling: React.FC<{ widget: FcrPollingWidget }> = observer(({ widge
   const {
     observables: { pollingState, canClose },
   } = useContext(PollingUIContext);
+  const pollingStateRef = useRef(pollingState);
   const transI18n = useI18n();
   const closeDisable = pollingState === PollingState.POLLING_END;
-
+  useEffect(() => {
+    if (
+      (widget.isStudent || widget.isAudience) &&
+      pollingStateRef.current === PollingState.POLLING_SUBMIT &&
+      pollingState === PollingState.POLLING_SUBMIT_END
+    ) {
+      widget.ui.addToast(transI18n('fcr_poll_tips_end_poll'));
+    }
+    pollingStateRef.current = pollingState;
+  }, [pollingState]);
   return (
     <EduToolDialog
       widget={widget}
