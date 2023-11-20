@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, useContext, useEffect } from 'react';
+import { FC, PropsWithChildren, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { ToolbarItem } from '.';
 import { SvgIconEnum } from '@components/svg-img';
@@ -9,13 +9,14 @@ import { ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
 
 export const MoveHandleItem = () => {
-  const { setToolbarPosition, observables } = useContext(ToolbarUIContext);
+  const { setToolbarPosition, dragToolbar, observables } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
   const bind = useDrag((p) => {
     const [mx, my] = (p as unknown as State['drag'])!.movement;
 
-    const { x, y } = observables.toolbarDockPosition;
+    const { x = 0, y = 0 } = observables.toolbarDockPosition;
     setToolbarPosition({ x: x + mx, y: y + my });
+    dragToolbar();
   });
 
   return (
@@ -33,37 +34,47 @@ export const MoveHandleItem = () => {
 
 export const DraggableWrapper: FC<PropsWithChildren<{ className?: string }>> = observer(
   ({ children, className }) => {
-    const { observables, dragToolbar, releaseToolbar } = useContext(ToolbarUIContext);
-    const { toolbarPosition, toolbarReleased, toolbarDockPosition } = observables;
-    const [{ x, y }, api] = useSpring(() => toolbarDockPosition, [toolbarDockPosition]);
-
+    const { observables, releaseToolbar } = useContext(ToolbarUIContext);
+    const { toolbarPosition, toolbarReleased, toolbarDockPosition, layoutReady } = observables;
+    const [{ x, y }, api] = useSpring<{ x: number; y: number }>({}, []);
+    const [visible, setVisible] = useState(false);
     useEffect(() => {
       const mouseReleaseHandler = () => {
         releaseToolbar();
       };
-      window.addEventListener('mouseup', mouseReleaseHandler);
+      const dom = document.querySelector('.netless-whiteboard-wrapper .fcr-widget-dialog-content');
+      if (dom) {
+        dom.addEventListener('mouseup', mouseReleaseHandler);
+      }
 
       return () => {
-        window.removeEventListener('mouseup', mouseReleaseHandler);
+        if (dom) {
+          dom.removeEventListener('mouseup', mouseReleaseHandler);
+        }
       };
     }, []);
 
     useEffect(() => {
-      if (toolbarReleased) {
-        api.start({ ...toolbarDockPosition, immediate: false });
+      if (layoutReady) {
+        api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: !toolbarReleased });
       }
-    }, [toolbarReleased]);
+    }, [toolbarPosition.x, toolbarPosition.y, toolbarReleased, layoutReady]);
 
     useEffect(() => {
-      if (toolbarDockPosition.initialized) {
-        api.start({ x: toolbarDockPosition.x, y: toolbarDockPosition.y, immediate: true });
+      if (layoutReady) {
+        api.start({
+          x: toolbarDockPosition.x,
+          y: toolbarDockPosition.y,
+          immediate: !toolbarReleased,
+        });
       }
-    }, [toolbarDockPosition.initialized]);
+    }, [toolbarDockPosition.x, toolbarDockPosition.y, toolbarReleased, layoutReady]);
 
-    useEffect(() => {
-      dragToolbar();
-      api.start({ x: toolbarPosition.x, y: toolbarPosition.y, immediate: true });
-    }, [toolbarPosition.x, toolbarPosition.y]);
+    useLayoutEffect(() => {
+      if (layoutReady) {
+        setVisible(true);
+      }
+    }, [layoutReady]);
 
     const cls = classNames(
       'fcr-board-toolbar',
@@ -74,14 +85,10 @@ export const DraggableWrapper: FC<PropsWithChildren<{ className?: string }>> = o
       className,
     );
 
-    let display: string | undefined = 'hidden';
-
-    if (toolbarDockPosition.initialized) {
-      display = undefined;
-    }
+    const visibility: 'hidden' | undefined = visible ? undefined : 'hidden';
 
     return (
-      <animated.div style={{ left: x, top: y, display }} className={cls}>
+      <animated.div style={{ left: x, top: y, visibility }} className={cls}>
         {children}
       </animated.div>
     );

@@ -2,7 +2,6 @@ import {
   AgoraUiCapable,
   FcrUISceneWidget,
   bound,
-  Lodash,
   Log,
   Logger,
   transI18n,
@@ -81,11 +80,11 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   };
   protected _grantedUsers = new Set<string>();
   protected _disposers: IReactionDisposer[] = [];
-
+  private _joinSuccessed = false;
+  private _connectionState: BoardConnectionState = BoardConnectionState.Disconnected;
   private _toolbarContext?: ToolbarUIContextValue;
   private _paginationContext?: ScenePaginationUIContextValue;
   private _boardContext?: BoardUIContextValue;
-  private _boardDomResizeObserver?: ResizeObserver;
   private _defaultBoardState = {
     tool: FcrBoardTool.Clicker,
     strokeColor: '#fed130',
@@ -162,6 +161,13 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   onEntered(): void {
     this.mount();
     this._repositionToolbar();
+    setTimeout(() => {
+      runInAction(() => {
+        if (this._toolbarContext) {
+          this._toolbarContext.observables.layoutReady = true;
+        }
+      });
+    });
   }
   @bound
   onExited(): void {
@@ -169,6 +175,12 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       this._boardMainWindow.destroy();
     }
     this._mounted = false;
+
+    runInAction(() => {
+      if (this._toolbarContext) {
+        this._toolbarContext.observables.layoutReady = false;
+      }
+    });
   }
   onInstall(controller: AgoraWidgetController): void {
     addResource();
@@ -252,7 +264,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       {
         messageType: AgoraExtensionRoomEvent.LayoutChanged,
         onMessage: () => {
-          setTimeout(this.onViewportBoundaryUpdate);
           setTimeout(this._repositionToolbar);
         },
       },
@@ -260,7 +271,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         messageType: AgoraExtensionRoomEvent.WidgetDialogBoundariesChanged,
         onMessage: ({ widgetId }: { widgetId: string }) => {
           if (widgetId === this.widgetId) {
-            setTimeout(this.onViewportBoundaryUpdate);
             setTimeout(this._repositionToolbar);
           }
         },
@@ -302,6 +312,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   onDestroy() {
     this._leave();
+    this.unmount();
+
     this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
     if (this._listenerDisposer) {
       this._listenerDisposer();
@@ -472,10 +484,21 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       mainWindow.setAttributes(attributes);
     }
   }
-
+  @action.bound
+  private _setJoinSuccessed(joinSuccessed: boolean) {
+    if (this._boardContext) {
+      this._boardContext.observables.joinSuccessed = joinSuccessed;
+    }
+  }
+  @action.bound
+  private _setConnectionState(state: BoardConnectionState) {
+    this._connectionState = state;
+    if (this._boardContext) {
+      this._boardContext.observables.connectionState = state;
+    }
+  }
   private _join(config: FcrBoardRoomJoinConfig) {
     this._joined = true;
-
     const { roomId, roomToken, userId, userName, hasOperationPrivilege } = config;
 
     this.logger.info('create board client with config', config);
@@ -512,11 +535,16 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
     boardRoom.on(FcrBoardRoomEvent.ConnectionStateChanged, (state) => {
       this.logger.info('Fcr board connection state changed to', state);
-      if (state === BoardConnectionState.Disconnected && this._joined) {
-        this.logger.info('Fcr board start reconnecting');
-        boardRoom.join(joinConfig);
+      this._setConnectionState(state);
+      if (state === BoardConnectionState.Disconnected) {
+        if (this._joined) {
+          this.logger.info('Fcr board start reconnecting');
+          boardRoom.join(joinConfig);
+        }
       }
+
       if (state === BoardConnectionState.Connected) {
+        this._setJoinSuccessed(true);
         if (this._boardMainWindow) {
           this._boardMainWindow.emitPageInfo();
         }
@@ -534,6 +562,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   private _leave() {
     this._joined = false;
+    this._setJoinSuccessed(false);
     if (this._boardRoom) {
       this._boardRoom.leave();
       this._boardRoom = undefined;
@@ -656,16 +685,13 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     );
   }
 
-  @bound
-  onViewportBoundaryUpdate() {
-    this._updateDockPosition();
-  }
-
   private _createBoardUIContext() {
     const observables = observable({
       canOperate: this.hasPrivilege,
       minimized: false,
       contentAreaSize: this.contentAreaSize,
+      connectionState: this._connectionState,
+      joinSuccessed: this._joinSuccessed,
     });
 
     this._boardContext = {
@@ -682,33 +708,22 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         if (this._boardDom) {
           this._setBackgourndImage();
 
-          const resizeObserver = new ResizeObserver(this._repositionToolbar);
-
-          resizeObserver.observe(this._boardDom);
-
-          this._boardDomResizeObserver = resizeObserver;
           this.mount();
         } else {
-          this._boardDomResizeObserver?.disconnect();
           this.unmount();
         }
       },
       handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
         this._collectorDom = ref;
       },
-
+      handleClose: () => {
+        this.setInactive();
+        this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
+          widgetId: this.widgetId,
+        });
+      },
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
-        if (this._toolbarContext) {
-          this._toolbarContext.observables.toolbarDockPosition = {
-            x: 0,
-            y: 0,
-            initialized: false,
-            placement: 'left',
-          };
-        }
-        // wait until the UI rerenders, then actual dimensions can be obtained
-        setTimeout(this._repositionToolbar);
       }),
     };
     return this._boardContext;
@@ -723,12 +738,13 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       lastShape: undefined as FcrBoardShape | undefined,
       currentStrokeWidth: 2,
       toolbarPosition: { x: 0, y: 0 },
-      toolbarDockPosition: { x: 0, y: 0, placement: 'left' as const, initialized: false },
-      toolbarReleased: true,
+      toolbarDockPosition: { x: undefined, y: undefined, placement: 'left' as const },
+      toolbarReleased: false,
       redoSteps: 0,
       undoSteps: 0,
       maxCountVisibleTools: 4,
       canOperate: this.hasPrivilege,
+      layoutReady: false,
     });
     this._toolbarContext = {
       observables,
@@ -783,9 +799,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       }),
       releaseToolbar: action(() => {
         observables.toolbarReleased = true;
-        this._updateDockPosition();
-        this._updateMaxVisibleTools();
-        setTimeout(this._updateDockPosition);
+        this._updateDockPlacement();
+        this._repositionToolbar();
       }),
       captureApp: () => {},
       captureScreen: () => {},
@@ -807,7 +822,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       if (this._outerDom) {
         this._outerDom.style.display = 'block';
       }
-      setTimeout(this._repositionToolbar, 500);
     }
   }
 
@@ -858,7 +872,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
 
   @bound
-  @Lodash.throttled(200)
   private _updateDockPosition() {
     if (this._toolbarContext) {
       const toolbarDom = document.querySelector(`.${toolbarClassName}`);
@@ -868,17 +881,14 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         const toolbarClientRect = toolbarDom.getBoundingClientRect();
         /* scene page bar 42 px height */
         const toolbarOffsetTop = (containerClientRect.height - toolbarDom.clientHeight - 42) / 2;
-        const toolbarCenterPos =
-          toolbarClientRect.left - containerClientRect.left + toolbarClientRect.width / 2;
         const toolbarContext = this._toolbarContext;
         runInAction(() => {
-          if (toolbarCenterPos > containerClientRect.width / 2) {
+          if (toolbarContext.observables.toolbarDockPosition.placement === 'right') {
             // right
             toolbarContext.observables.toolbarDockPosition = {
               x: containerClientRect.width - toolbarClientRect.width,
               y: toolbarOffsetTop + sceneNavHeight / 2,
               placement: 'right',
-              initialized: true,
             };
           } else {
             // left
@@ -886,7 +896,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
               x: 0,
               y: toolbarOffsetTop,
               placement: 'left',
-              initialized: true,
             };
           }
         });
@@ -925,7 +934,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       const containerDom = document.querySelector(`.${windowClassName}`);
 
       if (containerDom && toolbarDom) {
-        this._updateDockPlacement();
         setTimeout(this._updateMaxVisibleTools);
         // wait until the UI rerenders, then actual dimensions can be obtained
         setTimeout(this._updateDockPosition);

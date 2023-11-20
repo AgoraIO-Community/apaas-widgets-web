@@ -1,6 +1,10 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { createContext } from 'react';
-import { FcrBoardTool, FcrBoardShape } from '../../../common/whiteboard-wrapper/type';
+import {
+  FcrBoardTool,
+  FcrBoardShape,
+  BoardConnectionState,
+} from '../../../common/whiteboard-wrapper/type';
 
 export interface DraggableHandler {
   getPosition(): { x: number; y: number };
@@ -13,11 +17,14 @@ const boardUIContextDefault = {
   observables: {
     canOperate: false,
     minimized: false,
+    connectionState: BoardConnectionState.Disconnected,
+    joinSuccessed: false,
   },
   handleDrop: (e: React.DragEvent) => {},
   handleDragOver: (e: React.DragEvent) => {},
   handleBoardDomLoad: (ref: HTMLDivElement | null) => {},
   handleCollectorDomLoad: (ref: HTMLDivElement | null) => {},
+  handleClose: () => {},
   setPrivilege: (canOperate: boolean) => {},
 };
 
@@ -29,12 +36,17 @@ const toolbarUIContextDefault = {
     currentStrokeWidth: 0,
     toolbarPosition: { x: 0, y: 0 },
     toolbarReleased: true,
-    toolbarDockPosition: { x: 0, y: 0, placement: 'left' as 'left' | 'right', initialized: false },
+    toolbarDockPosition: {
+      x: 0 as number | undefined,
+      y: 0 as number | undefined,
+      placement: 'left' as 'left' | 'right',
+    },
     redoSteps: 0,
     undoSteps: 0,
     lastPen: undefined as FcrBoardShape | undefined,
     lastShape: undefined as FcrBoardShape | undefined,
     maxCountVisibleTools: 4,
+    layoutReady: false,
   },
   clean: () => {},
   redo: () => {},

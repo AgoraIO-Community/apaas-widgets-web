@@ -107,8 +107,8 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
 
     try {
       this.logger.info('Join board room with params', joinParams);
-
       const retriesMax = 10;
+      this._updateConnnectionState(BoardConnectionState.Connecting);
       await retryAttempt(
         async () => {
           const room = await this._client.joinRoom(joinParams, {
@@ -147,9 +147,13 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
           this.logger.info(`continue attemptting? ${this._joined}`);
           return this._joined;
         })
+        .abort(() => {
+          this._updateConnnectionState(BoardConnectionState.Disconnected);
+        })
         .exec();
     } catch (e) {
       this._eventBus.emit(FcrBoardRoomEvent.JoinFailure, e);
+      this._updateConnnectionState(BoardConnectionState.Disconnected);
     }
   }
 
@@ -190,37 +194,25 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
       this._eventBus.emit(FcrBoardRoomEvent.MemberStateChanged, { ...localState });
     }
   }
-
+  @bound
+  @Log.silence
+  private _updateConnnectionState(state: BoardConnectionState) {
+    this._connState = state;
+    this._eventBus.emit(FcrBoardRoomEvent.ConnectionStateChanged, state);
+  }
   @bound
   @Log.silence
   private _handleConnectionStateUpdated(phase: RoomPhase) {
     if (phase === RoomPhase.Connecting) {
-      this._connState = BoardConnectionState.Connecting;
-      this._eventBus.emit(
-        FcrBoardRoomEvent.ConnectionStateChanged,
-        BoardConnectionState.Connecting,
-      );
+      this._updateConnnectionState(BoardConnectionState.Connecting);
     } else if (phase === RoomPhase.Connected) {
-      this._connState = BoardConnectionState.Connected;
-      this._eventBus.emit(FcrBoardRoomEvent.ConnectionStateChanged, BoardConnectionState.Connected);
+      this._updateConnnectionState(BoardConnectionState.Connected);
     } else if (phase === RoomPhase.Reconnecting) {
-      this._connState = BoardConnectionState.Reconnecting;
-      this._eventBus.emit(
-        FcrBoardRoomEvent.ConnectionStateChanged,
-        BoardConnectionState.Reconnecting,
-      );
+      this._updateConnnectionState(BoardConnectionState.Reconnecting);
     } else if (phase === RoomPhase.Disconnected) {
-      this._connState = BoardConnectionState.Disconnected;
-      this._eventBus.emit(
-        FcrBoardRoomEvent.ConnectionStateChanged,
-        BoardConnectionState.Disconnected,
-      );
+      this._updateConnnectionState(BoardConnectionState.Disconnected);
     } else if (phase === RoomPhase.Disconnecting) {
-      this._connState = BoardConnectionState.Disconnecting;
-      this._eventBus.emit(
-        FcrBoardRoomEvent.ConnectionStateChanged,
-        BoardConnectionState.Disconnecting,
-      );
+      this._updateConnnectionState(BoardConnectionState.Disconnecting);
     }
   }
 

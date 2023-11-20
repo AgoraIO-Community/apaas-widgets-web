@@ -30,7 +30,8 @@ import {
 } from './type';
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
 import isEqual from 'lodash/isEqual';
-
+import { BoardMountManager } from './mount-manager';
+import { when } from 'mobx';
 @Log.attach({ proxyMethods: false })
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   logger!: Logger;
@@ -97,6 +98,29 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     this.preCheck({ wm: false });
     if (this._whiteRoom) {
       this._destroyed = false;
+      this.logger.info(
+        '[FcrBoardMainWindow] start mount board window, white room id:',
+        this._whiteRoom.uuid,
+      );
+      if (BoardMountManager.isMounting) {
+        this.logger.info(
+          '[FcrBoardMainWindow] wait for previous board window mounted, white room id:',
+          this._whiteRoom.uuid,
+        );
+        await when(() => !BoardMountManager.isMounting);
+        this.logger.info(
+          '[FcrBoardMainWindow] previous board window mounted, start mount current board window, white room id:',
+          this._whiteRoom.uuid,
+        );
+      }
+      if (this._destroyed) {
+        this.logger.info(
+          '[FcrBoardMainWindow] current board window has been destroyed, white room id:',
+          this._whiteRoom.uuid,
+        );
+        return;
+      }
+      BoardMountManager.setIsMounting(true);
       await WindowManager.mount({
         room: this._whiteRoom,
         container: view,
@@ -123,6 +147,13 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
             FcrBoardMainWindowFailureReason.MountFailure,
             e,
           );
+        })
+        .finally(() => {
+          this.logger.info(
+            '[FcrBoardMainWindow] finish mount board window, white room id:',
+            this._whiteRoom.uuid,
+          );
+          BoardMountManager.setIsMounting(false);
         });
     }
   }

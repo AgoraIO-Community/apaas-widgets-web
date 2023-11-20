@@ -34,4 +34,5 @@ export default {
   fcr_poll_close: 'Close',
   fcr_poll_unable_to_close: 'Please end the current round of voting before closing the polls.',
   fcr_poll_people_participated: 'People Participated',
+  fcr_poll_tips_end_poll: 'Teacher has ended the poll',
 };

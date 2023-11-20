@@ -34,4 +34,5 @@ export default {
   fcr_poll_close: '关闭',
   fcr_poll_unable_to_close: '关闭前，请结束本轮投票。',
   fcr_poll_people_participated: '参与人数',
+  fcr_poll_tips_end_poll: '老师已结束投票',
 };
