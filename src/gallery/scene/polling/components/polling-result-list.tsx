@@ -100,7 +100,7 @@ const PollingResultList: React.FC = observer(() => {
 
       {PollingState.POLLING_SUBMIT === pollingState && !selectIndex && !isAudience ? (
         <div className={classnames('fcr-polling-result-person-count', 'fcr-polling-result-center')}>
-          {resultInfo.isMuti ? 'Muti-select' : 'Single'}
+          {resultInfo.isMuti ? transI18n('fcr_poll_multi') : transI18n('fcr_poll_single')}
         </div>
       ) : (
         <div className="fcr-polling-result-person-count">
