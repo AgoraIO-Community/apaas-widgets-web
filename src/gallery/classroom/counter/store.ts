@@ -1,4 +1,3 @@
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { action, autorun, computed, observable } from 'mobx';
 import { AgoraCountdown } from '.';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
@@ -96,6 +95,6 @@ export class PluginStore {
   @computed
   get isController() {
     const { role } = this._widget.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role);
+    return [1, 3].includes(role);
   }
 }

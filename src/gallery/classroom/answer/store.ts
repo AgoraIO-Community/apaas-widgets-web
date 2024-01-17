@@ -1,4 +1,3 @@
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { bound, Lodash, Scheduler } from 'agora-common-libs';
 import { action, autorun, computed, observable, reaction, runInAction } from 'mobx';
 import { computedFn } from 'mobx-utils';
@@ -210,16 +209,14 @@ export class PluginStore {
   @computed
   get isController() {
     const { role } = this._widget.classroomConfig.sessionInfo;
-    return role === EduRoleTypeEnum.teacher || role === EduRoleTypeEnum.assistant;
+    return role === 1 || role === 3;
   }
 
   @computed
   get isTeacherType() {
     const { role } = this._widget.classroomConfig.sessionInfo;
 
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant, EduRoleTypeEnum.observer].includes(
-      role,
-    );
+    return [1, 3, 4].includes(role);
   }
 
   @computed
@@ -268,11 +265,7 @@ export class PluginStore {
   @computed
   get isShowAwardButton() {
     const { role } = this._widget.classroomConfig.sessionInfo;
-    return (
-      [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) &&
-      this.isShowResultSection &&
-      this.answerState === 0
-    );
+    return [1, 3].includes(role) && this.isShowResultSection && this.answerState === 0;
   }
 
   @computed
@@ -286,7 +279,7 @@ export class PluginStore {
   @computed
   get isShowAnswerBtn() {
     const { role } = this._widget.classroomConfig.sessionInfo;
-    return this.answerState === 1 && !this.isTeacherType && role !== EduRoleTypeEnum.invisible;
+    return this.answerState === 1 && !this.isTeacherType && role !== 0;
   }
 
   @computed

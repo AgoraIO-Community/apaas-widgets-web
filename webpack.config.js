@@ -4,6 +4,7 @@ const baseConfig = require('agora-common-libs/presets/webpack.config.base.js');
 const packConfig = require('agora-common-libs/presets/webpack.config.pack.js');
 const webpack = require('webpack');
 const ROOT_PATH = path.resolve(__dirname, './');
+// const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer');
 
 const target = process.env.BUNDLE_TARGET || '';
 const entry = {};
@@ -56,6 +57,7 @@ const config = {
     new webpack.optimize.LimitChunkCountPlugin({
       maxChunks: 1,
     }),
+    // new BundleAnalyzerPlugin(),
   ],
 };
 const mergedConfig = webpackMerge.merge(baseConfig, packConfig, config);

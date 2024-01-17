@@ -1,15 +1,22 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
-import { ClassState } from 'agora-edu-core/lib/stores/domain/common/room/type';
 import dayjs from 'dayjs';
-import { AgoraRteEventType } from 'agora-rte-sdk/lib/core/processor/type';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
 import { transI18n, bound, Scheduler } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
+export enum MobileCallState {
+  Initialize = 'initialize',
+  Processing = 'processing',
+  VoiceCall = 'voiceCall',
+  VideoCall = 'videoCall',
+  VideoAndVoiceCall = 'videoAndVoiceCall',
+  DeviceOffCall = 'deviceOffCall',
+}
 export class RoomStore {
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
+  @observable mobileCallState: MobileCallState = MobileCallState.Initialize;
   @observable messageVisible = true;
   @observable orientation: OrientationEnum = OrientationEnum.portrait;
   @observable forceLandscape = false;
@@ -55,10 +62,17 @@ export class RoomStore {
   private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
     this.landscapeToolBarVisible = visible;
   }
+  @action.bound
+  private _handleMobileCallStateChanged(state: MobileCallState) {
+    this.mobileCallState = state;
+  }
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
-
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileCallStateChanged,
+      onMessage: this._handleMobileCallStateChanged,
+    });
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
       onMessage: this._handleMobileLandscapeToolBarStateChanged,
@@ -74,7 +88,7 @@ export class RoomStore {
     });
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
     this._widget.classroomStore.connectionStore.scene?.on(
-      AgoraRteEventType.RoomPropertyUpdated,
+      'room-property-updated',
       this._handleClassRoomPropertiesChange,
     );
   }
@@ -86,9 +100,13 @@ export class RoomStore {
       onMessage: this._handleOrientationChanged,
     });
     this._widget.classroomStore.connectionStore.scene?.off(
-      AgoraRteEventType.RoomPropertyUpdated,
+      'room-property-updated',
       this._handleClassRoomPropertiesChange,
     );
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileCallStateChanged,
+      onMessage: this._handleMobileCallStateChanged,
+    });
   }
   @computed
   get userCount() {
@@ -113,17 +131,17 @@ export class RoomStore {
     let duration = -1;
     if (classroomSchedule) {
       switch (classroomSchedule.state) {
-        case ClassState.beforeClass:
+        case 0:
           if (classroomSchedule.startTime !== undefined) {
             duration = Math.max(classroomSchedule.startTime - this.calibratedTime, 0);
           }
           break;
-        case ClassState.ongoing:
+        case 1:
           if (classroomSchedule.startTime !== undefined) {
             duration = Math.max(this.calibratedTime - classroomSchedule.startTime, 0);
           }
           break;
-        case ClassState.afterClass:
+        case 2:
           if (
             classroomSchedule.startTime !== undefined &&
             classroomSchedule.duration !== undefined
@@ -147,9 +165,9 @@ export class RoomStore {
     } = this._widget.classroomStore.roomStore;
 
     switch (state) {
-      case ClassState.ongoing:
+      case 1:
         return `${this.formatCountDown(duration)}`;
-      case ClassState.afterClass:
+      case 2:
         return `${this.formatCountDown(duration)}`;
       default:
         return ``;

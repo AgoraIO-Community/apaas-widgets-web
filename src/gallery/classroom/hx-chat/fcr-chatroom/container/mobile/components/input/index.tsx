@@ -9,6 +9,9 @@ import './index.css';
 import { useI18n } from 'agora-common-libs';
 import { useClickAnywhere } from '../../../../utils/hooks';
 import classNames from 'classnames';
+import { AgoraExtensionWidgetEvent } from '../../../../../../../../events';
+import { MobileCallState } from '../../../../store/room';
+
 export const FcrChatRoomH5Inputs = observer(
   ({
     showEmoji,
@@ -26,6 +29,7 @@ export const FcrChatRoomH5Inputs = observer(
     const inputRef = useRef<HTMLInputElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {
+      broadcastWidgetMessage,
       messageStore: { sendTextMessage, sendImageMessage },
       roomStore: {
         allMuted,
@@ -35,10 +39,62 @@ export const FcrChatRoomH5Inputs = observer(
         forceLandscape,
         landscapeToolBarVisible,
         quitForceLandscape,
+        mobileCallState,
       },
       userStore: { userMuted },
     } = useStore();
-
+    const getCallIcon = () => {
+      switch (mobileCallState) {
+        case MobileCallState.Initialize:
+          return {
+            icon: SvgIconEnum.CALL_MOBILE,
+            colors: {
+              iconPrimary: undefined,
+              iconSecondary: undefined,
+            },
+          };
+        case MobileCallState.VideoAndVoiceCall:
+          return {
+            icon: SvgIconEnum.CALLING_MOBILE,
+            colors: {
+              iconPrimary: 'rgba(66, 98, 255, 1)',
+              iconSecondary: 'rgba(66, 98, 255, 1)',
+            },
+          };
+        case MobileCallState.VoiceCall:
+          return {
+            icon: SvgIconEnum.CALLING_MOBILE,
+            colors: {
+              iconPrimary: 'rgba(66, 98, 255, 1)',
+              iconSecondary: '#fff',
+            },
+          };
+        case MobileCallState.VideoCall:
+          return {
+            icon: SvgIconEnum.CALLING_MOBILE,
+            colors: {
+              iconPrimary: '#fff',
+              iconSecondary: 'rgba(66, 98, 255, 1)',
+            },
+          };
+        case MobileCallState.DeviceOffCall:
+          return {
+            icon: SvgIconEnum.CALLING_MOBILE,
+            colors: {
+              iconPrimary: '#fff',
+              iconSecondary: '#fff',
+            },
+          };
+        default:
+          return {
+            icon: SvgIconEnum.CALL_MOBILE,
+            colors: {
+              iconPrimary: undefined,
+              iconSecondary: undefined,
+            },
+          };
+      }
+    };
     const isMuted = allMuted || userMuted;
     const send = useCallback(() => {
       sendTextMessage(text);
@@ -62,7 +118,9 @@ export const FcrChatRoomH5Inputs = observer(
     const toggleMessageVisible = () => {
       setMessageVisible(!messageVisible);
     };
-
+    const openHandsUpActionSheet = () => {
+      broadcastWidgetMessage(AgoraExtensionWidgetEvent.OpenMobileHandsUpActionSheet, undefined);
+    };
     const inputVisible = (messageVisible && landscapeToolBarVisible) || !isLandscape;
     return (
       <>
@@ -140,29 +198,39 @@ export const FcrChatRoomH5Inputs = observer(
                   isMuted || forceLandscape ? '' : `${transI18n('chat.enter_contents')}...`
                 }></input>
             </div>
+
             {!isMuted && !forceLandscape && (
-              <div className="fcr-chatroom-mobile-inputs-input-emoji">
-                {showEmoji ? (
+              <>
+                <div className="fcr-chatroom-mobile-inputs-image" onClick={handleImgInputClick}>
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
                     landscape={isLandscape}
-                    type={SvgIconEnum.KEYBOARD}
-                    onClick={() => {
-                      inputRef.current?.focus();
-                      onShowEmojiChanged(false);
-                    }}
-                    size={34}></SvgImgMobile>
-                ) : (
-                  <SvgImgMobile
-                    forceLandscape={forceLandscape}
-                    landscape={isLandscape}
-                    type={SvgIconEnum.CHAT_EMOJI}
-                    onClick={() => {
-                      onShowEmojiChanged(true);
-                    }}
-                    size={34}></SvgImgMobile>
-                )}
-              </div>
+                    type={SvgIconEnum.CHAT_IMAGE}
+                    size={30}></SvgImgMobile>
+                </div>
+                <div className="fcr-chatroom-mobile-inputs-input-emoji">
+                  {showEmoji ? (
+                    <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.KEYBOARD}
+                      onClick={() => {
+                        inputRef.current?.focus();
+                        onShowEmojiChanged(false);
+                      }}
+                      size={30}></SvgImgMobile>
+                  ) : (
+                    <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.CHAT_EMOJI}
+                      onClick={() => {
+                        onShowEmojiChanged(true);
+                      }}
+                      size={30}></SvgImgMobile>
+                  )}
+                </div>
+              </>
             )}
           </div>
           {text ? (
@@ -195,22 +263,31 @@ export const FcrChatRoomH5Inputs = observer(
                   )}
                 </div>
               )}
-              {!isMuted && !forceLandscape && (
-                <div className="fcr-chatroom-mobile-inputs-image" onClick={handleImgInputClick}>
-                  <SvgImgMobile
-                    forceLandscape={forceLandscape}
-                    landscape={isLandscape}
-                    type={SvgIconEnum.CHAT_IMAGE}
-                    size={30}></SvgImgMobile>
-                </div>
-              )}
-              <input
-                ref={fileInputRef}
-                onChange={handleFileInputChange}
-                accept="image/*"
-                type="file"
-                style={{ display: 'none' }}></input>
+              <>
+                <input
+                  ref={fileInputRef}
+                  onChange={handleFileInputChange}
+                  accept="image/*"
+                  type="file"
+                  style={{ display: 'none' }}></input>
+              </>
 
+              <div className="fcr-chatroom-mobile-inputs-call" onClick={openHandsUpActionSheet}>
+                {mobileCallState === MobileCallState.Processing && (
+                  <div className="fcr-chatroom-mobile-inputs-call-loading">
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                    <div className="dot"></div>
+                  </div>
+                )}
+
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={getCallIcon().icon}
+                  colors={{ ...getCallIcon().colors }}
+                  size={30}></SvgImgMobile>
+              </div>
               <ThumbsUp></ThumbsUp>
             </>
           )}

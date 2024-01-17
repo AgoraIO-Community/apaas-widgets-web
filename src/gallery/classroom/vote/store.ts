@@ -1,4 +1,3 @@
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
 import { Toast } from '../../../components/toast';
 import { action, autorun, computed, observable, runInAction } from 'mobx';
 import { AgoraPolling } from '.';
@@ -229,14 +228,12 @@ export class PluginStore {
   @computed
   get isController() {
     const { role } = this._widget.classroomConfig.sessionInfo;
-    return role === EduRoleTypeEnum.teacher || role === EduRoleTypeEnum.assistant;
+    return role === 1 || role === 3;
   }
 
   @computed
   get isTeacherType() {
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant, EduRoleTypeEnum.observer].includes(
-      this._widget.classroomConfig.sessionInfo.role,
-    );
+    return [1, 3, 4].includes(this._widget.classroomConfig.sessionInfo.role);
   }
 
   @computed
@@ -316,7 +313,7 @@ export class PluginStore {
   get isShowVoteBtn() {
     const { sessionInfo } = this._widget.classroomConfig;
 
-    return this.isShowVote && sessionInfo.role !== EduRoleTypeEnum.invisible;
+    return this.isShowVote && sessionInfo.role !== 0;
   }
 
   @computed

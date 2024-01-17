@@ -1,6 +1,6 @@
 import { AgoraHXChatWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
 import { Scheduler, bound } from 'agora-common-libs';
 
@@ -70,7 +70,7 @@ export class UserStore {
     if (this.joinedUser) return;
     const userInfoList = await this._fcrChatRoom.getUserInfoList([user]);
     const joinedUser = userInfoList[0];
-    if (joinedUser.ext.role !== EduRoleTypeEnum.student) return;
+    if (joinedUser.ext.role !== 2) return;
     runInAction(() => {
       if (joinedUser) this.joinedUser = joinedUser;
     });

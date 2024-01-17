@@ -8,7 +8,7 @@ import AppH5 from './mobile/app';
 import { PluginStore } from './store';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+
 import { transI18n, ThemeProvider } from 'agora-common-libs';
 import { addResource } from './i18n/config';
 import { AgoraExtensionWidgetEvent } from '../../../events';
@@ -31,7 +31,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
 
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role);
+    return [1, 3].includes(role);
   }
 
   get minWidth() {
@@ -73,7 +73,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
   }
 
   private _checkState(props: any) {
-    const isStudent = EduRoleTypeEnum.student === this.classroomConfig.sessionInfo.role;
+    const isStudent = 2 === this.classroomConfig.sessionInfo.role;
     if (props.extra?.state === 0 && isStudent) {
       this.setVisibility(false);
     } else {

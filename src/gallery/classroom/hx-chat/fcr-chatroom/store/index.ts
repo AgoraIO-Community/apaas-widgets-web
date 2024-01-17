@@ -8,7 +8,7 @@ import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
 import { RoomStore } from './room';
-import { retryAttempt } from 'agora-rte-sdk/lib/core/utils/utils';
+import { retryAttempt } from 'agora-common-libs';
 import to from 'await-to-js';
 import { transI18n, bound, Logger } from 'agora-common-libs';
 
@@ -110,6 +110,10 @@ export class FcrChatRoomStore {
     this.roomStore.getChatRoomDetails();
     await this.messageStore.getHistoryMessageList();
     this.messageStore.getAnnouncement();
+  }
+  @bound
+  broadcastWidgetMessage(messageType: string, message: unknown) {
+    this._widget.broadcast(messageType, message);
   }
   destroy() {
     this._removeListeners();

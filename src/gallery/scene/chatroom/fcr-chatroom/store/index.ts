@@ -8,7 +8,7 @@ import { FcrChatroomWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
 import { RoomStore } from './room';
-import { retryAttempt } from 'agora-rte-sdk/lib/core/utils/utils';
+import { retryAttempt } from 'agora-common-libs';
 import { bound, Logger } from 'agora-common-libs';
 import to from 'await-to-js';
 

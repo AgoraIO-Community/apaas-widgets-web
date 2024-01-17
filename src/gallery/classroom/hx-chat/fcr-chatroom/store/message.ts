@@ -11,6 +11,7 @@ import {
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../../common/im/wrapper/typs';
+import { AgoraExtensionRoomEvent } from '../../../../../events';
 const MAX_MESSAGE_COUNT = 1000;
 export class MessageStore {
   private _disposers: (() => void)[] = [];
@@ -33,10 +34,10 @@ export class MessageStore {
 
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
-    this._disposers.push(
-      //@ts-ignore
-      reaction(() => this._widget.shareUIStore.isLandscape, this.messageListScrollToBottom),
-    );
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this.messageListScrollToBottom,
+    });
   }
   private async _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.TextMessageReceived, this._onTextMessageReceived);
@@ -45,6 +46,10 @@ export class MessageStore {
 
     this._fcrChatRoom.off(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.off(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this.messageListScrollToBottom,
+    });
   }
   private _startPollingMessageTask() {
     if (!this._pollingMessageTask) {

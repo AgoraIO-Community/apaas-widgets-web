@@ -26,7 +26,7 @@ import {
   FcrBoardShape,
 } from './type';
 import { convertToFcrBoardToolShape, hexColorToWhiteboardColor, textColors } from './helper';
-import { retryAttempt } from 'agora-rte-sdk/lib/core/utils/utils';
+import { retryAttempt } from 'agora-common-libs';
 
 @Log.attach()
 export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
