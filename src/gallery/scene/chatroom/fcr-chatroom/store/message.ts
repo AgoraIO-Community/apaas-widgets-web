@@ -1,4 +1,4 @@
-import { bound, Lodash, Scheduler } from 'agora-common-libs';
+import { bound, Lodash, Scheduler, transI18n } from 'agora-common-libs';
 import { observable, action, runInAction, computed, reaction } from 'mobx';
 import { FcrChatroomWidget } from '../..';
 import {
@@ -300,6 +300,10 @@ export class MessageStore {
   @bound
   async sendTextMessage(text: string, receiverList?: AgoraIMUserInfo[]) {
     const message = this._fcrChatRoom.createTextMessage(text, receiverList);
+    if (message.msg?.length > 300) {
+      this._widget.ui.addToast(transI18n('fcr_chat_tips_message_too_long'), 'error');
+      return;
+    }
     await this._fcrChatRoom.sendMessage(message);
     runInAction(() => {
       message.from = this._fcrChatRoom.userInfo?.userId;

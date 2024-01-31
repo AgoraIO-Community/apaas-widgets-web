@@ -27,6 +27,7 @@ const im_CN = {
     send: '发送',
     enter_contents: '请输入内容',
     enter_content_is_empty: '消息内容不能为空',
+    enter_content_is_too_long: '您的消息过长，请拆分成多条消息发送',
     no_message: '还没有消息',
     default_announcement: '暂无公告',
     publish: '发布',

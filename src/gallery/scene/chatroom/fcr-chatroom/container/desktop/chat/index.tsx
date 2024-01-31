@@ -122,7 +122,7 @@ const ChatInput = observer(() => {
             ref={textAreaRef}
             onKeyDown={handleKeyDown}
             autoSize={{ minHeight: 72 }}
-            maxCount={150}
+            maxCount={300}
             onFocusChange={setInputFocus}
             resizable={false}
             showCount={false}
