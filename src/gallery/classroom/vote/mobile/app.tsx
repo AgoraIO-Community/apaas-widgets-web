@@ -53,9 +53,8 @@ export const PollH5 = observer(() => {
   };
   return minimize ? (
     <div
-      className={`fcr-mobile-poll-widget-minimize ${
-        isLandscape ? 'fcr-mobile-poll-widget-minimize-landscape' : ''
-      }`}
+      className={`fcr-mobile-poll-widget-minimize ${isLandscape ? 'fcr-mobile-poll-widget-minimize-landscape' : ''
+        }`}
       onClick={() => {
         setMinimize(false);
       }}>
@@ -76,9 +75,8 @@ export const PollH5 = observer(() => {
     </div>
   ) : (
     <div
-      className={`fcr-mobile-poll-widget-modal ${
-        isLandscape ? 'fcr-mobile-poll-widget-modal-landscape' : ''
-      }`}>
+      className={`fcr-mobile-poll-widget-modal ${isLandscape ? 'fcr-mobile-poll-widget-modal-landscape' : ''
+        }`}>
       <div
         className="fcr-mobile-poll-widget-modal-close"
         onClick={() => {
@@ -123,9 +121,8 @@ export const PollH5 = observer(() => {
                   <div
                     onClick={() => handleOptionClick(index)}
                     key={value}
-                    className={`fcr-mobile-poll-widget-option ${
-                      isSelected ? 'fcr-mobile-poll-widget-option-selected' : ''
-                    } ${isShowResultSection ? 'fcr-mobile-poll-widget-option-result' : ''}`}>
+                    className={`fcr-mobile-poll-widget-option ${isSelected ? 'fcr-mobile-poll-widget-option-selected' : ''
+                      } ${isShowResultSection ? 'fcr-mobile-poll-widget-option-result' : ''}`}>
                     <p>{value}</p>
                     {isShowResultSection && (
                       <>
@@ -134,11 +131,10 @@ export const PollH5 = observer(() => {
                           <div>{percentage}</div>
                         </div>
                         <div
-                          className={`fcr-mobile-poll-widget-option-result-progress ${
-                            isSelected
-                              ? 'fcr-mobile-poll-widget-option-result-progress-selected'
-                              : ''
-                          }`}
+                          className={`fcr-mobile-poll-widget-option-result-progress ${isSelected
+                            ? 'fcr-mobile-poll-widget-option-result-progress-selected'
+                            : ''
+                            }`}
                           style={{ width: percentage }}></div>
                       </>
                     )}
@@ -155,9 +151,8 @@ export const PollH5 = observer(() => {
           {!isShowResultSection && (
             <div
               onClick={handleSubmit}
-              className={`fcr-mobile-poll-widget-submit ${
-                isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
-              }`}>
+              className={`fcr-mobile-poll-widget-submit ${isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
+                }`}>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
                 landscape={isLandscape}

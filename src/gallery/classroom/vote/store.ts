@@ -22,6 +22,9 @@ export class PluginStore {
       typeof extra?.pollState !== 'undefined' && this.setStagePanel(extra.pollState);
       typeof extra?.pollTitle !== 'undefined' && this.setTitle(extra.pollTitle);
       extra?.mode && this.setType(this.getTypeByMode);
+      if (extra.pollState === 0 && !this.isTeacherType) {
+        this._widget.ui.addToast(transI18n('fcr_H5_tips_end_poll'))
+      }
       runInAction(() => {
         typeof extra?.pollItems !== 'undefined' && (this.options = extra.pollItems);
       });
@@ -158,7 +161,7 @@ export class PluginStore {
           Toast.show({
             type: 'error',
             text: JSON.stringify(e),
-            closeToast: () => {},
+            closeToast: () => { },
           });
           reject(e);
         });
