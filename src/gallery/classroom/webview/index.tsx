@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import { App } from './app';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+
 import { AgoraWidgetTrackMode, bound } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 
@@ -24,7 +24,7 @@ export class FcrWebviewWidget extends AgoraEduToolWidget {
   }
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) || this._privilege;
+    return [1, 3].includes(role) || this._privilege;
   }
 
   get resizable(): boolean {

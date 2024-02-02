@@ -6,7 +6,6 @@ import {
 } from 'agora-common-libs';
 import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
 import { observer } from 'mobx-react';
@@ -51,15 +50,11 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
     showChat: widgetStore.showChat,
     isShowMiniIcon: !widgetStore.showChat,
     configUIVisible: {
-      showInputBox:
-        sessionInfo.role !== EduRoleTypeEnum.invisible &&
-        sessionInfo.role !== EduRoleTypeEnum.observer, // 输入UI
-      memebers: sessionInfo.roomType !== EduRoomTypeEnum.Room1v1Class, // 成员 tab
-      announcement: !currentSubRoom && sessionInfo.roomType !== EduRoomTypeEnum.Room1v1Class, //公告 tab
-      allMute: visibleMuteAll && sessionInfo.roomType !== EduRoomTypeEnum.Room1v1Class, // 全体禁言按钮
-      showQuestionBox:
-        sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass &&
-        sessionInfo.role === EduRoleTypeEnum.student, //大班课课的学生显示提问
+      showInputBox: sessionInfo.role !== 0 && sessionInfo.role !== 4, // 输入UI
+      memebers: sessionInfo.roomType !== 0, // 成员 tab
+      announcement: !currentSubRoom && sessionInfo.roomType !== 0, //公告 tab
+      allMute: visibleMuteAll && sessionInfo.roomType !== 0, // 全体禁言按钮
+      showQuestionBox: sessionInfo.roomType === 2 && sessionInfo.role === 2, //大班课课的学生显示提问
       isFullSize: widgetStore.isFullSize,
       emoji: visibleEmoji,
       btnSend: visibleBtnSend,

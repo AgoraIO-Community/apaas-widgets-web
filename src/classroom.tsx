@@ -7,7 +7,6 @@ import { FcrWatermarkWidget } from './gallery/classroom/watermark';
 import { FcrWebviewWidget } from './gallery/classroom/webview';
 import { FcrBoardWidget } from './gallery/classroom/whiteboard';
 import tailwindConfig from '../tailwind.config';
-import '@ui-kit-utils/preflight.css';
 
 import { setTailwindConfig } from '@ui-kit-utils/tailwindcss';
 import './thirdparty-preset';

@@ -1,4 +1,4 @@
-import { bound, Lodash, Scheduler } from 'agora-common-libs';
+import { bound, Lodash, Scheduler, transI18n } from 'agora-common-libs';
 import { observable, action, runInAction, reaction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {
@@ -11,6 +11,7 @@ import {
   AgoraIMMessageType,
   AgoraIMTextMessage,
 } from '../../../../../common/im/wrapper/typs';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 const MAX_MESSAGE_COUNT = 1000;
 export class MessageStore {
   private _disposers: (() => void)[] = [];
@@ -33,10 +34,10 @@ export class MessageStore {
 
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
-    this._disposers.push(
-      //@ts-ignore
-      reaction(() => this._widget.shareUIStore.isLandscape, this.messageListScrollToBottom),
-    );
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this.messageListScrollToBottom,
+    });
   }
   private async _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.TextMessageReceived, this._onTextMessageReceived);
@@ -45,6 +46,10 @@ export class MessageStore {
 
     this._fcrChatRoom.off(AgoraIMEvents.AnnouncementUpdated, this._onAnnouncementUpdated);
     this._fcrChatRoom.off(AgoraIMEvents.AnnouncementDeleted, this._onAnnouncementDeleted);
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
+      onMessage: this.messageListScrollToBottom,
+    });
   }
   private _startPollingMessageTask() {
     if (!this._pollingMessageTask) {
@@ -153,6 +158,18 @@ export class MessageStore {
   @bound
   async sendTextMessage(text: string) {
     const message = this._fcrChatRoom.createTextMessage(text);
+
+    if (message.msg?.length > 300) {
+      console.log(this._widget);
+
+      this._widget.broadcast(AgoraExtensionWidgetEvent.AddSingletonToast, {
+        desc: transI18n('chat.enter_content_is_too_long'),
+        type: 'normal',
+      });
+
+      return;
+    }
+
     await this._fcrChatRoom.sendMessage(message);
     runInAction(() => {
       message.from = this._fcrChatRoom.userInfo?.userId;

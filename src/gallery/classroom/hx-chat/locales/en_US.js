@@ -26,6 +26,7 @@ const enUS = {
     send: 'Send',
     enter_contents: 'Please enter message',
     enter_content_is_empty: 'The message cannot be empty',
+    enter_content_is_too_long: 'Your message is too long, please split it into multiple messages',
     no_message: 'No Message',
     default_announcement: 'No notice',
     publish: 'Publish',

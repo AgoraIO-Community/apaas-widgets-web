@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import { App } from './app';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+
 import { bound, AgoraWidgetTrackMode } from 'agora-common-libs';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
@@ -35,7 +35,7 @@ export class FcrStreamMediaPlayerWidget extends AgoraEduToolWidget {
   @computed
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role) || this._privilege;
+    return [1, 3].includes(role) || this._privilege;
   }
 
   get resizable(): boolean {

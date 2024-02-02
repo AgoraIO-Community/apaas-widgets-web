@@ -121,6 +121,11 @@ export const InputMsg = ({ allMutePermission }) => {
   // 发送消息
   const sendTextMessage = () => (e) => {
     e.preventDefault();
+
+    if(content.length > 300) {
+      message.error(transI18n('chat.enter_content_is_too_long'));
+      return;
+    }
     // 消息为空不发送
     if (content.match(/^\s*$/)) {
       message.error(transI18n('chat.enter_content_is_empty'));

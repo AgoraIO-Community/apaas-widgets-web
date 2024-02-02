@@ -7,7 +7,6 @@ import { PluginStore } from './store';
 import { addResource } from './i18n/config';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
 import { WidgetModal } from '../../../components/modal';
-import { EduRoleTypeEnum, EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import { transI18n, ThemeProvider } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../events';
@@ -30,7 +29,7 @@ export class AgoraSelector extends AgoraEduToolWidget {
 
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role);
+    return [1, 3].includes(role);
   }
   get minWidth() {
     return 360;
@@ -41,7 +40,7 @@ export class AgoraSelector extends AgoraEduToolWidget {
 
   async onInstall(controller: AgoraWidgetController) {
     await addResource();
-    if (controller.classroomConfig.sessionInfo.roomType !== EduRoomTypeEnum.RoomBigClass) {
+    if (controller.classroomConfig.sessionInfo.roomType !== 2) {
       controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
         id: this.widgetName,
         name: transI18n('widget_selector.appName'),

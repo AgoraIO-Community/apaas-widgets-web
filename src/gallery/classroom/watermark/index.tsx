@@ -1,5 +1,5 @@
 import type { AgoraWidgetController } from 'agora-edu-core';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
 import ReactDOM from 'react-dom';
@@ -23,7 +23,7 @@ export class FcrWatermarkWidget extends AgoraCloudClassWidget {
   private _rendered = false;
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [EduRoleTypeEnum.teacher, EduRoleTypeEnum.assistant].includes(role);
+    return [1, 3].includes(role);
   }
 
   onInstall(controller: AgoraWidgetController): void {}

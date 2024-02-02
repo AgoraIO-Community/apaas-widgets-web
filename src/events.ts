@@ -85,6 +85,8 @@ export enum AgoraExtensionRoomEvent {
   WidgetDialogBoundariesChanged = 'widget-dialog-boundaries-changed',
   //设置插件全屏
   SetFullscreen = 'set-fullscreen',
+  //mobile连麦状态变更
+  MobileCallStateChanged = 'mobile-call-state-changed',
 }
 
 /**
@@ -159,4 +161,6 @@ export enum AgoraExtensionWidgetEvent {
   UpdatePosition = 'update-position',
   //更新倒计时状态
   CountdownTimerStateChanged = 'countdown-timer-state-changed',
+  //打开mobile web的举手弹窗
+  OpenMobileHandsUpActionSheet = 'open-mobile-hands-up-action-sheet',
 }

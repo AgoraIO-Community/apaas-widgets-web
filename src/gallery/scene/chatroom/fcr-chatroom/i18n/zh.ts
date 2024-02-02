@@ -42,4 +42,5 @@ export default {
   fcr_chat_label_no_announcement: '没有公告',
   fcr_chat_you_are_muted_by_teacher: '你被老师禁言了',
   fcr_chat_enter_message_placehoder: '请输入消息',
+  fcr_chat_tips_message_too_long: '您的消息过长，请拆分成多条消息发送',
 };

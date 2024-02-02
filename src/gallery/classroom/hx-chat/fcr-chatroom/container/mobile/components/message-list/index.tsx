@@ -1,6 +1,6 @@
 import ImageViewer from '../image-viewer';
 import { useI18n, Scheduler } from 'agora-common-libs';
-import { EduRoleTypeEnum } from 'agora-edu-core/lib/type';
+
 import throttle from 'lodash/throttle';
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useCallback, useMemo } from 'react';
@@ -311,7 +311,7 @@ const useMessageParams = ({
   const transI18n = useI18n();
 
   const isSelfMessage = message.from === fcrChatRoom.userInfo?.userId;
-  const isTeacherMessage = message.ext?.role === EduRoleTypeEnum.teacher;
+  const isTeacherMessage = message.ext?.role === 1;
   const messageFromAlias = isSelfMessage
     ? `(${transI18n('chat.me')})`
     : isTeacherMessage

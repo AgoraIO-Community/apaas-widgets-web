@@ -1,4 +1,3 @@
-import { EduRoomTypeEnum } from 'agora-edu-core/lib/type';
 import { action, autorun, observable, runInAction } from 'mobx';
 import { AgoraHXChatWidget } from '.';
 import { OrientationEnum } from './type';
@@ -21,14 +20,12 @@ export class WidgetChatUIStore {
     this.handleOrientationchange();
     autorun(() => {
       let isFullSize = false;
-      if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
+      if (sessionInfo.roomType === 2 && isH5) {
         isFullSize = true;
-      } else if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
+      } else if (sessionInfo.roomType === 2 && isH5) {
         isFullSize = this.orientation === 'portrait' ? false : true;
       } else {
-        isFullSize =
-          sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass ||
-          sessionInfo.roomType === EduRoomTypeEnum.Room1v1Class;
+        isFullSize = sessionInfo.roomType === 2 || sessionInfo.roomType === 0;
       }
       runInAction(() => (this.isFullSize = isFullSize));
     });
@@ -36,13 +33,11 @@ export class WidgetChatUIStore {
     autorun(() => {
       let isShowChat = isH5 ? true : false;
 
-      if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
+      if (sessionInfo.roomType === 2 && isH5) {
         isShowChat = true;
-      } else if (sessionInfo.roomType === EduRoomTypeEnum.RoomBigClass && isH5) {
+      } else if (sessionInfo.roomType === 2 && isH5) {
         isShowChat = this.orientation === 'portrait' ? false : true;
-      } else if (
-        [EduRoomTypeEnum.Room1v1Class, EduRoomTypeEnum.RoomBigClass].includes(sessionInfo.roomType)
-      ) {
+      } else if ([0, 2].includes(sessionInfo.roomType)) {
         isShowChat = true;
       }
       runInAction(() => (this.showChat = isShowChat));

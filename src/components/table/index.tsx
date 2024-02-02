@@ -1,9 +1,10 @@
 import classnames from 'classnames';
 import React, { useState, ReactElement } from 'react';
 import './index.css';
-import ConfigProvider from 'antd/lib/config-provider';
-import Empty from 'antd/lib/empty';
-import AntTable, { TableProps as AntTableProps } from 'antd/lib/table';
+import { ConfigProvider } from 'antd';
+import { Empty } from 'antd';
+import { Table as AntTable } from 'antd';
+import type { TableProps as AntTableProps } from 'antd/lib/table';
 
 export interface TableBaseProps {
   className?: string;
@@ -17,7 +18,7 @@ export interface TableBaseProps {
   onScroll?: React.UIEventHandler<HTMLDivElement>;
 }
 
-export type TableProps = TableBaseProps
+export type TableProps = TableBaseProps;
 
 export const Table: React.FC<TableProps> = ({ className, children, align, ...restProps }) => {
   const cls = classnames({
@@ -153,7 +154,7 @@ export function ATable<T>(props: ATableProps<T>): ReactElement {
   return (
     <ConfigProvider
       renderEmpty={() => <Empty className={props.emptyClassName} image={props.emptyImg}></Empty>}>
-      <AntTable {...props as any} />
+      <AntTable {...(props as any)} />
     </ConfigProvider>
   );
 }

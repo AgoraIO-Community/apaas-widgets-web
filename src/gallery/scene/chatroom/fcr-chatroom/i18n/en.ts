@@ -42,4 +42,5 @@ export default {
   fcr_chat_label_no_announcement: 'No announcement',
   fcr_chat_you_are_muted_by_teacher: 'You are muted by teacher',
   fcr_chat_enter_message_placehoder: 'Enter a message...',
+  fcr_chat_tips_message_too_long: 'Your message is too long, please split it into multiple messages'
 };
