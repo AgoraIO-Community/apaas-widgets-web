@@ -11,7 +11,8 @@ import { useI18n } from 'agora-common-libs';
 
 const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   const pluginStore = usePluginStore();
-  const { duration, setDuration, play, reset } = useTimeCounter();
+  const { duration, setDuration, play, reset } = useTimeCounter(widget);
+
   const durationRef = React.useRef<number>(duration);
   const [caution, setCaution] = React.useState(false);
   const transI18n = useI18n();
@@ -98,21 +99,19 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
               }}
               suffix={
                 <span
-                  className={`${
-                    pluginStore.number != null &&
+                  className={`${pluginStore.number != null &&
                     pluginStore.number <= 3600 &&
                     pluginStore.number >= 1
-                      ? 'count-input-color-normal'
-                      : 'count-input-color-error'
-                  }`}>
+                    ? 'count-input-color-normal'
+                    : 'count-input-color-error'
+                    }`}>
                   ({transI18n('widget_countdown.seconds')})
                 </span>
               }
-              className={`${
-                pluginStore.number != null && pluginStore.number <= 3600 && pluginStore.number >= 1
-                  ? 'count-input-color-normal'
-                  : 'count-input-color-error'
-              }`}
+              className={`${pluginStore.number != null && pluginStore.number <= 3600 && pluginStore.number >= 1
+                ? 'count-input-color-normal'
+                : 'count-input-color-error'
+                }`}
               maxNumber={3600}
             />
           </div>
