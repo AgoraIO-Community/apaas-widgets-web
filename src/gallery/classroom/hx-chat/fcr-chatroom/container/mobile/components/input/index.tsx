@@ -135,8 +135,8 @@ export const FcrChatRoomH5Inputs = observer(
               isLandscape && (showEmoji || inputFocus)
                 ? '#fff'
                 : isLandscape
-                ? 'transparent'
-                : '#27292f',
+                  ? 'transparent'
+                  : '#27292f',
           }}>
           <div
             className={classNames('fcr-chatroom-mobile-inputs-input', {
@@ -271,7 +271,13 @@ export const FcrChatRoomH5Inputs = observer(
                   type="file"
                   style={{ display: 'none' }}></input>
               </>
-
+              <div className="fcr-chatroom-mobile-inputs-raise-up">
+                <SvgImgMobile
+                  type={SvgIconEnum.RAAISE_HANDS}
+                  size={18}
+                  landscape={isLandscape}
+                  forceLandscape={forceLandscape}></SvgImgMobile>
+              </div>
               <div className="fcr-chatroom-mobile-inputs-call" onClick={openHandsUpActionSheet}>
                 {mobileCallState === MobileCallState.Processing && (
                   <div className="fcr-chatroom-mobile-inputs-call-loading">
@@ -288,7 +294,7 @@ export const FcrChatRoomH5Inputs = observer(
                   colors={{ ...getCallIcon().colors }}
                   size={30}></SvgImgMobile>
               </div>
-              <ThumbsUp></ThumbsUp>
+              {/* <ThumbsUp></ThumbsUp> */}
             </>
           )}
         </div>
