@@ -47,47 +47,47 @@ export const FcrChatRoomH5Inputs = observer(
       switch (mobileCallState) {
         case MobileCallState.Initialize:
           return {
-            icon: SvgIconEnum.CALL_MOBILE,
-            colors: {
-              iconPrimary: undefined,
-              iconSecondary: undefined,
-            },
+            icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
+            // colors: {
+            //   iconPrimary: undefined,
+            //   iconSecondary: undefined,
+            // },
           };
         case MobileCallState.VideoAndVoiceCall:
           return {
             icon: SvgIconEnum.CALLING_MOBILE,
-            colors: {
-              iconPrimary: 'rgba(66, 98, 255, 1)',
-              iconSecondary: 'rgba(66, 98, 255, 1)',
-            },
+            // colors: {
+            //   iconPrimary: 'rgba(66, 98, 255, 1)',
+            //   iconSecondary: 'rgba(66, 98, 255, 1)',
+            // },
           };
         case MobileCallState.VoiceCall:
           return {
-            icon: SvgIconEnum.CALLING_MOBILE,
-            colors: {
-              iconPrimary: 'rgba(66, 98, 255, 1)',
-              iconSecondary: '#fff',
-            },
+            icon: SvgIconEnum.VOICE_CALLING_MOBILE,
+            // colors: {
+            //   iconPrimary: 'rgba(66, 98, 255, 1)',
+            //   iconSecondary: '#fff',
+            // },
           };
         case MobileCallState.VideoCall:
           return {
-            icon: SvgIconEnum.CALLING_MOBILE,
-            colors: {
-              iconPrimary: '#fff',
-              iconSecondary: 'rgba(66, 98, 255, 1)',
-            },
+            icon: SvgIconEnum.VIDEO_CALLING_MOBILE,
+            // colors: {
+            //   iconPrimary: '#fff',
+            //   iconSecondary: 'rgba(66, 98, 255, 1)',
+            // },
           };
         case MobileCallState.DeviceOffCall:
           return {
-            icon: SvgIconEnum.CALLING_MOBILE,
-            colors: {
-              iconPrimary: '#fff',
-              iconSecondary: '#fff',
-            },
+            icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
+            // colors: {
+            //   iconPrimary: '#fff',
+            //   iconSecondary: '#fff',
+            // },
           };
         default:
           return {
-            icon: SvgIconEnum.CALL_MOBILE,
+            icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
             colors: {
               iconPrimary: undefined,
               iconSecondary: undefined,

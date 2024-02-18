@@ -60,13 +60,12 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
   private _renderApp() {
     if (!this._rendered && this.imConfig && this.easemobUserId && this._dom) {
       ReactDOM.render(<FcrChatRoomApp widget={this} />, this._dom);
-
       this._rendered = true;
     }
   }
 
   locate() {
-    return document.querySelector('.widget-slot-chat') as HTMLElement;
+    return document.querySelector('.widget-slot-chat-mobile') as HTMLElement;
   }
 
   render(dom: HTMLElement): void {
