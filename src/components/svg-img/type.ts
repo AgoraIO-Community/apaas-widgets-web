@@ -178,5 +178,6 @@ export enum SvgIconEnum {
   VIDEO_CALLING_MOBILE = 'video-calling-mobile',
   VOICE_CALLING_MOBILE = 'voice-calling-mobile',
   DEVICE_OFF_CALL_MOBILE = 'device-off-call-mobile',
-  RAAISE_HANDS = 'raise-hands'
+  RAAISE_HANDS = 'raise-hands',
+  FCR_TOOLTIP_ARROW = 'fcr_tooltip_arrow',
 }

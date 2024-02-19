@@ -3,6 +3,8 @@ import { computed, observable, runInAction, action } from 'mobx';
 
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
 import { Scheduler, bound } from 'agora-common-libs';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
+import { CustomMessageHandsUpState } from '../../type';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -12,7 +14,9 @@ export class UserStore {
   @observable userCarouselAnimDelay = 3000;
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
-
+  @observable isRaiseHand = false;
+  @observable raiseHandTooltipVisible = false;
+  private _raiseHandTooltipTask: Scheduler.Task | null = null;
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._onUserJoined = this._onUserJoined.bind(this);
@@ -28,12 +32,44 @@ export class UserStore {
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
+      onMessage: this._onRaiseHandStateChanged,
+    });
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
+      onMessage: this._onRaiseHandStateChanged,
+    });
   }
+  @action.bound
+  private _onRaiseHandStateChanged(data: CustomMessageHandsUpState) {
+    this.isRaiseHand = data === CustomMessageHandsUpState.raiseHand;
+    if (this.isRaiseHand) {
+      this.raiseHandTooltipVisible = true;
+      this._raiseHandTooltipTask = Scheduler.shared.addDelayTask(() => {
+        runInAction(() => {
+          this.raiseHandTooltipVisible = false;
+        });
+      }, 6000);
+    } else {
+      this._raiseHandTooltipTask?.stop();
+      this.raiseHandTooltipVisible = false;
+    }
+  }
+  @bound
+  raiseHand() {
+    this._widget.broadcast(AgoraExtensionWidgetEvent.RaiseHand, undefined);
+  }
+  @bound
+  lowerHand() {
+    this._widget.broadcast(AgoraExtensionWidgetEvent.LowerHand, undefined);
+  }
+
   @bound
   private _updateUserMutedState(muted: UserMutedState) {
     const { userUuid } = this._widget.classroomConfig.sessionInfo;

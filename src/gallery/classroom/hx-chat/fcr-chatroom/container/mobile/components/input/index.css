@@ -84,7 +84,7 @@
   animation-delay: 0.2s;
 }
 
-.fcr-chatroom-mobile-inputs-raise-up {
+.fcr-chatroom-mobile-inputs-raise-hand {
   width: 36px;
   height: 36px;
   border-radius: 50%;
@@ -93,9 +93,12 @@
   justify-content: center;
   align-items: center;
 }
-.fcr-chatroom-mobile-inputs-raise-up {
+.fcr-chatroom-mobile-inputs-raise-hand {
   background: rgba(59, 62, 72, 1);
   position: relative;
+}
+.fcr-chatroom-mobile-inputs-raise-hand-active {
+  background: rgba(66, 98, 255, 1);
 }
 @keyframes dotAnimation {
   0%,
