@@ -11,7 +11,7 @@ module.exports = {
       unitPrecision: 5,
       viewportUnit: 'vw',
       fontViewportUnit: 'vw',
-      include: [/\/mobile\//, /\.mobile\./],
+      include: [/\/classroom\//],
       exclude: [/\/node_modules\//i],
       landscape: true, // 是否处理横屏情况
       landscapeUnit: 'vw', // (String) 横屏时使用的单位

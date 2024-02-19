@@ -41,7 +41,7 @@ export const FcrChatRoomH5Inputs = observer(
         quitForceLandscape,
         mobileCallState,
       },
-      userStore: { userMuted },
+      userStore: { userMuted, isRaiseHand, raiseHand, lowerHand },
     } = useStore();
     const getCallIcon = () => {
       switch (mobileCallState) {
@@ -135,8 +135,8 @@ export const FcrChatRoomH5Inputs = observer(
               isLandscape && (showEmoji || inputFocus)
                 ? '#fff'
                 : isLandscape
-                  ? 'transparent'
-                  : '#27292f',
+                ? 'transparent'
+                : '#27292f',
           }}>
           <div
             className={classNames('fcr-chatroom-mobile-inputs-input', {
@@ -271,7 +271,11 @@ export const FcrChatRoomH5Inputs = observer(
                   type="file"
                   style={{ display: 'none' }}></input>
               </>
-              <div className="fcr-chatroom-mobile-inputs-raise-up">
+              <div
+                onClick={isRaiseHand ? lowerHand : raiseHand}
+                className={classNames('fcr-chatroom-mobile-inputs-raise-hand', {
+                  'fcr-chatroom-mobile-inputs-raise-hand-active': isRaiseHand,
+                })}>
                 <SvgImgMobile
                   type={SvgIconEnum.RAAISE_HANDS}
                   size={18}
