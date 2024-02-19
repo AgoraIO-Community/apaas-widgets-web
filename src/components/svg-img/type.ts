@@ -175,5 +175,6 @@ export enum SvgIconEnum {
   QUIT_LANDSCAPE = 'quit-landscape',
   CALL_MOBILE = 'call-mobile',
   CALLING_MOBILE = 'calling-mobile',
-  RAAISE_HANDS = 'raise-hands'
+  RAAISE_HANDS = 'raise-hands',
+  FCR_TOOLTIP_ARROW = 'fcr_tooltip_arrow',
 }

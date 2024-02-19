@@ -15,6 +15,8 @@ export class UserStore {
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
   @observable isRaiseHand = false;
+  @observable raiseHandTooltipVisible = false;
+  private _raiseHandTooltipTask: Scheduler.Task | null = null;
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._onUserJoined = this._onUserJoined.bind(this);
@@ -47,6 +49,17 @@ export class UserStore {
   @action.bound
   private _onRaiseHandStateChanged(data: CustomMessageHandsUpState) {
     this.isRaiseHand = data === CustomMessageHandsUpState.raiseHand;
+    if (this.isRaiseHand) {
+      this.raiseHandTooltipVisible = true;
+      this._raiseHandTooltipTask = Scheduler.shared.addDelayTask(() => {
+        runInAction(() => {
+          this.raiseHandTooltipVisible = false;
+        });
+      }, 6000);
+    } else {
+      this._raiseHandTooltipTask?.stop();
+      this.raiseHandTooltipVisible = false;
+    }
   }
   @bound
   raiseHand() {

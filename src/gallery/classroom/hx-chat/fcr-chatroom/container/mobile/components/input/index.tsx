@@ -3,7 +3,6 @@ import { useCallback, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
-import { ThumbsUp } from '../thumbs-up';
 import { emojis } from '../../../../utils/emoji';
 import './index.css';
 import { useI18n } from 'agora-common-libs';
@@ -11,6 +10,7 @@ import { useClickAnywhere } from '../../../../utils/hooks';
 import classNames from 'classnames';
 import { AgoraExtensionWidgetEvent } from '../../../../../../../../events';
 import { MobileCallState } from '../../../../store/room';
+import { ToolTip } from '../tooltip';
 
 export const FcrChatRoomH5Inputs = observer(
   ({
@@ -41,7 +41,7 @@ export const FcrChatRoomH5Inputs = observer(
         quitForceLandscape,
         mobileCallState,
       },
-      userStore: { userMuted, isRaiseHand, raiseHand, lowerHand },
+      userStore: { userMuted, isRaiseHand, raiseHand, lowerHand, raiseHandTooltipVisible },
     } = useStore();
     const getCallIcon = () => {
       switch (mobileCallState) {
@@ -271,17 +271,22 @@ export const FcrChatRoomH5Inputs = observer(
                   type="file"
                   style={{ display: 'none' }}></input>
               </>
-              <div
-                onClick={isRaiseHand ? lowerHand : raiseHand}
-                className={classNames('fcr-chatroom-mobile-inputs-raise-hand', {
-                  'fcr-chatroom-mobile-inputs-raise-hand-active': isRaiseHand,
-                })}>
-                <SvgImgMobile
-                  type={SvgIconEnum.RAAISE_HANDS}
-                  size={18}
-                  landscape={isLandscape}
-                  forceLandscape={forceLandscape}></SvgImgMobile>
-              </div>
+              <ToolTip
+                content={transI18n('fcr_participants_tips_lower_hand')}
+                visible={raiseHandTooltipVisible}>
+                <div
+                  onClick={isRaiseHand ? lowerHand : raiseHand}
+                  className={classNames('fcr-chatroom-mobile-inputs-raise-hand', {
+                    'fcr-chatroom-mobile-inputs-raise-hand-active': isRaiseHand,
+                  })}>
+                  <SvgImgMobile
+                    type={SvgIconEnum.RAAISE_HANDS}
+                    size={18}
+                    landscape={isLandscape}
+                    forceLandscape={forceLandscape}></SvgImgMobile>
+                </div>
+              </ToolTip>
+
               <div className="fcr-chatroom-mobile-inputs-call" onClick={openHandsUpActionSheet}>
                 {mobileCallState === MobileCallState.Processing && (
                   <div className="fcr-chatroom-mobile-inputs-call-loading">

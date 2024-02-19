@@ -66,6 +66,7 @@ const enUS = {
   fcr_H5_mute_user_msg: 'You have been muted by teacher',
   fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
   fcr_H5_button_chat: 'Chat',
+  fcr_participants_tips_lower_hand: 'Lower Hand',
 };
 
 export default enUS;

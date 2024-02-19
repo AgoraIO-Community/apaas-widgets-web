@@ -68,5 +68,6 @@ const im_CN = {
   fcr_H5_mute_user_msg: '您被老师禁止发言了',
   fcr_H5_unmute_user_msg: '您被老师解除禁言了',
   fcr_H5_button_chat: '去讨论',
+  fcr_participants_tips_lower_hand: '手放下',
 };
 export default im_CN;
