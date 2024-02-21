@@ -2,6 +2,7 @@ import { MobXProviderContext } from 'mobx-react';
 import { useContext, useState, useEffect, useCallback, useRef } from 'react';
 import { PluginStore } from './store';
 import { AgoraCountdown } from '.';
+import RewardSound from './assets/countdown.mp3';
 
 export enum CountdownStatus {
   STOPPED = 0,
@@ -19,7 +20,7 @@ export const usePluginStore = (): PluginStore => {
 // 获取当前时间
 // const getCurrentTimestamp = () => (window.performance ? performance.now() : Date.now());
 export const useTimeCounter = (widget: AgoraCountdown) => {
-  const timer = useRef<ReturnType<typeof setInterval> | null>(null);
+  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const { extra } = widget.roomProperties;
   const [duration, setDuration] = useState<number>(extra.duration || 0);
   const calcRemoteDuration = () => {
@@ -35,32 +36,43 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
   };
 
   const step = useCallback(() => {
-    setDuration((duration) => duration - 1);
+    setDuration((duration) => {
+      const newCurrent = duration - 1;
+      if (newCurrent < 5 && newCurrent >= 0) {
+        const audioElement = new Audio(RewardSound);
+        audioElement.play();
+      }
+      return newCurrent;
+    });
   }, []);
 
   const play = useCallback(() => {
     stop();
-    timer.current = setInterval(() => {
-      step();
-    }, 1000);
+    function recursiveTimeout() {
+      timer.current = setTimeout(() => {
+        step();
+        recursiveTimeout();
+      }, 1000);
+    }
+    recursiveTimeout();
   }, []);
 
   const stop = useCallback(() => {
     if (timer.current) {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
     }
   }, []);
 
   const reset = useCallback(() => {
     if (timer.current) {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
       setDuration((_) => 0);
     }
   }, []);
 
   const pause = useCallback(() => {
     if (timer.current) {
-      clearInterval(timer.current);
+      clearTimeout(timer.current);
       setDuration(calcRemoteDuration());
     }
   }, []);
