@@ -22,6 +22,17 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
   const timer = useRef<ReturnType<typeof setInterval> | null>(null);
   const { extra } = widget.roomProperties;
   const [duration, setDuration] = useState<number>(extra.duration || 0);
+  const calcRemoteDuration = () => {
+    const { extra } = widget.roomProperties;
+    const serverTimeCalcByLocalTime =
+      Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
+    const duration = extra?.startTime
+      ? extra?.duration
+        ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
+        : 0
+      : extra.duration;
+    return Math.max(duration, 0);
+  };
 
   const step = useCallback(() => {
     setDuration((duration) => duration - 1);
@@ -50,7 +61,7 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
   const pause = useCallback(() => {
     if (timer.current) {
       clearInterval(timer.current);
-      setDuration((duration) => duration);
+      setDuration(calcRemoteDuration());
     }
   }, []);
 
@@ -64,17 +75,23 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
     if (remoteStatus === CountdownStatus.PAUSED) {
       pause();
     }
-  }, [])
+  }, []);
   useEffect(() => {
     if (!duration || duration <= 0) {
-      reset()
-      return
+      reset();
+      return;
     }
-    followRemoteStatus(extra.state)
-  }, [extra.state, duration])
+    followRemoteStatus(extra.state);
+  }, [extra.state, duration]);
   // useEffect(() => {
   //   (!duration || duration <= 0) && reset();
   // }, [duration]);
 
-  return { duration, setDuration, play, stop, reset };
+  return {
+    duration: extra.state === CountdownStatus.STOPPED ? 0 : duration,
+    setDuration,
+    play,
+    stop,
+    reset,
+  };
 };
