@@ -12,6 +12,7 @@ const polling_en = {
     'mul-sel': 'Multi-select',
     'submit-tip': 'Please select an option before submitting',
     'fcr_poll_people_participated': 'People Participated',
+    'fcr_H5_tips_end_poll': 'Teacher has ended the polls',
   },
 };
 

@@ -12,6 +12,7 @@ const polling_zh = {
     'mul-sel': '多选',
     'submit-tip': '请先选择选项再提交',
     'fcr_poll_people_participated': '参与人数',
+    'fcr_H5_tips_end_poll': '老师已结束投票',
   },
 };
 
