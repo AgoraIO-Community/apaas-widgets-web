@@ -1,5 +1,5 @@
 import React, { useEffect } from 'react';
-import { usePluginStore, useTimeCounter } from '../hooks';
+import { CountdownStatus, usePluginStore, useTimeCounter } from '../hooks';
 import { observer } from 'mobx-react';
 import FlipClock from './flip-clock';
 import { AgoraCountdown } from '..';
@@ -27,13 +27,17 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   }, [widget.roomProperties.extra]);
 
   React.useEffect(() => {
-    if (durationRef.current !== duration && duration < 10) {
+    if (
+      durationRef.current !== duration &&
+      duration < 10 &&
+      widget.roomProperties.extra.state !== CountdownStatus.STOPPED
+    ) {
       setCaution(true);
     } else {
       setCaution(false);
     }
     durationRef.current = duration;
-  }, [duration]);
+  }, [duration, widget.roomProperties.extra]);
   return (
     <div
       className={`fcr-countdown-mobile  ${
