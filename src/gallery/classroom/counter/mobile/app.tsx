@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { usePluginStore, useTimeCounter } from '../hooks';
 import { observer } from 'mobx-react';
 import FlipClock from './flip-clock';
-import { autorun } from 'mobx';
 import { AgoraCountdown } from '..';
 import './index.css';
 const App = observer(({ widget }: { widget: AgoraCountdown }) => {
@@ -22,18 +21,10 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
     return Math.max(duration, 0);
   };
   useEffect(() => {
-    return autorun(() => {
-      const { extra } = widget.roomProperties;
-      if (extra && extra.startTime) {
-        setDuration(calcRemoteDuration())
-        const serverTimeCalcByLocalTime = Date.now() + pluginStore.getTimestampGap;
-        const direction = serverTimeCalcByLocalTime - (extra.startTime + extra.duration * 1000); // 判断方向
-        if (direction < 0) {
-          pluginStore.setShowSetting(false);
-        }
-      }
-    });
-  }, []);
+    if (widget.roomProperties.extra && widget.roomProperties.extra.startTime) {
+      setDuration(calcRemoteDuration());
+    }
+  }, [widget.roomProperties.extra]);
 
   React.useEffect(() => {
     if (durationRef.current !== duration && duration < 10) {
@@ -45,8 +36,9 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   }, [duration]);
   return (
     <div
-      className={`fcr-countdown-mobile  ${pluginStore.isLandscape ? 'fcr-countdown-mobile-landscape' : ''
-        } ${pluginStore.landscapeToolBarVisible ? '' : 'fcr-countdown-mobile-landscape-right'}`}>
+      className={`fcr-countdown-mobile  ${
+        pluginStore.isLandscape ? 'fcr-countdown-mobile-landscape' : ''
+      } ${pluginStore.landscapeToolBarVisible ? '' : 'fcr-countdown-mobile-landscape-right'}`}>
       <FlipClock duration={duration} caution={!pluginStore.showSetting && caution} />
     </div>
   );
