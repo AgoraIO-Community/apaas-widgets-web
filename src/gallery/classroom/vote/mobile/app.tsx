@@ -145,7 +145,7 @@ export const PollH5 = observer(() => {
           </div>
           {isShowResultSection && (
             <div className={`fcr-mobile-poll-widget-result-count`}>
-              {pollingResultUserCount}人参与
+              {pollingResultUserCount} {transI18n('widget_polling.fcr_poll_people_participated')}
             </div>
           )}
           {!isShowResultSection && (

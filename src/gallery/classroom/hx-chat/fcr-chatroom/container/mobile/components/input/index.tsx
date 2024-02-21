@@ -48,50 +48,26 @@ export const FcrChatRoomH5Inputs = observer(
         case MobileCallState.Initialize:
           return {
             icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
-            // colors: {
-            //   iconPrimary: undefined,
-            //   iconSecondary: undefined,
-            // },
           };
         case MobileCallState.VideoAndVoiceCall:
           return {
             icon: SvgIconEnum.CALLING_MOBILE,
-            // colors: {
-            //   iconPrimary: 'rgba(66, 98, 255, 1)',
-            //   iconSecondary: 'rgba(66, 98, 255, 1)',
-            // },
           };
         case MobileCallState.VoiceCall:
           return {
             icon: SvgIconEnum.VOICE_CALLING_MOBILE,
-            // colors: {
-            //   iconPrimary: 'rgba(66, 98, 255, 1)',
-            //   iconSecondary: '#fff',
-            // },
           };
         case MobileCallState.VideoCall:
           return {
             icon: SvgIconEnum.VIDEO_CALLING_MOBILE,
-            // colors: {
-            //   iconPrimary: '#fff',
-            //   iconSecondary: 'rgba(66, 98, 255, 1)',
-            // },
           };
         case MobileCallState.DeviceOffCall:
           return {
             icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
-            // colors: {
-            //   iconPrimary: '#fff',
-            //   iconSecondary: '#fff',
-            // },
           };
         default:
           return {
             icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
-            colors: {
-              iconPrimary: undefined,
-              iconSecondary: undefined,
-            },
           };
       }
     };
@@ -135,8 +111,8 @@ export const FcrChatRoomH5Inputs = observer(
               isLandscape && (showEmoji || inputFocus)
                 ? '#fff'
                 : isLandscape
-                ? 'transparent'
-                : '#27292f',
+                  ? 'transparent'
+                  : '#27292f',
           }}>
           <div
             className={classNames('fcr-chatroom-mobile-inputs-input', {
@@ -300,7 +276,7 @@ export const FcrChatRoomH5Inputs = observer(
                   forceLandscape={forceLandscape}
                   landscape={isLandscape}
                   type={getCallIcon().icon}
-                  colors={{ ...getCallIcon().colors }}
+                  // colors={{ ...getCallIcon().colors }}
                   size={30}></SvgImgMobile>
               </div>
               {/* <ThumbsUp></ThumbsUp> */}

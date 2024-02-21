@@ -11,6 +11,7 @@ const polling_en = {
     'single-sel': 'Single select',
     'mul-sel': 'Multi-select',
     'submit-tip': 'Please select an option before submitting',
+    'fcr_poll_people_participated': 'People Participated',
   },
 };
 

@@ -11,6 +11,7 @@ const polling_zh = {
     'single-sel': '单选',
     'mul-sel': '多选',
     'submit-tip': '请先选择选项再提交',
+    'fcr_poll_people_participated': '参与人数',
   },
 };
 
