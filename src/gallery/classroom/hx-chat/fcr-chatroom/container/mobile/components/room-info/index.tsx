@@ -25,22 +25,6 @@ export const RoomInfoContainer = observer(
         className={`fcr-mobile-interact-container${landscape ? '-landscape' : ''} ${classNames}`}
         style={{ ...style }}>
         <>
-          {!landscape && (
-            <div className="fcr-mobile-interact-container-top">
-              <div className="fcr-mobile-interact-container-placeholder"></div>
-              {
-                <div
-                  className="fcr-chatroom-mobile-announcement"
-                  style={{
-                    height: announcement && showAnnouncement ? 'auto' : '0px',
-                    ...(announcement && showAnnouncement ? {} : { paddingBottom: '0px' }),
-                  }}>
-                  <span>{transI18n('chat.announcement')}</span>
-                  <span>{announcement}</span>
-                </div>
-              }
-            </div>
-          )}
           <RoomInfo landscape={landscape} />
           {children}
         </>
@@ -110,37 +94,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
         </div>
       </div>
     </div>
-  ) : (
-    <div className="fcr-mobile-inter-room-info">
-      <div className="fcr-mobile-inter-room-info-left">
-        <FcrLogo></FcrLogo>
-        {teacherName && (
-          <div className="fcr-mobile-inter-room-info-teacher-name">
-            <span>{transI18n('chat.teacher')}:</span>
-            <span>{teacherName}</span>
-          </div>
-        )}
-        <FcrHot></FcrHot>
-      </div>
-      <div className="fcr-mobile-inter-room-info-right">
-        <div className="fcr-mobile-inter-room-info-start-time">{classStatusText}</div>
-        {announcement && (
-          <div
-            className="fcr-mobile-inter-room-info-toggle-announcement"
-            onClick={() => {
-              setShowAnnouncement(!showAnnouncement);
-            }}>
-            <SvgImgMobile
-              forceLandscape={forceLandscape}
-              landscape={landscape}
-              style={{ transform: `rotate(${showAnnouncement ? '180deg' : '0deg'})` }}
-              type={SvgIconEnum.DOUBLE_ARROW_DOWN}
-              size={12}></SvgImgMobile>
-          </div>
-        )}
-      </div>
-    </div>
-  );
+  ) : null
 });
 export const FcrLogo = observer(() => {
   const {
@@ -166,7 +120,8 @@ export const FcrHot = observer(() => {
       <SvgImgMobile
         forceLandscape={forceLandscape}
         landscape={isLandscape}
-        type={SvgIconEnum.HOT}
+        type={SvgIconEnum.USER_COUNT}
+        colors={{ iconPrimary: '#757575' }}
         size={20}></SvgImgMobile>{' '}
       <span>
         {userCount} {transI18n('fcr_h5_label_watched')}

@@ -180,4 +180,5 @@ export enum SvgIconEnum {
   DEVICE_OFF_CALL_MOBILE = 'device-off-call-mobile',
   RAAISE_HANDS = 'raise-hands',
   FCR_TOOLTIP_ARROW = 'fcr_tooltip_arrow',
+  USER_COUNT = 'user-count',
 }
