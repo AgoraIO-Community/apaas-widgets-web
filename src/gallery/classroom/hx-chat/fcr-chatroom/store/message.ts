@@ -201,6 +201,7 @@ export class MessageStore {
     const announcement = await this._fcrChatRoom.getAnnouncement();
     runInAction(() => {
       this.announcement = announcement;
+      this.addMessage(announcement);
     });
   }
 

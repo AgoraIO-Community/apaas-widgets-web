@@ -108,8 +108,8 @@ export class FcrChatRoomStore {
       return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
     }
     this.roomStore.getChatRoomDetails();
-    await this.messageStore.getHistoryMessageList();
     this.messageStore.getAnnouncement();
+    this.messageStore.getHistoryMessageList();
   }
   @bound
   broadcastWidgetMessage(messageType: string, message: unknown) {

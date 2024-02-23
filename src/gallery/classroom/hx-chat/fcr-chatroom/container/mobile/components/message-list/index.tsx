@@ -19,13 +19,11 @@ import './index.css';
 export const MessageList = observer(() => {
   const {
     messageStore: {
-      announcement,
       messageList,
       isBottom,
       setIsBottom,
       unreadMessageCount,
-      addMessage,
-      removeAnnouncementFromMessageList,
+
       setMessageListDom,
       messageListScrollToBottom,
     },
@@ -65,14 +63,7 @@ export const MessageList = observer(() => {
       messageListScrollToBottom();
     }
   }, [isBottom, messageList.length, messageListScrollToBottom]);
-  useEffect(() => {
-    if (isLandscape && announcement) {
-      addMessage(announcement);
-    }
-    if (!isLandscape) {
-      removeAnnouncementFromMessageList();
-    }
-  }, [announcement, isLandscape]);
+
   useEffect(() => {
     const messageContainer = messageContainerRef.current;
     const resizeObserver = new ResizeObserver(handleScroll);
