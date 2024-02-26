@@ -101,7 +101,9 @@ export const FcrChatRoomH5Inputs = observer(
     return (
       <>
         <div
-          className="fcr-chatroom-mobile-inputs"
+          className={classNames('fcr-chatroom-mobile-inputs', {
+            'fcr-chatroom-mobile-inputs-landscape': isLandscape,
+          })}
           style={{
             visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
             opacity: landscapeToolBarVisible ? 1 : 0,
@@ -111,8 +113,8 @@ export const FcrChatRoomH5Inputs = observer(
               isLandscape && (showEmoji || inputFocus)
                 ? '#fff'
                 : isLandscape
-                  ? 'transparent'
-                  : '#27292f',
+                ? 'transparent'
+                : '#27292f',
           }}>
           <div
             className={classNames('fcr-chatroom-mobile-inputs-input', {

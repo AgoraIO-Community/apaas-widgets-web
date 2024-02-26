@@ -3,7 +3,7 @@ import { useI18n, Scheduler } from 'agora-common-libs';
 
 import throttle from 'lodash/throttle';
 import { observer } from 'mobx-react';
-import { useEffect, useRef, useCallback, useMemo } from 'react';
+import { useEffect, useRef, useCallback, useMemo, useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import {
   AgoraIMBase,
@@ -30,12 +30,20 @@ export const MessageList = observer(() => {
     roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
+  const scrollingRef = useRef(false);
+  const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
 
   const transI18n = useI18n();
   const messageContainerRef = useRef<HTMLDivElement>(null);
+
   const handleScroll = useCallback(
     throttle(() => {
+      scrollingTaskRef.current?.stop();
+      scrollingTaskRef.current = Scheduler.shared.addDelayTask(() => {
+        scrollingRef.current = false;
+      }, 300);
+      scrollingRef.current = true;
       if (messageContainerRef.current)
         if (
           messageContainerRef.current.scrollTop + messageContainerRef.current.clientHeight <=
@@ -54,6 +62,10 @@ export const MessageList = observer(() => {
     }
   }, [isLandscape]);
   useEffect(() => {
+    console.log(isBottom, scrollingRef.current, 'scrollingRef.current');
+    if (scrollingRef.current) {
+      return;
+    }
     const lastMessage = messageList[messageList.length - 1];
     if (
       isBottom ||

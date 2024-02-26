@@ -4,9 +4,10 @@
   left: 0;
   bottom: 0;
   height: 100%;
-  background: #f4f4ff;
+  background: #27292f;
   position: relative;
   min-height: 100px;
+  padding-bottom: 56px;
 }
 .fcr-mobile-interact-container-top {
   position: relative;

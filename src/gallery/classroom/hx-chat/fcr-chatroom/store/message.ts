@@ -196,6 +196,7 @@ export class MessageStore {
       this._messageQueue = this._messageQueue.concat(messages);
     });
     this._startPollingMessageTask();
+    setTimeout(this.messageListScrollToBottom, 500);
   }
   async getAnnouncement() {
     const announcement = await this._fcrChatRoom.getAnnouncement();

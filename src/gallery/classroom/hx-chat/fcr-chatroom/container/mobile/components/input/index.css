@@ -6,7 +6,13 @@
   flex-shrink: 0;
   background: #27292f;
   pointer-events: all;
-  position: relative;
+  pointer-events: all;
+}
+.fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  width: 100%;
 }
 .fcr-chatroom-mobile-inputs-input {
   position: relative;
