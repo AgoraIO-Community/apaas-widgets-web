@@ -35,9 +35,9 @@ export const FcrCountdownApp = ({ widget }: { widget: FcrCountdownWidget }) => {
   const [timeFormat, setTimeFormat] = useState<TimeFormat>(defaultTimeFormat);
 
   const { minimized } = useCountdownMinimized(widget);
-  const { duration, totalDuration, status: remoteStatus } = useCountdownRemoteStatus(widget);
+  const { totalDuration, status: remoteStatus } = useCountdownRemoteStatus(widget);
 
-  const { current } = useCountdown(duration, remoteStatus);
+  const { current } = useCountdown(widget, remoteStatus);
   const isStopped = remoteStatus === CountdownStatus.STOPPED;
   const roomId = widget.classroomStore.connectionStore.scene?.sceneId || '0';
   useEffect(() => {

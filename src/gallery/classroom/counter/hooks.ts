@@ -20,7 +20,7 @@ export const usePluginStore = (): PluginStore => {
 // 获取当前时间
 // const getCurrentTimestamp = () => (window.performance ? performance.now() : Date.now());
 export const useTimeCounter = (widget: AgoraCountdown) => {
-  const timer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const timer = useRef<number>(0);
   const { extra } = widget.roomProperties;
   const [duration, setDuration] = useState<number>(extra.duration || 0);
   const calcRemoteDuration = () => {
@@ -36,8 +36,8 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
   };
 
   const step = useCallback(() => {
-    setDuration((duration) => {
-      const newCurrent = duration - 1;
+    setDuration(() => {
+      const newCurrent = calcRemoteDuration();
       if (newCurrent < 5 && newCurrent >= 0) {
         const audioElement = new Audio(RewardSound);
         audioElement.play();
@@ -48,33 +48,30 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
 
   const play = useCallback(() => {
     stop();
+    step();
     function recursiveTimeout() {
-      timer.current = setTimeout(() => {
+      timer.current = requestAnimationFrame(() => {
         step();
         recursiveTimeout();
-      }, 1000);
+      });
     }
     recursiveTimeout();
   }, []);
 
   const stop = useCallback(() => {
-    if (timer.current) {
-      clearTimeout(timer.current);
-    }
+    cancelAnimationFrame(timer.current);
   }, []);
 
   const reset = useCallback(() => {
     if (timer.current) {
-      clearTimeout(timer.current);
+      cancelAnimationFrame(timer.current);
       setDuration((_) => 0);
     }
   }, []);
 
   const pause = useCallback(() => {
-    if (timer.current) {
-      clearTimeout(timer.current);
-      setDuration(calcRemoteDuration());
-    }
+    cancelAnimationFrame(timer.current);
+    setDuration(calcRemoteDuration());
   }, []);
 
   const followRemoteStatus = useCallback((remoteStatus: CountdownStatus) => {

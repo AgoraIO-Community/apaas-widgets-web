@@ -18,61 +18,60 @@ export enum CountdownStatus {
   RUNNING = 1,
   PAUSED = 2,
 }
+const calcRemoteDuration = (widget: FcrCountdownWidget) => {
+  const { extra } = widget.roomProperties;
 
+  const serverTimeCalcByLocalTime =
+    Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
+  const duration = extra
+    ? extra?.startTime
+      ? extra?.duration
+        ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
+        : 0
+      : extra.duration
+    : 0;
+  return Math.max(duration, 0);
+};
 export const useCountdown = (
-  duration: number,
+  widget: FcrCountdownWidget,
   remoteStatus: CountdownStatus,
 ): UseCountdownReturnType => {
   const [status, setStatus] = useState(remoteStatus);
-  const [current, setCurrent] = useState(duration);
-  const requestRef = useRef<number>();
-  const prevTimeRef = useRef<number>(0);
-  const intervalDuration = 1000; // 1 second
-  const currentRef = useRef(duration);
+  const [current, setCurrent] = useState(calcRemoteDuration(widget));
+  const requestRef = useRef<number>(0);
 
-  const animate = (currentTime: number) => {
-    if (prevTimeRef.current === 0) {
-      prevTimeRef.current = currentTime;
+  const animate = () => {
+    let newCurrent = calcRemoteDuration(widget);
+    if (newCurrent < 5 && newCurrent >= 0) {
+      const audioElement = new Audio(RewardSound);
+      audioElement.play();
+    }
+    if (newCurrent <= 0) {
+      stop();
+      newCurrent = 0;
     }
 
-    const elapsedTime = currentTime - prevTimeRef.current;
-
-    if (elapsedTime >= intervalDuration) {
-      let newCurrent = currentRef.current - Math.floor(elapsedTime / intervalDuration);
-      if (newCurrent < 5 && newCurrent >= 0) {
-        const audioElement = new Audio(RewardSound);
-        audioElement.play();
-      }
-      if (newCurrent <= 0) {
-        stop();
-        newCurrent = 0;
-      }
-
-      setCurrent(newCurrent);
-      currentRef.current = newCurrent;
-      prevTimeRef.current = currentTime;
-    }
-    if (currentRef.current > 0) {
-      requestRef.current && cancelAnimationFrame(requestRef.current);
+    setCurrent(newCurrent);
+    if (newCurrent > 0) {
+      cancelAnimationFrame(requestRef.current);
       requestRef.current = requestAnimationFrame(animate);
     }
   };
 
   const start = () => {
     setStatus(CountdownStatus.RUNNING);
-    prevTimeRef.current = performance.now();
-    requestRef.current && cancelAnimationFrame(requestRef.current);
+    cancelAnimationFrame(requestRef.current);
     requestRef.current = requestAnimationFrame(animate);
   };
 
   const pause = () => {
     setStatus(CountdownStatus.PAUSED);
-    requestRef.current && cancelAnimationFrame(requestRef.current);
+    cancelAnimationFrame(requestRef.current);
   };
   const stop = () => {
     setStatus(CountdownStatus.STOPPED);
     setCurrent(0);
-    requestRef.current && cancelAnimationFrame(requestRef.current);
+    cancelAnimationFrame(requestRef.current);
   };
   const followRemoteStatus = (remoteStatus: CountdownStatus) => {
     if (remoteStatus === CountdownStatus.RUNNING) {
@@ -87,30 +86,16 @@ export const useCountdown = (
   };
 
   useEffect(() => {
-    setCurrent(duration);
-    currentRef.current = duration;
     followRemoteStatus(remoteStatus);
     return () => {
       requestRef.current && cancelAnimationFrame(requestRef.current);
     };
-  }, [remoteStatus, duration]);
+  }, [remoteStatus]);
 
   return { current: Math.ceil(current), start, stop, pause, status };
 };
 
 export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
-  const calcRemoteDuration = () => {
-    const { extra } = widget.roomProperties;
-
-    const serverTimeCalcByLocalTime =
-      Date.now() + widget.classroomStore.roomStore.clientServerTimeShift;
-    const duration = extra?.startTime
-      ? extra?.duration
-        ? extra.duration - Math.floor(Math.abs(serverTimeCalcByLocalTime - extra.startTime) / 1000)
-        : 0
-      : extra.duration;
-    return Math.max(duration, 0);
-  };
   const [status, setStatus] = useState(CountdownStatus.STOPPED);
   const [duration, setDuration] = useState(0);
   const [totalDuration, setTotalDuration] = useState(
@@ -120,7 +105,7 @@ export const useCountdownRemoteStatus = (widget: FcrCountdownWidget) => {
     return autorun(() => {
       const { extra } = widget.roomProperties;
       if (extra) {
-        setDuration(calcRemoteDuration());
+        setDuration(calcRemoteDuration(widget));
         if (extra.totalDuration) {
           setTotalDuration(extra.totalDuration || 0);
         }
