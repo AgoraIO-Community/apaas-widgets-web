@@ -38,10 +38,7 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
   const step = useCallback(() => {
     setDuration(() => {
       const newCurrent = calcRemoteDuration();
-      if (newCurrent < 5 && newCurrent >= 0) {
-        const audioElement = new Audio(RewardSound);
-        audioElement.play();
-      }
+
       return newCurrent;
     });
   }, []);
@@ -73,7 +70,12 @@ export const useTimeCounter = (widget: AgoraCountdown) => {
     cancelAnimationFrame(timer.current);
     setDuration(calcRemoteDuration());
   }, []);
-
+  useEffect(() => {
+    if (extra.state === CountdownStatus.RUNNING && duration <= 5 && duration > 0) {
+      const audioElement = new Audio(RewardSound);
+      audioElement.play();
+    }
+  }, [duration, extra.state]);
   const followRemoteStatus = useCallback((remoteStatus: CountdownStatus) => {
     if (remoteStatus === CountdownStatus.RUNNING) {
       play();

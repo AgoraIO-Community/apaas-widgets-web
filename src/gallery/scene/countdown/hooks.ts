@@ -1,11 +1,12 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useCallback } from 'react';
 import { autorun } from 'mobx';
 import { FcrCountdownWidget } from '.';
 import { AgoraExtensionRoomEvent } from '../../../events';
 import { TimeFormat } from './app';
 import dayjs from 'dayjs';
 import RewardSound from './assets/countdown.mp3';
-
+let animationFrameId: number;
+let animationing = false;
 type UseCountdownReturnType = {
   current: number;
   start: () => void;
@@ -38,40 +39,30 @@ export const useCountdown = (
 ): UseCountdownReturnType => {
   const [status, setStatus] = useState(remoteStatus);
   const [current, setCurrent] = useState(calcRemoteDuration(widget));
-  const requestRef = useRef<number>(0);
-
+  const updateCurrent = () => {
+    const newCurrent = calcRemoteDuration(widget);
+    setCurrent(newCurrent <= 0 ? 0 : newCurrent);
+    return newCurrent;
+  };
   const animate = () => {
-    let newCurrent = calcRemoteDuration(widget);
-    if (newCurrent < 5 && newCurrent >= 0) {
-      const audioElement = new Audio(RewardSound);
-      audioElement.play();
-    }
-    if (newCurrent <= 0) {
-      stop();
-      newCurrent = 0;
-    }
-
-    setCurrent(newCurrent);
-    if (newCurrent > 0) {
-      cancelAnimationFrame(requestRef.current);
-      requestRef.current = requestAnimationFrame(animate);
+    updateCurrent();
+    if (animationing) {
+      animationFrameId = requestAnimationFrame(animate);
     }
   };
 
   const start = () => {
     setStatus(CountdownStatus.RUNNING);
-    cancelAnimationFrame(requestRef.current);
-    requestRef.current = requestAnimationFrame(animate);
+    animationing = true;
+    animate();
   };
-
   const pause = () => {
     setStatus(CountdownStatus.PAUSED);
-    cancelAnimationFrame(requestRef.current);
+    updateCurrent();
   };
   const stop = () => {
     setStatus(CountdownStatus.STOPPED);
-    setCurrent(0);
-    cancelAnimationFrame(requestRef.current);
+    updateCurrent();
   };
   const followRemoteStatus = (remoteStatus: CountdownStatus) => {
     if (remoteStatus === CountdownStatus.RUNNING) {
@@ -84,12 +75,16 @@ export const useCountdown = (
       pause();
     }
   };
-
   useEffect(() => {
+    if (status === CountdownStatus.RUNNING && current <= 5 && current > 0) {
+      const audioElement = new Audio(RewardSound);
+      audioElement.play();
+    }
+  }, [current, status]);
+  useEffect(() => {
+    cancelAnimationFrame(animationFrameId);
+    animationing = false;
     followRemoteStatus(remoteStatus);
-    return () => {
-      requestRef.current && cancelAnimationFrame(requestRef.current);
-    };
   }, [remoteStatus]);
 
   return { current: Math.ceil(current), start, stop, pause, status };
