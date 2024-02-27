@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../hooks/useStore';
 import { FcrChatRoomH5Inputs } from './components/input';
 import { MessageList } from './components/message-list';
@@ -38,7 +38,7 @@ export const FcrChatRoomH5 = observer(() => {
             <MessageList></MessageList>
           </div>
         )}
-
+        <PollMobile />
         <div
           className={classNames(
             { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
@@ -54,4 +54,22 @@ export const FcrChatRoomH5 = observer(() => {
       </>
     </RoomInfoContainer>
   );
+});
+
+export const PollMobile = observer(() => {
+  const {
+    messageStore: {
+      unreadMessageCount,
+    },
+    roomStore: { isLandscape, messageVisible }
+  } = useStore();
+  const [width, setWidth] = useState('0')
+  useEffect(() => {
+    if (unreadMessageCount !== 0 && messageVisible) {
+      setWidth('160px')
+    } else {
+      setWidth('0')
+    }
+  }, [unreadMessageCount, messageVisible, isLandscape])
+  return <div className={`fcr-poll-mobile-widget ${isLandscape ? '' : 'fcr-relative'}`} style={{ left: width }}></div>;
 });

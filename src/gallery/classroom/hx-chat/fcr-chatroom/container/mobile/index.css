@@ -42,3 +42,6 @@
 .fcr-chatroom-mobile-landscape-input-container-emoji-open {
   bottom: 200px;
 }
+.fcr-poll-mobile-widget{
+  pointer-events: all;
+}
