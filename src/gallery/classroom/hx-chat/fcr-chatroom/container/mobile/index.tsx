@@ -66,7 +66,7 @@ export const PollMobile = observer(() => {
   const [width, setWidth] = useState('0')
   useEffect(() => {
     if (unreadMessageCount !== 0 && messageVisible) {
-      setWidth('160px')
+      setWidth('40%')
     } else {
       setWidth('0')
     }
