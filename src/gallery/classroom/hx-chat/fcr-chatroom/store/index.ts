@@ -60,8 +60,7 @@ export class FcrChatRoomStore {
   }
   @bound
   private _handleFcrChatRoomErrorOccurred(error: unknown) {
-    //@ts-ignore
-    this._widget.shareUIStore.addSingletonToast(JSON.stringify(error), 'error');
+    this._widget.ui.addToast(JSON.stringify(error), 'error');
   }
   @bound
   private _handleFcrChatRoomConnectionStateChanged(connectionState: AgoraIMConnectionState) {

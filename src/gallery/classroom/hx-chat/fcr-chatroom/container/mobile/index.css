@@ -26,6 +26,7 @@
 .fcr-chatroom-mobile-room-info-emoji-open {
   position: relative;
   top: -200px;
+  z-index: 1;
 }
 
 /** landscape **/

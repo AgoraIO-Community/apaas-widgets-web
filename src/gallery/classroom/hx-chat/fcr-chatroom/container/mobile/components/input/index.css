@@ -8,11 +8,16 @@
   pointer-events: all;
   pointer-events: all;
 }
+
 .fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
   position: fixed;
   left: 0;
   bottom: 0;
   width: 100%;
+}
+.fcr-chatroom-mobile-room-info-emoji-open
+  .fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
+  bottom: 200px;
 }
 .fcr-chatroom-mobile-inputs-input {
   position: relative;
