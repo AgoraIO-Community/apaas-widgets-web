@@ -58,18 +58,16 @@ export const FcrChatRoomH5 = observer(() => {
 
 export const PollMobile = observer(() => {
   const {
-    messageStore: {
-      unreadMessageCount,
-    },
-    roomStore: { isLandscape, messageVisible }
+    messageStore: { unreadMessageCount },
+    roomStore: { isLandscape, messageVisible },
   } = useStore();
-  const [width, setWidth] = useState('0')
+  const [width, setWidth] = useState('0');
   useEffect(() => {
     if (unreadMessageCount !== 0 && messageVisible) {
-      setWidth('40%')
+      setWidth('40%');
     } else {
-      setWidth('0')
+      setWidth('0');
     }
-  }, [unreadMessageCount, messageVisible, isLandscape])
-  return <div className={`fcr-poll-mobile-widget ${isLandscape ? '' : 'fcr-relative'}`} style={{ left: width }}></div>;
+  }, [unreadMessageCount, messageVisible, isLandscape]);
+  return <div className={`${isLandscape ? '' : 'fcr-relative'}`} style={{ left: width }}></div>;
 });

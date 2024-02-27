@@ -20,12 +20,13 @@
 }
 .fcr-chatroom-mobile-messages-has-new-container::before {
   content: '';
-  width: 100%;
+  width: 100vw;
   height: 36px;
   background: linear-gradient(0deg, #282a32 32.95%, rgba(40, 42, 50, 0) 100%);
   position: absolute;
-  left: 0;
+  left: -20px;
   bottom: 0;
+  z-index: 0;
 }
 .fcr-chatroom-mobile-messages-has-new {
   height: 28px;
@@ -36,10 +37,9 @@
   color: #f5655c;
   padding: 0 12px;
   border-radius: 14px;
-  position: absolute;
-  bottom: 0;
-  left: 20px;
   background: #fff;
+  position: relative;
+  top: 2px;
 }
 .fcr-chatroom-mobile-messages-wrap {
   padding: 10px 20px 0;
@@ -149,4 +149,5 @@
 .fcr-chatroom-mobile-messages-has-new-container-landscape .fcr-chatroom-mobile-messages-has-new {
   position: relative;
   pointer-events: all;
+  margin-left: 20px;
 }

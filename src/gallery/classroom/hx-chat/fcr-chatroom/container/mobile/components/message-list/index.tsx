@@ -16,6 +16,7 @@ import {
 } from '../../../../../../../../common/im/wrapper/typs';
 import { useStore } from '../../../../hooks/useStore';
 import './index.css';
+import { createPortal } from 'react-dom';
 export const MessageList = observer(() => {
   const {
     messageStore: {
@@ -34,7 +35,6 @@ export const MessageList = observer(() => {
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
 
-  const transI18n = useI18n();
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(
@@ -147,21 +147,54 @@ export const MessageList = observer(() => {
         ) : null}
       </div>
       {unreadMessageCount !== 0 && messageVisible && (
-        <div
-          className={`fcr-chatroom-mobile-messages-has-new-container${
-            isLandscape ? '-landscape' : ''
-          }`}>
-          <div onClick={messageListScrollToBottom} className="fcr-chatroom-mobile-messages-has-new">
-            <span>
-              {unreadMessageCount}&nbsp;
-              {transI18n('fcr_h5_button_newmessage')}
-            </span>
-          </div>
-        </div>
+        <UnreadMessage
+          unreadMessageCount={unreadMessageCount}
+          isLandscape={isLandscape}
+          onClick={messageListScrollToBottom}></UnreadMessage>
       )}
     </>
   );
 });
+const UnreadMessage = ({
+  isLandscape,
+  onClick,
+  unreadMessageCount,
+}: {
+  isLandscape: boolean;
+  onClick: () => void;
+  unreadMessageCount: number;
+}) => {
+  const transI18n = useI18n();
+  const container = document.querySelector('.fcr-poll-mobile-widget');
+  return container && !isLandscape ? (
+    createPortal(
+      <div
+        className={`fcr-chatroom-mobile-messages-has-new-container${
+          isLandscape ? '-landscape' : ''
+        }`}>
+        <div onClick={onClick} className="fcr-chatroom-mobile-messages-has-new">
+          <span>
+            {unreadMessageCount}&nbsp;
+            {transI18n('fcr_h5_button_newmessage')}
+          </span>
+        </div>
+      </div>,
+      container,
+    )
+  ) : (
+    <div
+      className={`fcr-chatroom-mobile-messages-has-new-container${
+        isLandscape ? '-landscape' : ''
+      }`}>
+      <div onClick={onClick} className="fcr-chatroom-mobile-messages-has-new">
+        <span>
+          {unreadMessageCount}&nbsp;
+          {transI18n('fcr_h5_button_newmessage')}
+        </span>
+      </div>
+    </div>
+  );
+};
 const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
   const transI18n = useI18n();
   return (
