@@ -17,7 +17,7 @@
 }
 .fcr-chatroom-mobile-room-info-emoji-open
   .fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
-  bottom: 200px;
+  position: absolute;
 }
 .fcr-chatroom-mobile-inputs-input {
   position: relative;

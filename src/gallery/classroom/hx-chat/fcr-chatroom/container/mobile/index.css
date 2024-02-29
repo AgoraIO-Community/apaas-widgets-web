@@ -35,13 +35,13 @@
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  position: absolute;
+  position: fixed;
   right: 0;
   bottom: 0;
 }
 .fcr-chatroom-mobile-landscape-input-container-emoji-open {
   bottom: 200px;
 }
-.fcr-poll-mobile-widget{
+.fcr-poll-mobile-widget {
   pointer-events: all;
 }

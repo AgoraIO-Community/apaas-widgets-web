@@ -137,12 +137,14 @@
   width: 40%;
   overflow-y: auto;
   pointer-events: all;
+  position: fixed;
+  bottom: 0;
 }
 .fcr-chatroom-mobile-messages-landscape::-webkit-scrollbar {
   display: none;
 }
 .fcr-chatroom-mobile-messages-has-new-container-landscape {
-  position: absolute;
+  position: fixed;
   bottom: 5px;
   background: transparent;
 }
