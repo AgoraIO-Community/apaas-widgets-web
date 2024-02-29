@@ -154,6 +154,7 @@ export class MessageStore {
   @action.bound
   private _onAnnouncementDeleted() {
     this.announcement = '';
+    this.removeAnnouncementFromMessageList();
   }
   @bound
   async sendTextMessage(text: string) {
@@ -202,6 +203,7 @@ export class MessageStore {
     const announcement = await this._fcrChatRoom.getAnnouncement();
     runInAction(() => {
       this.announcement = announcement;
+      this.removeAnnouncementFromMessageList();
       if (announcement) {
         this.addMessage(announcement);
       }
