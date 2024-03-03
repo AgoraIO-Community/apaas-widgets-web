@@ -3,7 +3,6 @@ import { Provider } from 'mobx-react';
 import ReactDOM from 'react-dom';
 import { observable, action } from 'mobx';
 import App from './app';
-import AppH5 from './mobile/app';
 
 import { PluginStore } from './store';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
@@ -81,28 +80,15 @@ export class AgoraCountdown extends AgoraEduToolWidget {
     }
   }
   locate(): HTMLElement | null | undefined {
-    const { platform } = this.classroomConfig;
-    if (platform === 'H5')
-      return document.querySelector('.fcr-countdown-mobile-widget') as HTMLElement;
+    return document.querySelector('.fcr-countdown-mobile-widget') as HTMLElement;
   }
   render(dom: HTMLElement) {
     this._dom = dom;
-    const { platform } = this.classroomConfig;
 
     ReactDOM.render(
       <Provider store={this._store}>
         <ThemeProvider value={this.theme}>
-          {platform === 'H5' ? (
-            <AppH5 widget={this} />
-          ) : (
-            <WidgetModal
-              title={transI18n('widget_countdown.appName')}
-              closable={this.controlled}
-              onCancel={this.handleClose}
-              onResize={this.handleResize}>
-              <App widget={this} />
-            </WidgetModal>
-          )}
+          <App widget={this} />
         </ThemeProvider>
       </Provider>,
       dom,
