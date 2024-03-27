@@ -109,23 +109,45 @@ export const FcrChatRoomH5Inputs = observer(
             opacity: landscapeToolBarVisible ? 1 : 0,
             transition: 'visibility .2s, opacity .2s',
             zIndex: 1,
-            background:
-              isLandscape && (showEmoji || inputFocus)
-                ? '#fff'
-                : isLandscape
-                ? 'transparent'
-                : '#27292f',
           }}>
+          {text ? null : (
+            <>
+              {isLandscape && (
+                <div
+                  className="fcr-chatroom-mobile-inputs-hide-message"
+                  onClick={toggleMessageVisible}>
+                  {messageVisible ? (
+                    <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.MESSAGE_OEPNED}
+                      size={30}></SvgImgMobile>
+                  ) : (
+                    <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.MESSAGE_CLOSED}
+                      size={30}></SvgImgMobile>
+                  )}
+                </div>
+              )}
+            </>
+          )}
           <div
             className={classNames('fcr-chatroom-mobile-inputs-input', {
-              'fcr-chatroom-mobile-inputs-input-force-landscape': forceLandscape,
+              'fcr-chatroom-mobile-inputs-input-force-landscape': isLandscape,
             })}
             style={{
               visibility: inputVisible ? 'visible' : 'hidden',
               opacity: inputVisible ? 1 : 0,
               transition: 'opacity .2s',
+              width: isLandscape ? '80%' : '',
             }}>
-            <div className="fcr-chatroom-mobile-inputs-input-wrap">
+            <div
+              className="fcr-chatroom-mobile-inputs-input-wrap"
+              style={{
+                width: isLandscape ? '100%' : '',
+              }}>
               <div className="fcr-chatroom-mobile-inputs-input-outline"></div>
               {isMuted && (
                 <div className="fcr-chatroom-mobile-inputs-input-muted">
@@ -153,6 +175,9 @@ export const FcrChatRoomH5Inputs = observer(
               )}
 
               <input
+                style={{
+                  width: isLandscape ? '100%' : '',
+                }}
                 onFocus={() => {
                   if (forceLandscape) {
                     quitForceLandscape();
@@ -222,25 +247,6 @@ export const FcrChatRoomH5Inputs = observer(
             </div>
           ) : (
             <>
-              {isLandscape && (
-                <div
-                  className="fcr-chatroom-mobile-inputs-hide-message"
-                  onClick={toggleMessageVisible}>
-                  {messageVisible ? (
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={SvgIconEnum.MESSAGE_OEPNED}
-                      size={30}></SvgImgMobile>
-                  ) : (
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={SvgIconEnum.MESSAGE_CLOSED}
-                      size={30}></SvgImgMobile>
-                  )}
-                </div>
-              )}
               <>
                 <input
                   ref={fileInputRef}
@@ -265,7 +271,12 @@ export const FcrChatRoomH5Inputs = observer(
                 </div>
               </ToolTip>
 
-              <div className="fcr-chatroom-mobile-inputs-call" onClick={openHandsUpActionSheet}>
+              <div
+                style={{
+                  display: isLandscape ? 'none' : 'flex',
+                }}
+                className="fcr-chatroom-mobile-inputs-call"
+                onClick={openHandsUpActionSheet}>
                 {mobileCallState === MobileCallState.Processing && (
                   <div className="fcr-chatroom-mobile-inputs-call-loading">
                     <div className="dot"></div>

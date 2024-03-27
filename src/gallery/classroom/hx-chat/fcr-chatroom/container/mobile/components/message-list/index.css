@@ -133,19 +133,19 @@
 }
 /** landscape **/
 .fcr-chatroom-mobile-messages-landscape {
-  height: 60%;
+  height: 139px;
   width: 40%;
   overflow-y: auto;
   pointer-events: all;
   position: fixed;
-  bottom: 0;
+  top: 120px;
 }
 .fcr-chatroom-mobile-messages-landscape::-webkit-scrollbar {
   display: none;
 }
 .fcr-chatroom-mobile-messages-has-new-container-landscape {
   position: fixed;
-  bottom: 5px;
+  bottom: 58px;
   background: transparent;
 }
 .fcr-chatroom-mobile-messages-has-new-container-landscape .fcr-chatroom-mobile-messages-has-new {

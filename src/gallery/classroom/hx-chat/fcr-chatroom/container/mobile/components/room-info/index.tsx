@@ -25,7 +25,7 @@ export const RoomInfoContainer = observer(
         className={`fcr-mobile-interact-container${landscape ? '-landscape' : ''} ${classNames}`}
         style={{ ...style }}>
         <>
-          <RoomInfo landscape={landscape} />
+          {landscape ? '' : <RoomInfo landscape={landscape} />}
           {children}
         </>
       </div>
@@ -94,7 +94,7 @@ const RoomInfo = observer(({ landscape = false }: { landscape?: boolean }) => {
         </div>
       </div>
     </div>
-  ) : null
+  ) : null;
 });
 export const FcrLogo = observer(() => {
   const {

@@ -35,9 +35,9 @@
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  position: fixed;
   right: 0;
   bottom: 0;
+  width: 100%;
 }
 .fcr-chatroom-mobile-landscape-input-container-emoji-open {
   bottom: 200px;

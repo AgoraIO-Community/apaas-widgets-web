@@ -199,7 +199,7 @@
 
 .fcr-chatroom-mobile-landscape-input-container .fcr-chatroom-mobile-inputs {
   padding: 9px;
-  justify-content: flex-end;
+  justify-content: flex-start;
   margin-right: 12px;
   margin-bottom: 4px;
   height: 52px;
@@ -237,6 +237,8 @@
 .fcr-chatroom-mobile-inputs-input-force-landscape input {
   width: 110px;
   padding: 0;
+  background-color: rgba(0, 0, 0, 0.3);
+  color: white;
 }
 .fcr-chatroom-mobile-inputs-input-quit-landscape {
   display: flex;

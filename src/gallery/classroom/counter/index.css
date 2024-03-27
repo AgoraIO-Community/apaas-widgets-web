@@ -14,10 +14,14 @@
   position: absolute;
   bottom: auto;
   left: auto;
-  top: 13px;
-  right: 63px;
+  top: 54px;
+  left: 20px;
+  /* right: 63px; */
   transform-origin: right top;
   z-index: 1;
+}
+.fcr-countdown-mobile-landscape {
+  top: 40px;
 }
 .fcr-countdown-mobile.fcr-countdown-mobile-landscape.fcr-countdown-mobile-landscape-right {
   right: 16px;

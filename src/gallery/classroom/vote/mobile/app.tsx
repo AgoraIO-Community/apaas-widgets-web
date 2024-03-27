@@ -4,6 +4,8 @@ import { useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../components/svg-img';
 import { usePluginStore } from '../hooks';
 import './index.css';
+import { createPortal } from 'react-dom';
+
 export const PollH5 = observer(() => {
   const {
     minimize,
@@ -52,116 +54,151 @@ export const PollH5 = observer(() => {
     handleSubmitVote([...selectedOptions]);
   };
   return minimize ? (
-    <div
-      className={`fcr-mobile-poll-widget-minimize ${isLandscape ? 'fcr-mobile-poll-widget-minimize-landscape' : ''
-        }`}
-      onClick={() => {
-        setMinimize(false);
-      }}>
-      <div className="fcr-mobile-poll-widget-minimize-icon">
-        <SvgImgMobile
-          forceLandscape={forceLandscape}
-          landscape={isLandscape}
-          type={SvgIconEnum.POLL}></SvgImgMobile>
-      </div>
-
-      <span>{transI18n('widget_polling.appName')}</span>
-      <SvgImgMobile
-        forceLandscape={forceLandscape}
-        colors={{ iconPrimary: '#000' }}
-        landscape={isLandscape}
-        type={SvgIconEnum.COLLAPSE}
-        size={20}></SvgImgMobile>
-    </div>
-  ) : (
-    <div
-      className={`fcr-mobile-poll-widget-modal ${isLandscape ? 'fcr-mobile-poll-widget-modal-landscape' : ''
-        }`}>
-      <div
-        className="fcr-mobile-poll-widget-modal-close"
-        onClick={() => {
-          setMinimize(true);
-        }}>
-        <SvgImgMobile
-          forceLandscape={forceLandscape}
-          landscape={isLandscape}
-          type={SvgIconEnum.CLOSE}></SvgImgMobile>
-      </div>
-      <div className="fcr-mobile-poll-widget-modal-content">
-        <div
-          className="fcr-mobile-poll-widget-content"
-          style={isShowResultSection ? { paddingBottom: 0 } : {}}>
-          <div className="fcr-mobile-poll-widget-top">
-            <div className="fcr-mobile-poll-widget-top-logo">
-              <SvgImgMobile
-                forceLandscape={forceLandscape}
-                landscape={isLandscape}
-                type={SvgIconEnum.POLL}
-                size={36}></SvgImgMobile>
-            </div>
-            <div className="fcr-mobile-poll-widget-top-right">
-              <div className="fcr-mobile-poll-widget-top-right-name">
-                {transI18n('widget_polling.appName')}
-              </div>
-              <div className="fcr-mobile-poll-widget-top-right-desc">
-                {transI18n(
-                  type === 'radio' ? 'widget_polling.single-sel' : 'widget_polling.mul-sel',
-                )}
-              </div>
-            </div>
-          </div>
-          <div className="fcr-mobile-poll-widget-bottom">
-            <div className="fcr-mobile-poll-widget-title">{title}</div>
-            <div className="fcr-mobile-poll-widget-options">
-              {options.map((value, index) => {
-                const isSelected = selectedIndex.has(index);
-                const res = pollingResult[index];
-                const percentage = res?.percentage * 100 + '%';
-                return (
-                  <div
-                    onClick={() => handleOptionClick(index)}
-                    key={value}
-                    className={`fcr-mobile-poll-widget-option ${isSelected ? 'fcr-mobile-poll-widget-option-selected' : ''
-                      } ${isShowResultSection ? 'fcr-mobile-poll-widget-option-result' : ''}`}>
-                    <p>{value}</p>
-                    {isShowResultSection && (
-                      <>
-                        <div className="fcr-mobile-poll-widget-option-result-analys">
-                          <div>{res.num}</div>
-                          <div>{percentage}</div>
-                        </div>
-                        <div
-                          className={`fcr-mobile-poll-widget-option-result-progress ${isSelected
-                            ? 'fcr-mobile-poll-widget-option-result-progress-selected'
-                            : ''
-                            }`}
-                          style={{ width: percentage }}></div>
-                      </>
-                    )}
-                  </div>
-                );
-              })}
-            </div>
-          </div>
-          {isShowResultSection && (
-            <div className={`fcr-mobile-poll-widget-result-count`}>
-              {pollingResultUserCount} {transI18n('widget_polling.fcr_poll_people_participated')}
-            </div>
-          )}
-          {!isShowResultSection && (
+    <>
+      {isLandscape
+        ? createPortal(
             <div
-              onClick={handleSubmit}
-              className={`fcr-mobile-poll-widget-submit ${isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
-                }`}>
+              className={`fcr-mobile-poll-widget-minimize fcr-mobile-poll-widget-minimize-landscape`}
+              onClick={() => {
+                setMinimize(false);
+              }}>
+              <div className="fcr-mobile-poll-widget-minimize-icon">
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.POLL}></SvgImgMobile>
+              </div>
+
+              <span>{transI18n('widget_polling.appName')}</span>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
+                colors={{ iconPrimary: '#000' }}
                 landscape={isLandscape}
-                type={SvgIconEnum.TICK}
-                size={48}></SvgImgMobile>
-            </div>
+                type={SvgIconEnum.COLLAPSE}
+                size={20}></SvgImgMobile>
+            </div>,
+            document.querySelector('.landscape-bottom-tools')!,
+          )
+        : createPortal(
+            <div
+              className={`fcr-mobile-poll-widget-minimize`}
+              onClick={() => {
+                setMinimize(false);
+              }}>
+              <div className="fcr-mobile-poll-widget-minimize-icon">
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.POLL}></SvgImgMobile>
+              </div>
+
+              <span>{transI18n('widget_polling.appName')}</span>
+              <SvgImgMobile
+                forceLandscape={forceLandscape}
+                colors={{ iconPrimary: '#000' }}
+                landscape={isLandscape}
+                type={SvgIconEnum.COLLAPSE}
+                size={20}></SvgImgMobile>
+            </div>,
+            document.querySelector('.fcr-poll-mobile-widget')!,
           )}
+    </>
+  ) : (
+    createPortal(
+      <div
+        className={`fcr-mobile-poll-widget-modal ${
+          isLandscape ? 'fcr-mobile-poll-widget-modal-landscape' : ''
+        }`}>
+        <div
+          className="fcr-mobile-poll-widget-modal-close"
+          onClick={() => {
+            setMinimize(true);
+          }}>
+          <SvgImgMobile
+            forceLandscape={forceLandscape}
+            landscape={isLandscape}
+            type={SvgIconEnum.CLOSE}></SvgImgMobile>
         </div>
-      </div>
-    </div>
+        <div className="fcr-mobile-poll-widget-modal-content">
+          <div
+            className="fcr-mobile-poll-widget-content"
+            style={isShowResultSection ? { paddingBottom: 0 } : {}}>
+            <div className="fcr-mobile-poll-widget-top">
+              <div className="fcr-mobile-poll-widget-top-logo">
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.POLL}
+                  size={36}></SvgImgMobile>
+              </div>
+              <div className="fcr-mobile-poll-widget-top-right">
+                <div className="fcr-mobile-poll-widget-top-right-name">
+                  {transI18n('widget_polling.appName')}
+                </div>
+                <div className="fcr-mobile-poll-widget-top-right-desc">
+                  {transI18n(
+                    type === 'radio' ? 'widget_polling.single-sel' : 'widget_polling.mul-sel',
+                  )}
+                </div>
+              </div>
+            </div>
+            <div className="fcr-mobile-poll-widget-bottom">
+              <div className="fcr-mobile-poll-widget-title">{title}</div>
+              <div className="fcr-mobile-poll-widget-options">
+                {options.map((value, index) => {
+                  const isSelected = selectedIndex.has(index);
+                  const res = pollingResult[index];
+                  const percentage = res?.percentage * 100 + '%';
+                  return (
+                    <div
+                      onClick={() => handleOptionClick(index)}
+                      key={value}
+                      className={`fcr-mobile-poll-widget-option ${
+                        isSelected ? 'fcr-mobile-poll-widget-option-selected' : ''
+                      } ${isShowResultSection ? 'fcr-mobile-poll-widget-option-result' : ''}`}>
+                      <p>{value}</p>
+                      {isShowResultSection && (
+                        <>
+                          <div className="fcr-mobile-poll-widget-option-result-analys">
+                            <div>{res.num}</div>
+                            <div>{percentage}</div>
+                          </div>
+                          <div
+                            className={`fcr-mobile-poll-widget-option-result-progress ${
+                              isSelected
+                                ? 'fcr-mobile-poll-widget-option-result-progress-selected'
+                                : ''
+                            }`}
+                            style={{ width: percentage }}></div>
+                        </>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+            {isShowResultSection && (
+              <div className={`fcr-mobile-poll-widget-result-count`}>
+                {pollingResultUserCount} {transI18n('widget_polling.fcr_poll_people_participated')}
+              </div>
+            )}
+            {!isShowResultSection && (
+              <div
+                onClick={handleSubmit}
+                className={`fcr-mobile-poll-widget-submit ${
+                  isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
+                }`}>
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.TICK}
+                  size={48}></SvgImgMobile>
+              </div>
+            )}
+          </div>
+        </div>
+      </div>,
+      document.body,
+    )
   );
 });

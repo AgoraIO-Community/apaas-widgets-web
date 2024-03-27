@@ -1,5 +1,6 @@
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from '../../hooks/useStore';
 import { FcrChatRoomH5Inputs } from './components/input';
 import { MessageList } from './components/message-list';
@@ -39,18 +40,39 @@ export const FcrChatRoomH5 = observer(() => {
           </div>
         )}
         <PollMobile />
-        <div
-          className={classNames(
-            { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
-            {
-              'fcr-chatroom-mobile-landscape-input-container-emoji-open': isLandscape && showEmoji,
-            },
-          )}>
-          <FcrChatRoomH5Inputs
-            emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
-            showEmoji={showEmoji}
-            onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
-        </div>
+        {isLandscape ? (
+          createPortal(
+            <div
+              className={classNames(
+                { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
+                {
+                  'fcr-chatroom-mobile-landscape-input-container-emoji-open':
+                    isLandscape && showEmoji,
+                },
+              )}>
+              <FcrChatRoomH5Inputs
+                emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
+                showEmoji={showEmoji}
+                onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
+              <PollMobile />
+            </div>,
+            document.querySelector('.landscape-bottom-tools')!,
+          )
+        ) : (
+          <div
+            className={classNames(
+              { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
+              {
+                'fcr-chatroom-mobile-landscape-input-container-emoji-open':
+                  isLandscape && showEmoji,
+              },
+            )}>
+            <FcrChatRoomH5Inputs
+              emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
+              showEmoji={showEmoji}
+              onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
+          </div>
+        )}
       </>
     </RoomInfoContainer>
   );

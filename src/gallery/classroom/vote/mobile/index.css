@@ -11,15 +11,15 @@
   position: relative;
   z-index: 1;
 }
-.fcr-mobile-poll-widget-minimize.fcr-mobile-poll-widget-minimize-landscape {
-  left: auto;
-  bottom: auto;
-  right: 16px;
-  top: 64px;
-  position: fixed;
+
+.fcr-mobile-poll-widget-minimize-landscape {
+  display: flex;
+  margin-right: 3px;
+  /* justify-content: flex-end; */
+  position: initial;
 }
 .fcr-mobile-poll-widget-minimize-landscape > svg {
-  transform: rotate(-90deg);
+  transform: rotate(0deg);
 }
 .fcr-mobile-poll-widget-minimize > span {
   font-weight: 500;
