@@ -181,4 +181,6 @@ export enum SvgIconEnum {
   RAAISE_HANDS = 'raise-hands',
   FCR_TOOLTIP_ARROW = 'fcr_tooltip_arrow',
   USER_COUNT = 'user-count',
+  MESSAGE_OPENED_NEW = 'message-opened-new',
+  MESSAGE_CLOSED_NEW = 'message-closed-new',
 }

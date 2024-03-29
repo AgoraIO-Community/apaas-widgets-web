@@ -115,18 +115,25 @@ export const FcrChatRoomH5Inputs = observer(
               {isLandscape && (
                 <div
                   className="fcr-chatroom-mobile-inputs-hide-message"
+                  style={{
+                    background: 'rgba(0, 0, 0, 0.3)',
+                  }}
                   onClick={toggleMessageVisible}>
                   {messageVisible ? (
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
                       landscape={isLandscape}
-                      type={SvgIconEnum.MESSAGE_OEPNED}
+                      type={
+                        isLandscape ? SvgIconEnum.MESSAGE_OPENED_NEW : SvgIconEnum.MESSAGE_OEPNED
+                      }
                       size={30}></SvgImgMobile>
                   ) : (
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
                       landscape={isLandscape}
-                      type={SvgIconEnum.MESSAGE_CLOSED}
+                      type={
+                        isLandscape ? SvgIconEnum.MESSAGE_CLOSED_NEW : SvgIconEnum.MESSAGE_CLOSED
+                      }
                       size={30}></SvgImgMobile>
                   )}
                 </div>
