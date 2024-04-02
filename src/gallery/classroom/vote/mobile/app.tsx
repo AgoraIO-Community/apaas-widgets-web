@@ -72,7 +72,7 @@ export const PollH5 = observer(() => {
               <span>{transI18n('widget_polling.appName')}</span>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
-                colors={{ iconPrimary: '#000' }}
+                colors={{ iconPrimary: '#fff' }}
                 landscape={isLandscape}
                 type={SvgIconEnum.COLLAPSE}
                 size={20}></SvgImgMobile>
