@@ -80,7 +80,7 @@ export class AgoraCountdown extends AgoraEduToolWidget {
     }
   }
   locate(): HTMLElement | null | undefined {
-    return document.querySelector('.fcr-countdown-mobile-widget') as HTMLElement;
+    return document.querySelector('.fcr-countdown-mobile-widget-slot') as HTMLElement;
   }
   render(dom: HTMLElement) {
     this._dom = dom;
