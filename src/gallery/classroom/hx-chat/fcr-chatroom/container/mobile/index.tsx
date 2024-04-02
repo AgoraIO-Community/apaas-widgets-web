@@ -51,7 +51,7 @@ export const FcrChatRoomH5 = observer(() => {
                 },
               )}>
               <FcrChatRoomH5Inputs
-                emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
+                emojiContainer={ document.querySelector('.fcr-chatroom-mobile-landscape-input-container') as HTMLDivElement}
                 showEmoji={showEmoji}
                 onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
               <PollMobile />

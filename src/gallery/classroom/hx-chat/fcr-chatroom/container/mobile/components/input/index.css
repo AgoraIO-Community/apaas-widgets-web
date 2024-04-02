@@ -137,6 +137,7 @@
 }
 .fcr-chatroom-mobile-input-emoji-container.fcr-chatroom-mobile-input-emoji-container-landscape {
   padding: 10px 100px;
+  top: 0;
 }
 .fcr-chatroom-mobile-input-emoji-container.fcr-chatroom-mobile-input-emoji-container-landscape
   > div {
@@ -146,6 +147,7 @@
   text-align: center;
   line-height: 32px;
 }
+
 .fcr-chatroom-mobile-input-emoji-container > div {
   width: 28px;
   height: 28px;
@@ -205,6 +207,10 @@
   height: 52px;
   border-radius: 50px;
   align-items: center;
+}
+.fcr-chatroom-mobile-landscape-input-container-emoji-open.fcr-chatroom-mobile-landscape-input-container
+  .fcr-chatroom-mobile-inputs {
+  margin-bottom: 0;
 }
 .fcr-chatroom-mobile-landscape-input-container .fcr-chatroom-mobile-inputs > div:not(:last-child) {
   margin-right: 12px;
