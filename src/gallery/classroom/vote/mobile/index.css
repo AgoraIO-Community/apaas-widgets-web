@@ -1,15 +1,15 @@
 .fcr-mobile-poll-widget-minimize {
-  width: 130px;
+  width: fit-content;
   height: 30px;
   /* background: rgba(240, 242, 248, 0.95); */
   background: linear-gradient(90deg, rgba(241, 156, 186, 0.85) 0%, rgba(238, 128, 165, 0.85) 100%);
   color: white;
-  border-radius: 50px;
+  border-radius: 6px;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  padding: 5px 7px;
+  padding: 3px 10px 3px 5px;
   position: relative;
   z-index: 1;
 }
@@ -25,15 +25,16 @@
   color: #fff;
 }
 .fcr-mobile-poll-widget-minimize > span {
-  font-weight: 500;
-  font-size: 15px;
+  font-weight: 600;
+  font-size: 14px;
   line-height: 16px;
+  white-space: nowrap;
 }
 .fcr-mobile-poll-widget-minimize-icon {
-  width: 30px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   /* background: #fff; */
-  border-radius: 50px;
+  /* border-radius: 50px; */
   display: flex;
   align-items: center;
   justify-content: center;
