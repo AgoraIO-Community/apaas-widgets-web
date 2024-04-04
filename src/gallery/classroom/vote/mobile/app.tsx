@@ -5,7 +5,10 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../components/svg-img';
 import { usePluginStore } from '../hooks';
 import './index.css';
 import { createPortal } from 'react-dom';
-
+const keepDecimals = (value: number, count = 0) => {
+  const reg = new RegExp(`^(-)*(\\d+)(\\.\\d{0,${count}}).*$`)
+  return Number(`${value}`.replace(reg, '$1$2$3'))
+}
 export const PollH5 = observer(() => {
   const {
     minimize,
@@ -148,7 +151,8 @@ export const PollH5 = observer(() => {
                 {options.map((value, index) => {
                   const isSelected = selectedIndex.has(index);
                   const res = pollingResult[index];
-                  const percentage = res?.percentage * 100 + '%';
+                  
+                  const percentage = keepDecimals(res?.percentage * 100) + '%';
                   return (
                     <div
                       onClick={() => handleOptionClick(index)}
