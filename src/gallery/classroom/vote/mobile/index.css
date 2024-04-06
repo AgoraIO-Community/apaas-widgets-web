@@ -219,3 +219,11 @@
 .fcr-mobile-poll-widget-option-result-progress-selected {
   background: #e5eeff;
 }
+.fcr-button-loading {
+  animation: loadingCircle 1s infinite linear;
+}
+@keyframes loadingCircle {
+  100% {
+    transform: rotate(360deg);
+  }
+}
