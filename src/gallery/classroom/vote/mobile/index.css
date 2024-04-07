@@ -58,6 +58,7 @@
   height: 100%;
   border-radius: 0;
   max-height: 100%;
+  z-index: 9999;
 }
 .fcr-mobile-poll-widget-modal-close {
   height: 32px;
