@@ -183,4 +183,5 @@ export enum SvgIconEnum {
   USER_COUNT = 'user-count',
   MESSAGE_OPENED_NEW = 'message-opened-new',
   MESSAGE_CLOSED_NEW = 'message-closed-new',
+  FCR_BTN_LOADING = 'fcr_btn_loading',
 }

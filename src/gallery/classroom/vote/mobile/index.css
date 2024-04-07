@@ -58,6 +58,7 @@
   height: 100%;
   border-radius: 0;
   max-height: 100%;
+  z-index: 9999;
 }
 .fcr-mobile-poll-widget-modal-close {
   height: 32px;
@@ -218,4 +219,12 @@
 }
 .fcr-mobile-poll-widget-option-result-progress-selected {
   background: #e5eeff;
+}
+.fcr-button-loading {
+  animation: loadingCircle 1s infinite linear;
+}
+@keyframes loadingCircle {
+  100% {
+    transform: rotate(360deg);
+  }
 }

@@ -91,6 +91,7 @@ export class RoomStore {
       'room-property-updated',
       this._handleClassRoomPropertiesChange,
     );
+    this._widget.broadcast(AgoraExtensionWidgetEvent.QueryMobileCallState, undefined);
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
