@@ -32,6 +32,7 @@ export const FcrChatRoomH5Inputs = observer(
       broadcastWidgetMessage,
       messageStore: { sendTextMessage, sendImageMessage },
       roomStore: {
+        pollMinimizeState,
         allMuted,
         isLandscape,
         messageVisible,
@@ -97,7 +98,8 @@ export const FcrChatRoomH5Inputs = observer(
     const openHandsUpActionSheet = () => {
       broadcastWidgetMessage(AgoraExtensionWidgetEvent.OpenMobileHandsUpActionSheet, undefined);
     };
-    const inputVisible = (messageVisible && landscapeToolBarVisible) || !isLandscape;
+    const inputVisible =
+      (messageVisible && landscapeToolBarVisible && pollMinimizeState) || !isLandscape;
     return (
       <>
         <div

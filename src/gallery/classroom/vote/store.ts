@@ -23,7 +23,7 @@ export class PluginStore {
       typeof extra?.pollTitle !== 'undefined' && this.setTitle(extra.pollTitle);
       extra?.mode && this.setType(this.getTypeByMode);
       if (extra.pollState === 0 && !this.isTeacherType) {
-        this._widget.ui.addToast(transI18n('widget_polling.fcr_H5_tips_end_poll'))
+        this._widget.ui.addToast(transI18n('widget_polling.fcr_H5_tips_end_poll'));
       }
       runInAction(() => {
         typeof extra?.pollItems !== 'undefined' && (this.options = extra.pollItems);
@@ -38,7 +38,10 @@ export class PluginStore {
       AgoraExtensionWidgetEvent.RequestMobileLandscapeToolBarVisible,
       undefined,
     );
-
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.QueryPollMinimizeState,
+      onMessage: this.handleQueryPollMinimizeState,
+    });
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -83,9 +86,14 @@ export class PluginStore {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
   }
+  @bound
+  handleQueryPollMinimizeState() {
+    this._widget.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, this.minimize);
+  }
   @action.bound
   setMinimize(minimize: boolean) {
     this.minimize = minimize;
+    this._widget.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, minimize);
   }
 
   @action.bound
@@ -161,7 +169,7 @@ export class PluginStore {
           Toast.show({
             type: 'error',
             text: JSON.stringify(e),
-            closeToast: () => { },
+            closeToast: () => {},
           });
           reject(e);
         });
@@ -206,6 +214,10 @@ export class PluginStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.QueryPollMinimizeState,
+      onMessage: this.handleQueryPollMinimizeState,
     });
   }
 

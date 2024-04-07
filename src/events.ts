@@ -170,4 +170,6 @@ export enum AgoraExtensionWidgetEvent {
   //取消举手
   LowerHand = 'lower-hand',
   QueryMobileCallState = 'query-mobile-call-state',
+  PollMinimizeStateChanged = 'poll-minimize-state-changed',
+  QueryPollMinimizeState = 'query-poll-minimize-state',
 }

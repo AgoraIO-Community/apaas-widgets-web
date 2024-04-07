@@ -24,7 +24,7 @@ export class RoomStore {
   allMuted = false;
 
   @observable landscapeToolBarVisible = false;
-
+  @observable pollMinimizeState = false;
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
   //缓存本地点赞要上报的个数
@@ -70,6 +70,11 @@ export class RoomStore {
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
+      onMessage: this._handlePollMinimizeStateChanged,
+    });
+    this._widget.broadcast(AgoraExtensionWidgetEvent.QueryPollMinimizeState, undefined);
+    this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileCallStateChanged,
       onMessage: this._handleMobileCallStateChanged,
     });
@@ -96,6 +101,10 @@ export class RoomStore {
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
+      onMessage: this._handlePollMinimizeStateChanged,
+    });
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -190,7 +199,10 @@ export class RoomStore {
 
     return duration.format('HH:mm:ss');
   }
-
+  @action.bound
+  private _handlePollMinimizeStateChanged(minimize: boolean) {
+    this.pollMinimizeState = minimize;
+  }
   @bound
   setThumbsUpAni(thumbsUpAni: ThumbsUpAni) {
     this._thumbsUpAni = thumbsUpAni;
