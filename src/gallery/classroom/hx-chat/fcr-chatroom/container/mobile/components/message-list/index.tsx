@@ -35,12 +35,18 @@ export const MessageList = observer(() => {
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
   const [innerHeight, setInnerHeight] = useState(window.innerHeight);
+  let handleResizeTimer: number | NodeJS.Timeout | undefined;
   useEffect(() => {
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.removeEventListener('resize', handleResize);
+      window.clearTimeout(handleResizeTimer);
+    };
   }, []);
   const handleResize = () => {
-    setInnerHeight(window.innerHeight);
+    handleResizeTimer = setTimeout(() => {
+      setInnerHeight(window.innerHeight);
+    }, 100);
   };
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
@@ -113,7 +119,7 @@ export const MessageList = observer(() => {
             : '',
           pointerEvents:
             messageList.length > 0 ? (isAndroid && forceLandscape ? 'none' : 'all') : 'none',
-          height: innerHeight - 168 + 'px',
+          height: innerHeight - 183 + 'px',
         }}
         className={`fcr-chatroom-mobile-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>
