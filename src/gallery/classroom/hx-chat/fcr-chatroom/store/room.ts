@@ -24,7 +24,7 @@ export class RoomStore {
   allMuted = false;
 
   @observable landscapeToolBarVisible = false;
-  @observable pollMinimizeState = false;
+  @observable pollMinimizeState = true;
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
   //缓存本地点赞要上报的个数

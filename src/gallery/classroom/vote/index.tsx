@@ -67,6 +67,7 @@ export class AgoraPolling extends AgoraEduToolWidget {
 
   onDestroy(): void {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, true);
 
     if (this._store) {
       this._store.destroy();
