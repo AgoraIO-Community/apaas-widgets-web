@@ -21,9 +21,7 @@
   cursor: pointer;
   background-color: #fff;
 }
-.whiteboard-mobile-container {
-  transition: all 0.3s ease;
-}
+
 .spinner-container {
   position: absolute;
   top: 10px;
