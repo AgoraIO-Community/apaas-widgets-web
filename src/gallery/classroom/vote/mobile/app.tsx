@@ -1,14 +1,14 @@
 import { useI18n } from 'agora-common-libs';
 import { observer } from 'mobx-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../components/svg-img';
 import { usePluginStore } from '../hooks';
 import './index.css';
 import { createPortal } from 'react-dom';
 const keepDecimals = (value: number, count = 0) => {
-  const reg = new RegExp(`^(-)*(\\d+)(\\.\\d{0,${count}}).*$`)
-  return Number(`${value}`.replace(reg, '$1$2$3'))
-}
+  const reg = new RegExp(`^(-)*(\\d+)(\\.\\d{0,${count}}).*$`);
+  return Number(`${value}`.replace(reg, '$1$2$3'));
+};
 export const PollH5 = observer(() => {
   const {
     minimize,
@@ -28,6 +28,7 @@ export const PollH5 = observer(() => {
   } = usePluginStore();
   const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const handleOptionClick = (index: number) => {
     if (isShowResultSection) {
       return;
@@ -49,12 +50,21 @@ export const PollH5 = observer(() => {
   };
   const isSubmitBtnDisabled = selectedOptions.size === 0;
   const selectedIndex = isShowResultSection ? selectedIndexResult : selectedOptions;
-  const handleSubmit = () => {
+  useEffect(() => () => setIsSubmitting(false), []);
+  const handleSubmit = async () => {
     if (isSubmitBtnDisabled) {
       addSubmitToast();
       return;
     }
-    handleSubmitVote([...selectedOptions]);
+    if (isSubmitting) {
+      return;
+    }
+    try {
+      setIsSubmitting(true);
+      await handleSubmitVote([...selectedOptions]);
+    } finally {
+      setIsSubmitting(false);
+    }
   };
   return minimize ? (
     <>
@@ -151,7 +161,7 @@ export const PollH5 = observer(() => {
                 {options.map((value, index) => {
                   const isSelected = selectedIndex.has(index);
                   const res = pollingResult[index];
-                  
+
                   const percentage = keepDecimals(res?.percentage * 100) + '%';
                   return (
                     <div
@@ -192,11 +202,20 @@ export const PollH5 = observer(() => {
                 className={`fcr-mobile-poll-widget-submit ${
                   isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
                 }`}>
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.TICK}
-                  size={48}></SvgImgMobile>
+                {isSubmitting ? (
+                  <SvgImgMobile
+                    className="fcr-button-loading"
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.FCR_BTN_LOADING}
+                    size={48}></SvgImgMobile>
+                ) : (
+                  <SvgImgMobile
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.TICK}
+                    size={48}></SvgImgMobile>
+                )}
               </div>
             )}
           </div>
