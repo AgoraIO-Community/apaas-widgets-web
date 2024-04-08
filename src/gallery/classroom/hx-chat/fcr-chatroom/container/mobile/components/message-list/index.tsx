@@ -45,7 +45,7 @@ export const MessageList = observer(() => {
   }, []);
   const handleResize = () => {
     handleResizeTimer = setTimeout(() => {
-      setInnerHeight(window.innerHeight);
+      setInnerHeight(window.document.documentElement.clientHeight);
     }, 100);
   };
   const messageContainerRef = useRef<HTMLDivElement>(null);
