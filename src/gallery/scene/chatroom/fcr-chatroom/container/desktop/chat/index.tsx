@@ -278,6 +278,7 @@ const MessageList = observer(() => {
   const {
     messageStore: { renderableMessageList, listCache, messageListScrollToBottom },
   } = useStore();
+  
   const transI18n = useI18n();
   const { listRef, handleScroll } = useScroll();
   const renderMessage = (
@@ -726,7 +727,7 @@ const UserList = observer(() => {
       <div>
         {searchUserList.length === 0 && (
           <div className="fcr-chatroom-member-list-empty-placeholder">
-            <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={60}></SvgImg>
+            <SvgImg type={SvgIconEnum.FCR_CHAT_PLACEHOLDER} size={200}></SvgImg>
             <span>{transI18n('fcr_chat_no_data')}</span>
           </div>
         )}

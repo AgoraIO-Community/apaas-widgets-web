@@ -58,6 +58,7 @@ const enUS = {
     sentence_connector: ',',
     me: 'me',
   },
+  fcr_chat_no_data: 'Student not found.',
   fcr_h5_label_watched: '',
   fcr_h5_label_logo: 'Flexible Classroom',
   fcr_h5_button_newmessage: 'New messages',

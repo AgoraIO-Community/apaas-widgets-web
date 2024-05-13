@@ -113,7 +113,7 @@ export class MessageStore {
   get renderableMessageList() {
     const combinedList: (AgoraIMMessageBase | AgoraIMMessageBase[] | string)[] = [];
     let lastTimestamp = 0;
-
+    
     this.messageList.forEach((msg) => {
       const lastItem = combinedList[combinedList.length - 1];
       const timestamp = msg.ts || 0;
@@ -158,7 +158,6 @@ export class MessageStore {
       }
       lastTimestamp = timestamp;
     });
-
     return combinedList;
   }
   checkIsPrivateMessage(message: AgoraIMMessageBase) {

@@ -53,6 +53,7 @@ export enum SvgIconEnum {
   IMAGE = 'image',
   INVITE_ON_PODIUM = 'invite-on-podium',
   INVITE_TO_PODIUM = 'invite-to-podium',
+  FCR_CHAT_PLACEHOLDER = 'fcr_chat_placeholder',
   KICK_OUT = 'kick-out',
   LASER_POINTER = 'laser-pointer',
   LINE = 'line',

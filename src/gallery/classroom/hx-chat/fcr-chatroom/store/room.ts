@@ -43,6 +43,9 @@ export class RoomStore {
     this._addEventListeners();
     this._initializeThumbsCount();
   }
+  isHost =
+    this._widget.classroomConfig.sessionInfo.role === 1 ||
+    this._widget.classroomConfig.sessionInfo.role === 3;
 
   @action.bound
   private _initializeThumbsCount() {
@@ -226,10 +229,14 @@ export class RoomStore {
     this.allMuted = false;
   }
   async getChatRoomDetails() {
-    const { mute } = await this._fcrChatRoom.getChatRoomDetails();
+    const { mute, affiliations } = await this._fcrChatRoom.getChatRoomDetails();
     runInAction(() => {
       this.allMuted = mute;
     });
+    return {
+      mute,
+      affiliations,
+    };
   }
   @action.bound
   private _handleOrientationChanged(params: {

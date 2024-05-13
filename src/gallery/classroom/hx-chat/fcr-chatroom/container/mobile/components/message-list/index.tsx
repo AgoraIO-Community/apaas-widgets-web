@@ -1,5 +1,5 @@
 import ImageViewer from '../image-viewer';
-import { useI18n, Scheduler } from 'agora-common-libs';
+import { useI18n, Scheduler, transI18n } from 'agora-common-libs';
 
 import throttle from 'lodash/throttle';
 import { observer } from 'mobx-react';
@@ -24,13 +24,14 @@ export const MessageList = observer(() => {
       isBottom,
       setIsBottom,
       unreadMessageCount,
-
+      checkIsPrivateMessage,
       setMessageListDom,
       messageListScrollToBottom,
     },
     roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
+  console.log(messageList)
   const scrollingRef = useRef(false);
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
@@ -231,7 +232,7 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
     message,
     fcrChatRoom,
   });
-
+  
   const textMessage = message as AgoraIMTextMessage;
   return (
     <div
@@ -246,7 +247,6 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
             size={24}></SvgImgMobile>
         </span>
       )}
-
       <span className="fcr-chatroom-mobile-message-item-name">
         {textMessage.ext?.nickName}
         {messageFromAlias}:
