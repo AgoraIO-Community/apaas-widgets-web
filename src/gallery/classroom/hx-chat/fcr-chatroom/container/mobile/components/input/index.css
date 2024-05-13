@@ -1,14 +1,70 @@
 .fcr-chatroom-mobile-inputs {
   display: flex;
-  padding: 10px 20px 0;
+  padding: 11px 15px 10px 10px;
   justify-content: space-between;
-  height: 56px;
   flex-shrink: 0;
   background: #27292f;
   pointer-events: all;
-  pointer-events: all;
 }
-
+.fcr-chatroom-mobile-inputs-content{
+  width: 100%;
+}
+.fcr-chatroom-mobile-inputs-private{
+  display: flex;
+  align-items: center;
+  margin-bottom: 7px;
+}
+.fcr-chatroom-mobile-inputs-private-label {
+  color: #FFF;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px; 
+  margin-right: 3px;
+}
+.fcr-chatroom-mobile-inputs-private-select{
+  display: flex;
+  align-items: center;
+}
+.fcr-chatroom-mobile-inputs-private-select-val{
+  color: #4262FF;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: Inter;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px
+}
+.fcr-chatroom-mobile-inputs-private-icon{
+  display: flex;
+  align-items: center;
+  padding: 0px 4px;
+  height: 18px;
+  border-radius:4px;
+  background: #FFC700;
+  margin-left: 4px;
+}
+.fcr-chatroom-mobile-inputs-private-icon-svg{
+  width: 16px;
+  height: 16px;
+  overflow: hidden;
+}
+.fcr-chatroom-mobile-inputs-private-icon-val{
+  color: #FFF;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: Inter;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 18px;
+}
+.fcr-chatroom-mobile-inputs-main{
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
 .fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
   position: fixed;
   left: 0;
@@ -25,21 +81,23 @@
 .fcr-chatroom-mobile-inputs-input-emoji {
   position: absolute;
   right: 11px;
-  top: 4px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .fcr-chatroom-mobile-inputs-image {
   position: absolute;
   right: 40px;
-  top: 4px;
+  top: 50%;
+  transform: translateY(-50%);
 }
 .fcr-chatroom-mobile-inputs-input input,
 .fcr-chatroom-mobile-inputs-input-forceLandscape input {
-  width: 239px;
+  width: 245px;
   background: rgba(61, 64, 75, 0.9);
   border: 1px solid #4a4c5f;
   border-radius: 50px;
-  height: 36px;
-  padding: 0 65px 0 18px;
+  height: 40px;
+  padding: 4px 65px 4px 12px;
   font-size: 14px;
   color: #fff;
   position: relative;
@@ -257,4 +315,84 @@
 }
 .fcr-chatroom-mobile-inputs-input-quit-landscape > svg {
   margin-left: 10px;
+}
+.fcr-chatroom-mobile-inputs-chat-dialog{
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  background-color: rgba(0,0,0,.35);
+  z-index: 10;
+}
+.fcr-chatroom-mobile-inputs-chat-dialog-main{
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background-color: #3C3C3C;
+  border-radius: 10px 10px 0 0;
+  height: 588px;
+  width: 100%;
+}
+.fcr-chatroom-mobile-inputs-chat-dialog-split{
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 32px;
+  height: 4px;
+  border-radius: 10px;
+  background: #BBB;
+}
+.fcr-chatroom-mobile-inputs-chat-dialog-close{
+  position: absolute;
+  left: 13px;
+  top: 17px;
+  width: 24px;
+  height: 24px;
+  border-radius: 24px;
+  background: rgba(53, 54, 56, .95);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fcr-chatroom-mobile-inputs-chat-dialog-title{
+  margin-top: 4px;
+  padding: 13px;
+  text-align: center;
+  color: #fff;
+  text-align: center;
+  font-family: "Helvetica Neue";
+  font-size: 15px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 15px;
+}
+.fcr-chatroom-mobile-inputs-chat-search{
+  margin: 0 15px;
+  border-radius: 50px;
+  border: 1px solid rgba(74, 76, 95, 0.50);
+  background: #3D404B;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+.fcr-chatroom-mobile-inputs-chat-search-input{
+  width: 100%;
+  padding: 4px 12px;
+  height: 100%;
+  background: transparent;
+  color: #fff;
+  outline: none;
+}
+.fcr-chatroom-mobile-inputs-chat-search-icon{
+  width: 42px;
+  height: 24px;
+  border-radius: 50px;
+  background: #4262FF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
 }
