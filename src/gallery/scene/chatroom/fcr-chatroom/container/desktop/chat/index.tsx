@@ -278,7 +278,6 @@ const MessageList = observer(() => {
   const {
     messageStore: { renderableMessageList, listCache, messageListScrollToBottom },
   } = useStore();
-  
   const transI18n = useI18n();
   const { listRef, handleScroll } = useScroll();
   const renderMessage = (

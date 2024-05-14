@@ -89,7 +89,7 @@ export const FcrChatRoomH5Inputs = observer(
     const handleFileInputChange = () => {
       const file = fileInputRef.current?.files?.[0];
       if (file) {
-        sendImageMessage(file);
+        sendImageMessage(file, privateUser ? [privateUser] : undefined);
       }
     };
     const handleEmojiClick = (emoji: string) => {
@@ -125,7 +125,6 @@ export const FcrChatRoomH5Inputs = observer(
             'fcr-chatroom-mobile-inputs-landscape': isLandscape,
           })}
           style={{
-            background: 'transparent',
             visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
             opacity: landscapeToolBarVisible ? 1 : 0,
             transition: 'visibility .2s, opacity .2s',

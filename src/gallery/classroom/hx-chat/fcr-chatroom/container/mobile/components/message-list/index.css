@@ -59,6 +59,8 @@
 }
 .fcr-chatroom-mobile-message-item-img {
   padding: 10px 10px;
+  display: flex;
+  flex-direction: column;
 }
 .fcr-chatroom-mobile-message-item-img > img {
   float: right;
@@ -152,4 +154,31 @@
   position: relative;
   pointer-events: all;
   margin-left: 20px;
+}
+.fcr-chat-private-tag{
+  color: #FFF;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: "Helvetica Neue";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19.5px;
+}
+.fcr-text-yellow{
+  color: #D4A80A;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: "Helvetica Neue";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 19.5px;
+}
+.fcr-text-blue{
+  color: #5BD0F5;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: "Helvetica Neue";
+  font-size: 13px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 19.5px;
 }

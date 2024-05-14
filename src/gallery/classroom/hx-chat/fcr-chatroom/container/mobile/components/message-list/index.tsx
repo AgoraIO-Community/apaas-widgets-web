@@ -24,14 +24,13 @@ export const MessageList = observer(() => {
       isBottom,
       setIsBottom,
       unreadMessageCount,
-      checkIsPrivateMessage,
       setMessageListDom,
       messageListScrollToBottom,
     },
     roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
-  console.log(messageList)
+  console.log('messageList', messageList)
   const scrollingRef = useRef(false);
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
@@ -226,13 +225,14 @@ const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
 const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
   const {
     fcrChatRoom,
+    messageStore: { checkIsPrivateMessage },
     roomStore: { isLandscape, forceLandscape },
   } = useStore();
   const { isTeacherMessage, messageFromAlias, messageStyleType } = useMessageParams({
     message,
     fcrChatRoom,
   });
-  
+  const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
   const textMessage = message as AgoraIMTextMessage;
   return (
     <div
@@ -247,10 +247,27 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
             size={24}></SvgImgMobile>
         </span>
       )}
-      <span className="fcr-chatroom-mobile-message-item-name">
-        {textMessage.ext?.nickName}
-        {messageFromAlias}:
-      </span>
+      {!checkIsPrivateMessage(message) && <span className="fcr-chatroom-mobile-message-item-name">
+        {!isSelfMessage ? textMessage.ext?.nickName : transI18n('fcr_chat_label_i')}
+        {isSelfMessage ? '' : messageFromAlias}:
+      </span>}
+      {isSelfMessage && checkIsPrivateMessage(message) && (
+        <span className="fcr-chat-private-tag">
+          <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
+          {transI18n('fcr_chat_label_i_said_to')}
+          <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
+          <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+          <span className='fcr-text-split'>:</span>
+        </span>
+      )}
+      {!isSelfMessage && checkIsPrivateMessage(message) && (
+        <span className="fcr-chat-private-tag">
+          <span className="fcr-text-blue">{message.ext?.nickName}</span>
+          {transI18n('fcr_chat_label_said_to_me')}
+          <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+          <span className='fcr-text-split'>:</span>
+        </span>
+      )}
       {textMessage.msg}
     </div>
   );
@@ -259,12 +276,14 @@ const ImageMessage = observer(
   ({ message, onImgLoad }: { message: AgoraIMMessageBase; onImgLoad: () => void }) => {
     const {
       fcrChatRoom,
+      messageStore: { checkIsPrivateMessage },
       roomStore: { isLandscape, forceLandscape },
     } = useStore();
     const { isTeacherMessage, messageFromAlias, messageStyleType } = useMessageParams({
       message,
       fcrChatRoom,
     });
+    const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
     const imageMessage = message as AgoraIMImageMessage;
     const imageUrl =
       imageMessage.url || (imageMessage.file ? URL.createObjectURL(imageMessage.file) : '');
@@ -304,10 +323,27 @@ const ImageMessage = observer(
             </span>
           )}
 
-          <span className="fcr-chatroom-mobile-message-item-name">
-            {imageMessage.ext?.nickName}
-            {messageFromAlias}:
-          </span>
+          {!checkIsPrivateMessage(message) && <span className="fcr-chatroom-mobile-message-item-name">
+            {!isSelfMessage ? imageMessage.ext?.nickName : transI18n('fcr_chat_label_i')}
+            {isSelfMessage ? '' : messageFromAlias}:
+          </span>}
+          {isSelfMessage && checkIsPrivateMessage(message) && (
+            <span className="fcr-chat-private-tag">
+              <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
+              {transI18n('fcr_chat_label_i_said_to')}
+              <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
+              <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+              <span className='fcr-text-split'>:</span>
+            </span>
+          )}
+          {!isSelfMessage && checkIsPrivateMessage(message) && (
+            <span className="fcr-chat-private-tag">
+              <span className="fcr-text-blue">{message.ext?.nickName}</span>
+              {transI18n('fcr_chat_label_said_to_me')}
+              <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+              <span className='fcr-text-split'>:</span>
+            </span>
+          )}
           <img onLoad={onImgLoad} src={imageUrl}></img>
         </div>
       </>
@@ -315,21 +351,39 @@ const ImageMessage = observer(
   },
 );
 const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
-  const { fcrChatRoom } = useStore();
+  const { fcrChatRoom, messageStore: { checkIsPrivateMessage }, } = useStore();
 
   const { messageFromAlias } = useMessageParams({
     message,
     fcrChatRoom,
   });
+  const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
   const cmdMessage = message as AgoraIMCustomMessage;
   return (
     <div
       key={cmdMessage.id}
       className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-student`}>
-      <span className="fcr-chatroom-mobile-message-item-name">
-        {cmdMessage.ext?.nickName}
-        {messageFromAlias}&nbsp;
-      </span>
+        {!checkIsPrivateMessage(message) && <span className="fcr-chatroom-mobile-message-item-name">
+          {!isSelfMessage ? cmdMessage.ext?.nickName : transI18n('fcr_chat_label_i')}
+          {isSelfMessage ? '' : messageFromAlias}:
+        </span>}
+        {isSelfMessage && checkIsPrivateMessage(message) && (
+          <span className="fcr-chat-private-tag">
+            <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
+            {transI18n('fcr_chat_label_i_said_to')}
+            <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
+            <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+            <span className='fcr-text-split'>:</span>
+          </span>
+        )}
+        {!isSelfMessage && checkIsPrivateMessage(message) && (
+          <span className="fcr-chat-private-tag">
+            <span className="fcr-text-blue">{message.ext?.nickName}</span>
+            {transI18n('fcr_chat_label_said_to_me')}
+            <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+            <span className='fcr-text-split'>:</span>
+          </span>
+        )}
       {convertCmdMessageAction(cmdMessage.action)}
     </div>
   );
@@ -359,7 +413,6 @@ const useMessageParams = ({
   fcrChatRoom: AgoraIMBase;
 }) => {
   const transI18n = useI18n();
-
   const isSelfMessage = message.from === fcrChatRoom.userInfo?.userId;
   const isTeacherMessage = message.ext?.role === 1;
   const messageFromAlias = isSelfMessage

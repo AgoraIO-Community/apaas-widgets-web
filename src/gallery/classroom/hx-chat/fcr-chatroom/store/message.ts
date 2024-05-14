@@ -8,8 +8,10 @@ import {
   AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
+  AgoraIMMessageExt,
   AgoraIMMessageType,
   AgoraIMTextMessage,
+  AgoraIMUserInfo,
 } from '../../../../../common/im/wrapper/typs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 const MAX_MESSAGE_COUNT = 1000;
@@ -20,9 +22,10 @@ export class MessageStore {
   private _messageListDom: HTMLDivElement | null = null;
   @observable isBottom = true;
   @observable unreadMessageCount = 0;
-  @observable messageList: (AgoraIMMessageBase | string)[] = [];
+  @observable messageList: (AgoraIMMessageBase)[] = [];
   @observable announcement = '';
   @observable showAnnouncement = false;
+  @observable historyMessageLoaded = false;
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
   }
@@ -100,6 +103,9 @@ export class MessageStore {
       }, 500);
     }
   }
+  checkIsPrivateMessage(message: AgoraIMMessageBase) {
+    return message.ext && message.ext?.receiverList?.length > 0;
+  }
   @bound
   setMessageListDom(dom: HTMLDivElement) {
     this._messageListDom = dom;
@@ -112,7 +118,7 @@ export class MessageStore {
     }
   }
   @action.bound
-  addMessage(message: AgoraIMMessageBase | string) {
+  addMessage(message: AgoraIMMessageBase) {
     this.messageList.push(message);
   }
   @action.bound
@@ -157,20 +163,12 @@ export class MessageStore {
     this.removeAnnouncementFromMessageList();
   }
   @bound
-  async sendTextMessage(text: string) {
-    const message = this._fcrChatRoom.createTextMessage(text);
-
+  async sendTextMessage(text: string, receiverList?: AgoraIMUserInfo[]) {
+    const message = this._fcrChatRoom.createTextMessage(text, receiverList);
     if (message.msg?.length > 300) {
-      console.log(this._widget);
-
-      this._widget.broadcast(AgoraExtensionWidgetEvent.AddSingletonToast, {
-        desc: transI18n('chat.enter_content_is_too_long'),
-        type: 'normal',
-      });
-
+      this._widget.ui.addToast(transI18n('fcr_chat_tips_message_too_long'), 'error');
       return;
     }
-
     await this._fcrChatRoom.sendMessage(message);
     runInAction(() => {
       message.from = this._fcrChatRoom.userInfo?.userId;
@@ -179,10 +177,27 @@ export class MessageStore {
     this._startPollingMessageTask();
   }
   @bound
-  async sendImageMessage(file: File) {
-    const message = await this._fcrChatRoom.createImageMessage({
-      file,
+  async sendCustomMessage(
+    action: AgoraIMCmdActionEnum,
+    ext?: Partial<AgoraIMMessageExt>,
+    receiverList?: AgoraIMUserInfo[],
+  ) {
+    const message = this._fcrChatRoom.createCustomMessage(action, ext, receiverList);
+    await this._fcrChatRoom.sendMessage(message);
+    runInAction(() => {
+      message.from = this._fcrChatRoom.userInfo?.userId;
+      this._messageQueue.push(message);
     });
+    this._startPollingMessageTask();
+  }
+  @bound
+  async sendImageMessage(file: File, receiverList?: AgoraIMUserInfo[]) {
+    const message = await this._fcrChatRoom.createImageMessage(
+      {
+        file,
+      },
+      receiverList,
+    );
     await this._fcrChatRoom.sendMessage(message);
     runInAction(() => {
       message.from = this._fcrChatRoom.userInfo?.userId;
@@ -195,18 +210,18 @@ export class MessageStore {
     const messages = await this._fcrChatRoom.getHistoryMessageList({ msgId: -1 });
     runInAction(() => {
       this._messageQueue = this._messageQueue.concat(messages);
+      this.historyMessageLoaded = true;
     });
     this._startPollingMessageTask();
-    setTimeout(this.messageListScrollToBottom, 500);
   }
   async getAnnouncement() {
     const announcement = await this._fcrChatRoom.getAnnouncement();
     runInAction(() => {
       this.announcement = announcement;
       this.removeAnnouncementFromMessageList();
-      if (announcement) {
-        this.addMessage(announcement);
-      }
+      // if (announcement) {
+      //   this.addMessage(announcement);
+      // }
     });
   }
 
