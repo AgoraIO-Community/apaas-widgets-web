@@ -94,6 +94,10 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.PrivateChat,
       onMessage: this._handlePrivateChat,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
+      onMessage: this._onRaiseHandStateChanged,
+    });
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
@@ -104,6 +108,11 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.PrivateChat,
       onMessage: this._handlePrivateChat,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
+      onMessage: this._onRaiseHandStateChanged,
+    });
+    
   }
   @observable privateUser?: AgoraIMUserInfo;
   @action.bound

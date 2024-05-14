@@ -49,7 +49,7 @@
   font-weight: 500;
   font-size: 13px;
   word-break: break-all;
-  margin-bottom: 4px;
+  margin-bottom: 8px;
   width: fit-content;
   padding: 2px 10px;
   color: rgba(255, 255, 255, 1);
@@ -70,15 +70,13 @@
   border-radius: 8px;
 }
 
-.fcr-chatroom-mobile-message-item-teacher {
-  background: rgba(124, 121, 255, 1);
-}
 .fcr-chatroom-mobile-message-item-student {
-  background: rgba(76, 84, 98, 0.6);
+  background: rgba(0, 0, 0, 0.30);
+  backdrop-filter: blur(25px);
 }
 
 .fcr-chatroom-mobile-message-item-self {
-  background: rgba(66, 98, 255, 1);
+  background: rgba(3, 167, 215, 0.20);
 }
 .fcr-chatroom-mobile-message-item-name {
   color: rgba(91, 208, 245, 1);
@@ -90,12 +88,25 @@
 .fcr-chatroom-mobile-message-item-host {
   position: relative;
   display: inline-block;
-  background: #0056fd;
+  background: rgba(255, 255, 255, 0.90);
   border-radius: 12px;
   margin-right: 4px;
   left: -8px;
   line-height: 18px;
   width: 30px;
+  height: 18px;
+  vertical-align: bottom;
+}
+.fcr-chatroom-mobile-message-item-private{
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #FFC700;
+  border-radius: 12px;
+  margin-right: 4px;
+  line-height: 18px;
+  width: 18px;
   height: 18px;
   vertical-align: bottom;
 }
@@ -136,7 +147,7 @@
 /** landscape **/
 .fcr-chatroom-mobile-messages-landscape {
   height: 179px;
-  width: 40%;
+  width: 296px;
   overflow-y: auto;
   pointer-events: all;
   position: absolute;
