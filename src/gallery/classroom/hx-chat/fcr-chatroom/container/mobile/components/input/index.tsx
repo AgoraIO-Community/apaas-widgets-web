@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { AgoraExtensionWidgetEvent } from '../../../../../../../../events';
 import { MobileCallState } from '../../../../store/room';
 import { ToolTip } from '../tooltip';
+import emptyPng from './empty.png'
 import { Avatar } from '../../../../../../../../../../fcr-ui-kit/src/components/avatar';
 
 export const FcrChatRoomH5Inputs = observer(
@@ -26,7 +27,6 @@ export const FcrChatRoomH5Inputs = observer(
     const [inputFocus, setInputFocus] = useState(false);
     const [text, setText] = useState('');
     const [isShowStudents, setIsShowStudents] = useState(false)
-    const [isShowInput, setIsShowInput] = useState(true)
     const transI18n = useI18n();
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -146,9 +146,9 @@ export const FcrChatRoomH5Inputs = observer(
         }
         
     }, [])
-    const handleHideInput = () => {
-      setIsShowInput(!isShowInput)
-    }
+    const searchUserLists = useMemo(() => {
+      return searchUserList.filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
+    }, [searchUserList, fcrChatRoom.userInfo?.userId])
     return (
       <>
         <div
@@ -181,7 +181,7 @@ export const FcrChatRoomH5Inputs = observer(
                         type={SvgIconEnum.PRIVATE}
                         size={16}></SvgImgMobile>
                     </div>
-                      {isHidePrivate && <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>}
+                      <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>
                   </div>
                 </div>
                 <div className='fcr-chatroom-mobile-inputs-main'>
@@ -370,18 +370,22 @@ export const FcrChatRoomH5Inputs = observer(
                   )}
                 </div>
               )}
-              <div className={classNames('fcr-chatroom-mobile-inputs-mobile-left-main', !isShowInput && 'hidden')}>
-               <div className='fcr-chatroom-mobile-private'>
-                  <span style={{ whiteSpace: 'nowrap' }}>{transI18n('fcr_chat_label_i_said_to')}:</span>
-                  <div className='fcr-chatroom-mobile-inputs-private-select' onClick={handleShowDialog}>
-                    <span className='fcr-chatroom-mobile-inputs-private-select-val'>{privateUser?.userId ? privateUser.nickName : transI18n('chat.chat_option_all')}</span>
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={SvgIconEnum.PRIVATE_SELECT}
-                      size={16}></SvgImgMobile>
-                  </div>
-               </div>
+              <div className='fcr-chatroom-mobile-inputs-mobile-left-main'>
+                <div className='fcr-chatroom-mobile-private'style={{
+                  visibility: inputVisible ? 'visible' : 'hidden',
+                  opacity: inputVisible ? 1 : 0,
+                  transition: 'opacity .2s',
+                }}>
+                    <span style={{ whiteSpace: 'nowrap' }}>{transI18n('fcr_chat_label_i_said_to')}:</span>
+                    <div className='fcr-chatroom-mobile-inputs-private-select' onClick={handleShowDialog}>
+                      <span className='fcr-chatroom-mobile-inputs-private-select-val'>{privateUser?.userId ? privateUser.nickName : transI18n('chat.chat_option_all')}</span>
+                      <SvgImgMobile
+                        forceLandscape={forceLandscape}
+                        landscape={isLandscape}
+                        type={SvgIconEnum.PRIVATE_SELECT}
+                        size={16}></SvgImgMobile>
+                    </div>
+                </div>
                 <div
                   className='fcr-chatroom-mobile-inputs-input fcr-chatroom-mobile-inputs-input-force-landscape'
                   style={{
@@ -424,7 +428,7 @@ export const FcrChatRoomH5Inputs = observer(
                             type={SvgIconEnum.PRIVATE}
                             size={16}></SvgImgMobile>
                         </div>
-                        <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>
+                        {isHidePrivate && <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>}
                       </div>
                     }
                     <input
@@ -525,17 +529,6 @@ export const FcrChatRoomH5Inputs = observer(
                       </div>
                     </ToolTip>
                     <div
-                        onClick={handleHideInput}
-                        className={classNames('fcr-chatroom-mobile-inputs-raise-hand', 'chat', {
-                          'fcr-chatroom-mobile-inputs-raise-hand-active': !isShowInput,
-                        })}>
-                        <SvgImgMobile
-                          type={SvgIconEnum.CHAT_CHAT}
-                          size={32}
-                          landscape={isLandscape}
-                          forceLandscape={forceLandscape}></SvgImgMobile>
-                      </div>
-                    <div
                       style={{
                         display: isLandscape ? 'none' : 'flex',
                       }}
@@ -563,8 +556,8 @@ export const FcrChatRoomH5Inputs = observer(
           </div>
           }
         </div>
-        {isShowStudents && <div className='fcr-chatroom-mobile-inputs-chat-dialog'>
-          <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main', isLandscape && 'active')}>
+        {isShowStudents && <div className='fcr-chatroom-mobile-inputs-chat-dialog' onClick={handleCloseDialog}>
+          <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main', isLandscape && 'active')} onClick={(e) =>  e.stopPropagation() }>
           <div className='fcr-chatroom-mobile-inputs-chat-dialog-split'></div>
             <div className='fcr-chatroom-mobile-inputs-chat-dialog-title'>
               <div className='fcr-chatroom-mobile-inputs-chat-dialog-close' onClick={handleCloseDialog}>
@@ -589,18 +582,14 @@ export const FcrChatRoomH5Inputs = observer(
               </div>
                
             </div>
-            <div className={classNames('fcr-chatroom-mobile-inputs-chat-lists', searchUserList.length === 0 && 'nodata')}>
-              {searchUserList.length === 0 && (
+            <div className={classNames('fcr-chatroom-mobile-inputs-chat-lists', searchUserLists.length === 0 && 'nodata')}>
+              {searchUserLists.length === 0 && (
                 <div className="fcr-chatroom-mobile-inputs-chat-list-empty-placeholder">
-                  <SvgImgMobile 
-                    forceLandscape={forceLandscape}
-                    landscape={isLandscape}
-                    type={SvgIconEnum.FCR_CHAT_PLACEHOLDER}
-                    size={60} />
+                  <img className='fcr-chatroom-mobile-inputs-chat-list-empty-img' src={emptyPng} alt="no_data" />
                   <span>{transI18n('fcr_chat_no_data')}</span>
                 </div>
               )}
-              {!searchKey && !!searchUserList.length && <div className='fcr-chatroom-mobile-inputs-chat-list' onClick={handleSelectAll}>
+              {!searchKey && !!searchUserLists.length && <div className='fcr-chatroom-mobile-inputs-chat-list' onClick={handleSelectAll}>
                 <div className='fcr-chatroom-mobile-inputs-chat-list-name'>
                   <div className='fcr-chatroom-mobile-inputs-chat-list-all'>
                     <SvgImgMobile 
@@ -621,9 +610,7 @@ export const FcrChatRoomH5Inputs = observer(
                     />
                 </div> : <div className='fcr-chatroom-mobile-inputs-chat-list-select-empty' />}
               </div>}
-              {searchUserList.length > 0 && searchUserList
-              .filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
-              .map((user) => {
+              {searchUserLists.length > 0 && searchUserLists.map((user) => {
                 let txts: string[] = ['', '', '']
                 if (searchKey) {
                   const index = user.nickName.indexOf(searchKey)

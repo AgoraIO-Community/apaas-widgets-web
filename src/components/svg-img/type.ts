@@ -43,7 +43,6 @@ export enum SvgIconEnum {
   HANDS_UP = 'hands-up',
   HANDS_UP_ACTIVE = 'hands-up-active',
   PRIVATE = 'private',
-  CHAT_CHAT = 'chat-chat',
   PRIVATE_SELECT = 'private-select',
   CHAT_CLOSE = 'chat-close',
   CHAT_SEARCH = 'chat-search',
