@@ -583,13 +583,13 @@ export const FcrChatRoomH5Inputs = observer(
                
             </div>
             <div className={classNames('fcr-chatroom-mobile-inputs-chat-lists', searchUserLists.length === 0 && 'nodata')}>
-              {searchUserLists.length === 0 && (
+              {searchUserLists.length === 0 && searchKey && (
                 <div className="fcr-chatroom-mobile-inputs-chat-list-empty-placeholder">
                   <img className='fcr-chatroom-mobile-inputs-chat-list-empty-img' src={emptyPng} alt="no_data" />
                   <span>{transI18n('fcr_chat_no_data')}</span>
                 </div>
               )}
-              {!searchKey && !!searchUserLists.length && <div className='fcr-chatroom-mobile-inputs-chat-list' onClick={handleSelectAll}>
+              {!searchKey && !!searchUserList.length && <div className='fcr-chatroom-mobile-inputs-chat-list' onClick={handleSelectAll}>
                 <div className='fcr-chatroom-mobile-inputs-chat-list-name'>
                   <div className='fcr-chatroom-mobile-inputs-chat-list-all'>
                     <SvgImgMobile 
