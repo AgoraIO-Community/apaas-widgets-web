@@ -520,8 +520,9 @@
   background: transparent;
   color: #fff;
   width: inherit;
-  /* min-width: 125px; */
+  min-width: 125px;
   padding: 4px 12px;
+  backdrop-filter:inherit;
   overflow: hidden;
 }
 .fcr-chatroom-mobile-inputs-mobile-left .fcr-chatroom-mobile-inputs-input-wrap{
