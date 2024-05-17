@@ -318,7 +318,7 @@ export const FcrChatRoomH5Inputs = observer(
                       </ToolTip>
                       <div
                         style={{
-                          display: isLandscape ? 'none' : 'flex',
+                          display: 'flex',
                         }}
                         className="fcr-chatroom-mobile-inputs-call"
                         onClick={openHandsUpActionSheet}>
@@ -528,28 +528,6 @@ export const FcrChatRoomH5Inputs = observer(
                           forceLandscape={forceLandscape}></SvgImgMobile>
                       </div>
                     </ToolTip>
-                    <div
-                      style={{
-                        display: isLandscape ? 'none' : 'flex',
-                      }}
-                      className="fcr-chatroom-mobile-inputs-call"
-                      onClick={openHandsUpActionSheet}>
-                      {mobileCallState === MobileCallState.Processing && (
-                        <div className="fcr-chatroom-mobile-inputs-call-loading">
-                          <div className="dot"></div>
-                          <div className="dot"></div>
-                          <div className="dot"></div>
-                        </div>
-                      )}
-
-                      <SvgImgMobile
-                        forceLandscape={forceLandscape}
-                        landscape={isLandscape}
-                        type={getCallIcon().icon}
-                        // colors={{ ...getCallIcon().colors }}
-                        size={30}></SvgImgMobile>
-                    </div>
-                    {/* <ThumbsUp></ThumbsUp> */}
                   </>
                 )}
             </div>

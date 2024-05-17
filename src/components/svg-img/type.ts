@@ -3,6 +3,7 @@ export enum SvgIconEnum {
   ALF = 'alf',
   ANSWER = 'answer',
   ARROW = 'arrow',
+  POLL_ICON = 'poll-icon',
   ASK_FOR_HELP = 'ask-for-help',
   AUDIO = 'audio',
   AUTHORIZED = 'authorized',

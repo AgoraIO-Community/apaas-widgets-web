@@ -473,7 +473,7 @@
   border: 1px solid rgba(74, 76, 95, 0.50);
 }
 .fcr-chatroom-mobile-inputs-mobile-content{
-  width: 100%;
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -519,8 +519,8 @@
   border: none;
   background: transparent;
   color: #fff;
-  width: initial;
-  min-width: 125px;
+  width: inherit;
+  /* min-width: 125px; */
   padding: 4px 12px;
   overflow: hidden;
 }
@@ -529,7 +529,7 @@
   align-items: center;
   border-radius: 50px;
   border: 0.5px solid rgba(74, 76, 95, 0.50);
-
+  width: 100%;
   background: rgba(91, 89, 152, 0.20);
 }
 /* .fcr-chatroom-mobile-inputs-input-wrap .fcr-chatroom-mobile-inputs-input-main.private{
