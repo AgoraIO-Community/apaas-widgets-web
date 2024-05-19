@@ -20,7 +20,6 @@ export class FcrChatRoomStore {
   constructor(private _widget: AgoraHXChatWidget, appKey: string, roomId: string) {
     const easemobUserId = this._widget.easemobUserId || '';
     const { userName, role, userUuid } = this._widget.classroomConfig.sessionInfo;
-
     this.fcrChatRoom = AgoraIM.createIMwithType('easemob', {
       appKey,
       roomId,

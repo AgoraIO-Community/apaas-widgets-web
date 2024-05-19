@@ -82,6 +82,7 @@
 }
 .fcr-chatroom-mobile-inputs-input {
   position: relative;
+  flex: 1;
 }
 .fcr-chatroom-mobile-inputs-input-emoji {
   position: absolute;
@@ -96,7 +97,7 @@
   transform: translateY(-50%);
 }
 .fcr-chatroom-mobile-inputs-input input {
-  width: 245px;
+  width: 100%;
   background: rgba(61, 64, 75, 0.9);
   border: 1px solid #4a4c5f;
   border-radius: 50px;
@@ -117,14 +118,19 @@
 
 .fcr-chatroom-mobile-inputs-hide-message,
 .fcr-chatroom-mobile-inputs-call {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgba(91, 89, 152, 0.20);
   border: 1px solid rgba(74, 76, 95, 0.50);
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-left: 8px;
+}
+.fcr-chatroom-mobile-inputs-call.landscape {
+  width: 40px;
+  height: 40px;
 }
 .fcr-chatroom-mobile-inputs-call {
   background: rgba(59, 62, 72, 1);
@@ -159,8 +165,8 @@
 }
 
 .fcr-chatroom-mobile-inputs-raise-hand {
-  width: 40px;
-  height: 40px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: rgba(249, 249, 252, 0.8);
   display: flex;
@@ -168,6 +174,12 @@
   align-items: center;
   background: rgba(91, 89, 152, 0.20);
   position: relative;
+  margin-left: 8px;
+}
+.fcr-chatroom-mobile-inputs-raise-hand.landscape{
+  width: 40px;
+  height: 40px;
+  margin-left: 0;
 }
 .fcr-chatroom-mobile-inputs-raise-hand.chat{
   margin-left: 15px;
@@ -228,10 +240,12 @@
   justify-content: center;
   align-items: center;
   border-radius: 50px;
+  margin-left: 8px;
 }
 
 .fcr-chatroom-mobile-inputs-input-wrap {
   position: relative;
+  width: 100%;
 }
 .fcr-chatroom-mobile-inputs-input-wrap:focus-within > .fcr-chatroom-mobile-inputs-input-outline {
   width: calc(100% + 4px);
@@ -316,162 +330,7 @@
 .fcr-chatroom-mobile-inputs-input-quit-landscape > svg {
   margin-left: 10px;
 }
-.fcr-chatroom-mobile-inputs-chat-dialog{
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0,0,0,.35);
-  z-index: 10;
- 
-}
-.fcr-chatroom-mobile-inputs-chat-dialog-main{
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  background-color: #3C3C3C;
-  border-radius: 10px 10px 0 0;
-  max-height: 588px;
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-}
-.fcr-chatroom-mobile-inputs-chat-dialog-main.active {
-  max-height: 80%;
-}
-.fcr-chatroom-mobile-inputs-chat-list-empty-placeholder{
-  color:  rgba(255, 255, 255, 0.70);
-  text-align: center;
-  font-family: "PingFang HK";
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height:  14px;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-  justify-content: center;
-  padding-bottom: 27px;
-  padding-top: 30px;
-}
-.fcr-chatroom-mobile-inputs-chat-list-empty-img{
-  width: 126px;
-  margin-bottom: 15px;
-  object-fit: cover;
-}
-.fcr-chatroom-mobile-inputs-chat-dialog-split{
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 32px;
-  height: 4px;
-  border-radius: 10px;
-  background: #BBB;
-}
-.fcr-chatroom-mobile-inputs-chat-dialog-close{
-  position: absolute;
-  left: 13px;
-  top: 13px;
-  width: 24px;
-  height: 24px;
-  border-radius: 24px;
-  background: rgba(53, 54, 56, .95);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.fcr-chatroom-mobile-inputs-chat-dialog-title{
-  margin-top: 4px;
-  padding: 13px;
-  text-align: center;
-  color: #fff;
-  text-align: center;
-  font-family: "Helvetica Neue";
-  font-size: 15px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 15px;
-}
-.fcr-chatroom-mobile-inputs-chat-search{
-  margin: 0 15px;
-  border-radius: 50px;
-  border: 1px solid rgba(74, 76, 95, 0.50);
-  background: #3D404B;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  margin-bottom: 10px;
-  overflow: hidden;
-}
-.fcr-chatroom-mobile-inputs-chat-search-input{
-  width: 100%;
-  padding: 4px 12px;
-  height: 100%;
-  background: transparent !important;
-  border: none !important;
-  color: #fff !important;
-  outline: none;
-}
-.fcr-chatroom-mobile-inputs-chat-search-icon{
-  width: 42px;
-  height: 24px;
-  border-radius: 50px;
-  background: #4262FF;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-right: 6px;
-}
-.fcr-chatroom-mobile-inputs-chat-lists{
-  flex: 1;
-  overflow-y: auto;
-  display: flex;
-  align-items: center;
-  flex-direction: column;
-}
-.fcr-chatroom-mobile-inputs-chat-lists.nodata{
-  justify-content: center;
-}
-.fcr-chatroom-mobile-inputs-chat-list{
-  display: flex;
-  align-items: center;
-  padding: 12px 21px 12px 15px;
-  justify-content: space-between;
-  width: 100%;
-}
-.fcr-chatroom-mobile-inputs-chat-list-all {
-  width: 36px;
-  height: 36px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 8px;
-  background:  #4262FF;
-}
-.fcr-chatroom-mobile-inputs-chat-list-name{
-  display: flex;
-  align-items: center;
-}
-.fcr-chatroom-mobile-inputs-chat-list-name-search{
-  background-color: #415ad9;
-}
-.fcr-chatroom-mobile-inputs-chat-list-name-val{
-  margin-left: 7px;
-  color: #FFF;
-  font-family: Montserrat;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 600;
-  line-height: 14px;
-}
-.fcr-chatroom-mobile-inputs-chat-list-select-empty{
-  width: 12px;
-  height: 12px;
-  border-radius: 14px;
-  border: 1px solid rgba(74, 76, 95, 0.50);
-}
+
 .fcr-chatroom-mobile-inputs-mobile-content{
   flex: 1;
   display: flex;
@@ -525,6 +384,24 @@
   backdrop-filter:inherit;
   overflow: hidden;
 }
+.fcr-chatroom-mobile-inputs-mobile-left .fcr-chatroom-mobile-inputs-input-force-landscape .fcr-chatroom-mobile-inputs-input-outline.private{
+  width: calc(100% + 4px);
+  height: calc(100% + 4px);
+  position: absolute;
+  top: -2px;
+  left: -2px;
+  border: 3px solid rgba(66, 98, 255, 0.5);
+  border-radius: 50px;
+}
+.fcr-chatroom-mobile-inputs-input-outline.active{
+  border: 1px solid rgba(66, 98, 255, 1);
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 0px;
+  border-radius: 50px;
+  left: 0px;
+}
 .fcr-chatroom-mobile-inputs-mobile-left .fcr-chatroom-mobile-inputs-input-wrap{
   display: flex;
   align-items: center;
@@ -545,6 +422,8 @@
   flex: 1;
   margin-right: 15px;
   overflow: hidden;
+  position: relative;
+  padding: 1px;
 }
 .fcr-chatroom-mobile-inputs-mobile-left .fcr-chatroom-mobile-inputs-input-force-landscape:focus{
   border: 1px solid rgba(66, 98, 255, 1);
@@ -565,4 +444,34 @@
 .fcr-chatroom-mobile-inputs-mobile-right{
   display: flex;
   align-items: center;
+}
+.fcr-chatroom-mobile-inputs-application{
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  background-color: rgba(59, 62, 72, .8);
+  width: 36px;
+  height: 36px;
+  border-radius: 36px;
+  margin-left: 8px;
+}
+.fcr-chatroom-mobile-inputs-application.landscape{
+  width: 40px;
+  height: 40px;
+  background-color: rgba(91, 89, 152, 0.20);
+}
+.fcr-chatroom-mobile-inputs-application.active{
+  background-color: #4262FF;
+}
+.fcr-chatroom-mobile-inputs-application.zero{
+  color: rgba(255,255,255,.5);
+}
+.fcr-chatroom-mobile-inputs-application-count{
+  position: absolute;
+  bottom: 5px;
+  right: 8px;
+  color: #fff;
+  font-weight: 700;
+  font-size: 12px;
 }
