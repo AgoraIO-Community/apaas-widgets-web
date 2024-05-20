@@ -3,7 +3,7 @@ import { App } from './app';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import { FcrUISceneWidget, bound } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
-import { SvgIconEnum } from '@components/svg-img';
+import { SvgIconEnum } from '../../../../../fcr-ui-kit/src/components/svg-img';
 
 export class FcrWebviewWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -102,6 +102,12 @@ export class FcrWebviewWidget extends FcrUISceneWidget {
         onMessage: handleOpen,
       });
     };
+  }
+  locate() {
+    const dom = document.querySelector('.widget-slot-web-view');
+    if (dom) {
+      return dom as HTMLElement;
+    }
   }
 
   onCreate(properties: any) {

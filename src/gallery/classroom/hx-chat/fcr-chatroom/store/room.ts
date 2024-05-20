@@ -3,7 +3,7 @@ import { computed, observable, action, runInAction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
 import dayjs from 'dayjs';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
-import { transI18n, bound, Scheduler } from 'agora-common-libs';
+import { transI18n, bound, Scheduler, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
 export enum MobileCallState {
@@ -25,6 +25,9 @@ export class RoomStore {
 
   @observable landscapeToolBarVisible = false;
   @observable pollMinimizeState = true;
+  @observable
+  private _widgetInstances: Record<string, AgoraWidgetBase> = {};
+  @observable currentWidget:AgoraWidgetBase | undefined = undefined;
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
   //缓存本地点赞要上报的个数
@@ -69,6 +72,31 @@ export class RoomStore {
   private _handleMobileCallStateChanged(state: MobileCallState) {
     this.mobileCallState = state;
   }
+  @bound
+  private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
+   this._widgetInstances = widgetInstances;
+  }
+  @computed
+  get widgetInstanceList() {
+    return Object.values(this._widgetInstances);
+  }
+
+  @computed
+  get z0Widgets() {
+    return this.widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+  }
+
+  @action.bound
+  setCurrentWidget(widget: any) {
+    this.currentWidget = widget
+    this._widget.broadcast(AgoraExtensionRoomEvent.SetCurrentApplication, widget);
+  }
+  @action.bound
+  _handleGetDefaultWidget(widget: any) {
+    if (widget) {
+      this.setCurrentWidget(widget)
+    }
+  }
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
@@ -76,11 +104,20 @@ export class RoomStore {
       messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
       onMessage: this._handlePollMinimizeStateChanged,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    })
     this._widget.broadcast(AgoraExtensionWidgetEvent.QueryPollMinimizeState, undefined);
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileCallStateChanged,
       onMessage: this._handleMobileCallStateChanged,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.DefaultCurrentApplication,
+      onMessage: this._handleGetDefaultWidget,
+    });
+  
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
       onMessage: this._handleMobileLandscapeToolBarStateChanged,
@@ -108,6 +145,14 @@ export class RoomStore {
       messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
       onMessage: this._handlePollMinimizeStateChanged,
     });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.DefaultCurrentApplication,
+      onMessage: this._handleGetDefaultWidget,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    })
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,

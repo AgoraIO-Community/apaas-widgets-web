@@ -4,7 +4,7 @@ import type { AgoraWidgetController } from 'agora-edu-core';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrUISceneWidget, bound } from 'agora-common-libs';
-import { SvgIconEnum } from '@components/svg-img';
+import { SvgIconEnum } from '../../../../../fcr-ui-kit/src/components/svg-img';
 
 export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -53,6 +53,12 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
       minimizedCollapsedIcon: SvgIconEnum.FCR_ALF2,
       minimizedTooltip: this.displayName,
     };
+  }
+  locate() {
+    const dom = document.querySelector('.widget-slot-media-player');
+    if (dom) {
+      return dom as HTMLElement;
+    }
   }
   get resizable(): boolean {
     return true;

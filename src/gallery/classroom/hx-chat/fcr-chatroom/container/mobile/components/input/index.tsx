@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
@@ -46,9 +46,12 @@ export const FcrChatRoomH5Inputs = observer(
         landscapeToolBarVisible,
         quitForceLandscape,
         mobileCallState,
+        z0Widgets,
+        currentWidget // 当前正在使用的widget-不能删
       },
       userStore: { setSearchKey, privateUser, userMuted, isRaiseHand, raiseHand, lowerHand, raiseHandTooltipVisible },
     } = useStore();
+    const widgets = useMemo(() => z0Widgets.filter((v) => v.widgetName !== 'easemobIM'),[z0Widgets])
     const getCallIcon = () => {
       switch (mobileCallState) {
         case MobileCallState.Initialize:
@@ -332,7 +335,7 @@ export const FcrChatRoomH5Inputs = observer(
                             landscape={isLandscape}
                             type={SvgIconEnum.APPLICATION}
                             size={30}></SvgImgMobile>
-                          <span className='fcr-chatroom-mobile-inputs-application-count'>1</span>
+                          <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
                       </div>
                       {/* <ThumbsUp></ThumbsUp> */}
                     </>
@@ -536,7 +539,7 @@ export const FcrChatRoomH5Inputs = observer(
                           landscape={isLandscape}
                           type={SvgIconEnum.APPLICATION}
                           size={30}></SvgImgMobile>
-                        <span className='fcr-chatroom-mobile-inputs-application-count'>1</span>
+                        <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
                     </div>
                   </>
                 )}
