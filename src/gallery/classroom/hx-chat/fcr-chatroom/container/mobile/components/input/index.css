@@ -3,7 +3,7 @@
   padding: 11px 15px 10px 10px;
   justify-content: space-between;
   flex-shrink: 0;
-  background: #27292f;
+  /* background: #27292f; */
   pointer-events: all;
 }
 .fcr-chatroom-mobile-inputs-content{
@@ -283,7 +283,6 @@
   margin-bottom: 4px;
   height: 52px;
   align-items: center;
-  background: linear-gradient(180deg, rgba(0, 0, 0, 0.00) 0%, rgba(0, 0, 0, 0.00) 8.07%, rgba(0, 0, 0, 0.01) 15.54%, rgba(0, 0, 0, 0.02) 22.5%, rgba(0, 0, 0, 0.04) 29.04%, rgba(0, 0, 0, 0.05) 35.26%, rgba(0, 0, 0, 0.07) 41.25%, rgba(0, 0, 0, 0.09) 47.1%, rgba(0, 0, 0, 0.11) 52.9%, rgba(0, 0, 0, 0.13) 58.75%, rgba(0, 0, 0, 0.15) 64.74%, rgba(0, 0, 0, 0.16) 70.96%, rgba(0, 0, 0, 0.18) 77.5%, rgba(0, 0, 0, 0.19) 84.46%, rgba(0, 0, 0, 0.20) 91.93%, rgba(0, 0, 0, 0.20) 100%);
 }
 .fcr-chatroom-mobile-landscape-input-container-emoji-open.fcr-chatroom-mobile-landscape-input-container
   .fcr-chatroom-mobile-inputs {
@@ -336,6 +335,7 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  overflow: hidden;
 }
 .fcr-chatroom-mobile-inputs-mobile-left{
   display: flex;
@@ -420,7 +420,7 @@
 }
 .fcr-chatroom-mobile-inputs-mobile-left .fcr-chatroom-mobile-inputs-input-force-landscape {
   flex: 1;
-  margin-right: 15px;
+  margin-right: 8px;
   overflow: hidden;
   position: relative;
   padding: 1px;
@@ -464,7 +464,7 @@
 .fcr-chatroom-mobile-inputs-application.active{
   background-color: #4262FF;
 }
-.fcr-chatroom-mobile-inputs-application.zero{
+.fcr-chatroom-mobile-inputs-application.zero .fcr-chatroom-mobile-inputs-application-count{
   color: rgba(255,255,255,.5);
 }
 .fcr-chatroom-mobile-inputs-application-count{

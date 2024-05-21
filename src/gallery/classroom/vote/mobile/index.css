@@ -36,6 +36,11 @@
   margin-right: 3px;
   /* justify-content: flex-end; */
   position: initial;
+  min-width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
 }
 .fcr-mobile-poll-widget-minimize-landscape > svg {

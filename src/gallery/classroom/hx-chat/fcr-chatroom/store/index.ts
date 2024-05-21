@@ -11,6 +11,7 @@ import { RoomStore } from './room';
 import { retryAttempt } from 'agora-common-libs';
 import to from 'await-to-js';
 import { transI18n, bound, Logger } from 'agora-common-libs';
+import { AgoraExtensionRoomEvent } from '../../../../../events';
 
 export class FcrChatRoomStore {
   fcrChatRoom: AgoraIMBase;
@@ -40,11 +41,13 @@ export class FcrChatRoomStore {
     this._addListeners();
     this._init();
   }
+
   private _addListeners() {
     this.fcrChatRoom.on(
       AgoraIMEvents.ConnectionStateChanged,
       this._handleFcrChatRoomConnectionStateChanged,
     );
+
     this.fcrChatRoom.on(AgoraIMEvents.ErrorOccurred, this._handleFcrChatRoomErrorOccurred);
   }
   private _removeListeners() {

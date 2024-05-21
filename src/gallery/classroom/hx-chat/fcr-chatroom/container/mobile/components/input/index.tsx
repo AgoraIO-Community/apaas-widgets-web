@@ -29,6 +29,7 @@ export const FcrChatRoomH5Inputs = observer(
     const [text, setText] = useState('');
     const [isShowStudents, setIsShowStudents] = useState(false)
     const [isShowApplication, setIsShowApplication] = useState(false)
+    const [collectVisible, setCollectVisible] = useState(false)
     const transI18n = useI18n();
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -47,6 +48,7 @@ export const FcrChatRoomH5Inputs = observer(
         quitForceLandscape,
         mobileCallState,
         z0Widgets,
+        addToast,
         currentWidget // 当前正在使用的widget-不能删
       },
       userStore: { setSearchKey, privateUser, userMuted, isRaiseHand, raiseHand, lowerHand, raiseHandTooltipVisible },
@@ -80,6 +82,35 @@ export const FcrChatRoomH5Inputs = observer(
           };
       }
     };
+    const closeCollectTip = () => {
+      setCollectVisible(false)
+    }
+    useEffect(() => {
+      document.body.addEventListener('click', closeCollectTip)
+      return () => {
+        document.body.removeEventListener('click', closeCollectTip)
+      }
+    }, [])
+    useEffect(() => {
+      let timer: NodeJS.Timeout | null = null;
+      if (collectVisible) {
+        timer = setTimeout(() => {
+          setCollectVisible(false)
+        }, 5000)
+      }
+      return () => {
+        if (timer) {
+          clearTimeout(timer)
+        }
+      }
+    }, [collectVisible])
+    useEffect(() => {
+      const isOpen = window.localStorage.getItem('application-isOpen')
+      if (widgets.length > 0 && !isOpen) {
+        window.localStorage.setItem('application-isOpen', "true")
+        setCollectVisible(true)
+      }
+    }, [widgets.length])
     const isMuted = allMuted || userMuted;
     const send = useCallback(() => {
       // sendTextMessage(text);
@@ -139,6 +170,10 @@ export const FcrChatRoomH5Inputs = observer(
     }, [])
     const handleShowApplicatioon = (e: { stopPropagation: () => void; }) => {
       e.stopPropagation()
+      if (widgets.length === 0) {
+        addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
+        return;
+      }
       setIsShowApplication(!isShowApplication)
     }
     return (
@@ -148,9 +183,6 @@ export const FcrChatRoomH5Inputs = observer(
             'fcr-chatroom-mobile-inputs-landscape': isLandscape,
           })}
           style={{
-            visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
-            opacity: landscapeToolBarVisible ? 1 : 0,
-            transition: 'visibility .2s, opacity .2s',
             zIndex: 1,
           }}>
             {!isLandscape && 
@@ -329,7 +361,7 @@ export const FcrChatRoomH5Inputs = observer(
                           // colors={{ ...getCallIcon().colors }}
                           size={30}></SvgImgMobile>
                       </div>
-                      <div className={classNames("fcr-chatroom-mobile-inputs-application", isShowApplication && 'active') } onClick={handleShowApplicatioon}>
+                      <div className={classNames("fcr-chatroom-mobile-inputs-application", widgets.length === 0 && 'zero', isShowApplication && 'active') } onClick={handleShowApplicatioon}>
                         <SvgImgMobile
                             forceLandscape={forceLandscape}
                             landscape={isLandscape}
@@ -346,7 +378,11 @@ export const FcrChatRoomH5Inputs = observer(
          
           {isLandscape && 
           <div className='fcr-chatroom-mobile-inputs-mobile-content'>
-            <div className='fcr-chatroom-mobile-inputs-mobile-left'>
+            <div className='fcr-chatroom-mobile-inputs-mobile-left' style={{
+                 visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
+                 opacity: landscapeToolBarVisible ? 1 : 0,
+                 transition: 'visibility .2s, opacity .2s',
+            }}>
               {text ? null : (
                 <div
                   className="fcr-chatroom-mobile-inputs-hide-message"
@@ -533,14 +569,16 @@ export const FcrChatRoomH5Inputs = observer(
                           forceLandscape={forceLandscape}></SvgImgMobile>
                       </div>
                     </ToolTip>
-                    <div className={classNames("fcr-chatroom-mobile-inputs-application landscape", isShowApplication && 'active') } onClick={handleShowApplicatioon}>
-                      <SvgImgMobile
-                          forceLandscape={forceLandscape}
-                          landscape={isLandscape}
-                          type={SvgIconEnum.APPLICATION}
-                          size={30}></SvgImgMobile>
-                        <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
-                    </div>
+                    <ToolTip placement="topLeft" content={transI18n('fcr_teacher_use_collected_tip')} visible={collectVisible}>
+                      <div className={classNames("fcr-chatroom-mobile-inputs-application landscape", widgets.length === 0 && 'zero', isShowApplication && 'active') } onClick={handleShowApplicatioon}>
+                        <SvgImgMobile
+                            forceLandscape={forceLandscape}
+                            landscape={isLandscape}
+                            type={SvgIconEnum.APPLICATION}
+                            size={30}></SvgImgMobile>
+                          <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
+                      </div>
+                    </ToolTip>
                   </>
                 )}
             </div>

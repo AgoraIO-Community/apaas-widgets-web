@@ -4,7 +4,7 @@ import type { AgoraWidgetController } from 'agora-edu-core';
 import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrUISceneWidget, bound } from 'agora-common-libs';
-import { SvgIconEnum } from '../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum } from '@components/svg-img';
 
 export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;

@@ -4,7 +4,7 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/sv
 import { useStore } from '../../../../hooks/useStore';
 import emptyPng from './empty.png'
 import { useI18n } from 'agora-common-libs';
-import { Avatar } from '../../../../../../../../../../fcr-ui-kit/src/components/avatar';
+import { Avatar } from '@components/avatar';
 import classNames from 'classnames';
 const PrivateDialog = ({ setIsShowStudents }: {setIsShowStudents: (arg0: boolean) => void}) => {
     const {

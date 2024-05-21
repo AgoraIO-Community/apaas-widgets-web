@@ -63,7 +63,11 @@ export class RoomStore {
     });
     this._thumbsUpCountCache = thumbsUpCount;
   }
-
+  @action.bound
+  addToast(message: string, type: "error" | "warning" | "success" | undefined) {
+    console.log(this)
+    return this._widget.ui.addToast(message, type);
+  }
   @action.bound
   private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
     this.landscapeToolBarVisible = visible;
@@ -74,6 +78,7 @@ export class RoomStore {
   }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
+    console.log('_handleGetWidgets', widgetInstances)
    this._widgetInstances = widgetInstances;
   }
   @computed
