@@ -1,12 +1,35 @@
-import { AgoraCloudClassWidget, transI18n, bound, Log, Logger } from 'agora-common-libs';
-import type { AgoraWidgetController } from 'agora-edu-core';
+import {
+  AgoraCloudClassWidget,
+  FcrUISceneWidget,
+  transI18n,
+  bound,
+  Log,
+  Logger,
+} from 'agora-common-libs';
+import { AgoraWidgetController, EduClassroomConfig, EduRoleTypeEnum } from 'agora-edu-core';
 import dayjs from 'dayjs';
 import ReactDOM from 'react-dom';
-import { reaction, IReactionDisposer } from 'mobx';
+import { reaction, computed, IReactionDisposer, observable, action, runInAction } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrBoardFactory } from '../../../common/whiteboard-wrapper/factory';
 import { FcrBoardRoom } from '../../../common/whiteboard-wrapper/board-room';
+import { SvgIconEnum } from '../../../../../fcr-ui-kit/src/components/svg-img';
+
 import { FcrBoardMainWindow } from '../../../common/whiteboard-wrapper/board-window';
+import {
+  WINDOW_ASPECT_RATIO,
+  WINDOW_MIN_SIZE,
+  WINDOW_TITLE_HEIGHT,
+  defaultToolsRetain,
+  heightPerColor,
+  heightPerTool,
+  layoutContentClassName,
+  sceneNavHeight,
+  toolbarClassName,
+  verticalPadding,
+  widgetContainerClassName,
+  windowClassName,
+} from './utils';
 import {
   BoardWindowAnimationOptions,
   FcrBoardRegion,
@@ -16,13 +39,27 @@ import {
   FcrBoardMainWindowEvent,
   BoardMountState,
   FcrBoardMainWindowFailureReason,
+  FcrBoardShape,
+  FcrBoardTool,
+  FcrBoardPageInfo,
 } from '../../../common/whiteboard-wrapper/type';
+import tinycolor from 'tinycolor2';
+
 import { downloadCanvasImage } from '../../../common/whiteboard-wrapper/utils';
-import { BoardUIContext } from './ui-context';
+import {
+  BoardUIContext,
+  BoardUIContextValue,
+  ScenePaginationUIContext,
+  ScenePaginationUIContextValue,
+  ToolbarUIContext,
+  ToolbarUIContextValue,
+} from './ui-context';
 import { App } from './app';
 import { DialogProgressApi } from '../../../components/progress';
 import isNumber from 'lodash/isNumber';
 import { addResource } from './i18n/config';
+import { MultiWindowWidgetDialog } from '../common/dialog/multi-window';
+import { ToastApi } from '@components/toast';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraCloudClassWidget {
@@ -31,6 +68,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   logger!: Logger;
   protected _boardRoom?: FcrBoardRoom;
   protected _boardMainWindow?: FcrBoardMainWindow;
+
   protected _outerDom?: HTMLElement;
   protected _boardDom?: HTMLDivElement | null;
   protected _collectorDom?: HTMLDivElement | null;
@@ -44,7 +82,25 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     region: FcrBoardRegion;
   };
   protected _grantedUsers = new Set<string>();
+  private _joinSuccessed = false;
   protected _disposers: IReactionDisposer[] = [];
+  private _toolbarContext?: ToolbarUIContextValue;
+  private _paginationContext?: ScenePaginationUIContextValue;
+  private _connectionState: BoardConnectionState = BoardConnectionState.Disconnected;
+  private _boardContext?: BoardUIContextValue;
+
+  get defaultFullscreen(): boolean {
+    return true;
+  }
+  get minimizedProperties() {
+    return {
+      minimizedIcon: SvgIconEnum.FCR_WHITEBOARD,
+      minimizedTooltip: transI18n('fcr_board_display_name'),
+    };
+  }
+  get displayName() {
+    return transI18n('fcr_board_display_name');
+  }
 
   get widgetName() {
     return 'netlessBoard';
@@ -62,11 +118,21 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     dom.classList.add('netless-whiteboard-wrapper');
     this._outerDom = dom;
 
-    this.setBackgourndImage();
-
+    this._setBackgourndImage();
     ReactDOM.render(
       <BoardUIContext.Provider value={this.createUIContext()}>
-        <App />
+        <ToolbarUIContext.Provider value={this._createToolbarUIContext()}>
+          <ScenePaginationUIContext.Provider value={this._createScenePaginationUIContext()}>
+            <MultiWindowWidgetDialog
+              widget={this}
+              closeable={this.hasPrivilege}
+              refreshable={false}
+              fullscreenable
+              minimizable>
+              <App />
+            </MultiWindowWidgetDialog>
+          </ScenePaginationUIContext.Provider>
+        </ToolbarUIContext.Provider>
       </BoardUIContext.Provider>,
       dom,
     );
@@ -77,6 +143,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       ReactDOM.unmountComponentAtNode(this._outerDom);
       this._outerDom = undefined;
     }
+  }
+  @action.bound
+  private _handleGrantedUpdate(auth) {
+    console.log('_handleGrantedUpdate', auth);
   }
 
   onInstall(controller: AgoraWidgetController): void {
@@ -102,7 +172,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     const setAnimationOptions = (animationOptions: BoardWindowAnimationOptions) => {
       FcrBoardWidget._animationOptions = animationOptions;
     };
-
+    controller.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.BoardGrantedUsersUpdated,
+      onMessage: this._handleGrantedUpdate,
+    });
     controller.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToggleBoard,
       onMessage: handleOpen,
@@ -118,6 +191,14 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         onMessage: handleOpen,
       });
     };
+
+    // const { role } = EduClassroomConfig.shared.sessionInfo;
+    // if (role === EduRoleTypeEnum.student) {
+    //   console.log('this---student', EduClassroomConfig.shared.sessionInfo);
+    //   this._disposers.push(
+    //     computed(() => this.grantedUsers).observe(async ({ newValue, oldValue }) => {}),
+    //   );
+    // }
   }
 
   /**
@@ -126,6 +207,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   onCreate(props: any, userProps: any) {
     addResource();
     this._isInitialUser = userProps.initial;
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
+      widgetId: this.widgetId,
+      visible: true,
+    });
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),
     );
@@ -208,7 +293,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         },
         (backgroundImage) => {
           if (backgroundImage) {
-            this.setBackgourndImage();
+            this._setBackgourndImage();
           }
         },
       ),
@@ -314,7 +399,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   @bound
   mount() {
     const { _boardMainWindow, _boardDom } = this;
-
     if (_boardDom && _boardMainWindow) {
       this._mounted = true;
       const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
@@ -323,6 +407,14 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         collectorContainer: this._collectorDom ?? undefined,
       });
     }
+    this._repositionToolbar();
+    setTimeout(() => {
+      runInAction(() => {
+        if (this._toolbarContext) {
+          this._toolbarContext.observables.layoutReady = true;
+        }
+      });
+    });
   }
 
   @bound
@@ -332,6 +424,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       this._boardMainWindow = undefined;
     }
     this._mounted = false;
+    runInAction(() => {
+      if (this._toolbarContext) {
+        this._toolbarContext.observables.layoutReady = false;
+      }
+    });
   }
 
   @bound
@@ -346,7 +443,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       this.removeWidgetExtraProperties([`grantedUsers.${userUuid}`]);
     }
   }
-
   @bound
   private async _saveAttributes() {
     const mainWindow = this._boardMainWindow;
@@ -364,7 +460,13 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     if (mainWindow) {
       mainWindow.getSnapshotImage(background, (progress) => {
         if (progress !== 100) {
-          DialogProgressApi.show({ key: 'saveImage', progress: 1, width: 100, auto: true });
+          DialogProgressApi.show({
+            key: 'saveImage',
+            platform: 'mobile',
+            progress: 1,
+            width: 100,
+            auto: true,
+          });
         } else {
           DialogProgressApi.destroy('saveImage');
         }
@@ -415,8 +517,8 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       this.logger.info('Fcr board join success');
       await mainWindow.updateOperationPrivilege(this.hasPrivilege);
       this._deliverWindowEvents(mainWindow);
-      // this.unmount();
       this._boardMainWindow = mainWindow;
+      this._connectObservables();
       this.mount();
     });
 
@@ -495,6 +597,67 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     });
   }
 
+  private _setDomVisibility(minimized: boolean) {
+    if (minimized) {
+      setTimeout(() => {
+        if (this._outerDom) {
+          this._outerDom.style.display = 'none';
+        }
+      }, 500);
+    } else {
+      if (this._outerDom) {
+        this._outerDom.style.display = 'block';
+      }
+    }
+  }
+
+  private _createScenePaginationUIContext() {
+    const observables = observable({
+      currentPage: 1,
+      totalPage: 1,
+    });
+
+    this._paginationContext = {
+      observables,
+      addPage: action(() => {
+        this._boardMainWindow?.addPage({ after: true });
+      }),
+      changePage: action((page: number) => {
+        this._boardMainWindow?.setPageIndex(page - observables.currentPage);
+      }),
+    };
+
+    return this._paginationContext;
+  }
+
+  @action.bound
+  private _updatePageInfo(info: FcrBoardPageInfo) {
+    if (this._paginationContext) {
+      this._paginationContext.observables.currentPage = info.showIndex + 1;
+      this._paginationContext.observables.totalPage = info.count;
+    }
+  }
+
+  @action.bound
+  private _updateRedo(steps: number) {
+    if (this._toolbarContext) {
+      this._toolbarContext.observables.redoSteps = steps;
+    }
+  }
+  @action.bound
+  private _updateUndo(steps: number) {
+    if (this._toolbarContext) {
+      this._toolbarContext.observables.undoSteps = steps;
+    }
+  }
+
+  private _connectObservables() {
+    const mainWindow = this._boardMainWindow;
+    mainWindow?.on(FcrBoardMainWindowEvent.PageInfoUpdated, this._updatePageInfo);
+    mainWindow?.on(FcrBoardMainWindowEvent.RedoStepsUpdated, this._updateRedo);
+    mainWindow?.on(FcrBoardMainWindowEvent.UndoStepsUpdated, this._updateUndo);
+  }
+
   @bound
   handleDragOver(e: unknown) {
     this.broadcast(AgoraExtensionWidgetEvent.BoardDragOver, e);
@@ -523,6 +686,21 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     const { userUuid, role } = this.classroomConfig.sessionInfo;
     const granted = this._grantedUsers.has(userUuid);
     return [1, 3].includes(role) ? true : granted;
+  }
+
+  get contentAreaSize() {
+    const layoutContentDom = document.querySelector(`.${layoutContentClassName}`);
+
+    const contentAreaSize = { width: 0, height: 0, top: 0, left: 0 };
+    if (layoutContentDom) {
+      const { width, height, left, top } = layoutContentDom.getBoundingClientRect();
+      contentAreaSize.width = width;
+      contentAreaSize.height = height;
+      contentAreaSize.left = left;
+      contentAreaSize.top = top;
+    }
+
+    return contentAreaSize;
   }
 
   /**
@@ -558,25 +736,252 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   }
 
   createUIContext() {
-    return {
-      mount: this.mount,
-      unmount: this.unmount,
-      handleDrop: this.handleDrop,
-      handleDragOver: this.handleDragOver,
+    const observables = observable({
+      canOperate: this.hasPrivilege,
+      minimized: false,
+      contentAreaSize: this.contentAreaSize,
+      connectionState: this._connectionState,
+      joinSuccessed: this._joinSuccessed,
+    });
+
+    this._boardContext = {
+      observables,
+      handleDrop: (e: unknown) => {
+        this.broadcast(AgoraExtensionWidgetEvent.BoardDrop, e);
+      },
+      handleDragOver: (e: unknown) => {
+        this.broadcast(AgoraExtensionWidgetEvent.BoardDragOver, e);
+      },
       handleBoardDomLoad: (ref: HTMLDivElement | null) => {
-        this.boardDom = ref;
+        this._boardDom = ref;
+
+        if (this._boardDom) {
+          this._setBackgourndImage();
+
+          this.mount();
+        } else {
+          this.unmount();
+        }
       },
       handleCollectorDomLoad: (ref: HTMLDivElement | null) => {
-        this.collectorDom = ref;
+        this._collectorDom = ref;
+      },
+      handleClose: () => {
+        this.setInactive();
+        this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
+          widgetId: this.widgetId,
+        });
+      },
+      setPrivilege: action((canOperate: boolean) => {
+        observables.canOperate = canOperate;
+      }),
+    };
+    return this._boardContext;
+  }
+
+  private _createToolbarUIContext() {
+    const observables = observable({
+      currentTool: undefined as FcrBoardTool | undefined,
+      currentColor: '',
+      currentShape: undefined as FcrBoardShape | undefined,
+      lastPen: undefined as FcrBoardShape | undefined,
+      lastShape: undefined as FcrBoardShape | undefined,
+      currentStrokeWidth: 2,
+      toolbarPosition: { x: 0, y: 0 },
+      toolbarDockPosition: { x: undefined, y: undefined, placement: 'left' as const },
+      toolbarReleased: false,
+      redoSteps: 0,
+      undoSteps: 0,
+      maxCountVisibleTools: 4,
+      canOperate: this.hasPrivilege,
+      layoutReady: false,
+    });
+    this._toolbarContext = {
+      observables,
+      redo: () => {
+        this._boardMainWindow?.redo();
+      },
+      undo: () => {
+        this._boardMainWindow?.undo();
+      },
+      clean: () => {
+        this._boardMainWindow?.clean();
+      },
+      setTool: action((tool: FcrBoardTool) => {
+        observables.currentTool = tool;
+        observables.currentShape = undefined;
+        this._boardMainWindow?.selectTool(tool);
+      }),
+      setPen: action((shape: FcrBoardShape) => {
+        observables.currentShape = shape;
+        observables.lastPen = shape;
+        observables.currentTool = undefined;
+        this._boardMainWindow?.drawShape(
+          shape,
+          observables.currentStrokeWidth,
+          tinycolor(observables.currentColor).toRgb(),
+        );
+      }),
+      setShape: action((shape: FcrBoardShape) => {
+        observables.currentShape = shape;
+        observables.lastShape = shape;
+        observables.currentTool = undefined;
+        this._boardMainWindow?.drawShape(
+          shape,
+          observables.currentStrokeWidth,
+          tinycolor(observables.currentColor).toRgb(),
+        );
+      }),
+      setStrokeColor: action((color: string) => {
+        observables.currentColor = color;
+        this._boardMainWindow?.changeStrokeColor(tinycolor(color).toRgb());
+      }),
+      setStrokeWidth: action((strokeWidth: number) => {
+        observables.currentStrokeWidth = strokeWidth;
+        this._boardMainWindow?.changeStrokeWidth(strokeWidth);
+      }),
+      clickExpansionTool: action(() => {}),
+      setToolbarPosition: action((pos: { x: number; y: number }) => {
+        observables.toolbarPosition = pos;
+      }),
+      dragToolbar: action(() => {
+        observables.toolbarReleased = false;
+      }),
+      releaseToolbar: action(() => {
+        observables.toolbarReleased = true;
+        this._updateDockPlacement();
+        this._repositionToolbar();
+      }),
+      captureApp: () => {},
+      captureScreen: () => {},
+      saveDraft: () => {
+        this._getSnapshotImage('#bbb');
       },
     };
+    return this._toolbarContext;
   }
 
   @bound
-  setBackgourndImage() {
+  private _updateDockPlacement() {
+    if (this._toolbarContext) {
+      const toolbarDom = document.querySelector(`.${toolbarClassName}`);
+      const containerDom = document.querySelector(`.${windowClassName}`);
+      if (containerDom && toolbarDom) {
+        const containerClientRect = containerDom.getBoundingClientRect();
+        const toolbarClientRect = toolbarDom.getBoundingClientRect();
+        const toolbarCenterPos =
+          toolbarClientRect.left - containerClientRect.left + toolbarClientRect.width / 2;
+        const toolbarContext = this._toolbarContext;
+        runInAction(() => {
+          if (toolbarCenterPos > containerClientRect.width / 2) {
+            // right
+            toolbarContext.observables.toolbarDockPosition.placement = 'right';
+          } else {
+            // left
+            toolbarContext.observables.toolbarDockPosition.placement = 'left';
+          }
+        });
+      }
+    }
+  }
+
+  @action.bound
+  private _repositionToolbar() {
+    if (this._toolbarContext) {
+      const toolbarDom = document.querySelector(`.${toolbarClassName}`);
+      const containerDom = document.querySelector(`.${windowClassName}`);
+      if (containerDom && toolbarDom) {
+        setTimeout(this._updateMaxVisibleTools);
+        // wait until the UI rerenders, then actual dimensions can be obtained
+        setTimeout(this._updateDockPosition);
+      }
+    }
+  }
+
+  @bound
+  private _updateDockPosition() {
+    if (this._toolbarContext) {
+      const toolbarDom = document.querySelector(`.${toolbarClassName}`);
+      const containerDom = document.querySelector(`.${windowClassName}`);
+      if (containerDom && toolbarDom) {
+        const containerClientRect = containerDom.getBoundingClientRect();
+        const toolbarClientRect = toolbarDom.getBoundingClientRect();
+        /* scene page bar 42 px height */
+        // const toolbarOffsetTop = (containerClientRect.height - toolbarDom.clientHeight - 42) / 2;
+        const toolbarOffsetTop = 12;
+        const toolbarContext = this._toolbarContext;
+        runInAction(() => {
+          if (toolbarContext.observables.toolbarDockPosition.placement === 'right') {
+            // right
+            toolbarContext.observables.toolbarDockPosition = {
+              x: containerClientRect.width - toolbarClientRect.width,
+              y: toolbarOffsetTop + sceneNavHeight / 2,
+              placement: 'right',
+            };
+          } else if (toolbarContext.observables.toolbarDockPosition.placement === 'bottom') {
+            toolbarContext.observables.toolbarDockPosition = {
+              x: 240,
+              y: 260,
+              placement: 'bottom',
+            };
+          } else {
+            // left
+            toolbarContext.observables.toolbarDockPosition = {
+              x: 16,
+              y: toolbarOffsetTop,
+              placement: 'left',
+            };
+          }
+        });
+      }
+    }
+  }
+
+  @bound
+  private _updateMaxVisibleTools() {
+    const containerDom = document.querySelector(`.${windowClassName}`);
+
+    if (this._toolbarContext && containerDom) {
+      const containerClientRect = containerDom.getBoundingClientRect();
+
+      const { placement } = this._toolbarContext.observables.toolbarDockPosition;
+      const toolbarContext = this._toolbarContext;
+      runInAction(() => {
+        if (placement === 'right') {
+          const availableHeight =
+            containerClientRect.height - verticalPadding - defaultToolsRetain + sceneNavHeight;
+          toolbarContext.observables.maxCountVisibleTools = Math.floor(
+            availableHeight / heightPerTool,
+          );
+          if (toolbarContext.observables.maxCountVisibleTools >= 9) {
+            const visibleTools = toolbarContext.observables.maxCountVisibleTools;
+            toolbarContext.observables.maxCountVisibleTools += Math.floor(
+              (availableHeight - visibleTools * heightPerTool) / heightPerColor,
+            );
+          }
+        } else {
+          const availableHeight =
+            containerClientRect.height - verticalPadding - defaultToolsRetain - sceneNavHeight;
+          toolbarContext.observables.maxCountVisibleTools = Math.floor(
+            availableHeight / heightPerTool,
+          );
+
+          if (toolbarContext.observables.maxCountVisibleTools >= 9) {
+            const visibleTools = toolbarContext.observables.maxCountVisibleTools;
+            toolbarContext.observables.maxCountVisibleTools += Math.floor(
+              (availableHeight - visibleTools * heightPerTool) / heightPerColor,
+            );
+          }
+        }
+      });
+    }
+  }
+
+  @bound
+  private _setBackgourndImage() {
     const imageUrl = this.classroomStore.roomStore.mainRoomDataStore.flexProps?.backgroundImage;
-    if (imageUrl && this._outerDom) {
-      this._outerDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
+    if (imageUrl && this._boardDom) {
+      this._boardDom.style.background = `url(${imageUrl}) no-repeat bottom center / cover`;
     }
   }
 }

@@ -5,4 +5,16 @@ export default {
   fcr_savecanvas_tips_saving: 'Please wait…',
   fcr_board_cannot_join_room:
     'Cannot join whiteboard room after times of attemptting, please rejoin classroom',
+  fcr_board_tool_selector: 'Selector',
+  fcr_board_tool_mobile_selector: 'Selector',
+  fcr_board_tool_text: 'Text',
+  fcr_board_tool_drag: 'Drag',
+  fcr_board_tool_laser_pointer: 'Laser Pointer',
+  fcr_board_tool_save: 'Save',
+  fcr_board_tool_clean: 'Clean',
+  fcr_board_tool_move: 'Move',
+  fcr_board_toolbar_hide: 'Hide Tools',
+  fcr_board_tool_pen: 'Pen',
+  fcr_board_tool_screen: 'Screen',
+  fcr_board_tool_shape: 'Shape',
 };

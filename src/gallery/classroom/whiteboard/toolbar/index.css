@@ -1,0 +1,112 @@
+.fcr-board-toolbar {
+  position: absolute;
+  z-index: 3;
+}
+.fcr-board-toolbar .fcr-board-toolbar-item-surrounding.fcr-board-toolbar-item-surrounding--active,
+.fcr-board-toolbar .fcr-popover-trigger-opened {
+  border-radius: var(--fcr_cornerradius_xs, 6px) !important;
+  background: var(--fcr_ui_scene_mobile_click, rgba(0, 0, 0, 0.2));
+}
+.fcr-board-toolbar .fcr-popover-trigger-opened .fcr-board-toolbar-item-surrounding--active {
+  background: none;
+}
+
+.fcr-board-toolbar-main {
+  width: 100px;
+  background: var(--fcr_mobile_ui_scene_color_popup_block1, rgba(41, 46, 51, 0.95));
+  border: 0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5));
+  border-radius: 12px;
+}
+.fcr-board-title-box {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-board-title {
+  font-family: 'PingFang HK';
+  font-size: 10px;
+  margin-left: 2px;
+  color: var(--fcr_ui_scene_icontext2, rgba(255, 255, 255, 0.7));
+}
+.fcr-board-toolbar-list {
+  display: flex;
+  flex-wrap: wrap;
+  border-top: 0.5px solid rgba(74, 76, 95, 0.5);
+}
+.fcr-board-toolbar-list li {
+  width: 50%;
+  display: inline-flex;
+  justify-content: center;
+  text-align: center;
+}
+.fcr-board-toolbar-list li > div {
+  width: 100%;
+}
+.fcr-board-toolbar-item-surrounding {
+  display: inline-flex;
+  justify-content: center;
+  flex-direction: column;
+  color: var(--fcr_ui_scene_icontext2, rgba(255, 255, 255, 0.7));
+  font-size: 10px;
+  width: 100%;
+  padding-bottom: 6px;
+}
+.fcr-board-toolbar-item-surrounding svg {
+  align-self: center;
+}
+.fcr-board-toolbar-panel .fcr-board-toolbar-panel--active {
+  background: var(--fcr_ui_scene_mobile_click, rgba(0, 0, 0, 0.2));
+}
+.fcr-board-toolbar-item-surrounding.fcr-board-toolbar-item-surrounding--disabled {
+  opacity: 0.3;
+}
+.fcr-board-toolbar-panel {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 0 7px;
+}
+.fcr-board-toolbar-panel--pen > div {
+  position: relative;
+}
+.fcr-board-toolbar-panel--pen > div:not(.fcr-divider-mobile-line) {
+  padding: 0 5px;
+  border-radius: var(--fcr_cornerradius_xs, 6px);
+}
+.fcr-board-toolbar-panel--pen > div::after {
+  @apply fcr-rounded-full;
+  content: '';
+  width: 28px;
+  height: 28px;
+  position: absolute;
+  left: 2.75px;
+  top: 2.75px;
+  border: 3px solid transparent;
+}
+.fcr-board-toolbar-panel--color {
+  width: 100%;
+}
+
+.fcr-board-toolbar-item__texttip {
+  font-family: 'PingFang HK';
+  font-size: 10px;
+  color: var(--fcr_ui_scene_icontext2, rgba(255, 255, 255, 0.7));
+}
+.fcr-board-toolbar-panel--pen > div.fcr-board-toolbar-panel--strokeactive {
+  background: var(--fcr_ui_scene_mobile_click, rgba(0, 0, 0, 0.2));
+}
+.fcr-board-toolbar-panel--pen > div.fcr-board-toolbar-panel--strokeactive::after {
+  border-color: currentColor;
+  left: 7.5px;
+}
+
+.fcr-board-toolbar__fixedbottom .fcr-dialog-tooltip-overlay-content {
+  padding: 0;
+}
+.fcr-board-toolbar__fixedbottom .fcr-tooltip-inner {
+  padding: 5px 11px 9px !important;
+  border: 0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5)) !important;
+  background: var(--fcr_mobile_ui_scene_color_popup_block1, rgba(41, 46, 51, 0.95)) !important;
+  border-bottom-left-radius: 0 !important;
+  border-bottom-right-radius: 0 !important;
+}

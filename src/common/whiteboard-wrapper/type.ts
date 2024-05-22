@@ -21,15 +21,17 @@ export enum FcrBoardTool {
   Clicker = 4,
   Hand = 5,
   Text = 6,
+  Clean = 7,
+  Pen = 8,
 }
 
 export enum FcrBoardShape {
   Curve = 1,
   Straight = 2,
-  Arrow = 3,
+  Arrow = 3, // 箭头
   Rectangle = 4,
   Triangle = 5,
-  Rhombus = 6,
+  Rhombus = 6, // 菱形
   Pentagram = 7,
   Ellipse = 8,
 }

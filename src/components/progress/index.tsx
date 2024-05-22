@@ -10,6 +10,7 @@ import React, {
 } from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
+import { windowClassName } from '../../gallery/classroom/whiteboard/utils';
 
 export type ProgressType = 'download';
 
@@ -18,6 +19,7 @@ export interface ProgressProps {
   width: number;
   type: ProgressType;
   className?: string;
+  platform?: string;
   style?: React.CSSProperties;
 }
 
@@ -59,7 +61,7 @@ export const Progress: React.FC<ProgressProps> = ({
   );
 };
 
-type ProgressListItem = Pick<ProgressProps, 'width' | 'progress'> & {
+type ProgressListItem = Pick<ProgressProps, 'platform' | 'width' | 'progress'> & {
   key: string;
   auto?: boolean;
 };
@@ -119,6 +121,57 @@ const ProgressList = forwardRef<ProgressListRef>((_, ref) => {
 
 ProgressList.displayName = 'dialog-progress';
 
+const ProgressListModile = forwardRef<ProgressListRef>((_, ref) => {
+  const [progressList, setProgressList] = useState<ProgressListItem[]>([]);
+  const transI18n = useI18n();
+  const [style, setStyle] = useState<any>();
+
+  useImperativeHandle(ref, () => ({
+    show: (dialog: ProgressListItem) => {
+      const containerDom = document.querySelector(`.${windowClassName}`);
+      if (containerDom) {
+        const containerClientRect = containerDom?.getBoundingClientRect();
+        setStyle({
+          top: containerClientRect.height + containerClientRect.top - 60,
+          width: containerClientRect.width,
+        });
+      }
+      setProgressList((list: ProgressListItem[]) => {
+        const target = list.find((item) => item.key === dialog.key);
+
+        if (!target) {
+          return [...list, dialog];
+        }
+        return list.map((item) => {
+          if (item.key === dialog.key) {
+            return { ...item, ...dialog };
+          }
+          return item;
+        });
+      });
+    },
+    destroy: (key: React.Key) => {
+      setProgressList(() => progressList.filter((item) => item.key !== key));
+    },
+    destroyAll: () => {
+      setProgressList([]);
+    },
+  }));
+
+  return (
+    <div className="dialog-progress-container" style={style}>
+      {progressList.map((progress) => (
+        <div
+          className={`dialog-progress-item fcr-progress-mobile-${progress.key}`}
+          key={progress.key}>
+          <span className="dialog-progress-tip">{transI18n('fcr_savecanvas_tips_saving')}</span>
+        </div>
+      ))}
+    </div>
+  );
+});
+ProgressListModile.displayName = 'dialog-progress dialog-progress-mobile';
+
 const ProgressWarpper = ({ key, width, progress, auto }: ProgressListItem) => {
   const [state, setState] = useState({ key, width, progress });
   const timerRef = useRef<ReturnType<typeof setInterval>>();
@@ -161,14 +214,18 @@ const ProgressWarpper = ({ key, width, progress, auto }: ProgressListItem) => {
 
 let progressListInstance = createRef<ProgressListRef>();
 
-const createProgressListInstance = () => {
+const createProgressListInstance = (platform?: string) => {
   if (progressListInstance.current) {
     return progressListInstance;
   }
   const progressListRef = createRef<ProgressListRef>();
   const div = document.createElement('div');
   document.body.appendChild(div);
-  ReactDOM.render(<ProgressList ref={progressListRef} />, div);
+  if (platform === 'mobile') {
+    ReactDOM.render(<ProgressListModile ref={progressListRef} />, div);
+  } else {
+    ReactDOM.render(<ProgressList ref={progressListRef} />, div);
+  }
   progressListInstance = progressListRef;
   return progressListInstance;
 };
@@ -176,7 +233,7 @@ const createProgressListInstance = () => {
 export const DialogProgressApi = {
   show: (dialog: ProgressListItem) => {
     const closePromise: Promise<typeof progressListInstance> = new Promise((resolve) => {
-      const instance = createProgressListInstance();
+      const instance = createProgressListInstance(dialog.platform);
       resolve(instance);
     });
 

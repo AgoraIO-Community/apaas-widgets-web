@@ -14,8 +14,6 @@
   line-height: 1rem;
 }
 
-
-
 .dialog-progress-container {
   box-sizing: border-box;
   margin: 0;
@@ -49,4 +47,10 @@
   font-size: 18px;
   color: #357bf6;
   line-height: 22px;
+}
+.fcr-progress-mobile-saveImage {
+  padding: 10px 16px;
+  border-radius: var(--fcr_cornerradius_s, 8px);
+  opacity: 0.9;
+  background: var(--fcr_mobile_ui_scene_toast1, rgba(255, 255, 255, 0.95));
 }

@@ -17,7 +17,7 @@ export enum MobileCallState {
 export class RoomStore {
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
   @observable mobileCallState: MobileCallState = MobileCallState.Initialize;
-  @observable messageVisible = true;
+  @observable messageVisible = false;
   @observable orientation: OrientationEnum = OrientationEnum.portrait;
   @observable forceLandscape = false;
   @observable

@@ -1,0 +1,261 @@
+.fcr-board-pagination {
+  position: absolute;
+  right: 24px;
+  top: 0px;
+  bottom: 0;
+  padding: 12px 0;
+  z-index: 3;
+}
+
+.fcr-mobile-pagination {
+  /* @apply fcr-bg-2 fcr-border-1 fcr-rounded-full; */
+  /* padding: 0 4px; */
+  font-size: 14px;
+  height: auto;
+  /* height: 36px; */
+  /* --effect-color: theme(colors.brand.4);
+  --color-icon-2: theme(colors.icon-2);
+  --color-hover: theme(colors.hover); */
+}
+
+.fcr-pagination-half-r .fcr-pagination__extra {
+  @apply fcr-bg-2  fcr-rounded-8;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-pagination__expage,
+.fcr-pagination__exundo {
+  @apply fcr-bg-2  fcr-rounded-8;
+  width: 40px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  margin-top: 14px;
+  color: #fff;
+}
+.fcr-pagination__exundo {
+  bottom: 12px;
+  position: absolute;
+  text-align: center;
+}
+.fcr-pagination__expage > div {
+}
+
+.fcr-mobile-pagination .fcr-pagination__prev,
+.fcr-mobile-pagination .fcr-pagination__next,
+.fcr-mobile-pagination .fcr-pagination__expansion {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-mobile-pagination .fcr-pagination__prev {
+  /* padding-right: 4px; */
+}
+.fcr-mobile-pagination .fcr-pagination__next {
+  /* padding-left: 4px; */
+}
+
+.fcr-pagination__expage {
+}
+
+.fcr-mobile-pagination .fcr-pagination__btn {
+  /* @apply fcr-rounded-full; */
+  height: 26px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.fcr-mobile-pagination .fcr-pagination__btn:hover:not(.fcr-pagination_btn--disabled) {
+  cursor: pointer;
+  color: var(--color-icon-2);
+}
+
+.fcr-mobile-pagination .fcr-pagination__btn:active:not(.fcr-pagination_btn--disabled) {
+  background: var(--fcr_ui_scene_mobile_click, rgba(0, 0, 0, 0.2));
+}
+
+.fcr-mobile-pagination .fcr-pagination__page {
+  /* @apply fcr-text-1; */
+  text-align: center;
+  font-weight: 700;
+  align-self: center;
+}
+
+.fcr-pagination-small {
+  height: 32px;
+}
+.fcr-pagination-small .fcr-pagination__page {
+  width: 40px;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+/* 
+.fcr-mobile-pagination.fcr-pagination-half-r {
+  @apply fcr-rounded-8;
+  height: 32px;
+  min-width: 40px;
+  font-size: 16px;
+  padding: 5px;
+  box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  border: none;
+  justify-content: center;
+}
+
+
+.fcr-pagination-half-r .fcr-pagination__next .fcr-pagination__btn,
+.fcr-pagination-half-r .fcr-pagination__prev .fcr-pagination__btn {
+  @apply fcr-rounded-4;
+  width: 22px;
+  height: 22px;
+}
+
+.fcr-pagination-half-r .fcr-pagination__page {
+  flex-shrink: 0;
+  width: fit-content;
+  min-width: 35px;
+}
+
+.fcr-pagination-mask {
+  display: inline-flex;
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: 0.3s all;
+}
+
+.fcr-pagination-mask--expanded {
+  opacity: 1;
+  width: 148px;
+}
+
+.fcr-pagination__expansion {
+  width: 0;
+  opacity: 0;
+  overflow: hidden;
+  transition: 0.3s all;
+  cursor: pointer;
+}
+
+.fcr-pagination__expansion--expanded {
+  opacity: 1;
+  width: 30px;
+}
+
+.fcr-pagination-half-r .fcr-pagination__extra {
+  @apply fcr-bg-2 fcr-border-1 fcr-rounded-full;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding-right: 9px;
+}
+
+.fcr-pagination-half-r .fcr-pagination__btn {
+  @apply fcr-rounded-10;
+  height: 30px;
+  width: 30px;
+}
+
+.fcr-pagination-half-r .fcr-pagination__prev {
+  padding-left: 13px;
+}
+
+.fcr-pagination_btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+
+.fcr-pagination-float {
+  pointer-events: none;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  --effect-color: theme(colors.brand.4);
+}
+
+.fcr-pagination-float .fcr-pagination-float__prev,
+.fcr-pagination-float .fcr-pagination-float__next {
+  @apply fcr-bg-4 fcr-rounded-8;
+  pointer-events: all;
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 12px;
+}
+.fcr-pagination-float .fcr-pagination-float__prev {
+  left: 10px;
+}
+
+.fcr-pagination-float .fcr-pagination-float__next {
+  right: 10px;
+}
+.fcr-pagination-float .fcr-pagination-float__btn,
+.fcr-pagination-list-view .fcr-pagination-float__btn {
+  @apply fcr-rounded-8 fcr-bg-2;
+  width: 40px;
+  height: 40px;
+  backdrop-filter: blur(25px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+.fcr-pagination-float .fcr-pagination-float__btn:hover:not(.fcr-pagination_btn--disabled),
+.fcr-pagination-list-view .fcr-pagination-float__btn:hover:not(.fcr-pagination_btn--disabled) {
+  @apply fcr-bg-brand-6;
+  cursor: pointer;
+  color: var(--color-icon-2);
+}
+
+.fcr-pagination-float .fcr-pagination-float__btn:active:not(.fcr-pagination_btn--disabled),
+.fcr-pagination-list-view .fcr-pagination-float__btn:active:not(.fcr-pagination_btn--disabled) {
+  @apply fcr-bg-brand-8;
+}
+
+.fcr-mobile-pagination .fcr-pagination__btn:active:not(.fcr-pagination_btn--disabled)
+
+.fcr-pagination-float__page {
+  @apply fcr-text-1;
+  padding: 3px 0 5px;
+}
+.fcr-pagination-list-view {
+  --effect-color: theme(colors.brand.4);
+  display: flex;
+  gap: 4px;
+}
+.fcr-pagination-list-view-col {
+  flex-direction: column;
+}
+.fcr-pagination-list-view .fcr-pagination-float__btn {
+  @apply fcr-rounded-4;
+}
+.fcr-pagination-list-view-row .fcr-pagination-float__btn {
+  width: 30px;
+  height: 114px;
+}
+.fcr-pagination-list-view-row .fcr-pagination-list-view__next svg {
+  transform: rotate(180deg);
+}
+.fcr-pagination-list-view-col .fcr-pagination-float__btn {
+  width: 192px;
+  height: 30px;
+}
+.fcr-pagination-list-view-col .fcr-pagination-list-view__prev svg {
+  transform: rotate(90deg);
+}
+.fcr-pagination-list-view-col .fcr-pagination-list-view__next svg {
+  transform: rotate(270deg);
+}
+.fcr-pagination-list-view .fcr-pagination-list-view__prev .fcr-pagination-float__btn,
+.fcr-pagination-list-view .fcr-pagination-list-view__next .fcr-pagination-float__btn {
+  @apply fcr-bg-2-a70;
+} */

@@ -1,0 +1,36 @@
+.fcr-edu-tool-dialog {
+  @apply fcr-bg-2 fcr-rounded-16 fcr-shadow-dialog;
+  position: relative;
+  transition: all 0.3s;
+  overflow: hidden;
+  display: flex;
+}
+.fcr-edu-tool-dialog-actions {
+  position: absolute;
+  right: 15px;
+  top: 10px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  z-index: 1;
+}
+
+.fcr-edu-tool-dialog-action-icon {
+  @apply fcr-rounded-full fcr-bg-1;
+  width: 24px;
+  height: 24px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+.fcr-edu-tool-dialog-action-icon:not(.fcr-widget-dialog-action-icon-disable):hover {
+  @apply fcr-bg-brand-6;
+}
+.fcr-edu-tool-dialog-action-icon-disable {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+.fcr-edu-tool-dialog-action-icon svg {
+  @apply fcr-text-notsb-inverse;
+}
