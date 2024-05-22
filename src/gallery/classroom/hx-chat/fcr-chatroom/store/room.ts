@@ -65,7 +65,6 @@ export class RoomStore {
   }
   @action.bound
   addToast(message: string, type: "error" | "warning" | "success" | undefined) {
-    console.log(this)
     return this._widget.ui.addToast(message, type);
   }
   @action.bound
@@ -78,7 +77,6 @@ export class RoomStore {
   }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
-    console.log('_handleGetWidgets', widgetInstances)
    this._widgetInstances = widgetInstances;
   }
   @computed
@@ -102,7 +100,6 @@ export class RoomStore {
     }
   }
   private _addEventListeners() {
-    console.log('_addEventListeners_addEventListeners_addEventListeners_addEventListeners')
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.addBroadcastListener({

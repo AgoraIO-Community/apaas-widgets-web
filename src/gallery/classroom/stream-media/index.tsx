@@ -169,7 +169,6 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   }
  @bound
  private _setCurrentWidget(currentWidget: any) {
-  console.log('_setCurrentWidget', currentWidget)
   this._currentWidget = currentWidget;
   // this.render(this.locate() as HTMLElement);
  }
@@ -185,11 +184,8 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
 
   render(dom: HTMLElement) {
     this._dom = dom;
-    // console.log('_currentWidget', dom, this._currentWidget, this)
-    // if (this._currentWidget.widgetId === this.widgetId) {
-      dom.classList.add('fcr-h-full');
-      ReactDOM.render(<App widget={this} />, dom);
-    // }
+    dom.classList.add('fcr-h-full');
+    ReactDOM.render(<App widget={this} />, dom);
   }
 
   unload() {
