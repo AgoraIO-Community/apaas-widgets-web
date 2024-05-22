@@ -76,6 +76,8 @@ const enUS = {
   fcr_H5_mute_user_msg: 'You have been muted by teacher',
   fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
   fcr_H5_button_chat: 'Chat',
+  fcr_teacher_no_use_textbooks: 'No teaching materials currently available',
+  fcr_teacher_use_collected_tip: 'The teaching materials used in the course will be collected here',
   fcr_participants_tips_lower_hand: 'Lower Hand',
 };
 

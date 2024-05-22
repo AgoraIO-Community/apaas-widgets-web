@@ -30,7 +30,6 @@ export const MessageList = observer(() => {
     roomStore: { isLandscape, messageVisible, forceLandscape },
     fcrChatRoom,
   } = useStore();
-  console.log('messageList', messageList)
   const scrollingRef = useRef(false);
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);

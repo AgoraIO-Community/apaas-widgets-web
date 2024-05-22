@@ -63,7 +63,7 @@ const im_CN = {
   fcr_h5_label_watched: '人',
   fcr_h5_label_logo: '灵动课堂',
   fcr_chat_label_i: "你",
-  fcr_chat_label_i_said_to: '发送给',
+  fcr_chat_label_i_said_to: '给',
   fcr_chat_label_said_to_me: '发送给我',
   fcr_chat_label_private: '私聊',
   fcr_h5_button_newmessage: '条新消息',
@@ -78,6 +78,8 @@ const im_CN = {
   fcr_H5_mute_user_msg: '您被老师禁止发言了',
   fcr_H5_unmute_user_msg: '您被老师解除禁言了',
   fcr_H5_button_chat: '去讨论',
+  fcr_teacher_no_use_textbooks: '当前无教材',
+  fcr_teacher_use_collected_tip: '课程中使用的教材会收纳到此处',
   fcr_participants_tips_lower_hand: '手放下',
 };
 export default im_CN;

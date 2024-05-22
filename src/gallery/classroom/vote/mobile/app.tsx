@@ -1,10 +1,11 @@
 import { useI18n } from 'agora-common-libs';
 import { observer } from 'mobx-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../components/svg-img';
 import { usePluginStore } from '../hooks';
 import './index.css';
 import { createPortal } from 'react-dom';
+import classNames from 'classnames';
 const keepDecimals = (value: number, count = 0) => {
   const reg = new RegExp(`^(-)*(\\d+)(\\.\\d{0,${count}}).*$`);
   return Number(`${value}`.replace(reg, '$1$2$3'));
@@ -29,6 +30,26 @@ export const PollH5 = observer(() => {
   const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [width, setWidth] = useState<number | null>(null);
+  const timer = useRef<NodeJS.Timeout>();
+  useEffect(() => {
+    const content = document.querySelector('.fcr-mobile-poll-widget-minimize-content')
+    const rect = content?.getBoundingClientRect()
+    if (rect) {
+      setWidth(rect.width)
+    }
+  }, [])
+  useEffect(() => {
+    if (timer.current) {
+      clearTimeout(timer.current);
+    }
+    timer.current = setTimeout(() => {
+      setWidth(0)
+    }, 3000);
+    return () => {
+      clearTimeout(timer.current);
+    };
+  }, [])
   const handleOptionClick = (index: number) => {
     if (isShowResultSection) {
       return;
@@ -81,20 +102,22 @@ export const PollH5 = observer(() => {
                   landscape={isLandscape}
                   type={SvgIconEnum.POLL}></SvgImgMobile>
               </div>
-
-              <span>{transI18n('widget_polling.appName')}</span>
-              <SvgImgMobile
-                forceLandscape={forceLandscape}
-                colors={{ iconPrimary: '#fff' }}
-                landscape={isLandscape}
-                type={SvgIconEnum.COLLAPSE}
-                size={20}></SvgImgMobile>
+              <div className='fcr-mobile-poll-widget-minimize-content' style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: 'fit-content'}}>
+                <span>{transI18n('widget_polling.appName')}</span>
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  colors={{ iconPrimary: '#fff' }}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.POLL_ICON}
+                  size={12}></SvgImgMobile>
+              </div>
+              
             </div>,
             document.querySelector('.landscape-bottom-tools')!,
           )
         : createPortal(
             <div
-              className={`fcr-mobile-poll-widget-minimize`}
+              className={`fcr-mobile-poll-widget-minimize active`}
               onClick={() => {
                 setMinimize(false);
               }}>
@@ -105,13 +128,15 @@ export const PollH5 = observer(() => {
                   type={SvgIconEnum.POLL}></SvgImgMobile>
               </div>
 
-              <span>{transI18n('widget_polling.appName')}</span>
-              <SvgImgMobile
-                forceLandscape={forceLandscape}
-                colors={{ iconPrimary: '#000' }}
-                landscape={isLandscape}
-                type={SvgIconEnum.COLLAPSE}
-                size={20}></SvgImgMobile>
+              <div className='fcr-mobile-poll-widget-minimize-content' style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: 'fit-content'}}>
+                <span>{transI18n('widget_polling.appName')}</span>
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  colors={{ iconPrimary: '#fff' }}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.POLL_ICON}
+                  size={12}></SvgImgMobile>
+              </div>
             </div>,
             document.querySelector('.fcr-poll-mobile-widget')!,
           )}
