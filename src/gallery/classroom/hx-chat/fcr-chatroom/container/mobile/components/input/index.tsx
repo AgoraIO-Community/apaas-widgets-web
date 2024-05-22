@@ -35,6 +35,7 @@ export const FcrChatRoomH5Inputs = observer(
     const inputRef = useRef<HTMLInputElement>(null);
     const fileInputRef = useRef<HTMLInputElement>(null);
     const {
+      roomId,
       broadcastWidgetMessage,
       messageStore: { sendTextMessage, sendImageMessage },
       roomStore: {
@@ -105,12 +106,17 @@ export const FcrChatRoomH5Inputs = observer(
       }
     }, [collectVisible])
     useEffect(() => {
-      const isOpen = window.localStorage.getItem('application-isOpen')
-      if (widgets.length > 0 && !isOpen) {
-        window.localStorage.setItem('application-isOpen', "true")
+      const obj = window.localStorage.getItem('application-room-id')
+      if (widgets.length > 0 && (!obj || obj && JSON.parse(obj).roomId !== roomId)) {
+        const applicationObj = {
+          roomId: roomId
+        }
+        window.localStorage.setItem('application-room-id', JSON.stringify(applicationObj))
         setCollectVisible(true)
+      } else {
+        setCollectVisible(false)
       }
-    }, [widgets.length])
+    }, [widgets.length, roomId])
     const isMuted = allMuted || userMuted;
     const send = useCallback(() => {
       // sendTextMessage(text);
@@ -361,14 +367,16 @@ export const FcrChatRoomH5Inputs = observer(
                           // colors={{ ...getCallIcon().colors }}
                           size={30}></SvgImgMobile>
                       </div>
-                      <div className={classNames("fcr-chatroom-mobile-inputs-application", widgets.length === 0 && 'zero', isShowApplication && 'active') } onClick={handleShowApplicatioon}>
-                        <SvgImgMobile
-                            forceLandscape={forceLandscape}
-                            landscape={isLandscape}
-                            type={SvgIconEnum.APPLICATION}
-                            size={30}></SvgImgMobile>
-                          <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
-                      </div>
+                      <ToolTip placement="topLeft" content={transI18n('fcr_teacher_use_collected_tip')} visible={collectVisible}>
+                        <div className={classNames("fcr-chatroom-mobile-inputs-application landscape", widgets.length === 0 && 'zero', isShowApplication && 'active') } onClick={handleShowApplicatioon}>
+                          <SvgImgMobile
+                              forceLandscape={forceLandscape}
+                              landscape={isLandscape}
+                              type={SvgIconEnum.APPLICATION}
+                              size={30}></SvgImgMobile>
+                            <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
+                        </div>
+                      </ToolTip>
                       {/* <ThumbsUp></ThumbsUp> */}
                     </>
                   )}

@@ -104,7 +104,7 @@ export class FcrWebviewWidget extends FcrUISceneWidget {
     };
   }
   locate() {
-    const dom = document.querySelector('.widget-slot-web-view');
+    const dom = document.querySelector(`.widget-slot-web-view-${this.widgetId}`);
     if (dom) {
       return dom as HTMLElement;
     }

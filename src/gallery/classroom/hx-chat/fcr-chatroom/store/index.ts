@@ -18,6 +18,7 @@ export class FcrChatRoomStore {
   messageStore: MessageStore;
   userStore: UserStore;
   roomStore: RoomStore;
+  roomId: string;
   constructor(private _widget: AgoraHXChatWidget, appKey: string, roomId: string) {
     const easemobUserId = this._widget.easemobUserId || '';
     const { userName, role, userUuid } = this._widget.classroomConfig.sessionInfo;
@@ -40,8 +41,8 @@ export class FcrChatRoomStore {
     this.roomStore = new RoomStore(this._widget, this.fcrChatRoom);
     this._addListeners();
     this._init();
+    this.roomId = roomId;
   }
-
   private _addListeners() {
     this.fcrChatRoom.on(
       AgoraIMEvents.ConnectionStateChanged,

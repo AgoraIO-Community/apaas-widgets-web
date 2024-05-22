@@ -1,13 +1,22 @@
 import classNames from 'classnames'
-import React, { useEffect, useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import { useStore } from '../../../../hooks/useStore';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import './index.css'
 const ApplicationDialog = ({ setIsShowApplication }: {setIsShowApplication: (arg0: boolean) => void}) => {
     const {
-        roomStore: { isLandscape,   forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
+        roomStore: { isLandscape,  forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
-    const widgets = useMemo(() => z0Widgets.filter((v) => v.widgetName !== 'easemobIM'),[z0Widgets])
+    const [allWidgets, setAllwidgets] = useState([])
+    useEffect(() => {
+        const arr: any = []
+        for (let i = 0; i < z0Widgets.length; i++) {
+            const item = z0Widgets[i];
+            arr.unshift(item)
+        }
+        setAllwidgets(arr)
+    }, [z0Widgets])
+    const widgets = useMemo(() => allWidgets.filter((v: any) => v.widgetName !== 'easemobIM'),[allWidgets])
     const handleClose = () => {
         setIsShowApplication(false);
     }
@@ -23,9 +32,9 @@ const ApplicationDialog = ({ setIsShowApplication }: {setIsShowApplication: (arg
         <div className='fcr-chatroom-mobile-application-split'></div>
         <div className='fcr-chatroom-mobile-application-lists'>
             {
-                widgets.map((item) => {
+                widgets.map((item: any) => {
                     return (
-                        <div key={item.widgetId} className='fcr-chatroom-mobile-application-list'onClick={(e) => handleSelectApplication(e, item)}>
+                        <div key={item.widgetId} className='fcr-chatroom-mobile-application-list' onClick={(e) => handleSelectApplication(e, item)}>
                             <div className='fcr-chatroom-mobile-application-list-left'>
                                 <div className={classNames('fcr-chatroom-mobile-application-list-icon', item.widgetName === 'mediaPlayer' && 'video', item.widgetName === 'webView' && 'bower')}>
                                    {item.widgetName === 'netlessBoard' && <SvgImgMobile
@@ -44,7 +53,7 @@ const ApplicationDialog = ({ setIsShowApplication }: {setIsShowApplication: (arg
                                         landscape={isLandscape}
                                         forceLandscape={forceLandscape}/>}
                                 </div>
-                                {(item.widgetName === 'netlessBoard' || item.widgetName === 'mediaPlayer') && <span className='fcr-chatroom-mobile-application-list-val'>{item.widgetName === 'netlessBoard' ? 'Whiteboard' : item.widgetName === 'mediaPlayer' ? 'Youtube' : ''}</span>}
+                                {(item.widgetName === 'netlessBoard' || item.widgetName === 'mediaPlayer') && <span className='fcr-chatroom-mobile-application-list-val'>{item.widgetName === 'netlessBoard' ? 'Whiteboard' : item.widgetName === 'mediaPlayer' ?  item.webviewTitle  : ''}</span>}
                                 {
                                     item.widgetName === 'webView' && <div className='fcr-chatroom-mobile-application-list-content'>
                                      <span className='fcr-chatroom-mobile-application-list-title'>网页</span>

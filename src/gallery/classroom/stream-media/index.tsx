@@ -20,7 +20,8 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
     volume: number;
     operatorId: string;
   };
-
+  @observable
+  private _currentWidget: any = undefined
   get widgetName() {
     return 'mediaPlayer';
   }
@@ -55,7 +56,7 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
     };
   }
   locate() {
-    const dom = document.querySelector('.widget-slot-media-player');
+    const dom = document.querySelector(`.widget-slot-media-player-${this.widgetId}`);
     if (dom) {
       return dom as HTMLElement;
     }
@@ -86,7 +87,6 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   get state() {
     return this._state;
   }
-
   onInstall(controller: AgoraWidgetController) {
     const handleOpen = ({
       url,
@@ -115,7 +115,6 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
         },
       });
     };
-
     controller.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OpenStreamMediaPlayer,
       onMessage: handleOpen,
@@ -141,7 +140,10 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
       messageType: AgoraExtensionRoomEvent.ResponseGrantedList,
       onMessage: this._handleGranted,
     });
-
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.SetCurrentApplication,
+      onMessage: this._setCurrentWidget,
+    });
     this.broadcast(AgoraExtensionWidgetEvent.RequestGrantedList, this.widgetId);
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
       widgetId: this.widgetId,
@@ -165,7 +167,15 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
 
     this._state = state;
   }
-
+ @bound
+ private _setCurrentWidget(currentWidget: any) {
+  console.log('_setCurrentWidget', currentWidget)
+  this._currentWidget = currentWidget;
+  // this.render(this.locate() as HTMLElement);
+ }
+ get currentWidget() {
+  return this._currentWidget
+ }
   @bound
   private _handleGranted(grantedUsers: Set<string>) {
     const { userUuid } = this.classroomConfig.sessionInfo;
@@ -175,8 +185,11 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
 
   render(dom: HTMLElement) {
     this._dom = dom;
-    dom.classList.add('fcr-h-full');
-    ReactDOM.render(<App widget={this} />, dom);
+    // console.log('_currentWidget', dom, this._currentWidget, this)
+    // if (this._currentWidget.widgetId === this.widgetId) {
+      dom.classList.add('fcr-h-full');
+      ReactDOM.render(<App widget={this} />, dom);
+    // }
   }
 
   unload() {

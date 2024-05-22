@@ -90,7 +90,6 @@ export class RoomStore {
   get z0Widgets() {
     return this.widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
   }
-
   @action.bound
   setCurrentWidget(widget: any) {
     this.currentWidget = widget
@@ -103,6 +102,7 @@ export class RoomStore {
     }
   }
   private _addEventListeners() {
+    console.log('_addEventListeners_addEventListeners_addEventListeners_addEventListeners')
     this._fcrChatRoom.on(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.AllUserUnmuted, this._handleAllUserUnmuted);
     this._widget.addBroadcastListener({

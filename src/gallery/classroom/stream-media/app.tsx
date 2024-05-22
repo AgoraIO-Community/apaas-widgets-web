@@ -5,7 +5,6 @@ import { FcrStreamMediaPlayerWidget } from '.';
 import { StreamMediaPlayerInterface } from './type';
 export const App = observer(({ widget }: { widget: FcrStreamMediaPlayerWidget }) => {
   const webviewRef = useRef<StreamMediaPlayerInterface>(null);
-
   return (
     <YoutubePlayer ref={webviewRef} widget={widget} />
   );
