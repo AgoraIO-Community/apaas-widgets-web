@@ -52,9 +52,9 @@ export const FcrChatRoomH5Inputs = observer(
         addToast,
         currentWidget // 当前正在使用的widget-不能删
       },
-      userStore: { setSearchKey, privateUser, userMuted, isRaiseHand, raiseHand, lowerHand, raiseHandTooltipVisible },
+      userStore: {  userList, setSearchKey, privateUser, userMuted, isRaiseHand, raiseHand, lowerHand, raiseHandTooltipVisible },
     } = useStore();
-    const widgets = useMemo(() => z0Widgets.filter((v) => v.widgetName !== 'easemobIM'),[z0Widgets])
+    const widgets = z0Widgets.filter((v) => v.widgetName !== 'easemobIM')
     const getCallIcon = () => {
       switch (mobileCallState) {
         case MobileCallState.Initialize:
@@ -120,6 +120,11 @@ export const FcrChatRoomH5Inputs = observer(
     const isMuted = allMuted || userMuted;
     const send = useCallback(() => {
       // sendTextMessage(text);
+      
+      const isPrivateInRoom = userList.find((v) => v.userId === privateUser?.userId);
+      if (!isPrivateInRoom) {
+        addToast(transI18n('fcr_private_leave_room', { reason: privateUser?.nickName }), 'warning');
+      }
       sendTextMessage(text, privateUser ? [privateUser] : undefined);
       setText('');
       onShowEmojiChanged(false);
@@ -203,7 +208,7 @@ export const FcrChatRoomH5Inputs = observer(
                       type={SvgIconEnum.PRIVATE_SELECT}
                       size={16}></SvgImgMobile>
                   </div>
-                  <div className='fcr-chatroom-mobile-inputs-private-icon'>
+                  {privateUser && <div className='fcr-chatroom-mobile-inputs-private-icon'>
                     <div className='fcr-chatroom-mobile-inputs-private-icon-svg'>
                       <SvgImgMobile
                         forceLandscape={forceLandscape}
@@ -212,7 +217,7 @@ export const FcrChatRoomH5Inputs = observer(
                         size={16}></SvgImgMobile>
                     </div>
                       <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>
-                  </div>
+                  </div>}
                 </div>
                 <div className='fcr-chatroom-mobile-inputs-main'>
                   <div
