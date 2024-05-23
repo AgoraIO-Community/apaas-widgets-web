@@ -3,7 +3,8 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { useStore } from '../../../../hooks/useStore';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import './index.css'
-const ApplicationDialog = ({ setIsShowApplication }: {setIsShowApplication: (arg0: boolean) => void}) => {
+import { observer } from 'mobx-react';
+const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplication: (arg0: boolean) => void}) => {
     const {
         roomStore: { isLandscape,  forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
@@ -113,5 +114,5 @@ const ApplicationDialog = ({ setIsShowApplication }: {setIsShowApplication: (arg
         </div>
     </div>
   )
-}
+})
 export default ApplicationDialog

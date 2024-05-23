@@ -64,7 +64,7 @@ const im_CN = {
   fcr_h5_label_logo: '灵动课堂',
   fcr_chat_label_i: "你",
   fcr_chat_label_i_said_to: '给',
-  fcr_chat_label_said_to_me: '发送给我',
+  fcr_chat_label_said_to_me: '发送给你',
   fcr_chat_label_private: '私聊',
   fcr_h5_button_newmessage: '条新消息',
   fcr_chat_label_send_to: '发送至',
