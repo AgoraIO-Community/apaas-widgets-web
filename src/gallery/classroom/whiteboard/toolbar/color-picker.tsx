@@ -1,13 +1,13 @@
 import { observer } from 'mobx-react';
 import React, { FC, useContext } from 'react';
-import { Popover } from './../../../../../../fcr-ui-kit/src/components/popover';
+import { Popover } from '@components/popover';
 import classNames from 'classnames';
 import { ToolbarUIContext } from '../ui-context';
 import { useVisibleTools } from './hooks';
 import { ExpansionToolbarItem } from '.';
 import { useI18n } from 'agora-common-libs';
 import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
-import { SvgIconEnum } from '../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum } from '@components/svg-img';
 
 const colors = ['#fed130', '#fc3141'];
 

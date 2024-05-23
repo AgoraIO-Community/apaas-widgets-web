@@ -1,7 +1,7 @@
 import { FC, PropsWithChildren, useContext, useEffect, useLayoutEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { ToolbarItem } from '.';
-import { SvgIconEnum } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum } from '@components/svg-img';
 import { useDrag, State } from '@use-gesture/react';
 import { useSpring, animated } from '@react-spring/web';
 import classNames from 'classnames';

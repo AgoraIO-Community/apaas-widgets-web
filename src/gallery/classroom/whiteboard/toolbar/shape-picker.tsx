@@ -1,8 +1,9 @@
 import { FC, useContext, useState } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem, ExpansionFixbarItem } from '.';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
+import { runInAction } from 'mobx';
 import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
@@ -20,17 +21,19 @@ const shapeIconMap = {
 
 export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { toolbarDockPosition, currentShape, lastShape, currentColor },
+    observables,
+    observables: { currentShape, currentTool, lastShape, currentColor },
     setShape,
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
   const handleShapeToolChange = (shapeTool: FcrBoardShape) => {
+    runInAction(() => {
+      observables.fixedToolVisible = true;
+    });
     return () => {
       setShape(shapeTool);
     };
   };
-  const [toolVisible, setToolVisible] = useState(false);
-  const toggleTooltipVisible = () => setToolVisible((prev) => !prev);
 
   const isActive =
     !!currentShape &&
@@ -48,29 +51,23 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
     : SvgIconEnum.FCR_MOBILE_WHITEBOARD_PED_CURVE;
   const clickShape = lastShape ? lastShape : FcrBoardShape.Ellipse;
 
+  const cls = classNames('fcr-board-toolbar-item-surrounding', {
+    'fcr-board-toolbar-item-surrounding--active': isActive,
+  });
+
   return (
-    <ExpansionFixbarItem
-      getTooltipContainer={() =>
-        document.querySelector('#fcr_board_center_position') as HTMLElement
-      }
-      isActive={isActive}
-      tooltip={transI18n('fcr_board_tool_shape')}
-      icon={icon}
-      toolVisible={toolVisible}
-      setToolVisible={toggleTooltipVisible}
-      onClick={handleShapeToolChange(clickShape)}
-      tooltipPlacement={'top'}
-      popoverPlacement={'top'}
-      popoverOverlayClassName="fcr-board-toolbar__picker__overlay  fcr-board-toolbar__fixedbottom"
-      popoverContent={<ShapePickerPanel handleClose={toggleTooltipVisible} />}
-      popoverOffset={offset}
-      iconProps={{ colors: { iconPrimary: currentColor } }}
-      texttip={transI18n('fcr_board_tool_shape')}
-    />
+    <div className={cls} onClick={handleShapeToolChange(clickShape)}>
+      <SvgImg
+        colors={{ iconPrimary: isActive && currentColor ? currentColor : 'white' }}
+        type={icon}
+        size={28}
+      />
+      <div className="fcr-board-toolbar-item__texttip">{transI18n('fcr_board_tool_shape')}</div>
+    </div>
   );
 });
 
-const ShapePickerPanel = observer(({ handleClose }: any) => {
+export const ShapePickerPanel = observer(() => {
   const { observables, setShape, setStrokeWidth } = useContext(ToolbarUIContext);
   const shapes = [
     { type: FcrBoardShape.Rectangle, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_SQUARE },
@@ -80,6 +77,11 @@ const ShapePickerPanel = observer(({ handleClose }: any) => {
     { type: FcrBoardShape.Pentagram, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_STAR },
     // { type: FcrBoardShape.Arrow, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_ARROW },
   ];
+  const handleClose = () => {
+    runInAction(() => {
+      observables.fixedToolVisible = false;
+    });
+  };
 
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--shape">

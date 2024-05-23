@@ -1,13 +1,7 @@
 import { observer } from 'mobx-react';
-import {
-  SvgIconEnum,
-  SvgImg,
-  SvgImgProps,
-} from './../../../../../../fcr-ui-kit/src/components/svg-img';
-import { ToolTip, ToolTipProps } from './../../../../../../fcr-ui-kit/src/components/tooltip';
-import { DialogToolTip } from './../../../../../../fcr-ui-kit/src/components/tooltip/dialog';
-import { ClassDialog } from './../../../../../../fcr-ui-kit/src/components/dialog';
-import { PopoverWithTooltip } from './../../../../../../fcr-ui-kit/src/components/popover';
+import { SvgIconEnum, SvgImg, SvgImgProps } from '@components/svg-img';
+import { DialogToolTip } from '@components/tooltip/dialog';
+import { PopoverWithTooltip } from '@components/popover';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import { runInAction } from 'mobx';
 import classNames from 'classnames';
@@ -15,15 +9,25 @@ import { useVisibleTools } from './hooks';
 import { DraggableWrapper } from './move-handle';
 import { BoardExpand } from '../../../../../../agora-classroom-sdk/src/containers/board-expand';
 import './index.css';
-import { ToolbarUIContext } from '../ui-context';
+import { BoardUIContext, ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
+import { ScenePagination } from '../scene-pagination';
+import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
+import { PenPickerPanel } from './pen-picker';
+import { ShapePickerPanel } from './shape-picker';
 
 export const Toolbar = observer(() => {
   const { mobileFixedTools } = useVisibleTools();
-  const { observables } = useContext(ToolbarUIContext);
+  const {
+    observables,
+    observables: { currentShape, currentTool, fixedToolVisible },
+  } = useContext(ToolbarUIContext);
+  const {
+    observables: { canOperate },
+  } = useContext(BoardUIContext);
   const transI18n = useI18n();
 
-  const [folded, setFolded] = useState<boolean | undefined>(false);
+  const [folded, setFolded] = useState<boolean | undefined>(true);
 
   useEffect(() => {
     runInAction(() => {
@@ -45,37 +49,71 @@ export const Toolbar = observer(() => {
     'fcr-board-toolbar--unfolded': typeof folded !== 'undefined' && !folded,
   });
 
+  const penActive = currentShape === FcrBoardShape.Curve || currentShape === FcrBoardShape.Straight;
+  const shapeActive =
+    !!currentShape &&
+    [
+      FcrBoardShape.Arrow,
+      FcrBoardShape.Ellipse,
+      FcrBoardShape.Pentagram,
+      FcrBoardShape.Rectangle,
+      FcrBoardShape.Rhombus,
+      FcrBoardShape.Triangle,
+    ].includes(currentShape);
+
   return (
-    <DraggableWrapper className={clsn}>
-      {/* fold */}
-      {folded ? (
-        <div className={`fcr-board-toolbar-fold`} onClick={handleFoldClick}>
-          <BoardExpand
-            iconEnum={SvgIconEnum.WHITEBOARDEDIT}
-            style={{
-              width: '40px',
-              height: '40px',
-            }}
-          />
-        </div>
-      ) : (
-        <div className="fcr-board-toolbar-main">
-          <div className="fcr-board-title-box" onClick={handleFoldClick}>
-            <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
-            <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
-          </div>
-          <ul className="fcr-board-toolbar-list">
-            {mobileFixedTools.map(({ renderItem }, i) => {
-              return <li key={i.toString()}>{renderItem()}</li>;
-            })}
-          </ul>
-        </div>
-      )}
-    </DraggableWrapper>
+    <>
+      <DraggableWrapper className={clsn}>
+        <>
+          {/* fold */}
+          {folded ? (
+            <div className={`fcr-board-toolbar-fold`} onClick={handleFoldClick}>
+              <BoardExpand
+                iconEnum={SvgIconEnum.WHITEBOARDEDIT}
+                style={{
+                  width: '40px',
+                  height: '40px',
+                }}
+              />
+            </div>
+          ) : (
+            <div className="fcr-board-toolbar-main">
+              <div className="fcr-board-title-box" onClick={handleFoldClick}>
+                <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
+                <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
+              </div>
+              <ul className="fcr-board-toolbar-list">
+                {mobileFixedTools.map(({ renderItem }, i) => {
+                  return <li key={i.toString()}>{renderItem()}</li>;
+                })}
+              </ul>
+            </div>
+          )}
+        </>
+      </DraggableWrapper>
+      <DialogToolTip
+        placement="top"
+        overlayOffset={-1}
+        overlayClassName="fcr-board-toolbar__picker__overlay fcr-board-toolbar__fixedbottom"
+        getTooltipContainer={() =>
+          document.querySelector('#fcr_board_center_position') as HTMLElement
+        }
+        content={
+          <>
+            {penActive && <PenPickerPanel />}
+            {shapeActive && <ShapePickerPanel />}
+          </>
+        }
+        visible={(penActive || shapeActive) && fixedToolVisible}
+        showArrow={false}
+        closeable={false}
+      />
+      {canOperate && !folded && <ScenePagination />}
+    </>
   );
 });
 
-export const ToolbarRight = observer(() => {});
+// export const ToolbarRight = observer(() => {});
 
 /** @internal */
 export const ToolbarItem: FC<{
@@ -164,7 +202,6 @@ export const ExpansionFixbarItem: FC<{
   popoverPlacement?: 'top' | 'bottom' | 'left' | 'right';
   popoverOverlayClassName?: string;
   onClick?: () => void;
-  onTargetClick?: () => void;
   setToolVisible?: () => void;
   getTooltipContainer?: (node: HTMLElement) => HTMLElement;
   isActive: boolean;
@@ -180,7 +217,6 @@ export const ExpansionFixbarItem: FC<{
   popoverPlacement,
   icon,
   onClick,
-  onTargetClick,
   popoverOverlayClassName,
   isActive,
   toolVisible,
@@ -198,7 +234,6 @@ export const ExpansionFixbarItem: FC<{
   const handleClick = () => {
     setToolVisible && setToolVisible();
     onClick && onClick();
-    onTargetClick && onTargetClick();
   };
 
   return (

@@ -1,12 +1,13 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem, ExpansionFixbarItem } from '.';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
 import { ColorPickerItem, ColorToolPickerItem } from './color-picker';
 import { FcrBoardShape, FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
+import { runInAction } from 'mobx';
 
 const penIconMap = {
   [FcrBoardShape.Straight]: SvgIconEnum.FCR_PENSIZE2_STRAIGHT,
@@ -15,18 +16,20 @@ const penIconMap = {
 
 export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { currentShape, lastPen, currentTool, currentColor },
+    observables,
+    observables: { currentShape, lastPen, fixedToolVisible, currentColor },
     setPen,
     setTool,
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
   const handlePenToolChange = (shapeTool: FcrBoardShape) => {
+    runInAction(() => {
+      observables.fixedToolVisible = true;
+    });
     return () => {
       setPen(shapeTool);
     };
   };
-  const [toolVisible, setToolVisible] = useState(false);
-  const toggleTooltipVisible = () => setToolVisible((prev) => !prev);
   const isActive = currentShape === FcrBoardShape.Curve || currentShape === FcrBoardShape.Straight;
 
   const icon = lastPen
@@ -34,35 +37,33 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
     : SvgIconEnum.FCR_MOBILE_WHITEBOARD_PED_LINE;
   const clickShape = lastPen ? lastPen : FcrBoardShape.Curve;
 
+  const cls = classNames('fcr-board-toolbar-item-surrounding', {
+    'fcr-board-toolbar-item-surrounding--active': isActive,
+  });
+
   return (
-    <ExpansionFixbarItem
-      getTooltipContainer={() =>
-        document.querySelector('#fcr_board_center_position') as HTMLElement
-      }
-      isActive={isActive}
-      toolVisible={toolVisible}
-      setToolVisible={toggleTooltipVisible}
-      tooltip={transI18n('fcr_board_tool_pen')}
-      icon={icon}
-      onClick={handlePenToolChange(clickShape)}
-      // onTargetClick={() => setTool(FcrBoardTool.Pen)}
-      tooltipPlacement={'top'}
-      popoverPlacement={'top'}
-      popoverOverlayClassName="fcr-board-toolbar__picker__overlay fcr-board-toolbar__fixedbottom"
-      popoverContent={<PenPickerPanel handleClose={toggleTooltipVisible} />}
-      popoverOffset={offset}
-      iconProps={{ colors: { iconPrimary: currentColor, iconSecondary: currentColor } }}
-      texttip={transI18n('fcr_board_tool_pen')}
-    />
+    <div className={cls} onClick={handlePenToolChange(clickShape)}>
+      <SvgImg
+        colors={{ iconPrimary: isActive && currentColor ? currentColor : 'white' }}
+        type={icon}
+        size={28}
+      />
+      <div className="fcr-board-toolbar-item__texttip">{transI18n('fcr_board_tool_pen')}</div>
+    </div>
   );
 });
 
-const PenPickerPanel = observer(({ handleClose }: any) => {
-  const { observables, setPen, setStrokeWidth } = useContext(ToolbarUIContext);
+export const PenPickerPanel = observer(() => {
+  const { observables, setPen } = useContext(ToolbarUIContext);
   const pens = [
     { type: FcrBoardShape.Straight, icon: SvgIconEnum.FCR_PENSIZE2_STRAIGHT },
     { type: FcrBoardShape.Curve, icon: SvgIconEnum.FCR_PENSIZE2 },
   ];
+  const handleClose = () => {
+    runInAction(() => {
+      observables.fixedToolVisible = false;
+    });
+  };
 
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--pen">
@@ -149,7 +150,7 @@ export const PenToolPickerItem = observer(() => {
   };
 
   const isActive = false;
-  const clickShape = lastShape ? lastShape : FcrBoardShape.Ellipse;
+  const clickShape = lastShape ? lastShape : FcrBoardShape.Curve;
 
   const penIcon =
     currentStrokeWidth === 1
@@ -165,9 +166,7 @@ export const PenToolPickerItem = observer(() => {
       isActive={isActive}
       tooltip={transI18n('fcr_board_tool_extra')}
       icon={penIcon}
-      onClick={() => {
-        handlePenToolChange(clickShape);
-      }}
+      onClick={handlePenToolChange(clickShape)}
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"

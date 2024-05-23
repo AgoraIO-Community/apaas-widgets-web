@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
 import { ToolbarItem } from '.';
 import { useContext } from 'react';
-import { SvgIconEnum } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum } from '@components/svg-img';
 import { ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
 

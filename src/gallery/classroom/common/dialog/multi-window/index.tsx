@@ -1,8 +1,8 @@
 import { observer } from 'mobx-react';
 import { PropsWithChildren, forwardRef, useEffect, useRef, useState } from 'react';
 import { FcrUISceneWidget, useI18n } from 'agora-common-libs';
-import { ToolTip } from './../../../../../../../fcr-ui-kit/src/components/tooltip';
-import { SvgIconEnum, SvgImg } from './../../../../../../../fcr-ui-kit/src/components/svg-img';
+import { ToolTip } from '@components/tooltip';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './index.css';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { FcrBoardWidget } from '../../../whiteboard';
@@ -10,17 +10,6 @@ import { addResource } from '../i18n/config';
 addResource();
 interface MultiWindowWidgetDialogProps extends PropsWithChildren {
   widget: FcrUISceneWidget;
-  // widget: Omit<
-  //   FcrUISceneWidget,
-  //   | 'setMinimize'
-  //   | 'setFullscreen'
-  //   | 'onMinimizedChanged'
-  //   | 'onFullscreenChanged'
-  //   | 'onEntered'
-  //   | 'onExited'
-  //   | 'updateSize'
-  //   | 'updatePosition'
-  // >;
   fullscreenable?: boolean;
   closeable?: boolean;
   refreshable?: boolean;

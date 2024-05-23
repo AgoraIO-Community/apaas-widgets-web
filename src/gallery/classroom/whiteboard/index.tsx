@@ -13,7 +13,7 @@ import { reaction, computed, IReactionDisposer, observable, action, runInAction 
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrBoardFactory } from '../../../common/whiteboard-wrapper/factory';
 import { FcrBoardRoom } from '../../../common/whiteboard-wrapper/board-room';
-import { SvgIconEnum } from '../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum } from '@components/svg-img';
 
 import { FcrBoardMainWindow } from '../../../common/whiteboard-wrapper/board-window';
 import {
@@ -148,7 +148,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   private _handleGrantedUpdate(auth) {
     console.log('_handleGrantedUpdate', auth);
   }
-
   onInstall(controller: AgoraWidgetController): void {
     const handleOpen = (toggle: boolean) => {
       const widgetId = this.widgetId;
@@ -184,7 +183,13 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       messageType: AgoraExtensionRoomEvent.BoardSetAnimationOptions,
       onMessage: setAnimationOptions,
     });
-
+    // controller.addBroadcastListener({
+    //   messageType: AgoraExtensionWidgetEvent.isHasWhiteboardAuth,
+    //   onMessage: (auth: boolean) => {
+    //     console.log('this----addBroadcastListener', auth);
+    //     this._isHasWhiteboardAuth = auth;
+    //   },
+    // });
     FcrBoardWidget._installationDisposer = () => {
       controller.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.ToggleBoard,
@@ -782,7 +787,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   private _createToolbarUIContext() {
     const observables = observable({
       currentTool: undefined as FcrBoardTool | undefined,
-      currentColor: '',
+      currentColor: '#547AFF',
       currentShape: undefined as FcrBoardShape | undefined,
       lastPen: undefined as FcrBoardShape | undefined,
       lastShape: undefined as FcrBoardShape | undefined,
@@ -795,6 +800,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       maxCountVisibleTools: 4,
       canOperate: this.hasPrivilege,
       layoutReady: false,
+      fixedToolVisible: false,
     });
     this._toolbarContext = {
       observables,
