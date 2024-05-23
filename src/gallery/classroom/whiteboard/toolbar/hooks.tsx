@@ -44,9 +44,9 @@ export const useVisibleTools = () => {
         />
       ),
     },
-    {
-      renderItem: ({ offset }: { offset?: number } = {}) => <PenPickerItem offset={offset} />,
-    },
+    // {
+    //   renderItem: ({ offset }: { offset?: number } = {}) => <PenPickerItem offset={offset} />,
+    // },
     {
       renderItem: () => (
         <ToolbarItem
@@ -93,7 +93,6 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
-          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip={transI18n('fcr_board_tool_mobile_selector')}
           texttip={transI18n('fcr_board_tool_mobile_selector')}
           icon={SvgIconEnum.FCR_WHITECHOOSE}
@@ -102,13 +101,24 @@ export const useVisibleTools = () => {
         />
       ),
     },
+    // {
+    //   renderItem: () => (
+    //     <ToolbarItem
+    //       tooltip={transI18n('fcr_board_tool_mobile_selector')}
+    //       texttip={transI18n('fcr_board_tool_mobile_selector')}
+    //       icon={SvgIconEnum.FCR_WHITECHOOSE}
+    //       iconProps={{ colors: { iconPrimary: currentColor } }}
+    //       onClick={handleToolChange(FcrBoardTool.Selector)}
+    //       isActive={currentTool === FcrBoardTool.Selector}
+    //     />
+    //   ),
+    // },
     {
       renderItem: ({ offset }: { offset?: number } = {}) => <PenPickerItem offset={offset || -1} />,
     },
     {
       renderItem: () => (
         <ToolbarItem
-          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip={transI18n('fcr_board_tool_text')}
           texttip={transI18n('fcr_board_tool_text')}
           icon={SvgIconEnum.FCR_WHITEBOARD_TEXT}
@@ -125,7 +135,6 @@ export const useVisibleTools = () => {
     {
       renderItem: () => (
         <ToolbarItem
-          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
           tooltip={transI18n('fcr_board_tool_save')}
           texttip={transI18n('fcr_board_tool_save')}
           icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
@@ -138,7 +147,6 @@ export const useVisibleTools = () => {
       renderItem: () => {
         return (
           <ToolbarItem
-            tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
             tooltip={transI18n('fcr_board_tool_clean')}
             texttip={transI18n('fcr_board_tool_clean')}
             icon={SvgIconEnum.FCR_CLEANWHITEBOARD}

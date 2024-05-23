@@ -47,6 +47,7 @@ const toolbarUIContextDefault = {
     lastShape: undefined as FcrBoardShape | undefined,
     maxCountVisibleTools: 4,
     layoutReady: false,
+    fixedToolVisible: false,
   },
   clean: () => {},
   redo: () => {},

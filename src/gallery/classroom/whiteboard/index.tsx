@@ -800,6 +800,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       maxCountVisibleTools: 4,
       canOperate: this.hasPrivilege,
       layoutReady: false,
+      fixedToolVisible: false,
     });
     this._toolbarContext = {
       observables,
