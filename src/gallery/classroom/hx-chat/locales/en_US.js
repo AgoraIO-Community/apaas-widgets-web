@@ -62,7 +62,7 @@ const enUS = {
   fcr_h5_label_watched: '',
   fcr_chat_label_i: "You ",
   fcr_chat_label_i_said_to: 'to',
-  fcr_chat_label_said_to_me: 'to me',
+  fcr_chat_label_said_to_me: 'to you',
   fcr_chat_label_private: 'Private',
   fcr_h5_label_logo: 'Flexible Classroom',
   fcr_h5_button_newmessage: 'New messages',

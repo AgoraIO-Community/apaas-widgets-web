@@ -6,7 +6,8 @@ import emptyPng from './empty.png'
 import { useI18n } from 'agora-common-libs';
 import { Avatar } from '@components/avatar';
 import classNames from 'classnames';
-const PrivateDialog = ({ setIsShowStudents }: {setIsShowStudents: (arg0: boolean) => void}) => {
+import { observer } from 'mobx-react';
+const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0: boolean) => void}) => {
     const {
         roomStore: {
           isLandscape,
@@ -50,7 +51,7 @@ const PrivateDialog = ({ setIsShowStudents }: {setIsShowStudents: (arg0: boolean
               {transI18n('fcr_chat_label_send_to')}
             </div>
             <div className='fcr-chatroom-mobile-inputs-chat-search'>
-              <input className='fcr-chatroom-mobile-inputs-chat-search-input' value={searchKey} type="text" placeholder={transI18n('fcr_chat_dialog_placeholder')} onChange={handleSearchChange} />
+              <input className='fcr-chatroom-mobile-inputs-chat-search-input' type="text" placeholder={transI18n('fcr_chat_dialog_placeholder')} onChange={handleSearchChange} />
               <div className='fcr-chatroom-mobile-inputs-chat-search-icon'>
                 <SvgImgMobile
                     forceLandscape={forceLandscape}
@@ -123,5 +124,5 @@ const PrivateDialog = ({ setIsShowStudents }: {setIsShowStudents: (arg0: boolean
           </div>
         </div>
   )
-}
+})
 export default PrivateDialog
