@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem } from '.';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
 import { isElectron } from '../../../../utils/isElectron';

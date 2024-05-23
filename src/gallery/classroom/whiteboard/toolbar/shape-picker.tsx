@@ -1,7 +1,7 @@
 import { FC, useContext, useState } from 'react';
 import { observer } from 'mobx-react';
 import { ExpansionToolbarItem, ExpansionFixbarItem } from '.';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
 import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
 import { ToolbarUIContext } from '../ui-context';
@@ -20,7 +20,7 @@ const shapeIconMap = {
 
 export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
-    observables: { toolbarDockPosition, currentShape, lastShape, currentColor },
+    observables: { toolbarDockPosition, currentShape, currentTool, lastShape, currentColor },
     setShape,
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
@@ -47,6 +47,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
     ? shapeIconMap[lastShape as keyof typeof shapeIconMap]
     : SvgIconEnum.FCR_MOBILE_WHITEBOARD_PED_CURVE;
   const clickShape = lastShape ? lastShape : FcrBoardShape.Ellipse;
+  const iconColor = !currentShape ? 'white' : currentColor;
 
   return (
     <ExpansionFixbarItem
@@ -61,10 +62,10 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
       onClick={handleShapeToolChange(clickShape)}
       tooltipPlacement={'top'}
       popoverPlacement={'top'}
-      popoverOverlayClassName="fcr-board-toolbar__picker__overlay  fcr-board-toolbar__fixedbottom"
+      popoverOverlayClassName="fcr-board-toolbar__picker__overlay fcr-board-toolbar__fixedbottom"
       popoverContent={<ShapePickerPanel handleClose={toggleTooltipVisible} />}
       popoverOffset={offset}
-      iconProps={{ colors: { iconPrimary: currentColor } }}
+      iconProps={{ colors: { iconPrimary: iconColor } }}
       texttip={transI18n('fcr_board_tool_shape')}
     />
   );

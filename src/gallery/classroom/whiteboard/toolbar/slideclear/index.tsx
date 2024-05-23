@@ -1,5 +1,5 @@
 import React from 'react';
-import { SvgIconEnum, SvgImg } from '../../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './slide.css';
 
 interface CleanSimpleVerifyProps {
@@ -50,7 +50,7 @@ export default class CleanSimpleVerify extends React.Component<
     }, 0);
   };
 
-  constructor(props: ReactSimpleVerifyProps) {
+  constructor(props: CleanSimpleVerifyProps) {
     super(props);
     this.state = {
       /** 是否滑入 */

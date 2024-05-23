@@ -14,7 +14,7 @@ import { ToolbarUIContext } from '../ui-context';
 import { FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
 import { useI18n } from 'agora-common-libs';
 import { Dialog } from 'antd-mobile';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import CleanSimpleVerify from './slideclear';
 
 export const useVisibleTools = () => {
@@ -143,7 +143,7 @@ export const useVisibleTools = () => {
             texttip={transI18n('fcr_board_tool_clean')}
             icon={SvgIconEnum.FCR_CLEANWHITEBOARD}
             onClick={() => {
-              setTool(FcrBoardTool.Clean);
+              // setTool(FcrBoardTool.Clean);
               Dialog.show({
                 maskStyle: { background: 'none' },
                 bodyStyle: {

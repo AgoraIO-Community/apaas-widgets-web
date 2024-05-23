@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 
 import React, { FC, useContext } from 'react';
 import { ExpansionToolbarItem } from '.';

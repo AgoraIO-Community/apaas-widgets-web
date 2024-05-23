@@ -1,6 +1,6 @@
 import { FC, PropsWithChildren, useEffect, useRef, useState } from 'react';
 import classNames from 'classnames';
-import { SvgIconEnum, SvgImg } from './../../../../../../fcr-ui-kit/src/components/svg-img';
+import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import './index.css';
 import { useVisibleTools } from '../toolbar/hooks';
 

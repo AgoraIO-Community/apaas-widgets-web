@@ -1,13 +1,7 @@
 import { observer } from 'mobx-react';
-import {
-  SvgIconEnum,
-  SvgImg,
-  SvgImgProps,
-} from './../../../../../../fcr-ui-kit/src/components/svg-img';
-import { ToolTip, ToolTipProps } from './../../../../../../fcr-ui-kit/src/components/tooltip';
-import { DialogToolTip } from './../../../../../../fcr-ui-kit/src/components/tooltip/dialog';
-import { ClassDialog } from './../../../../../../fcr-ui-kit/src/components/dialog';
-import { PopoverWithTooltip } from './../../../../../../fcr-ui-kit/src/components/popover';
+import { SvgIconEnum, SvgImg, SvgImgProps } from '@components/svg-img';
+import { DialogToolTip } from '@components/tooltip/dialog';
+import { PopoverWithTooltip } from '@components/popover';
 import React, { FC, useContext, useEffect, useRef, useState } from 'react';
 import { runInAction } from 'mobx';
 import classNames from 'classnames';
@@ -164,7 +158,6 @@ export const ExpansionFixbarItem: FC<{
   popoverPlacement?: 'top' | 'bottom' | 'left' | 'right';
   popoverOverlayClassName?: string;
   onClick?: () => void;
-  onTargetClick?: () => void;
   setToolVisible?: () => void;
   getTooltipContainer?: (node: HTMLElement) => HTMLElement;
   isActive: boolean;
@@ -180,7 +173,6 @@ export const ExpansionFixbarItem: FC<{
   popoverPlacement,
   icon,
   onClick,
-  onTargetClick,
   popoverOverlayClassName,
   isActive,
   toolVisible,
@@ -198,7 +190,6 @@ export const ExpansionFixbarItem: FC<{
   const handleClick = () => {
     setToolVisible && setToolVisible();
     onClick && onClick();
-    onTargetClick && onTargetClick();
   };
 
   return (
