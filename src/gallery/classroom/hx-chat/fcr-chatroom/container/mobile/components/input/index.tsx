@@ -122,7 +122,7 @@ export const FcrChatRoomH5Inputs = observer(
       // sendTextMessage(text);
       
       const isPrivateInRoom = userList.find((v) => v.userId === privateUser?.userId);
-      if (!isPrivateInRoom) {
+      if (!isPrivateInRoom && privateUser?.userId) {
         addToast(transI18n('fcr_private_leave_room', { reason: privateUser?.nickName }), 'warning');
       }
       sendTextMessage(text, privateUser ? [privateUser] : undefined);

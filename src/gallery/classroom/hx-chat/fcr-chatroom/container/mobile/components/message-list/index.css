@@ -57,6 +57,9 @@
   line-height: 18px;
   overflow: hidden;
 }
+.fcr-chatroom-mobile-message-item:last-child{
+  margin-bottom: 0;
+}
 .fcr-chatroom-mobile-message-item-img {
   padding: 10px 10px;
   display: flex;
@@ -151,7 +154,7 @@
   overflow-y: auto;
   pointer-events: all;
   position: absolute;
-  top: 120px;
+  bottom: 56px;
 }
 .fcr-chatroom-mobile-messages-landscape::-webkit-scrollbar {
   display: none;

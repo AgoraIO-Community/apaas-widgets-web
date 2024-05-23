@@ -165,7 +165,6 @@ export class MessageStore {
   @bound
   async sendTextMessage(text: string, receiverList?: AgoraIMUserInfo[]) {
     const message = this._fcrChatRoom.createTextMessage(text, receiverList);
-    console.log('sendTextMessage', this._fcrChatRoom, )
     if (message.msg?.length > 300) {
       this._widget.ui.addToast(transI18n('fcr_chat_tips_message_too_long'), 'error');
       return;
