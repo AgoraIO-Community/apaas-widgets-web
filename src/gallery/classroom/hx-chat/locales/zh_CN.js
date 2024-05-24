@@ -59,6 +59,7 @@ const im_CN = {
     sentence_connector: '，',
     me: '我',
   },
+  fcr_private_leave_room: '{reason}已离开房间',
   fcr_chat_no_data: '没有找到该学生',
   fcr_h5_label_watched: '人',
   fcr_h5_label_logo: '灵动课堂',

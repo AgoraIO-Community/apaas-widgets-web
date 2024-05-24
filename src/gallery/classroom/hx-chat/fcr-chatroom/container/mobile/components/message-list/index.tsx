@@ -27,7 +27,7 @@ export const MessageList = observer(() => {
       setMessageListDom,
       messageListScrollToBottom,
     },
-    roomStore: { isLandscape, messageVisible, forceLandscape },
+    roomStore: { isLandscape, messageVisible, forceLandscape, landscapeToolBarVisible },
     fcrChatRoom,
   } = useStore();
   const scrollingRef = useRef(false);
@@ -112,7 +112,7 @@ export const MessageList = observer(() => {
     <>
       <div
         style={{
-          visibility: messageVisible || !isLandscape ? 'visible' : 'hidden',
+          visibility: (landscapeToolBarVisible && messageVisible) || !isLandscape ? 'visible' : 'hidden',
           WebkitMask: isLandscape
             ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
             : '',
