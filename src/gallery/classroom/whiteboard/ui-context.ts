@@ -15,6 +15,7 @@ export interface DraggableHandler {
 
 const boardUIContextDefault = {
   observables: {
+    isLandscape: true,
     canOperate: false,
     minimized: false,
     connectionState: BoardConnectionState.Disconnected,
@@ -47,8 +48,11 @@ const toolbarUIContextDefault = {
     lastShape: undefined as FcrBoardShape | undefined,
     maxCountVisibleTools: 4,
     layoutReady: false,
+    foldToolBar: true,
     fixedToolVisible: false,
+    hasSelectorContainer: false,
   },
+  deleteSelector: () => {},
   clean: () => {},
   redo: () => {},
   undo: () => {},

@@ -100,9 +100,12 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
         cursorName: config.userName,
         disappearCursor: true,
       },
-      floatBar: {
-        colors: textColors.map((color) => hexColorToWhiteboardColor(color)),
-      },
+      floatBar:
+        config.enableFloatBar === false
+          ? false
+          : {
+              colors: textColors.map((color) => hexColorToWhiteboardColor(color)),
+            },
     };
 
     try {

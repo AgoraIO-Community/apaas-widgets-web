@@ -138,25 +138,27 @@ export const HalfRoundedPagination: FC<HalfRoundedProps> = ({
         <div className="fcr-pagination__extra" onClick={onAdd}>
           <SvgImg type={SvgIconEnum.FCR_MOBILE_NEWWHITEBOARDPAGE} size={24} />
         </div>
-        <div className="fcr-pagination__expage">
-          <div className="fcr-pagination__prev">
-            <button className={prevCls} onClick={handlePrev}>
-              <SvgImg type={SvgIconEnum.FCR_DROPUP4} size={24} />
-            </button>
+        {total > 1 ? (
+          <div className="fcr-pagination__expage">
+            <div className="fcr-pagination__prev">
+              <button className={prevCls} onClick={handlePrev}>
+                <SvgImg type={SvgIconEnum.FCR_DROPUP4} size={24} />
+              </button>
+            </div>
+            <div className="fcr-pagination__page">
+              <p className="page__number">
+                {current ?? 0}
+                <text>/</text>
+              </p>
+              <text className="page__number">{total ?? 0}</text>
+            </div>
+            <div className="fcr-pagination__next">
+              <button className={nextCls} onClick={handleNext}>
+                <SvgImg type={SvgIconEnum.FCR_DROPDOWN4} size={24} />
+              </button>
+            </div>
           </div>
-          <div className="fcr-pagination__page">
-            <p className="page__number">
-              {current ?? 0}
-              <text>/</text>
-            </p>
-            <text className="page__number">{total ?? 0}</text>
-          </div>
-          <div className="fcr-pagination__next">
-            <button className={nextCls} onClick={handleNext}>
-              <SvgImg type={SvgIconEnum.FCR_DROPDOWN4} size={24} />
-            </button>
-          </div>
-        </div>
+        ) : null}
         {/* history options */}
         <div className="fcr-pagination__exundo">
           {fixedUndoItem.map(({ renderItem }, i) => {

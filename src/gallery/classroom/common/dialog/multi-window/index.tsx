@@ -77,7 +77,7 @@ export const MultiWindowWidgetDialog = observer(
     }, []);
     return (
       <div ref={ref} className="fcr-widget-dialog-zindex-wrapper fcr-widget-dialog">
-        <div className={`fcr-widget-dialog-title-bar`}>
+        {/* <div className={`fcr-widget-dialog-title-bar`}>
           <span>{widget.displayName || widget.widgetName}</span>
           <div className={`fcr-widget-dialog-title-actions`}>
             <ul>
@@ -140,7 +140,7 @@ export const MultiWindowWidgetDialog = observer(
               )}
             </ul>
           </div>
-        </div>
+        </div> */}
         <div className={`fcr-widget-dialog-content `}>{children}</div>
       </div>
     );

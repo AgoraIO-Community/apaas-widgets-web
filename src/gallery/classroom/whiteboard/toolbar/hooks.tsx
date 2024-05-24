@@ -9,17 +9,18 @@ import { ShapePickerItem } from './shape-picker';
 import range from 'lodash/range';
 import min from 'lodash/min';
 import max from 'lodash/max';
-import { AdditionToolPickerItem } from './extra-tool-picker';
 import { ToolbarUIContext } from '../ui-context';
 import { FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
 import { useI18n } from 'agora-common-libs';
 import { Dialog } from 'antd-mobile';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import CleanSimpleVerify from './slideclear';
+import { runInAction } from 'mobx';
 
 export const useVisibleTools = () => {
   const {
-    observables: { currentTool, maxCountVisibleTools, toolbarDockPosition },
+    observables,
+    observables: { currentTool, maxCountVisibleTools, fixedToolVisible, toolbarDockPosition },
     clean,
     setTool,
     saveDraft,
@@ -152,6 +153,9 @@ export const useVisibleTools = () => {
             icon={SvgIconEnum.FCR_CLEANWHITEBOARD}
             onClick={() => {
               // setTool(FcrBoardTool.Clean);
+              runInAction(() => {
+                observables.fixedToolVisible = false;
+              });
               Dialog.show({
                 maskStyle: { background: 'none' },
                 bodyStyle: {

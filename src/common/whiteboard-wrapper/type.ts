@@ -63,6 +63,7 @@ export type FcrBoardRoomJoinConfig = {
   userId: string;
   userName: string;
   hasOperationPrivilege: boolean;
+  enableFloatBar?: boolean;
 };
 
 export enum FcrBoardRoomEvent {

@@ -507,7 +507,10 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
 
     this._eventBus.emit(FcrBoardMainWindowEvent.PageInfoUpdated, state);
   }
-
+  @bound
+  delete() {
+    this._whiteRoom.delete();
+  }
   private _addWindowManagerEventListeners() {
     const windowManager = this._windowManager;
 

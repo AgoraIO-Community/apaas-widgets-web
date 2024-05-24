@@ -7,47 +7,26 @@ import { runInAction } from 'mobx';
 import classNames from 'classnames';
 import { useVisibleTools } from './hooks';
 import { DraggableWrapper } from './move-handle';
-import { BoardExpand } from '../../../../../../agora-classroom-sdk/src/containers/board-expand';
 import './index.css';
 import { BoardUIContext, ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
 import { ScenePagination } from '../scene-pagination';
-import { FcrBoardShape } from '../../../../common/whiteboard-wrapper/type';
+import { FcrBoardShape, FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
 import { PenPickerPanel } from './pen-picker';
 import { ShapePickerPanel } from './shape-picker';
+import { SelectorPickerPanel } from './selector-picker';
+import classnames from 'classnames';
 
 export const Toolbar = observer(() => {
   const { mobileFixedTools } = useVisibleTools();
   const {
     observables,
-    observables: { currentShape, currentTool, fixedToolVisible },
+    observables: { currentShape, currentTool, foldToolBar, fixedToolVisible, hasSelectorContainer },
   } = useContext(ToolbarUIContext);
   const {
-    observables: { canOperate },
+    observables: { canOperate, isLandscape },
   } = useContext(BoardUIContext);
   const transI18n = useI18n();
-
-  const [folded, setFolded] = useState<boolean | undefined>(true);
-
-  useEffect(() => {
-    runInAction(() => {
-      observables.toolbarDockPosition = {
-        x: folded ? 16 : 6,
-        y: 12,
-        placement: 'left',
-      };
-    });
-  }, [folded]);
-
-  const handleFoldClick = () => {
-    setFolded(!folded);
-  };
-
-  const clsn = classNames({
-    'fcr-board-toolbar--folded': folded,
-    // prevent first animation play
-    'fcr-board-toolbar--unfolded': typeof folded !== 'undefined' && !folded,
-  });
 
   const penActive = currentShape === FcrBoardShape.Curve || currentShape === FcrBoardShape.Straight;
   const shapeActive =
@@ -61,24 +40,78 @@ export const Toolbar = observer(() => {
       FcrBoardShape.Triangle,
     ].includes(currentShape);
 
+  useEffect(() => {
+    let observer: any;
+    if (FcrBoardTool.Selector === currentTool) {
+      observer = new MutationObserver((mutations) => {
+        for (let mutation of mutations) {
+          if (mutation.type === 'childList') {
+            // 检查是否存在 .highlight-box 类, 表示图形是否被选中
+            const highlightBoxExists =
+              document.querySelector(
+                '.netless-whiteboard.cursor-selector .component .highlight-box',
+              ) !== null;
+            runInAction(() => {
+              observables.hasSelectorContainer = !!highlightBoxExists;
+              observables.fixedToolVisible = !!highlightBoxExists;
+            });
+          }
+        }
+      });
+      const targetNode = document.querySelector('.netless-whiteboard.cursor-selector');
+      if (targetNode) {
+        observer.observe(targetNode, { childList: true, subtree: true });
+      }
+    } else {
+      observer && observer.disconnect();
+    }
+
+    return () => observer && observer.disconnect();
+  }, [currentTool]);
+
+  const handleObserverBack = (args: any) => {
+    console.log('this---args', args);
+  };
+
+  const handleFoldClick = (bool: boolean) => {
+    // setFolded(!folded);
+    runInAction(() => {
+      observables.foldToolBar = bool;
+    });
+  };
+
+  const clsn = classNames({
+    'fcr-board-toolbar--folded': foldToolBar,
+    // prevent first animation play
+    'fcr-board-toolbar--unfolded': typeof foldToolBar !== 'undefined' && !foldToolBar,
+  });
+
+  // const {
+  //   shareUIStore: { isLandscape, setForceLandscape },
+  // } = useStore();
+  console.log('this----neitb ucanOperate', foldToolBar, isLandscape, canOperate);
+
+  if (!canOperate) return null;
   return (
     <>
       <DraggableWrapper className={clsn}>
         <>
           {/* fold */}
-          {folded ? (
-            <div className={`fcr-board-toolbar-fold`} onClick={handleFoldClick}>
-              <BoardExpand
-                iconEnum={SvgIconEnum.WHITEBOARDEDIT}
-                style={{
-                  width: '40px',
-                  height: '40px',
-                }}
-              />
+          {foldToolBar ? (
+            <div className={`fcr-board-toolbar-fold`} onClick={() => handleFoldClick(false)}>
+              <div
+                className={classnames(
+                  'fcr-mobile-board-expand fcr-t-0 fcr-l-0 fcr-h-full fcr-flex fcr-justify-center',
+                )}>
+                <SvgImg
+                  type={SvgIconEnum.WHITEBOARDEDIT}
+                  colors={{ iconPrimary: 'white' }}
+                  size={32}></SvgImg>
+              </div>
             </div>
           ) : (
             <div className="fcr-board-toolbar-main">
-              <div className="fcr-board-title-box" onClick={handleFoldClick}>
+              <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
                 <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
                 <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
               </div>
@@ -102,13 +135,14 @@ export const Toolbar = observer(() => {
           <>
             {penActive && <PenPickerPanel />}
             {shapeActive && <ShapePickerPanel />}
+            {hasSelectorContainer && <SelectorPickerPanel />}
           </>
         }
-        visible={(penActive || shapeActive) && fixedToolVisible}
+        visible={fixedToolVisible}
         showArrow={false}
         closeable={false}
       />
-      {canOperate && !folded && <ScenePagination />}
+      {canOperate && !foldToolBar && <ScenePagination />}
     </>
   );
 });

@@ -2,11 +2,10 @@ import React, { useContext, useEffect } from 'react';
 import { BoardUIContext } from './ui-context';
 import './style.css';
 import { Toolbar } from './toolbar';
-import { observer } from 'mobx-react';
 import { BoardConnectionState } from '../../../common/whiteboard-wrapper/type';
 import { Loading } from './loading';
 
-export const App = observer(() => {
+export const App = () => {
   const {
     observables: { canOperate, connectionState, joinSuccessed },
     observables,
@@ -15,10 +14,7 @@ export const App = observer(() => {
     handleBoardDomLoad,
     handleCollectorDomLoad,
   } = useContext(BoardUIContext);
-  // const {
-  //   shareUIStore: { isLandscape, forceLandscape, toastQueue, addSingletonToast, addToast },
-  // } = useStore();
-  console.log('observables', observables, canOperate);
+
   const loading =
     connectionState === BoardConnectionState.Connecting ||
     connectionState === BoardConnectionState.Reconnecting;
@@ -42,8 +38,8 @@ export const App = observer(() => {
 
       <div id="fcr_board_center_position" className="fcr_board_center_position" />
       {/* toolbar */}
-      {canOperate && <Toolbar />}
+      <Toolbar />
       {loading && <Loading></Loading>}
     </React.Fragment>
   );
-});
+};

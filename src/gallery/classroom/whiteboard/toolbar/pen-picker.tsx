@@ -17,7 +17,7 @@ const penIconMap = {
 export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const {
     observables,
-    observables: { currentShape, lastPen, fixedToolVisible, currentColor },
+    observables: { currentShape, lastPen, currentColor },
     setPen,
     setTool,
   } = useContext(ToolbarUIContext);
