@@ -74,9 +74,9 @@
   justify-content: space-between;
 }
 .fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
-  position: fixed;
+  /* position: fixed;
   left: 0;
-  bottom: 0;
+  bottom: 0; */
   width: 100%;
 }
 .fcr-chatroom-mobile-room-info-emoji-open

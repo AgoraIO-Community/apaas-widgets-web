@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 import './index.css'
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
@@ -17,9 +17,16 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
         userStore: { searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser },
       } = useStore();
       const transI18n = useI18n();
+      const [height, setHeight] = useState(0)
+      
       const searchUserLists = useMemo(() => {
         return searchUserList.filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
       }, [searchUserList, fcrChatRoom.userInfo?.userId])
+      useEffect(() => {
+        const innerHeight = window.innerHeight;
+        const domHeight = document.querySelector('.fcr-chatroom-mobile-inputs-chat-dialog-main')?.getBoundingClientRect().height || 0;
+        setHeight(domHeight > innerHeight * 0.8 ? innerHeight * 0.8 : domHeight)
+      }, [searchUserLists.length])
       const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target
         setSearchKey(value)
@@ -35,9 +42,10 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
         setPrivateUser(undefined)
         setIsShowStudents(false)
       }
+
   return (
     <div className='fcr-chatroom-mobile-inputs-chat-dialog' onClick={handleCloseDialog}>
-        <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main', isLandscape && 'active')} onClick={(e) =>  e.stopPropagation() }>
+        <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main')} style={isLandscape ? { height: !height ? 'auto' : `${height}px`} : undefined} onClick={(e) =>  e.stopPropagation() }>
           <div className='fcr-chatroom-mobile-inputs-chat-dialog-split'></div>
             <div className='fcr-chatroom-mobile-inputs-chat-dialog-title'>
               <div className='fcr-chatroom-mobile-inputs-chat-dialog-close' onClick={handleCloseDialog}>
@@ -51,7 +59,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
               {transI18n('fcr_chat_label_send_to')}
             </div>
             <div className='fcr-chatroom-mobile-inputs-chat-search'>
-              <input className='fcr-chatroom-mobile-inputs-chat-search-input' type="text" placeholder={transI18n('fcr_chat_dialog_placeholder')} onChange={handleSearchChange} />
+              <input className='fcr-chatroom-mobile-inputs-chat-search-input' type="search" placeholder={transI18n('fcr_chat_dialog_placeholder')} onChange={handleSearchChange} />
               <div className='fcr-chatroom-mobile-inputs-chat-search-icon'>
                 <SvgImgMobile
                     forceLandscape={forceLandscape}
@@ -126,3 +134,4 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
   )
 })
 export default PrivateDialog
+
