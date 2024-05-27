@@ -125,21 +125,11 @@ const ColorPickerPanel = observer(() => {
     setStrokeColor,
   } = useContext(ToolbarUIContext);
 
-  // const colors = [
-  //   '#EFEFEF',
-  //   '#FFEC42',
-  //   '#FFB545',
-  //   '#E44A19',
-  //   '#4A4C5F',
-  //   '#A1C573',
-  //   '#51BD69',
-  //   '#EB47A2',
-  //   '#0E0E0E',
-  //   '#50E3C2',
-  //   '#547AFF',
-  //   '#79479F',
-  // ];
   const colors = ['#51BD69', '#E44A19', '#FFEC42', '#547AFF', '#4A4C5F'];
+
+  const handleClick = (color: string) => {
+    setStrokeColor(color);
+  };
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--color">
       {colors.map((color) => {
@@ -149,14 +139,11 @@ const ColorPickerPanel = observer(() => {
           'fcr-board-toolbar__picker-color--active': isActive,
         });
 
-        const handleClick = () => {
-          setStrokeColor(color);
-        };
         return (
           <div
             key={color}
             className={cls}
-            onClick={handleClick}
+            onClick={() => handleClick(color)}
             style={{
               color,
               background: color,

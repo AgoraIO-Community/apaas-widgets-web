@@ -7,7 +7,7 @@ import { useI18n } from 'agora-common-libs';
 export const ScenePagination = observer(() => {
   const { observables, addPage, changePage } = useContext(ScenePaginationUIContext);
   const transI18n = useI18n();
-  console.log('ScenePagination', observables);
+
   return (
     <div className="fcr-board-pagination">
       <HalfRoundedPagination

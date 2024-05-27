@@ -1,9 +1,6 @@
-import { useContext, useEffect, useRef, useState } from 'react';
+import { useContext } from 'react';
 import { ToolbarItem } from '.';
-import { ColorPickerItem } from './color-picker';
-import { EraserPickerItem } from './eraser-picker';
 import { UndoItem, RedoItem } from './history';
-import { MoveHandleItem } from './move-handle';
 import { PenPickerItem } from './pen-picker';
 import { ShapePickerItem } from './shape-picker';
 import range from 'lodash/range';
@@ -13,14 +10,15 @@ import { ToolbarUIContext } from '../ui-context';
 import { FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
 import { useI18n } from 'agora-common-libs';
 import { Dialog } from 'antd-mobile';
-import { SvgIconEnum, SvgImg } from '@components/svg-img';
-import CleanSimpleVerify from './slideclear';
+import { SvgIconEnum } from '@components/svg-img';
+import { CleanModal } from './slideclear';
 import { runInAction } from 'mobx';
+import { windowClassName } from '../utils';
 
 export const useVisibleTools = () => {
   const {
     observables,
-    observables: { currentTool, maxCountVisibleTools, fixedToolVisible, toolbarDockPosition },
+    observables: { currentTool, maxCountVisibleTools, toolbarDockPosition },
     clean,
     setTool,
     saveDraft,
@@ -45,9 +43,6 @@ export const useVisibleTools = () => {
         />
       ),
     },
-    // {
-    //   renderItem: ({ offset }: { offset?: number } = {}) => <PenPickerItem offset={offset} />,
-    // },
     {
       renderItem: () => (
         <ToolbarItem
@@ -102,18 +97,6 @@ export const useVisibleTools = () => {
         />
       ),
     },
-    // {
-    //   renderItem: () => (
-    //     <ToolbarItem
-    //       tooltip={transI18n('fcr_board_tool_mobile_selector')}
-    //       texttip={transI18n('fcr_board_tool_mobile_selector')}
-    //       icon={SvgIconEnum.FCR_WHITECHOOSE}
-    //       iconProps={{ colors: { iconPrimary: currentColor } }}
-    //       onClick={handleToolChange(FcrBoardTool.Selector)}
-    //       isActive={currentTool === FcrBoardTool.Selector}
-    //     />
-    //   ),
-    // },
     {
       renderItem: ({ offset }: { offset?: number } = {}) => <PenPickerItem offset={offset || -1} />,
     },
@@ -146,38 +129,36 @@ export const useVisibleTools = () => {
     },
     {
       renderItem: () => {
+        const dialogToogle = (bool: boolean) => {
+          if (bool) {
+            clean();
+          }
+          Dialog.clear();
+          runInAction(() => {
+            observables.foldToolBar = false;
+            observables.fixedBottomBarVisible = false;
+          });
+        };
+
         return (
           <ToolbarItem
             tooltip={transI18n('fcr_board_tool_clean')}
             texttip={transI18n('fcr_board_tool_clean')}
             icon={SvgIconEnum.FCR_CLEANWHITEBOARD}
             onClick={() => {
-              // setTool(FcrBoardTool.Clean);
               runInAction(() => {
-                observables.fixedToolVisible = false;
+                observables.fixedBottomBarVisible = false;
+                observables.foldToolBar = true;
               });
               Dialog.show({
-                maskStyle: { background: 'none' },
+                maskStyle: { background: 'var(--fcr_ui_scene_mask, rgba(8, 8, 8, 0.35))' },
+                getContainer: () => {
+                  return document.querySelector(`.${windowClassName}`) as HTMLElement;
+                },
                 bodyStyle: {
                   width: '244px',
                 },
-                content: (
-                  <>
-                    <CleanSimpleVerify
-                      verify={() => {
-                        Dialog.clear();
-                        clean();
-                      }}
-                    />
-                    <div className="fcr-mobile-slide__close" onClick={() => Dialog.clear()}>
-                      <SvgImg
-                        type={SvgIconEnum.FCR_MOBILE_CLOSE}
-                        colors={{ iconPrimary: '#FB584E' }}
-                        size={16}
-                      />
-                    </div>
-                  </>
-                ),
+                content: <CleanModal onToggle={dialogToogle} />,
                 className: 'fcr-mobile-slide__dialog',
               });
             }}

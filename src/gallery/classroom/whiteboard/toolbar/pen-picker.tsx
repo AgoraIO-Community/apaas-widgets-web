@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useState } from 'react';
 import { observer } from 'mobx-react';
-import { ExpansionToolbarItem, ExpansionFixbarItem } from '.';
+import { ExpansionToolbarItem } from '.';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
 import { ColorPickerItem, ColorToolPickerItem } from './color-picker';
@@ -23,10 +23,10 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
   const handlePenToolChange = (shapeTool: FcrBoardShape) => {
-    runInAction(() => {
-      observables.fixedToolVisible = true;
-    });
     return () => {
+      runInAction(() => {
+        observables.fixedBottomBarVisible = true;
+      });
       setPen(shapeTool);
     };
   };
@@ -35,6 +35,9 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
   const icon = lastPen
     ? penIconMap[lastPen as keyof typeof penIconMap]
     : SvgIconEnum.FCR_MOBILE_WHITEBOARD_PED_LINE;
+
+  // console.log('this---lastPen', lastPen, penIconMap[lastPen as keyof typeof penIconMap]);
+
   const clickShape = lastPen ? lastPen : FcrBoardShape.Curve;
 
   const cls = classNames('fcr-board-toolbar-item-surrounding', {
@@ -61,7 +64,7 @@ export const PenPickerPanel = observer(() => {
   ];
   const handleClose = () => {
     runInAction(() => {
-      observables.fixedToolVisible = false;
+      observables.fixedBottomBarVisible = false;
     });
   };
 
@@ -115,6 +118,9 @@ const PenWeightsItem = observer(() => {
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_4SIZE,
     },
   ];
+  const handleClick = (value: number) => {
+    setStrokeWidth(value);
+  };
 
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--pen">
@@ -122,11 +128,9 @@ const PenWeightsItem = observer(() => {
         const cls = classNames({
           'fcr-board-toolbar-panel--strokeactive': observables.currentStrokeWidth === value,
         });
-        const handleClick = () => {
-          setStrokeWidth(value);
-        };
+
         return (
-          <div key={value} className={cls} onClick={handleClick}>
+          <div key={value} className={cls} onClick={() => handleClick(value)}>
             <SvgImg type={icon} size={28} />
           </div>
         );
@@ -135,9 +139,9 @@ const PenWeightsItem = observer(() => {
   );
 });
 
-export const PenToolPickerItem = observer(() => {
+export const PenToolPickerItem = observer(({ origin }: any) => {
   const {
-    observables: { currentShape, lastShape, currentColor, currentStrokeWidth },
+    observables: { lastShape, currentStrokeWidth },
     setPen,
     setStrokeWidth,
   } = useContext(ToolbarUIContext);
@@ -145,6 +149,7 @@ export const PenToolPickerItem = observer(() => {
 
   const handlePenToolChange = (shapeTool: FcrBoardShape) => {
     return () => {
+      if (origin) return;
       setPen(shapeTool);
     };
   };
@@ -170,6 +175,15 @@ export const PenToolPickerItem = observer(() => {
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
+      popoverOffset={4}
+      overlayInnerStyle={{
+        width: 'fit-content',
+        background: 'rgba(41, 46, 51, 0.95)',
+        'border-bottom-left-radius': 0,
+        'border-bottom-right-radius': 0,
+        border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
+        'border-radius': '6px',
+      }}
       popoverContent={<PenWeightsItem />}
       // iconProps={{ colors: { iconPrimary: currentColor } }}
       extensionMark={false}
