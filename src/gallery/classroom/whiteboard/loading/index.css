@@ -99,3 +99,6 @@
     transform: rotate(360deg);
   }
 }
+.flex1 {
+  flex: 1;
+}

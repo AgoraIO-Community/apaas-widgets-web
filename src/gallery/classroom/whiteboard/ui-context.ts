@@ -15,7 +15,7 @@ export interface DraggableHandler {
 
 const boardUIContextDefault = {
   observables: {
-    isLandscape: true,
+    isLandscape: false,
     canOperate: false,
     minimized: false,
     connectionState: BoardConnectionState.Disconnected,
@@ -27,6 +27,7 @@ const boardUIContextDefault = {
   handleCollectorDomLoad: (ref: HTMLDivElement | null) => {},
   handleClose: () => {},
   setPrivilege: (canOperate: boolean) => {},
+  setLandscape: (bool: boolean) => {},
 };
 
 const toolbarUIContextDefault = {
@@ -49,7 +50,8 @@ const toolbarUIContextDefault = {
     maxCountVisibleTools: 4,
     layoutReady: false,
     foldToolBar: true,
-    fixedToolVisible: false,
+    isHideToolBar: true,
+    fixedBottomBarVisible: false,
     hasSelectorContainer: false,
   },
   deleteSelector: () => {},

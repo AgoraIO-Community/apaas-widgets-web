@@ -11,20 +11,31 @@ import './index.css';
 import { BoardUIContext, ToolbarUIContext } from '../ui-context';
 import { useI18n } from 'agora-common-libs';
 import { ScenePagination } from '../scene-pagination';
-import { FcrBoardShape, FcrBoardTool } from '../../../../common/whiteboard-wrapper/type';
+import {
+  FcrBoardShape,
+  FcrBoardTool,
+  BoardConnectionState,
+} from '../../../../common/whiteboard-wrapper/type';
 import { PenPickerPanel } from './pen-picker';
 import { ShapePickerPanel } from './shape-picker';
 import { SelectorPickerPanel } from './selector-picker';
 import classnames from 'classnames';
+import { Loading } from '../loading';
 
 export const Toolbar = observer(() => {
   const { mobileFixedTools } = useVisibleTools();
   const {
     observables,
-    observables: { currentShape, currentTool, foldToolBar, fixedToolVisible, hasSelectorContainer },
+    observables: {
+      currentShape,
+      currentTool,
+      foldToolBar,
+      fixedBottomBarVisible,
+      hasSelectorContainer,
+    },
   } = useContext(ToolbarUIContext);
   const {
-    observables: { canOperate, isLandscape },
+    observables: { canOperate, isLandscape, connectionState },
   } = useContext(BoardUIContext);
   const transI18n = useI18n();
 
@@ -53,7 +64,7 @@ export const Toolbar = observer(() => {
               ) !== null;
             runInAction(() => {
               observables.hasSelectorContainer = !!highlightBoxExists;
-              observables.fixedToolVisible = !!highlightBoxExists;
+              observables.fixedBottomBarVisible = !!highlightBoxExists;
             });
           }
         }
@@ -69,12 +80,7 @@ export const Toolbar = observer(() => {
     return () => observer && observer.disconnect();
   }, [currentTool]);
 
-  const handleObserverBack = (args: any) => {
-    console.log('this---args', args);
-  };
-
   const handleFoldClick = (bool: boolean) => {
-    // setFolded(!folded);
     runInAction(() => {
       observables.foldToolBar = bool;
     });
@@ -86,63 +92,65 @@ export const Toolbar = observer(() => {
     'fcr-board-toolbar--unfolded': typeof foldToolBar !== 'undefined' && !foldToolBar,
   });
 
-  // const {
-  //   shareUIStore: { isLandscape, setForceLandscape },
-  // } = useStore();
-  console.log('this----neitb ucanOperate', foldToolBar, isLandscape, canOperate);
-
   if (!canOperate) return null;
   return (
     <>
-      <DraggableWrapper className={clsn}>
+      {connectionState === BoardConnectionState.Connected ? (
         <>
-          {/* fold */}
-          {foldToolBar ? (
-            <div className={`fcr-board-toolbar-fold`} onClick={() => handleFoldClick(false)}>
-              <div
-                className={classnames(
-                  'fcr-mobile-board-expand fcr-t-0 fcr-l-0 fcr-h-full fcr-flex fcr-justify-center',
-                )}>
-                <SvgImg
-                  type={SvgIconEnum.WHITEBOARDEDIT}
-                  colors={{ iconPrimary: 'white' }}
-                  size={32}></SvgImg>
-              </div>
-            </div>
+          {!fixedBottomBarVisible ? (
+            <DraggableWrapper className={clsn}>
+              <>
+                {foldToolBar ? (
+                  <div className={`fcr-board-toolbar-fold`} onClick={() => handleFoldClick(false)}>
+                    <div
+                      className={classnames(
+                        'fcr-mobile-board-expand fcr-t-0 fcr-l-0 fcr-h-full fcr-flex fcr-justify-center',
+                      )}>
+                      <SvgImg
+                        type={SvgIconEnum.WHITEBOARDEDIT}
+                        colors={{ iconPrimary: 'white' }}
+                        size={32}></SvgImg>
+                    </div>
+                  </div>
+                ) : (
+                  <div className="fcr-board-toolbar-main">
+                    <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
+                      <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
+                      <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
+                    </div>
+                    <ul className="fcr-board-toolbar-list">
+                      {mobileFixedTools.map(({ renderItem }, i) => {
+                        return <li key={i.toString()}>{renderItem()}</li>;
+                      })}
+                    </ul>
+                  </div>
+                )}
+              </>
+            </DraggableWrapper>
           ) : (
-            <div className="fcr-board-toolbar-main">
-              <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
-                <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
-                <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
-              </div>
-              <ul className="fcr-board-toolbar-list">
-                {mobileFixedTools.map(({ renderItem }, i) => {
-                  return <li key={i.toString()}>{renderItem()}</li>;
-                })}
-              </ul>
-            </div>
+            <DialogToolTip
+              placement="top"
+              overlayOffset={-1}
+              overlayClassName="fcr-board-toolbar__picker__overlay fcr-board-toolbar__fixedbottom"
+              getTooltipContainer={() =>
+                document.querySelector('#fcr_board_center_position') as HTMLElement
+              }
+              content={
+                <>
+                  {penActive && <PenPickerPanel />}
+                  {shapeActive && <ShapePickerPanel />}
+                  {hasSelectorContainer && <SelectorPickerPanel />}
+                </>
+              }
+              visible={fixedBottomBarVisible}
+              showArrow={false}
+              closeable={false}
+            />
           )}
         </>
-      </DraggableWrapper>
-      <DialogToolTip
-        placement="top"
-        overlayOffset={-1}
-        overlayClassName="fcr-board-toolbar__picker__overlay fcr-board-toolbar__fixedbottom"
-        getTooltipContainer={() =>
-          document.querySelector('#fcr_board_center_position') as HTMLElement
-        }
-        content={
-          <>
-            {penActive && <PenPickerPanel />}
-            {shapeActive && <ShapePickerPanel />}
-            {hasSelectorContainer && <SelectorPickerPanel />}
-          </>
-        }
-        visible={fixedToolVisible}
-        showArrow={false}
-        closeable={false}
-      />
-      {canOperate && !foldToolBar && <ScenePagination />}
+      ) : null}
+      <Loading />
+      {canOperate && !fixedBottomBarVisible && !foldToolBar && <ScenePagination />}
     </>
   );
 });
@@ -166,12 +174,10 @@ export const ToolbarItem: FC<{
   });
 
   return (
-    // <ToolTip placement={tooltipPlacement} content={tooltip}>
     <div className={cls} onClick={isDisabled ? undefined : onClick}>
       <SvgImg type={icon} size={28} />
       {texttip && <text>{texttip}</text>}
     </div>
-    // </ToolTip>
   );
 };
 
@@ -184,6 +190,7 @@ export const ExpansionToolbarItem: FC<{
   tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
   popoverPlacement?: 'top' | 'bottom' | 'left' | 'right';
   popoverOverlayClassName?: string;
+  overlayInnerStyle?: object;
   onClick?: () => void;
   isActive: boolean;
   extensionMark?: boolean;
@@ -197,6 +204,7 @@ export const ExpansionToolbarItem: FC<{
   popoverPlacement,
   icon,
   onClick,
+  overlayInnerStyle,
   popoverOverlayClassName,
   isActive,
   extensionMark = true,
@@ -216,6 +224,7 @@ export const ExpansionToolbarItem: FC<{
         placement: popoverPlacement,
         content: popoverContent,
         overlayClassName: popoverOverlayClassName,
+        overlayInnerStyle,
         visible: true,
       }}>
       <div className={cls} onClick={onClick}>
@@ -223,69 +232,5 @@ export const ExpansionToolbarItem: FC<{
         {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
       </div>
     </PopoverWithTooltip>
-  );
-};
-
-/** @internal */
-export const ExpansionFixbarItem: FC<{
-  tooltip: string;
-  popoverContent: React.ReactNode;
-  icon: SvgIconEnum;
-  iconProps?: Partial<Omit<SvgImgProps, 'type'>>;
-  tooltipPlacement?: 'top' | 'bottom' | 'left' | 'right';
-  popoverPlacement?: 'top' | 'bottom' | 'left' | 'right';
-  popoverOverlayClassName?: string;
-  onClick?: () => void;
-  setToolVisible?: () => void;
-  getTooltipContainer?: (node: HTMLElement) => HTMLElement;
-  isActive: boolean;
-  toolVisible?: boolean;
-  extensionMark?: boolean;
-  extensionMarkProps?: Partial<SvgImgProps>;
-  popoverOffset?: number;
-  texttip?: string;
-}> = ({
-  tooltip,
-  tooltipPlacement,
-  popoverContent,
-  popoverPlacement,
-  icon,
-  onClick,
-  popoverOverlayClassName,
-  isActive,
-  toolVisible,
-  extensionMark = true,
-  extensionMarkProps,
-  getTooltipContainer,
-  popoverOffset = 0,
-  iconProps,
-  texttip,
-  setToolVisible,
-}) => {
-  const cls = classNames('fcr-board-toolbar-item-surrounding', {
-    'fcr-board-toolbar-item-surrounding--active': isActive,
-  });
-  const handleClick = () => {
-    setToolVisible && setToolVisible();
-    onClick && onClick();
-  };
-
-  return (
-    <>
-      <div className={cls} onClick={handleClick}>
-        <SvgImg colors={{ iconPrimary: 'white' }} {...iconProps} type={icon} size={28} />
-        {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
-      </div>
-      <DialogToolTip
-        placement={popoverPlacement}
-        overlayOffset={popoverOffset}
-        overlayClassName={popoverOverlayClassName}
-        getTooltipContainer={getTooltipContainer}
-        content={popoverContent}
-        visible={toolVisible}
-        showArrow={false}
-        closeable={false}
-        onClose={setToolVisible}></DialogToolTip>
-    </>
   );
 };

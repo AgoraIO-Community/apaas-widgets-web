@@ -1,6 +1,11 @@
-import React from 'react';
+import React, { useContext } from 'react';
+import { observer } from 'mobx-react';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
+import { runInAction } from 'mobx';
+import { Dialog } from 'antd-mobile';
+import { useI18n } from 'agora-common-libs';
 import './slide.css';
+import { ToolbarUIContext } from '../../ui-context';
 
 interface CleanSimpleVerifyProps {
   width: number;
@@ -169,7 +174,10 @@ export default class CleanSimpleVerify extends React.Component<
     };
     return (
       <div style={this.style} className="simple-verify">
-        <div className="verify-tips">{this.props.tips}</div>
+        <div className="verify-tips">
+          {this.props.tips}
+          <SvgImg size={12} type={SvgIconEnum.FCR_MOBILE_ARROW_RIGHT} />
+        </div>
         <div className="verify-box">
           <div style={slideStyle} className="veriry-slide" />
         </div>
@@ -189,3 +197,40 @@ export default class CleanSimpleVerify extends React.Component<
     );
   }
 }
+
+export const CleanModal = observer(({ onToggle }: any) => {
+  const {
+    observables,
+    // observables: { currentTool, maxCountVisibleTools, fixedBottomBarVisible, toolbarDockPosition },
+    clean,
+  } = useContext(ToolbarUIContext);
+  const transI18n = useI18n();
+
+  return (
+    <>
+      <CleanSimpleVerify
+        tips={transI18n('fcr_board_slide_clean')}
+        verify={() => {
+          clean();
+          onToggle(true);
+          // runInAction(() => {
+          //   observables.fixedBottomBarVisible = false;
+          // });
+        }}
+      />
+      <div
+        className="fcr-mobile-slide__close"
+        onClick={() => {
+          // runInAction(() => {
+          //   observables.fixedBottomBarVisible = false;
+          // });
+          onToggle(false);
+          // setTimeout(() => {
+          //   Dialog.clear();
+          // }, 100);
+        }}>
+        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} colors={{ iconPrimary: '#FB584E' }} size={16} />
+      </div>
+    </>
+  );
+});

@@ -55,7 +55,6 @@ import { DialogProgressApi } from '../../../components/progress';
 import isNumber from 'lodash/isNumber';
 import { addResource } from './i18n/config';
 import { MultiWindowWidgetDialog } from '../common/dialog/multi-window';
-import { ToastApi } from '@components/toast';
 enum OrientationEnum {
   portrait = 'portrait',
   landscape = 'landscape',
@@ -89,6 +88,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   private _boardContext?: BoardUIContextValue;
   @observable orientation: OrientationEnum = OrientationEnum.portrait;
   @observable forceLandscape = false;
+  @observable landscapeToolBarVisible = false;
+
+  get isLandscape() {
+    return this.forceLandscape || this.orientation === OrientationEnum.landscape;
+  }
 
   get defaultFullscreen(): boolean {
     return true;
@@ -113,11 +117,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   set boardDom(dom: HTMLDivElement | null) {
     this._boardDom = dom;
-  }
-
-  get isLandscape() {
-    console.log('this---isLandscape-computed', this.forceLandscape, this.orientation);
-    return this.forceLandscape || this.orientation === OrientationEnum.landscape;
   }
 
   render(dom: HTMLElement) {
@@ -150,10 +149,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       this._outerDom = undefined;
     }
   }
-  @action.bound
-  private _handleGrantedUpdate(auth) {
-    console.log('_handleGrantedUpdate', auth);
-  }
+
   onInstall(controller: AgoraWidgetController): void {
     const handleOpen = (toggle: boolean) => {
       const widgetId = this.widgetId;
@@ -178,10 +174,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       FcrBoardWidget._animationOptions = animationOptions;
     };
     controller.addBroadcastListener({
-      messageType: AgoraExtensionWidgetEvent.BoardGrantedUsersUpdated,
-      onMessage: this._handleGrantedUpdate,
-    });
-    controller.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToggleBoard,
       onMessage: handleOpen,
     });
@@ -193,13 +185,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
     });
-    // controller.addBroadcastListener({
-    //   messageType: AgoraExtensionWidgetEvent.isHasWhiteboardAuth,
-    //   onMessage: (auth: boolean) => {
-    //     console.log('this----addBroadcastListener', auth);
-    //     this._isHasWhiteboardAuth = auth;
-    //   },
-    // });
     FcrBoardWidget._installationDisposer = () => {
       controller.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.ToggleBoard,
@@ -210,9 +195,9 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     // const { role } = EduClassroomConfig.shared.sessionInfo;
     // if (role === EduRoleTypeEnum.student) {
     //   console.log('this---student', EduClassroomConfig.shared.sessionInfo);
-    //   this._disposers.push(
-    //     computed(() => this.grantedUsers).observe(async ({ newValue, oldValue }) => {}),
-    //   );
+    // this._disposers.push(
+    //   computed(() => this.grantedUsers).observe(async ({ newValue, oldValue }) => {}),
+    // );
     // }
   }
 
@@ -412,6 +397,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   }
 
   @action.bound
+  private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
+    this.landscapeToolBarVisible = visible;
+  }
+
+  @action.bound
   private _handleOrientationChanged(params: {
     orientation: OrientationEnum;
     forceLandscape: boolean;
@@ -554,6 +544,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     boardRoom.on(FcrBoardRoomEvent.ConnectionStateChanged, (state) => {
       this.logger.info('Fcr board connection state changed to', state);
       // this.broadcast(FcrBoardRoomEvent.ConnectionStateChanged, state);
+      this._setConnectionState(state);
       if (state === BoardConnectionState.Disconnected && this._joined) {
         this.logger.info('Fcr board start reconnecting');
         boardRoom.join(joinConfig);
@@ -632,6 +623,14 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       if (this._outerDom) {
         this._outerDom.style.display = 'block';
       }
+    }
+  }
+
+  @action.bound
+  private _setConnectionState(state: BoardConnectionState) {
+    this._connectionState = state;
+    if (this._boardContext) {
+      this._boardContext.observables.connectionState = state;
     }
   }
 
@@ -800,6 +799,9 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
       }),
+      setLandscape: action((isLandscape: boolean) => {
+        observables.isLandscape = isLandscape;
+      }),
     };
     return this._boardContext;
   }
@@ -818,10 +820,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       redoSteps: 0,
       undoSteps: 0,
       maxCountVisibleTools: 4,
-      canOperate: this.hasPrivilege,
       layoutReady: false,
       foldToolBar: true,
-      fixedToolVisible: false,
+      fixedBottomBarVisible: false,
+      isHideToolBar: true,
       hasSelectorContainer: false,
     });
     this._toolbarContext = {

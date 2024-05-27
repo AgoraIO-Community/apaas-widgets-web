@@ -1,6 +1,5 @@
 import { FC, useContext, useState } from 'react';
 import { observer } from 'mobx-react';
-import { ExpansionToolbarItem, ExpansionFixbarItem } from '.';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import classNames from 'classnames';
 import { runInAction } from 'mobx';
@@ -27,10 +26,10 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
   const handleShapeToolChange = (shapeTool: FcrBoardShape) => {
-    runInAction(() => {
-      observables.fixedToolVisible = true;
-    });
     return () => {
+      runInAction(() => {
+        observables.fixedBottomBarVisible = true;
+      });
       setShape(shapeTool);
     };
   };
@@ -68,7 +67,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
 });
 
 export const ShapePickerPanel = observer(() => {
-  const { observables, setShape, setStrokeWidth } = useContext(ToolbarUIContext);
+  const { observables, setShape } = useContext(ToolbarUIContext);
   const shapes = [
     { type: FcrBoardShape.Rectangle, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_SQUARE },
     { type: FcrBoardShape.Rhombus, icon: SvgIconEnum.FCR_WHITEBOARD_SHAP_REHUMBUS },
@@ -79,7 +78,7 @@ export const ShapePickerPanel = observer(() => {
   ];
   const handleClose = () => {
     runInAction(() => {
-      observables.fixedToolVisible = false;
+      observables.fixedBottomBarVisible = false;
     });
   };
 
@@ -99,7 +98,7 @@ export const ShapePickerPanel = observer(() => {
         );
       })}
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
-      <PenToolPickerItem />
+      <PenToolPickerItem origin="shape" />
 
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
       <ColorToolPickerItem />
