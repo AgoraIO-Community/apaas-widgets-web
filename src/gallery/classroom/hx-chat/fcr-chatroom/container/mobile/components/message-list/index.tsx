@@ -238,16 +238,16 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
       key={textMessage.id}
       className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-${messageStyleType}`}>
       {isTeacherMessage && (
-        <span className="fcr-chatroom-mobile-message-item-host">
+        <span className={`fcr-chatroom-mobile-message-item-host ${!isLandscape ? '' : 'active'}`}>
           <SvgImgMobile
-            colors={{ iconPrimary: 'black' }}
+            colors={{ iconPrimary: isLandscape ? 'black' : 'white'}}
             forceLandscape={forceLandscape}
             landscape={isLandscape}
             type={SvgIconEnum.HOST}
             size={24}></SvgImgMobile>
         </span>
       )}
-      {checkIsPrivateMessage(message) && (
+      {checkIsPrivateMessage(message) && isLandscape && (
         <span className="fcr-chatroom-mobile-message-item-private">
           <SvgImgMobile
             forceLandscape={forceLandscape}
@@ -332,7 +332,7 @@ const ImageMessage = observer(
                 size={24}></SvgImgMobile>
             </span>
           )}
-          {checkIsPrivateMessage(message) && (
+          {checkIsPrivateMessage(message) && isLandscape  && (
             <span className="fcr-chatroom-mobile-message-item-private">
               <SvgImgMobile
                 forceLandscape={forceLandscape}
