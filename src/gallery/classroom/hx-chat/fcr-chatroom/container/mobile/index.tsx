@@ -66,6 +66,7 @@ export const FcrChatRoomH5 = observer(() => {
                 'fcr-chatroom-mobile-landscape-input-container-emoji-open':
                   isLandscape && showEmoji,
               },
+              'fcr-chatroom-mobile-input-container'
             )}>
             <FcrChatRoomH5Inputs
               emojiContainer={containerRef.current?.parentNode as HTMLDivElement}

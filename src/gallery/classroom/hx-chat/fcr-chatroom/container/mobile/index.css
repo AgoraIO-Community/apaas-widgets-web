@@ -6,9 +6,11 @@
   display: flex;
   flex-direction: column;
   background: #27292f;
-  /* overflow: hidden; */
+  overflow: hidden;
 }
-
+.fcr-chatroom-mobile-input-container{
+  height: 90px;
+}
 .fcr-chatroom-mobile-placeholder {
   height: 12px;
   flex-shrink: 0;
