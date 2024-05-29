@@ -134,7 +134,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
               refreshable={false}
               fullscreenable={false}
               minimizable>
-              <App />
+              <App widget={this} />
             </MultiWindowWidgetDialog>
           </ScenePaginationUIContext.Provider>
         </ToolbarUIContext.Provider>
@@ -181,10 +181,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       messageType: AgoraExtensionRoomEvent.BoardSetAnimationOptions,
       onMessage: setAnimationOptions,
     });
-    controller.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
-      onMessage: this._handleOrientationChanged,
-    });
+
     FcrBoardWidget._installationDisposer = () => {
       controller.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.ToggleBoard,
@@ -211,6 +208,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       widgetId: this.widgetId,
       visible: true,
     });
+
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),
     );
@@ -394,20 +392,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         '] command whether the command is not supported or the main window is not created!',
       );
     }
-  }
-
-  @action.bound
-  private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
-    this.landscapeToolBarVisible = visible;
-  }
-
-  @action.bound
-  private _handleOrientationChanged(params: {
-    orientation: OrientationEnum;
-    forceLandscape: boolean;
-  }) {
-    this.orientation = params.orientation;
-    this.forceLandscape = params.forceLandscape;
   }
 
   @bound
@@ -762,7 +746,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   createUIContext() {
     const observables = observable({
       canOperate: this.hasPrivilege,
-      isLandscape: this.isLandscape,
+      isLandscape: false,
       minimized: false,
       contentAreaSize: this.contentAreaSize,
       connectionState: this._connectionState,
@@ -799,8 +783,8 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
       }),
-      setLandscape: action((isLandscape: boolean) => {
-        observables.isLandscape = isLandscape;
+      setLandscape: action((landscape: boolean) => {
+        observables.isLandscape = landscape;
       }),
     };
     return this._boardContext;

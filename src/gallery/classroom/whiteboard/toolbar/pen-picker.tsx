@@ -179,10 +179,10 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
       overlayInnerStyle={{
         width: 'fit-content',
         background: 'rgba(41, 46, 51, 0.95)',
-        'border-bottom-left-radius': 0,
-        'border-bottom-right-radius': 0,
+        borderRadius: '6px',
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
         border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
-        'border-radius': '6px',
       }}
       popoverContent={<PenWeightsItem />}
       // iconProps={{ colors: { iconPrimary: currentColor } }}

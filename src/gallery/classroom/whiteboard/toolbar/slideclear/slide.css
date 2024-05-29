@@ -2,9 +2,11 @@
   background: none;
   /* width: 245px; */
 }
+.fcr-mobile-slide__dialog .adm-dialog-content * {
+  pointer-events: auto;
+}
 .fcr-mobile-slide__dialog .adm-dialog-content {
   display: flex;
-  gap: 11px;
   align-items: center;
   flex-wrap: wrap;
 }
@@ -24,6 +26,7 @@
   line-height: 1;
   position: relative;
   -webkit-user-select: none;
+  margin-right: 11px;
   height: 50px;
   backdrop-filter: blur(5px);
   border-radius: 25px;

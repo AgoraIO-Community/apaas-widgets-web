@@ -9,7 +9,6 @@ import { ToolbarUIContext } from '../../ui-context';
 
 interface CleanSimpleVerifyProps {
   width: number;
-  borderRadius: number;
   tips: string;
   verify?: () => void;
 }
@@ -18,13 +17,18 @@ interface CleanSimpleVerifyState {
   isMouseEnter: boolean;
   diff: number;
 }
+
+const completeHeight = (height: number): any => {
+  const basicWidth = window.matchMedia('(orientation: landscape)').matches ? 812 : 375;
+  return ((height / basicWidth) * 100).toFixed(5) || 42;
+};
+
 export default class CleanSimpleVerify extends React.Component<
   CleanSimpleVerifyProps,
   CleanSimpleVerifyState
 > {
   static defaultProps = {
     width: 180,
-    borderRadius: 21,
     tips: '滑动清除所有',
   };
 
@@ -160,9 +164,14 @@ export default class CleanSimpleVerify extends React.Component<
 
   public render() {
     /** 滑条样式 */
+    let slideHeight = completeHeight(42);
+    let slideWidth = Number(this.state.diff) + Number(slideHeight);
+    // console.log('this---slideWidth', slideWidth);
+
     const slideStyle = {
-      borderRadius: this.props.borderRadius,
-      width: `${this.state.diff + 42 - 6}px`,
+      borderRadius: `${slideHeight / 2}vw`,
+      width: `${slideWidth}vw`,
+      maxWidth: `${this.props.width - 6}px`,
       // opacity: this.state.isMouseEnter ? 1 : 0,
       opacity: 1,
       transitionDuration: !this.state.isMouseEnter || !this.isMousedown ? '.3s' : '0s',
@@ -199,11 +208,7 @@ export default class CleanSimpleVerify extends React.Component<
 }
 
 export const CleanModal = observer(({ onToggle }: any) => {
-  const {
-    observables,
-    // observables: { currentTool, maxCountVisibleTools, fixedBottomBarVisible, toolbarDockPosition },
-    clean,
-  } = useContext(ToolbarUIContext);
+  const { clean } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
 
   return (
@@ -213,22 +218,9 @@ export const CleanModal = observer(({ onToggle }: any) => {
         verify={() => {
           clean();
           onToggle(true);
-          // runInAction(() => {
-          //   observables.fixedBottomBarVisible = false;
-          // });
         }}
       />
-      <div
-        className="fcr-mobile-slide__close"
-        onClick={() => {
-          // runInAction(() => {
-          //   observables.fixedBottomBarVisible = false;
-          // });
-          onToggle(false);
-          // setTimeout(() => {
-          //   Dialog.clear();
-          // }, 100);
-        }}>
+      <div className="fcr-mobile-slide__close" onClick={() => onToggle(false)}>
         <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} colors={{ iconPrimary: '#FB584E' }} size={16} />
       </div>
     </>

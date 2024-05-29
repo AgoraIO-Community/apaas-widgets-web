@@ -100,20 +100,12 @@ export const HalfRoundedPagination: FC<HalfRoundedProps> = ({
 }) => {
   const cls = classNames('fcr-mobile-pagination fcr-pagination-half-r', {});
 
-  const [expansionVisible, setExpansionVisible] = useState(false);
-
-  const [expanded, setExpanded] = useState(true);
-
   const { handleNext, handlePrev, current: innerCurrent } = usePageCounter({ current, total });
   const { fixedUndoItem } = useVisibleTools();
 
   useEffect(() => {
     onChange(innerCurrent);
   }, [innerCurrent]);
-
-  const handleExpand = () => {
-    setExpanded((expanded) => !expanded);
-  };
 
   const prevCls = classNames(
     'fcr-pagination__btn',
@@ -125,15 +117,8 @@ export const HalfRoundedPagination: FC<HalfRoundedProps> = ({
     innerCurrent >= total ? 'fcr-pagination_btn--disabled' : 'fcr-btn-click-effect',
   );
 
-  const handleHover = (visible: boolean) => () => {
-    setExpansionVisible(visible);
-  };
-
   return (
-    <div
-      className="fcr-pagination-half-r-wrapper"
-      onTouchStart={handleHover(true)}
-      onTouchEnd={handleHover(false)}>
+    <div className="fcr-pagination-half-r-wrapper">
       <div className={cls}>
         <div className="fcr-pagination__extra" onClick={onAdd}>
           <SvgImg type={SvgIconEnum.FCR_MOBILE_NEWWHITEBOARDPAGE} size={24} />
@@ -145,12 +130,17 @@ export const HalfRoundedPagination: FC<HalfRoundedProps> = ({
                 <SvgImg type={SvgIconEnum.FCR_DROPUP4} size={24} />
               </button>
             </div>
-            <div className="fcr-pagination__page">
-              <p className="page__number">
-                {current ?? 0}
-                <text>/</text>
-              </p>
-              <text className="page__number">{total ?? 0}</text>
+            <div
+              className={classNames('fcr-pagination__page', {
+                'flex-column': `${current}${total}`.length > 3,
+              })}>
+              <text className={classNames({ 'fcr-pagination_btn--disabled': innerCurrent <= 1 })}>
+                <text>{current ?? 0}</text>/
+              </text>
+              <text
+                className={classNames({ 'fcr-pagination_btn--disabled': innerCurrent >= total })}>
+                {total ?? 0}
+              </text>
             </div>
             <div className="fcr-pagination__next">
               <button className={nextCls} onClick={handleNext}>

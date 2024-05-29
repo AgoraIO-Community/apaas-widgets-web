@@ -65,6 +65,8 @@
   align-items: center;
   gap: 12px;
   padding: 0 7px;
+  border-radius: 12px;
+  overflow: hidden;
 }
 .fcr-board-toolbar-panel--pen > div {
   position: relative;
@@ -99,7 +101,9 @@
   border-color: currentColor;
   left: 7.5px;
 }
-
+/* .fcr-board-toolbar__fixedbottom * {
+  pointer-events: all;
+} */
 .fcr-board-toolbar__fixedbottom .fcr-dialog-tooltip-overlay-content {
   padding: 0;
 }
@@ -115,4 +119,7 @@
   width: 40px;
   height: 40px;
   align-items: center;
+}
+.fcr-board-toolbar-fold {
+  pointer-events: auto;
 }
