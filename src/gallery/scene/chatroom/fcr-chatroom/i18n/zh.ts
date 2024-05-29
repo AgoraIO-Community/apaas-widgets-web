@@ -28,7 +28,7 @@ export default {
   fcr_chat_label_private: '私聊',
   fcr_chat_label_private_chat: '私聊',
   fcr_chat_label_i_said_to: '你发送给',
-  fcr_chat_label_said_to_me: '发送给发送给你我',
+  fcr_chat_label_said_to_me: '发送给你',
   fcr_chat_tips_announcement_del_success: '删除公告成功',
   fcr_chat_more: '更多',
   fcr_chat_no_data: '没有消息',

@@ -17,6 +17,7 @@ import {
 import { useStore } from '../../../../hooks/useStore';
 import './index.css';
 import { createPortal } from 'react-dom';
+import classNames from 'classnames';
 export const MessageList = observer(() => {
   const {
     messageStore: {
@@ -33,20 +34,7 @@ export const MessageList = observer(() => {
   const scrollingRef = useRef(false);
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
-  const [innerHeight, setInnerHeight] = useState(window.innerHeight);
-  let handleResizeTimer: number | NodeJS.Timeout | undefined;
-  useEffect(() => {
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-      window.clearTimeout(handleResizeTimer);
-    };
-  }, []);
-  const handleResize = () => {
-    handleResizeTimer = setTimeout(() => {
-      setInnerHeight(window.document.documentElement.clientHeight);
-    }, 100);
-  };
+
   const messageContainerRef = useRef<HTMLDivElement>(null);
 
   const handleScroll = useCallback(
@@ -118,12 +106,11 @@ export const MessageList = observer(() => {
             : '',
           pointerEvents:
             messageList.length > 0 ? (isAndroid && forceLandscape ? 'none' : 'all') : 'none',
-          height: innerHeight - 183 + 'px',
         }}
         className={`fcr-chatroom-mobile-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>
         {messageList.length > 0 ? (
-          <div className="fcr-chatroom-mobile-messages-wrap">
+          <div className={classNames("fcr-chatroom-mobile-messages-wrap", isLandscape && 'isLandscape')}>
             {messageList.map((message) => {
               if (typeof message === 'string') {
                 return (
@@ -238,16 +225,16 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
       key={textMessage.id}
       className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-${messageStyleType}`}>
       {isTeacherMessage && (
-        <span className="fcr-chatroom-mobile-message-item-host">
+        <span className={`fcr-chatroom-mobile-message-item-host ${!isLandscape ? '' : 'active'}`}>
           <SvgImgMobile
-            colors={{ iconPrimary: 'black' }}
+            colors={{ iconPrimary: isLandscape ? 'black' : 'white'}}
             forceLandscape={forceLandscape}
             landscape={isLandscape}
             type={SvgIconEnum.HOST}
             size={24}></SvgImgMobile>
         </span>
       )}
-      {checkIsPrivateMessage(message) && (
+      {checkIsPrivateMessage(message) && isLandscape && (
         <span className="fcr-chatroom-mobile-message-item-private">
           <SvgImgMobile
             forceLandscape={forceLandscape}
@@ -332,7 +319,7 @@ const ImageMessage = observer(
                 size={24}></SvgImgMobile>
             </span>
           )}
-          {checkIsPrivateMessage(message) && (
+          {checkIsPrivateMessage(message) && isLandscape  && (
             <span className="fcr-chatroom-mobile-message-item-private">
               <SvgImgMobile
                 forceLandscape={forceLandscape}

@@ -27,6 +27,8 @@ export class RoomStore {
   @observable pollMinimizeState = true;
   @observable
   private _widgetInstances: Record<string, AgoraWidgetBase> = {};
+  @observable
+  private _widgetInstanceList: AgoraWidgetBase[] = [];
   @observable currentWidget:AgoraWidgetBase | undefined = undefined;
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
@@ -77,16 +79,13 @@ export class RoomStore {
   }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
-   this._widgetInstances = widgetInstances;
+    console.log('AgoraExtensionRoomEvent.GetApplications_handleGetWidgets', widgetInstances,  Object.values(widgetInstances))
+   this._widgetInstanceList = Object.values(widgetInstances);
   }
-  @computed
-  get widgetInstanceList() {
-    return Object.values(this._widgetInstances);
-  }
-
   @computed
   get z0Widgets() {
-    return this.widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList)
+    return this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
   }
   @action.bound
   setCurrentWidget(widget: any) {

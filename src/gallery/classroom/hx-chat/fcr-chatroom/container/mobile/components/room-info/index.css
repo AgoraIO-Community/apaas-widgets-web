@@ -1,13 +1,8 @@
 .fcr-mobile-interact-container {
   display: flex;
   flex-direction: column;
-  left: 0;
-  bottom: 0;
   height: 100%;
   background: #27292f;
-  position: relative;
-  min-height: 100px;
-  padding-bottom: 80px;
 }
 
 .fcr-mobile-interact-container-top {
