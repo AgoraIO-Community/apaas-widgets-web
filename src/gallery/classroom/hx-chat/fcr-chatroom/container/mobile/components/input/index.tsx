@@ -159,24 +159,27 @@ export const FcrChatRoomH5Inputs = observer(
  
     const [isHidePrivate, setIsHidePrivate] = useState(false)
     useEffect(() => {
+        let resizeObserver:ResizeObserver | undefined = undefined;
         // 选择你想要监听的DOM元素
         const element = document.querySelector('.fcr-chatroom-mobile-inputs-input-main');
         if (element) {
           // 创建一个ResizeObserver实例并定义回调函数
-          const resizeObserver = new ResizeObserver(entries => {
+          resizeObserver = new ResizeObserver(entries => {
             for (const entry of entries) {
               const width = entry.contentRect.width;
               console.log('element', width)
-              if (width <= 125) {
+              if (width <= 110) {
                 setIsHidePrivate(true)
               } else {
                 setIsHidePrivate(false)
               }
             }
           });
-
           // 开始监听元素的尺寸变化
           resizeObserver.observe(element);
+        }
+        return () => {
+          resizeObserver?.disconnect();
         }
     }, [])
     const handleShowApplicatioon = (e: { stopPropagation: () => void; }) => {

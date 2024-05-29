@@ -25,7 +25,9 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
       useEffect(() => {
         const innerHeight = window.innerHeight;
         const domHeight = document.querySelector('.fcr-chatroom-mobile-inputs-chat-dialog-main')?.getBoundingClientRect().height || 0;
-        setHeight(domHeight > innerHeight * 0.8 ? innerHeight * 0.8 : domHeight)
+        const dialogHeight  = domHeight > innerHeight * 0.8 ? innerHeight * 0.8 : domHeight
+        setHeight(dialogHeight)
+
       }, [searchUserLists.length])
       const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { value } = e.target

@@ -9,7 +9,8 @@
   overflow: hidden;
 }
 .fcr-chatroom-mobile-input-container{
-  height: 90px;
+  height: 80px;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 .fcr-chatroom-mobile-placeholder {
   height: 12px;
