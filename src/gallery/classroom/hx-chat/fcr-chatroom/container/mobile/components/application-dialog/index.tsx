@@ -18,6 +18,11 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
         setAllwidgets(arr)
     }, [z0Widgets])
     const widgets = useMemo(() => allWidgets.filter((v: any) => v.widgetName !== 'easemobIM'),[allWidgets])
+    useEffect(() => {
+        if (!currentWidget && widgets[0]) {
+            setCurrentWidget(widgets[0])
+        }
+    }, [currentWidget, setCurrentWidget, widgets])
     const handleClose = () => {
         setIsShowApplication(false);
     }
