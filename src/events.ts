@@ -65,6 +65,8 @@ export enum AgoraExtensionRoomEvent {
   ResponseGrantedList = 'response-granted-list',
   // 横竖屏切换
   OrientationStatesChanged = 'orientation-changed',
+  // 横竖屏再次动通知
+  OrientationStatesChangedAgain = 'orientation-states-changed-again',
   // 移动端大班课横屏清屏状态变化
   MobileLandscapeToolBarVisibleChanged = 'mobile-landscape-tool-bar-visible-changed',
   //打开聊天对话框

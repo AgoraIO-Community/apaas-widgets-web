@@ -14,7 +14,6 @@ import { ToolTip } from '../tooltip';
 import PrivateDialog from '../private-dialog';
 import ApplicationDialog from '../application-dialog';
 
-
 export const FcrChatRoomH5Inputs = observer(
   ({
     showEmoji,
@@ -27,9 +26,9 @@ export const FcrChatRoomH5Inputs = observer(
   }) => {
     const [inputFocus, setInputFocus] = useState(false);
     const [text, setText] = useState('');
-    const [isShowStudents, setIsShowStudents] = useState(false)
-    const [isShowApplication, setIsShowApplication] = useState(false)
-    const [collectVisible, setCollectVisible] = useState(false)
+    const [isShowStudents, setIsShowStudents] = useState(false);
+    const [isShowApplication, setIsShowApplication] = useState(false);
+    const [collectVisible, setCollectVisible] = useState(false);
     const transI18n = useI18n();
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -50,11 +49,20 @@ export const FcrChatRoomH5Inputs = observer(
         mobileCallState,
         z0Widgets,
         addToast,
-        currentWidget // 当前正在使用的widget-不能删
+        currentWidget, // 当前正在使用的widget-不能删
       },
-      userStore: {  userList, setSearchKey, privateUser, userMuted, isRaiseHand, raiseHand, lowerHand, raiseHandTooltipVisible },
+      userStore: {
+        userList,
+        setSearchKey,
+        privateUser,
+        userMuted,
+        isRaiseHand,
+        raiseHand,
+        lowerHand,
+        raiseHandTooltipVisible,
+      },
     } = useStore();
-    const widgets = z0Widgets.filter((v) => v.widgetName !== 'easemobIM')
+    const widgets = z0Widgets.filter((v) => v.widgetName !== 'easemobIM');
     const getCallIcon = () => {
       switch (mobileCallState) {
         case MobileCallState.Initialize:
@@ -84,43 +92,43 @@ export const FcrChatRoomH5Inputs = observer(
       }
     };
     const closeCollectTip = () => {
-      setCollectVisible(false)
-    }
+      setCollectVisible(false);
+    };
     useEffect(() => {
-      document.body.addEventListener('click', closeCollectTip)
+      document.body.addEventListener('click', closeCollectTip);
       return () => {
-        document.body.removeEventListener('click', closeCollectTip)
-      }
-    }, [])
+        document.body.removeEventListener('click', closeCollectTip);
+      };
+    }, []);
     useEffect(() => {
       let timer: NodeJS.Timeout | null = null;
       if (collectVisible) {
         timer = setTimeout(() => {
-          setCollectVisible(false)
-        }, 5000)
+          setCollectVisible(false);
+        }, 5000);
       }
       return () => {
         if (timer) {
-          clearTimeout(timer)
+          clearTimeout(timer);
         }
-      }
-    }, [collectVisible])
+      };
+    }, [collectVisible]);
     useEffect(() => {
-      const obj = window.localStorage.getItem('application-room-id')
-      if (widgets.length > 0 && (!obj || obj && JSON.parse(obj).roomId !== roomId)) {
+      const obj = window.localStorage.getItem('application-room-id');
+      if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
         const applicationObj = {
-          roomId: roomId
-        }
-        window.localStorage.setItem('application-room-id', JSON.stringify(applicationObj))
-        setCollectVisible(true)
+          roomId: roomId,
+        };
+        window.localStorage.setItem('application-room-id', JSON.stringify(applicationObj));
+        setCollectVisible(true);
       } else {
-        setCollectVisible(false)
+        setCollectVisible(false);
       }
-    }, [widgets.length, roomId])
+    }, [widgets.length, roomId]);
     const isMuted = allMuted || userMuted;
     const send = useCallback(() => {
       // sendTextMessage(text);
-      
+
       const isPrivateInRoom = userList.find((v) => v.userId === privateUser?.userId);
       if (!isPrivateInRoom && privateUser?.userId) {
         addToast(transI18n('fcr_private_leave_room', { reason: privateUser?.nickName }), 'warning');
@@ -151,45 +159,45 @@ export const FcrChatRoomH5Inputs = observer(
     };
     const inputVisible =
       (messageVisible && landscapeToolBarVisible && pollMinimizeState) || !isLandscape;
-   
+
     const handleShowDialog = () => {
-      setIsShowStudents(!isShowStudents)
-      setSearchKey('')
-    }
- 
-    const [isHidePrivate, setIsHidePrivate] = useState(false)
+      setIsShowStudents(!isShowStudents);
+      setSearchKey('');
+    };
+
+    const [isHidePrivate, setIsHidePrivate] = useState(false);
     useEffect(() => {
-        let resizeObserver:ResizeObserver | undefined = undefined;
-        // 选择你想要监听的DOM元素
-        const element = document.querySelector('.fcr-chatroom-mobile-inputs-input-main');
-        if (element) {
-          // 创建一个ResizeObserver实例并定义回调函数
-          resizeObserver = new ResizeObserver(entries => {
-            for (const entry of entries) {
-              const width = entry.contentRect.width;
-              console.log('element', width)
-              if (width <= 110) {
-                setIsHidePrivate(true)
-              } else {
-                setIsHidePrivate(false)
-              }
+      let resizeObserver: ResizeObserver | undefined = undefined;
+      // 选择你想要监听的DOM元素
+      const element = document.querySelector('.fcr-chatroom-mobile-inputs-input-main');
+      if (element) {
+        // 创建一个ResizeObserver实例并定义回调函数
+        resizeObserver = new ResizeObserver((entries) => {
+          for (const entry of entries) {
+            const width = entry.contentRect.width;
+            console.log('element', width);
+            if (width <= 110) {
+              setIsHidePrivate(true);
+            } else {
+              setIsHidePrivate(false);
             }
-          });
-          // 开始监听元素的尺寸变化
-          resizeObserver.observe(element);
-        }
-        return () => {
-          resizeObserver?.disconnect();
-        }
-    }, [])
-    const handleShowApplicatioon = (e: { stopPropagation: () => void; }) => {
-      e.stopPropagation()
+          }
+        });
+        // 开始监听元素的尺寸变化
+        resizeObserver.observe(element);
+      }
+      return () => {
+        resizeObserver?.disconnect();
+      };
+    }, []);
+    const handleShowApplicatioon = (e: { stopPropagation: () => void }) => {
+      e.stopPropagation();
       if (widgets.length === 0) {
         addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
         return;
       }
-      setIsShowApplication(!isShowApplication)
-    }
+      setIsShowApplication(!isShowApplication);
+    };
     return (
       <>
         <div
@@ -199,39 +207,48 @@ export const FcrChatRoomH5Inputs = observer(
           style={{
             zIndex: 1,
           }}>
-            {!isLandscape && 
-              <div className='fcr-chatroom-mobile-inputs-content'>
-                <div className='fcr-chatroom-mobile-inputs-private'>
-                  <span className='fcr-chatroom-mobile-inputs-private-label'>{transI18n('chat.send_to')}:</span>
-                  <div className='fcr-chatroom-mobile-inputs-private-select' onClick={handleShowDialog}>
-                    <span className='fcr-chatroom-mobile-inputs-private-select-val'>{privateUser?.userId ? privateUser.nickName : transI18n('chat.chat_option_all')}</span>
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={SvgIconEnum.PRIVATE_SELECT}
-                      size={16}></SvgImgMobile>
-                  </div>
-                  {privateUser && <div className='fcr-chatroom-mobile-inputs-private-icon'>
-                    <div className='fcr-chatroom-mobile-inputs-private-icon-svg'>
+          {!isLandscape && (
+            <div className="fcr-chatroom-mobile-inputs-content">
+              <div className="fcr-chatroom-mobile-inputs-private">
+                <span className="fcr-chatroom-mobile-inputs-private-label">
+                  {transI18n('chat.send_to')}:
+                </span>
+                <div
+                  className="fcr-chatroom-mobile-inputs-private-select"
+                  onClick={handleShowDialog}>
+                  <span className="fcr-chatroom-mobile-inputs-private-select-val">
+                    {privateUser?.userId ? privateUser.nickName : transI18n('chat.chat_option_all')}
+                  </span>
+                  <SvgImgMobile
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.PRIVATE_SELECT}
+                    size={16}></SvgImgMobile>
+                </div>
+                {privateUser && (
+                  <div className="fcr-chatroom-mobile-inputs-private-icon">
+                    <div className="fcr-chatroom-mobile-inputs-private-icon-svg">
                       <SvgImgMobile
                         forceLandscape={forceLandscape}
                         landscape={isLandscape}
                         type={SvgIconEnum.PRIVATE}
                         size={16}></SvgImgMobile>
                     </div>
-                      <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>
-                  </div>}
-                </div>
-                <div className='fcr-chatroom-mobile-inputs-main'>
-                  <div
-                  className='fcr-chatroom-mobile-inputs-input'
+                    <span className="fcr-chatroom-mobile-inputs-private-icon-val">
+                      {transI18n('chat.private')}
+                    </span>
+                  </div>
+                )}
+              </div>
+              <div className="fcr-chatroom-mobile-inputs-main">
+                <div
+                  className="fcr-chatroom-mobile-inputs-input"
                   style={{
                     visibility: inputVisible ? 'visible' : 'hidden',
                     opacity: inputVisible ? 1 : 0,
                     transition: 'opacity .2s',
                   }}>
-                  <div
-                    className="fcr-chatroom-mobile-inputs-input-wrap">
+                  <div className="fcr-chatroom-mobile-inputs-input-wrap">
                     <div className="fcr-chatroom-mobile-inputs-input-outline"></div>
                     {isMuted && (
                       <div className="fcr-chatroom-mobile-inputs-input-muted">
@@ -288,7 +305,9 @@ export const FcrChatRoomH5Inputs = observer(
 
                   {!isMuted && !forceLandscape && (
                     <>
-                      <div className="fcr-chatroom-mobile-inputs-image" onClick={handleImgInputClick}>
+                      <div
+                        className="fcr-chatroom-mobile-inputs-image"
+                        onClick={handleImgInputClick}>
                         <SvgImgMobile
                           forceLandscape={forceLandscape}
                           landscape={isLandscape}
@@ -319,239 +338,271 @@ export const FcrChatRoomH5Inputs = observer(
                       </div>
                     </>
                   )}
+                </div>
+                {text ? (
+                  <div className="fcr-chatroom-mobile-inputs-send">
+                    <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.VECTOR}
+                      onClick={send}
+                      size={36}></SvgImgMobile>
                   </div>
-                  {text ? (
-                    <div className="fcr-chatroom-mobile-inputs-send">
+                ) : (
+                  <>
+                    <>
+                      <input
+                        ref={fileInputRef}
+                        onChange={handleFileInputChange}
+                        accept="image/*"
+                        type="file"
+                        style={{ display: 'none' }}></input>
+                    </>
+                    <ToolTip
+                      content={transI18n('fcr_participants_tips_lower_hand')}
+                      visible={raiseHandTooltipVisible}>
+                      <div
+                        onClick={isRaiseHand ? lowerHand : raiseHand}
+                        className={classNames('fcr-chatroom-mobile-inputs-raise-hand', {
+                          'fcr-chatroom-mobile-inputs-raise-hand-active': isRaiseHand,
+                        })}>
+                        <SvgImgMobile
+                          type={SvgIconEnum.RAAISE_HANDS}
+                          size={18}
+                          landscape={isLandscape}
+                          forceLandscape={forceLandscape}></SvgImgMobile>
+                      </div>
+                    </ToolTip>
+                    <div
+                      style={{
+                        display: 'flex',
+                      }}
+                      className="fcr-chatroom-mobile-inputs-call"
+                      onClick={openHandsUpActionSheet}>
+                      {mobileCallState === MobileCallState.Processing && (
+                        <div className="fcr-chatroom-mobile-inputs-call-loading">
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                          <div className="dot"></div>
+                        </div>
+                      )}
+
                       <SvgImgMobile
                         forceLandscape={forceLandscape}
                         landscape={isLandscape}
-                        type={SvgIconEnum.VECTOR}
-                        onClick={send}
-                        size={36}></SvgImgMobile>
+                        type={getCallIcon().icon}
+                        // colors={{ ...getCallIcon().colors }}
+                        size={30}></SvgImgMobile>
                     </div>
-                  ) : (
-                    <>
-                      <>
-                        <input
-                          ref={fileInputRef}
-                          onChange={handleFileInputChange}
-                          accept="image/*"
-                          type="file"
-                          style={{ display: 'none' }}></input>
-                      </>
-                      <ToolTip
-                        content={transI18n('fcr_participants_tips_lower_hand')}
-                        visible={raiseHandTooltipVisible}>
-                        <div
-                          onClick={isRaiseHand ? lowerHand : raiseHand}
-                          className={classNames('fcr-chatroom-mobile-inputs-raise-hand', {
-                            'fcr-chatroom-mobile-inputs-raise-hand-active': isRaiseHand,
-                          })}>
-                          <SvgImgMobile
-                            type={SvgIconEnum.RAAISE_HANDS}
-                            size={18}
-                            landscape={isLandscape}
-                            forceLandscape={forceLandscape}></SvgImgMobile>
-                        </div>
-                      </ToolTip>
+                    <ToolTip
+                      placement="topLeft"
+                      content={transI18n('fcr_teacher_use_collected_tip')}
+                      visible={collectVisible}>
                       <div
-                        style={{
-                          display: 'flex',
-                        }}
-                        className="fcr-chatroom-mobile-inputs-call"
-                        onClick={openHandsUpActionSheet}>
-                        {mobileCallState === MobileCallState.Processing && (
-                          <div className="fcr-chatroom-mobile-inputs-call-loading">
-                            <div className="dot"></div>
-                            <div className="dot"></div>
-                            <div className="dot"></div>
-                          </div>
+                        className={classNames(
+                          'fcr-chatroom-mobile-inputs-application landscape',
+                          widgets.length === 0 && 'zero',
+                          isShowApplication && 'active',
                         )}
-
+                        onClick={handleShowApplicatioon}>
                         <SvgImgMobile
                           forceLandscape={forceLandscape}
                           landscape={isLandscape}
-                          type={getCallIcon().icon}
-                          // colors={{ ...getCallIcon().colors }}
+                          type={SvgIconEnum.APPLICATION}
                           size={30}></SvgImgMobile>
+                        <span className="fcr-chatroom-mobile-inputs-application-count">
+                          {widgets.length > 99 ? '...' : widgets.length}
+                        </span>
                       </div>
-                      <ToolTip placement="topLeft" content={transI18n('fcr_teacher_use_collected_tip')} visible={collectVisible}>
-                        <div className={classNames("fcr-chatroom-mobile-inputs-application landscape", widgets.length === 0 && 'zero', isShowApplication && 'active') } onClick={handleShowApplicatioon}>
-                          <SvgImgMobile
-                              forceLandscape={forceLandscape}
-                              landscape={isLandscape}
-                              type={SvgIconEnum.APPLICATION}
-                              size={30}></SvgImgMobile>
-                            <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
-                        </div>
-                      </ToolTip>
-                      {/* <ThumbsUp></ThumbsUp> */}
-                    </>
-                  )}
-                </div>
+                    </ToolTip>
+                    {/* <ThumbsUp></ThumbsUp> */}
+                  </>
+                )}
               </div>
-            }
-         
-          {isLandscape && 
-          <div className='fcr-chatroom-mobile-inputs-mobile-content'>
-            <div className='fcr-chatroom-mobile-inputs-mobile-left' style={{
-                 visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
-                 opacity: landscapeToolBarVisible ? 1 : 0,
-                 transition: 'visibility .2s, opacity .2s',
-            }}>
-              {text ? null : (
-                <div
-                  className="fcr-chatroom-mobile-inputs-hide-message"
-                  onClick={toggleMessageVisible}>
-                  {messageVisible ? (
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={
-                        isLandscape ? SvgIconEnum.MESSAGE_OPENED_NEW : SvgIconEnum.MESSAGE_OEPNED
-                      }
-                      size={30}></SvgImgMobile>
-                  ) : (
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={
-                        isLandscape ? SvgIconEnum.MESSAGE_CLOSED_NEW : SvgIconEnum.MESSAGE_CLOSED
-                      }
-                      size={30}></SvgImgMobile>
-                  )}
-                </div>
-              )}
-              <div className='fcr-chatroom-mobile-inputs-mobile-left-main'>
-                <div className='fcr-chatroom-mobile-private'style={{
-                  visibility: inputVisible ? 'visible' : 'hidden',
-                  opacity: inputVisible ? 1 : 0,
-                  transition: 'opacity .2s',
-                }}>
-                    <span style={{ whiteSpace: 'nowrap' }}>{transI18n('fcr_chat_label_i_said_to')}:</span>
-                    <div className='fcr-chatroom-mobile-inputs-private-select' onClick={handleShowDialog}>
-                      <span className='fcr-chatroom-mobile-inputs-private-select-val'>{privateUser?.userId ? privateUser.nickName : transI18n('chat.chat_option_all')}</span>
+            </div>
+          )}
+
+          {isLandscape && (
+            <div
+              className="fcr-chatroom-mobile-inputs-mobile-content"
+              style={{
+                visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
+                opacity: landscapeToolBarVisible ? 1 : 0,
+                transition: 'visibility .2s, opacity .2s',
+              }}>
+              <div className="fcr-chatroom-mobile-inputs-mobile-left">
+                {text ? null : (
+                  <div
+                    className="fcr-chatroom-mobile-inputs-hide-message"
+                    onClick={toggleMessageVisible}>
+                    {messageVisible ? (
+                      <SvgImgMobile
+                        forceLandscape={forceLandscape}
+                        landscape={isLandscape}
+                        type={
+                          isLandscape ? SvgIconEnum.MESSAGE_OPENED_NEW : SvgIconEnum.MESSAGE_OEPNED
+                        }
+                        size={30}></SvgImgMobile>
+                    ) : (
+                      <SvgImgMobile
+                        forceLandscape={forceLandscape}
+                        landscape={isLandscape}
+                        type={
+                          isLandscape ? SvgIconEnum.MESSAGE_CLOSED_NEW : SvgIconEnum.MESSAGE_CLOSED
+                        }
+                        size={30}></SvgImgMobile>
+                    )}
+                  </div>
+                )}
+                <div className="fcr-chatroom-mobile-inputs-mobile-left-main">
+                  <div
+                    className="fcr-chatroom-mobile-private"
+                    style={{
+                      visibility: inputVisible ? 'visible' : 'hidden',
+                      opacity: inputVisible ? 1 : 0,
+                      transition: 'opacity .2s',
+                    }}>
+                    <span style={{ whiteSpace: 'nowrap' }}>
+                      {transI18n('fcr_chat_label_i_said_to')}:
+                    </span>
+                    <div
+                      className="fcr-chatroom-mobile-inputs-private-select"
+                      onClick={handleShowDialog}>
+                      <span className="fcr-chatroom-mobile-inputs-private-select-val">
+                        {privateUser?.userId
+                          ? privateUser.nickName
+                          : transI18n('chat.chat_option_all')}
+                      </span>
                       <SvgImgMobile
                         forceLandscape={forceLandscape}
                         landscape={isLandscape}
                         type={SvgIconEnum.PRIVATE_SELECT}
                         size={16}></SvgImgMobile>
                     </div>
-                </div>
-                <div
-                  className='fcr-chatroom-mobile-inputs-input fcr-chatroom-mobile-inputs-input-force-landscape'
-                  style={{
-                    visibility: inputVisible ? 'visible' : 'hidden',
-                    opacity: inputVisible ? 1 : 0,
-                    transition: 'opacity .2s',
-                  }}>
+                  </div>
                   <div
-                    className="fcr-chatroom-mobile-inputs-input-wrap">
-                    {isMuted && (
-                      <div className="fcr-chatroom-mobile-inputs-input-muted">
-                        <SvgImgMobile
-                          forceLandscape={forceLandscape}
-                          landscape={isLandscape}
-                          type={SvgIconEnum.MUTE}
-                          size={30}></SvgImgMobile>
-                        {allMuted ? (
-                          <p>{transI18n('chat.all_muted')}...</p>
-                        ) : (
-                          <p>{transI18n('chat.single_muted')}...</p>
-                        )}
-                      </div>
-                    )}
-                    {forceLandscape && (
-                      <div className="fcr-chatroom-mobile-inputs-input-quit-landscape">
-                        {transI18n('fcr_H5_button_chat')}
-                        <SvgImgMobile
-                          forceLandscape={forceLandscape}
-                          type={SvgIconEnum.QUIT_LANDSCAPE}
-                          size={30}
-                          landscape={isLandscape}></SvgImgMobile>
-                      </div>
-                    )}
-                    {privateUser && 
-                      <div className='fcr-chatroom-mobile-inputs-private-icon private'>
-                        <div className='fcr-chatroom-mobile-inputs-private-icon-svg'>
+                    className="fcr-chatroom-mobile-inputs-input fcr-chatroom-mobile-inputs-input-force-landscape"
+                    style={{
+                      visibility: inputVisible ? 'visible' : 'hidden',
+                      opacity: inputVisible ? 1 : 0,
+                      transition: 'opacity .2s',
+                    }}>
+                    <div className="fcr-chatroom-mobile-inputs-input-wrap">
+                      {isMuted && (
+                        <div className="fcr-chatroom-mobile-inputs-input-muted">
                           <SvgImgMobile
                             forceLandscape={forceLandscape}
                             landscape={isLandscape}
-                            type={SvgIconEnum.PRIVATE}
-                            size={16}></SvgImgMobile>
+                            type={SvgIconEnum.MUTE}
+                            size={30}></SvgImgMobile>
+                          {allMuted ? (
+                            <p>{transI18n('chat.all_muted')}...</p>
+                          ) : (
+                            <p>{transI18n('chat.single_muted')}...</p>
+                          )}
                         </div>
-                        {!isHidePrivate && <span className='fcr-chatroom-mobile-inputs-private-icon-val'>{transI18n('chat.private')}</span>}
-                      </div>
-                    }
-                    {inputFocus && <>
-                      <div className="fcr-chatroom-mobile-inputs-input-outline private"></div>
-                      <div className="fcr-chatroom-mobile-inputs-input-outline active"></div>
-                    </>}
-                    <input
-                      className={classNames('fcr-chatroom-mobile-inputs-input-main', privateUser && 'private')}
-                      onFocus={() => {
-                        if (forceLandscape) {
-                          quitForceLandscape();
-                          inputRef.current?.focus();
-                        }
-                        setInputFocus(true);
-                      }}
-                      onBlur={() => {
-                        setInputFocus(false);
-                      }}
-                      disabled={isMuted}
-                      ref={inputRef}
-                      onSubmit={send}
-                      value={forceLandscape ? '' : text}
-                      onChange={(e) => {
-                        setText(e.target.value);
-                      }}
-                      multiple={false}
-                      type={'text'}
-                      placeholder={
-                        isMuted || forceLandscape ? '' : `${transI18n('chat.enter_contents')}...`
-                      } 
-                    />
-                    {!isMuted && !forceLandscape && (
-                    <>
-                      <div className="fcr-chatroom-mobile-inputs-image" onClick={handleImgInputClick}>
-                        <SvgImgMobile
-                          forceLandscape={forceLandscape}
-                          landscape={isLandscape}
-                          type={SvgIconEnum.CHAT_IMAGE}
-                          size={30}></SvgImgMobile>
-                      </div>
-                      <div className="fcr-chatroom-mobile-inputs-input-emoji">
-                        {showEmoji ? (
+                      )}
+                      {forceLandscape && (
+                        <div className="fcr-chatroom-mobile-inputs-input-quit-landscape">
+                          {transI18n('fcr_H5_button_chat')}
                           <SvgImgMobile
                             forceLandscape={forceLandscape}
-                            landscape={isLandscape}
-                            type={SvgIconEnum.KEYBOARD}
-                            onClick={() => {
-                              inputRef.current?.focus();
-                              onShowEmojiChanged(false);
-                            }}
-                            size={30}></SvgImgMobile>
-                        ) : (
-                          <SvgImgMobile
-                            forceLandscape={forceLandscape}
-                            landscape={isLandscape}
-                            type={SvgIconEnum.CHAT_EMOJI}
-                            onClick={() => {
-                              onShowEmojiChanged(true);
-                            }}
-                            size={30}></SvgImgMobile>
+                            type={SvgIconEnum.QUIT_LANDSCAPE}
+                            size={30}
+                            landscape={isLandscape}></SvgImgMobile>
+                        </div>
+                      )}
+                      {privateUser && (
+                        <div className="fcr-chatroom-mobile-inputs-private-icon private">
+                          <div className="fcr-chatroom-mobile-inputs-private-icon-svg">
+                            <SvgImgMobile
+                              forceLandscape={forceLandscape}
+                              landscape={isLandscape}
+                              type={SvgIconEnum.PRIVATE}
+                              size={16}></SvgImgMobile>
+                          </div>
+                          {!isHidePrivate && (
+                            <span className="fcr-chatroom-mobile-inputs-private-icon-val">
+                              {transI18n('chat.private')}
+                            </span>
+                          )}
+                        </div>
+                      )}
+                      {inputFocus && (
+                        <>
+                          <div className="fcr-chatroom-mobile-inputs-input-outline private"></div>
+                          <div className="fcr-chatroom-mobile-inputs-input-outline active"></div>
+                        </>
+                      )}
+                      <input
+                        className={classNames(
+                          'fcr-chatroom-mobile-inputs-input-main',
+                          privateUser && 'private',
                         )}
-                      </div>
-                    
-                    </>
-                  )}
+                        onFocus={() => {
+                          if (forceLandscape) {
+                            quitForceLandscape();
+                            inputRef.current?.focus();
+                          }
+                          setInputFocus(true);
+                        }}
+                        onBlur={() => {
+                          setInputFocus(false);
+                        }}
+                        disabled={isMuted}
+                        ref={inputRef}
+                        onSubmit={send}
+                        value={forceLandscape ? '' : text}
+                        onChange={(e) => {
+                          setText(e.target.value);
+                        }}
+                        multiple={false}
+                        type={'text'}
+                        placeholder={
+                          isMuted || forceLandscape ? '' : `${transI18n('chat.enter_contents')}...`
+                        }
+                      />
+                      {!isMuted && !forceLandscape && (
+                        <>
+                          <div
+                            className="fcr-chatroom-mobile-inputs-image"
+                            onClick={handleImgInputClick}>
+                            <SvgImgMobile
+                              forceLandscape={forceLandscape}
+                              landscape={isLandscape}
+                              type={SvgIconEnum.CHAT_IMAGE}
+                              size={30}></SvgImgMobile>
+                          </div>
+                          <div className="fcr-chatroom-mobile-inputs-input-emoji">
+                            {showEmoji ? (
+                              <SvgImgMobile
+                                forceLandscape={forceLandscape}
+                                landscape={isLandscape}
+                                type={SvgIconEnum.KEYBOARD}
+                                onClick={() => {
+                                  inputRef.current?.focus();
+                                  onShowEmojiChanged(false);
+                                }}
+                                size={30}></SvgImgMobile>
+                            ) : (
+                              <SvgImgMobile
+                                forceLandscape={forceLandscape}
+                                landscape={isLandscape}
+                                type={SvgIconEnum.CHAT_EMOJI}
+                                onClick={() => {
+                                  onShowEmojiChanged(true);
+                                }}
+                                size={30}></SvgImgMobile>
+                            )}
+                          </div>
+                        </>
+                      )}
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-            <div className='fcr-chatroom-mobile-inputs-mobile-right'>
-              {text ? (
+              <div className="fcr-chatroom-mobile-inputs-mobile-right">
+                {text ? (
                   <div className="fcr-chatroom-mobile-inputs-send">
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
@@ -585,21 +636,32 @@ export const FcrChatRoomH5Inputs = observer(
                           forceLandscape={forceLandscape}></SvgImgMobile>
                       </div>
                     </ToolTip>
-                    <ToolTip placement="topLeft" content={transI18n('fcr_teacher_use_collected_tip')} visible={collectVisible}>
-                      <div className={classNames("fcr-chatroom-mobile-inputs-application landscape", widgets.length === 0 && 'zero', isShowApplication && 'active') } onClick={handleShowApplicatioon}>
+                    <ToolTip
+                      placement="topLeft"
+                      content={transI18n('fcr_teacher_use_collected_tip')}
+                      visible={collectVisible}>
+                      <div
+                        className={classNames(
+                          'fcr-chatroom-mobile-inputs-application landscape',
+                          widgets.length === 0 && 'zero',
+                          isShowApplication && 'active',
+                        )}
+                        onClick={handleShowApplicatioon}>
                         <SvgImgMobile
-                            forceLandscape={forceLandscape}
-                            landscape={isLandscape}
-                            type={SvgIconEnum.APPLICATION}
-                            size={30}></SvgImgMobile>
-                          <span className='fcr-chatroom-mobile-inputs-application-count'>{widgets.length > 99 ? '...' : widgets.length}</span>
+                          forceLandscape={forceLandscape}
+                          landscape={isLandscape}
+                          type={SvgIconEnum.APPLICATION}
+                          size={30}></SvgImgMobile>
+                        <span className="fcr-chatroom-mobile-inputs-application-count">
+                          {widgets.length > 99 ? '...' : widgets.length}
+                        </span>
                       </div>
                     </ToolTip>
                   </>
                 )}
+              </div>
             </div>
-          </div>
-          }
+          )}
         </div>
         {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />}
         {isShowStudents && <PrivateDialog setIsShowStudents={setIsShowStudents} />}

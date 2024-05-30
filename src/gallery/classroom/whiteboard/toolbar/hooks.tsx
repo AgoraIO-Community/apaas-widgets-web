@@ -156,7 +156,7 @@ export const useVisibleTools = () => {
                   return document.querySelector(`.${windowClassName}`) as HTMLElement;
                 },
                 bodyStyle: {
-                  width: '244px',
+                  width: 'max-content',
                 },
                 content: <CleanModal onToggle={dialogToogle} />,
                 className: 'fcr-mobile-slide__dialog',

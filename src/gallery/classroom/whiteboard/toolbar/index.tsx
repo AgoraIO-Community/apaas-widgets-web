@@ -22,7 +22,7 @@ import { SelectorPickerPanel } from './selector-picker';
 import classnames from 'classnames';
 import { Loading } from '../loading';
 
-export const Toolbar = observer(() => {
+export const Toolbar = observer(({ closeToolBar }: any) => {
   const { mobileFixedTools } = useVisibleTools();
   const {
     observables,
@@ -35,7 +35,7 @@ export const Toolbar = observer(() => {
     },
   } = useContext(ToolbarUIContext);
   const {
-    observables: { canOperate, isLandscape, connectionState },
+    observables: { canOperate, connectionState, isLandscape },
   } = useContext(BoardUIContext);
   const transI18n = useI18n();
 
@@ -80,9 +80,24 @@ export const Toolbar = observer(() => {
     return () => observer && observer.disconnect();
   }, [currentTool]);
 
+  useEffect(() => {
+    const element: any = document.querySelector(
+      '.whiteboard-mobile-container .netless-whiteboard-wrapper',
+    );
+    if (!element) return;
+    if (!fixedBottomBarVisible && foldToolBar) {
+      element.style.pointerEvents = 'none';
+    } else {
+      element.style.pointerEvents = 'auto';
+    }
+  }, [fixedBottomBarVisible, foldToolBar]);
+
   const handleFoldClick = (bool: boolean) => {
     runInAction(() => {
       observables.foldToolBar = bool;
+      if (!bool && closeToolBar) {
+        closeToolBar();
+      }
     });
   };
 
@@ -97,7 +112,7 @@ export const Toolbar = observer(() => {
     <>
       {connectionState === BoardConnectionState.Connected ? (
         <>
-          {!fixedBottomBarVisible ? (
+          {isLandscape && !fixedBottomBarVisible ? (
             <DraggableWrapper className={clsn}>
               <>
                 {foldToolBar ? (
@@ -150,7 +165,7 @@ export const Toolbar = observer(() => {
         </>
       ) : null}
       <Loading />
-      {canOperate && !fixedBottomBarVisible && !foldToolBar && <ScenePagination />}
+      {canOperate && isLandscape && !fixedBottomBarVisible && !foldToolBar && <ScenePagination />}
     </>
   );
 });

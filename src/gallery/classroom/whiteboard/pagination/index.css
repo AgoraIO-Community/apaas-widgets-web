@@ -95,6 +95,13 @@
   font-size: 12px;
   font-weight: 400;
 }
+.fcr-pagination_btn--disabled {
+  cursor: not-allowed;
+  opacity: 0.5;
+}
+.flex-column {
+  flex-direction: column;
+}
 
 /* 
 .fcr-mobile-pagination.fcr-pagination-half-r {
@@ -164,11 +171,6 @@
 
 .fcr-pagination-half-r .fcr-pagination__prev {
   padding-left: 13px;
-}
-
-.fcr-pagination_btn--disabled {
-  cursor: not-allowed;
-  opacity: 0.5;
 }
 
 .fcr-pagination-float {
