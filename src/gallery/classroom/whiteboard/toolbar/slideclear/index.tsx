@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect } from 'react';
 import { observer } from 'mobx-react';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { runInAction } from 'mobx';
@@ -210,6 +210,16 @@ export default class CleanSimpleVerify extends React.Component<
 export const CleanModal = observer(({ onToggle }: any) => {
   const { clean } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
+
+  useEffect(() => {
+    const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
+
+    if (!chatDom) return;
+    chatDom.style.height = '0';
+    return () => {
+      chatDom.style.height = '230px';
+    };
+  }, []);
 
   return (
     <>

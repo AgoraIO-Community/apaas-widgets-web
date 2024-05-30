@@ -78,12 +78,13 @@
 .fcr-board-toolbar-panel--pen > div::after {
   @apply fcr-rounded-full;
   content: '';
-  width: 28px;
-  height: 28px;
+  width: 26px;
+  height: 26px;
   position: absolute;
-  left: 2.75px;
-  top: 2.75px;
+  top: 0px;
+  left: 6px;
   border: 3px solid transparent;
+  border-radius: 50%;
 }
 .fcr-board-toolbar-panel--color {
   width: 100%;
@@ -99,11 +100,7 @@
 }
 .fcr-board-toolbar-panel--pen > div.fcr-board-toolbar-panel--strokeactive::after {
   border-color: currentColor;
-  left: 7.5px;
 }
-/* .fcr-board-toolbar__fixedbottom * {
-  pointer-events: all;
-} */
 .fcr-board-toolbar__fixedbottom .fcr-dialog-tooltip-overlay-content {
   padding: 0;
 }
