@@ -42,7 +42,7 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
   const handleCloseToolbar = () => {
     widget.widgetController.broadcast(
       AgoraExtensionWidgetEvent.RequestMobileLandscapeToolBarVisible,
-      undefined,
+      true,
     );
   };
 

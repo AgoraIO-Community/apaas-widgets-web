@@ -423,14 +423,14 @@ export const FcrChatRoomH5Inputs = observer(
           )}
 
           {isLandscape && (
-            <div
-              className="fcr-chatroom-mobile-inputs-mobile-content"
-              style={{
-                visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
-                opacity: landscapeToolBarVisible ? 1 : 0,
-                transition: 'visibility .2s, opacity .2s',
-              }}>
-              <div className="fcr-chatroom-mobile-inputs-mobile-left">
+            <div className="fcr-chatroom-mobile-inputs-mobile-content">
+              <div
+                className="fcr-chatroom-mobile-inputs-mobile-left"
+                style={{
+                  visibility: landscapeToolBarVisible ? 'visible' : 'hidden',
+                  opacity: landscapeToolBarVisible ? 1 : 0,
+                  transition: 'visibility .2s, opacity .2s',
+                }}>
                 {text ? null : (
                   <div
                     className="fcr-chatroom-mobile-inputs-hide-message"
