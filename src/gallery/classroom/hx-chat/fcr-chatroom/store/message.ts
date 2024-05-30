@@ -22,7 +22,7 @@ export class MessageStore {
   private _messageListDom: HTMLDivElement | null = null;
   @observable isBottom = true;
   @observable unreadMessageCount = 0;
-  @observable messageList: (AgoraIMMessageBase)[] = [];
+  @observable messageList: (AgoraIMMessageBase | string)[] = [];
   @observable announcement = '';
   @observable showAnnouncement = false;
   @observable historyMessageLoaded = false;
@@ -118,7 +118,7 @@ export class MessageStore {
     }
   }
   @action.bound
-  addMessage(message: AgoraIMMessageBase) {
+  addMessage(message: AgoraIMMessageBase | string) {
     this.messageList.push(message);
   }
   @action.bound
@@ -219,9 +219,9 @@ export class MessageStore {
     runInAction(() => {
       this.announcement = announcement;
       this.removeAnnouncementFromMessageList();
-      // if (announcement) {
-      //   this.addMessage(announcement);
-      // }
+      if (announcement) {
+        this.addMessage(announcement);
+      }
     });
   }
 
