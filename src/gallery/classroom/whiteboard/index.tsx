@@ -452,7 +452,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   }
 
   @bound
-  private async _getSnapshotImage(background: string) {
+  private async _getSnapshotImage(background?: string) {
     const mainWindow = this._boardMainWindow;
 
     if (mainWindow) {
@@ -872,7 +872,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       captureApp: () => {},
       captureScreen: () => {},
       saveDraft: () => {
-        this._getSnapshotImage('#bbb');
+        this._getSnapshotImage();
       },
     };
     return this._toolbarContext;
