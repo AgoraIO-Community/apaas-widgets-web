@@ -39,12 +39,12 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
     durationRef.current = duration;
   }, [duration, widget.roomProperties.extra]);
   return (
-    <div
+    <>{pluginStore.landscapeToolBarVisible ? <div
       className={`fcr-countdown-mobile  ${
         pluginStore.isLandscape ? 'fcr-countdown-mobile-landscape' : ''
       } `}>
       <FlipClock duration={duration} caution={!pluginStore.showSetting && caution} />
-    </div>
+    </div> : null}</>
   );
 });
 
