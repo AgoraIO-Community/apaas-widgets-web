@@ -908,7 +908,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       const toolbarDom = document.querySelector(`.${toolbarClassName}`);
       const containerDom = document.querySelector(`.${windowClassName}`);
       if (containerDom && toolbarDom) {
-        setTimeout(this._updateMaxVisibleTools);
+        // setTimeout(this._updateMaxVisibleTools);
         // wait until the UI rerenders, then actual dimensions can be obtained
         setTimeout(this._updateDockPosition);
       }

@@ -44,6 +44,9 @@ export const ColorToolPickerItem = observer(() => {
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
+      overlayInnerStyle={{
+        width: 'max-content',
+      }}
       popoverContent={<ColorPickerPanel />}
       iconProps={{ colors: { iconPrimary: currentColor } }}
       extensionMark={false}

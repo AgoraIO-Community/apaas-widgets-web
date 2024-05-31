@@ -84,11 +84,18 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     const element: any = document.querySelector(
       '.whiteboard-mobile-container .netless-whiteboard-wrapper',
     );
+    const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
+    const inputDom: any = document.querySelector('.landscape-bottom-tools');
+
     if (!element) return;
     if (!fixedBottomBarVisible && foldToolBar) {
       element.style.pointerEvents = 'none';
+      chatDom.style.height = '230px';
+      inputDom.style.bottom = '0';
     } else {
       element.style.pointerEvents = 'auto';
+      chatDom.style.height = '0';
+      inputDom.style.bottom = '-100px';
     }
   }, [fixedBottomBarVisible, foldToolBar]);
 
