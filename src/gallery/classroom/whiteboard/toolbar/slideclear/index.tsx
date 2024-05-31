@@ -16,12 +16,8 @@ interface CleanSimpleVerifyProps {
 interface CleanSimpleVerifyState {
   isMouseEnter: boolean;
   diff: number;
+  slideWidth: number;
 }
-
-const completeHeight = (height: number): any => {
-  const basicWidth = window.matchMedia('(orientation: landscape)').matches ? 812 : 375;
-  return ((height / basicWidth) * 100).toFixed(5) || 42;
-};
 
 export default class CleanSimpleVerify extends React.Component<
   CleanSimpleVerifyProps,
@@ -45,6 +41,8 @@ export default class CleanSimpleVerify extends React.Component<
   private style = {
     width: this.props.width,
   };
+  // private slideWidth = 0;
+  private currentObs: any;
 
   public reset = () => {
     this.isSuccess = false;
@@ -66,6 +64,7 @@ export default class CleanSimpleVerify extends React.Component<
       isMouseEnter: false,
       /** 滑动距离 */
       diff: 0,
+      slideWidth: 0,
     };
   }
 
@@ -73,6 +72,24 @@ export default class CleanSimpleVerify extends React.Component<
    * 绑定事件
    */
   public componentDidMount() {
+    this.currentObs = new IntersectionObserver(
+      (entries, observer) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            // 获取高度
+            this.setState({
+              slideWidth: entry.target.clientHeight,
+            });
+            // 停止观察
+            observer.unobserve(entry.target);
+          }
+        });
+      },
+      { threshold: 1 }, // 触发阈值，可以根据需要调整
+    );
+
+    this.currentObs.observe(document.querySelector('.veriry-slide'));
+
     document.body.addEventListener('mousemove', this.mousemove.bind(this));
     document.body.addEventListener('touchmove', this.mousemove.bind(this));
     document.body.addEventListener('mouseup', this.mouseup.bind(this));
@@ -83,6 +100,7 @@ export default class CleanSimpleVerify extends React.Component<
    * 移除事件
    */
   public componentWillUnmount() {
+    this.currentObs && this.currentObs.unobserve();
     document.body.removeEventListener('mousemove', this.mousemove.bind(this));
     document.body.removeEventListener('touchmove', this.mousemove.bind(this));
     document.body.removeEventListener('mouseup', this.mouseup.bind(this));
@@ -164,21 +182,17 @@ export default class CleanSimpleVerify extends React.Component<
 
   public render() {
     /** 滑条样式 */
-    let slideHeight = completeHeight(42);
-    let slideWidth = Number(this.state.diff) + Number(slideHeight);
-    // console.log('this---slideWidth', slideWidth);
 
     const slideStyle = {
-      borderRadius: `${slideHeight / 2}vw`,
-      width: `${slideWidth}vw`,
+      borderRadius: `${this.state.slideWidth / 2}px`,
+      width: `${this.state.diff + this.state.slideWidth}px`,
       maxWidth: `${this.props.width - 6}px`,
-      // opacity: this.state.isMouseEnter ? 1 : 0,
       opacity: 1,
       transitionDuration: !this.state.isMouseEnter || !this.isMousedown ? '.3s' : '0s',
     };
     /** 滑块样式 */
     const barStyle = {
-      transitionDuration: !this.state.isMouseEnter || !this.isMousedown ? '.15s' : '0s',
+      transitionDuration: !this.state.isMouseEnter || !this.isMousedown ? '.1s' : '0s',
       transform: `translateX(${this.state.diff + 3}px)`,
     };
     return (
@@ -210,16 +224,6 @@ export default class CleanSimpleVerify extends React.Component<
 export const CleanModal = observer(({ onToggle }: any) => {
   const { clean } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
-
-  useEffect(() => {
-    const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
-
-    if (!chatDom) return;
-    chatDom.style.height = '0';
-    return () => {
-      chatDom.style.height = '230px';
-    };
-  }, []);
 
   return (
     <>

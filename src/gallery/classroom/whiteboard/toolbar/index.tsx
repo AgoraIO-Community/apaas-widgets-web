@@ -120,36 +120,36 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
       {connectionState === BoardConnectionState.Connected ? (
         <>
           {isLandscape && !fixedBottomBarVisible ? (
-            <DraggableWrapper className={clsn}>
-              <>
-                {foldToolBar ? (
-                  <div className={`fcr-board-toolbar-fold`} onClick={() => handleFoldClick(false)}>
-                    <div
-                      className={classnames(
-                        'fcr-mobile-board-expand fcr-t-0 fcr-l-0 fcr-h-full fcr-flex fcr-justify-center',
-                      )}>
-                      <SvgImg
-                        type={SvgIconEnum.WHITEBOARDEDIT}
-                        colors={{ iconPrimary: 'white' }}
-                        size={32}></SvgImg>
-                    </div>
+            // <DraggableWrapper className={clsn}>
+            <>
+              {foldToolBar ? (
+                <div className="fcr-board-toolbar-fold" onClick={() => handleFoldClick(false)}>
+                  <div
+                    className={classnames(
+                      'fcr-mobile-board-expand fcr-t-0 fcr-l-0 fcr-h-full fcr-flex fcr-justify-center',
+                    )}>
+                    <SvgImg
+                      type={SvgIconEnum.WHITEBOARDEDIT}
+                      colors={{ iconPrimary: 'white' }}
+                      size={32}></SvgImg>
                   </div>
-                ) : (
-                  <div className="fcr-board-toolbar-main">
-                    <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
-                      <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
-                      <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
-                    </div>
-                    <ul className="fcr-board-toolbar-list">
-                      {mobileFixedTools.map(({ renderItem }, i) => {
-                        return <li key={i.toString()}>{renderItem()}</li>;
-                      })}
-                    </ul>
+                </div>
+              ) : (
+                <div className="fcr-board-toolbar-main">
+                  <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
+                    <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
+                    <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
                   </div>
-                )}
-              </>
-            </DraggableWrapper>
+                  <ul className="fcr-board-toolbar-list">
+                    {mobileFixedTools.map(({ renderItem }, i) => {
+                      return <li key={i.toString()}>{renderItem()}</li>;
+                    })}
+                  </ul>
+                </div>
+              )}
+            </>
           ) : (
+            // </DraggableWrapper>
             <DialogToolTip
               placement="top"
               overlayOffset={-1}
@@ -159,9 +159,9 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
               }
               content={
                 <>
-                  {penActive && <PenPickerPanel />}
-                  {shapeActive && <ShapePickerPanel />}
-                  {hasSelectorContainer && <SelectorPickerPanel />}
+                  {penActive && <PenPickerPanel key="penActive" />}
+                  {shapeActive && <ShapePickerPanel key="shapeActive" />}
+                  {hasSelectorContainer && <SelectorPickerPanel key="SelectorPickerPanel" />}
                 </>
               }
               visible={fixedBottomBarVisible}

@@ -405,7 +405,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         collectorContainer: this._collectorDom ?? undefined,
       });
     }
-    this._repositionToolbar();
+    // this._repositionToolbar();
     setTimeout(() => {
       runInAction(() => {
         if (this._toolbarContext) {
@@ -910,7 +910,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       if (containerDom && toolbarDom) {
         // setTimeout(this._updateMaxVisibleTools);
         // wait until the UI rerenders, then actual dimensions can be obtained
-        setTimeout(this._updateDockPosition);
+        // setTimeout(this._updateDockPosition);
       }
     }
   }
