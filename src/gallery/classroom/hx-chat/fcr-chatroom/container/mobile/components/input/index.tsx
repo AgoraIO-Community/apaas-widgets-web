@@ -600,8 +600,6 @@ export const FcrChatRoomH5Inputs = observer(
                     </div>
                   </div>
                 </div>
-              </div>
-              <div className="fcr-chatroom-mobile-inputs-mobile-right">
                 {text ? (
                   <div className="fcr-chatroom-mobile-inputs-send">
                     <SvgImgMobile
@@ -636,7 +634,12 @@ export const FcrChatRoomH5Inputs = observer(
                           forceLandscape={forceLandscape}></SvgImgMobile>
                       </div>
                     </ToolTip>
-                    <ToolTip
+                    
+                  </>
+                )}
+              </div>
+              <div className="fcr-chatroom-mobile-inputs-mobile-right">
+                <ToolTip
                       placement="topLeft"
                       content={transI18n('fcr_teacher_use_collected_tip')}
                       visible={collectVisible}>
@@ -657,8 +660,6 @@ export const FcrChatRoomH5Inputs = observer(
                         </span>
                       </div>
                     </ToolTip>
-                  </>
-                )}
               </div>
             </div>
           )}
