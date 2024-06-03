@@ -20,7 +20,7 @@ const shapeIconMap = {
   [FcrBoardShape.Triangle]: SvgIconEnum.FCR_WHITEBOARD_SHAP_TRIANGLE,
 };
 
-export const ColorToolPickerItem = observer(() => {
+export const ColorToolPickerItem = observer(({ origin }: any) => {
   const transI18n = useI18n();
   const {
     observables: { lastShape, currentTool, currentColor, currentShape },
@@ -28,6 +28,7 @@ export const ColorToolPickerItem = observer(() => {
   } = useContext(ToolbarUIContext);
   const handleShapeToolChange = (shapeTool: FcrBoardShape) => {
     return () => {
+      if (origin === 'pen') return;
       setShape(shapeTool);
     };
   };
@@ -44,8 +45,14 @@ export const ColorToolPickerItem = observer(() => {
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
+      popoverOffset={2}
       overlayInnerStyle={{
-        width: 'max-content',
+        width: 'fit-content',
+        background: 'rgba(41, 46, 51, 0.95)',
+        borderRadius: '6px',
+        borderBottomLeftRadius: 0,
+        borderBottomRightRadius: 0,
+        border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
       }}
       popoverContent={<ColorPickerPanel />}
       iconProps={{ colors: { iconPrimary: currentColor } }}

@@ -98,10 +98,10 @@ export const ShapePickerPanel = observer(() => {
         );
       })}
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
-      <PenToolPickerItem origin="shape" />
+      <PenToolPickerItem origin="ShapePenPicker" key="ShapePenPicker" />
 
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
-      <ColorToolPickerItem />
+      <ColorToolPickerItem key="ShapeColorPicker" />
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
       <div onClick={handleClose}>
         <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} size={16} />

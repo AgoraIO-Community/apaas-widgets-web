@@ -108,7 +108,7 @@
   position: relative;
   width: 18px;
   height: 18px;
-  margin: 12px 8px;
+  margin: 12px;
   border-radius: 50px;
   cursor: pointer;
 }
@@ -133,7 +133,7 @@
 .fcr-board-toolbar-panel--color {
   display: flex;
   flex-wrap: wrap;
-  width: 185px;
+  width: max-content;
   justify-content: space-around;
 }
 .fcr-popover-trigger-opened {

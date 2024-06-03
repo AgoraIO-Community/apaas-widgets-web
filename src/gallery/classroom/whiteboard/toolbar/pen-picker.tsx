@@ -85,10 +85,10 @@ export const PenPickerPanel = observer(() => {
       })}
 
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
-      <PenToolPickerItem />
+      <PenToolPickerItem origin="PenToolPicker" key="PenToolPicker" />
 
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
-      <ColorToolPickerItem />
+      <ColorToolPickerItem origin="pen" key="PenColorPicker" />
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
       <div key="close" onClick={handleClose}>
         <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} size={16} />
@@ -131,7 +131,9 @@ const PenWeightsItem = observer(() => {
 
         return (
           <div key={value} className={cls} onClick={() => handleClick(value)}>
-            <SvgImg type={icon} size={28} />
+            <div className="fcr-board-pen__cycle">
+              <SvgImg type={icon} size={28} />
+            </div>
           </div>
         );
       })}
@@ -146,13 +148,6 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
     setStrokeWidth,
   } = useContext(ToolbarUIContext);
   const transI18n = useI18n();
-
-  const handlePenToolChange = (shapeTool: FcrBoardShape) => {
-    return () => {
-      if (origin) return;
-      setPen(shapeTool);
-    };
-  };
 
   const isActive = false;
   const clickShape = lastShape ? lastShape : FcrBoardShape.Curve;
@@ -171,11 +166,11 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
       isActive={isActive}
       tooltip={transI18n('fcr_board_tool_extra')}
       icon={penIcon}
-      onClick={handlePenToolChange(clickShape)}
+      // onClick={handlePenToolChange(clickShape)}
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
-      popoverOffset={4}
+      popoverOffset={2}
       overlayInnerStyle={{
         width: 'fit-content',
         background: 'rgba(41, 46, 51, 0.95)',
@@ -184,8 +179,7 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
         borderBottomRightRadius: 0,
         border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
       }}
-      popoverContent={<PenWeightsItem />}
-      // iconProps={{ colors: { iconPrimary: currentColor } }}
+      popoverContent={<PenWeightsItem key={origin} />}
       extensionMark={false}
     />
   );
