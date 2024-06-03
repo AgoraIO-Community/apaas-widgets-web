@@ -213,11 +213,11 @@ export const CleanModal = observer(({ onToggle }: any) => {
 
   useEffect(() => {
     const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
-
+    const height = chatDom.style.height
     if (!chatDom) return;
     chatDom.style.height = '0';
     return () => {
-      chatDom.style.height = '230px';
+      chatDom.style.height = height;
     };
   }, []);
 

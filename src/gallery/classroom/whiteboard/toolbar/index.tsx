@@ -86,11 +86,11 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     );
     const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
     const inputDom: any = document.querySelector('.landscape-bottom-tools');
-
+    const height = chatDom.style.height
     if (!element) return;
     if (!fixedBottomBarVisible && foldToolBar) {
       element.style.pointerEvents = 'none';
-      chatDom.style.height = '230px';
+      chatDom.style.height = height;
       inputDom.style.bottom = '0';
     } else {
       element.style.pointerEvents = 'auto';
