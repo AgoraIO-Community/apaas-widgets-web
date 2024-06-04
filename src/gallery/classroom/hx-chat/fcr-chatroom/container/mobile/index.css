@@ -9,6 +9,11 @@
   overflow: hidden;
 }
 .fcr-chatroom-mobile-input-container{
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: 99;
+  background-color: #27292f;
   height: 80px;
   padding-bottom: env(safe-area-inset-bottom);
 }
