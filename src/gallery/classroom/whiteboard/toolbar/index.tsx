@@ -86,16 +86,21 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     );
     const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
     const inputDom: any = document.querySelector('.landscape-bottom-tools');
-    const height = chatDom.style.height
+
     if (!element) return;
     if (!fixedBottomBarVisible && foldToolBar) {
       element.style.pointerEvents = 'none';
-      chatDom.style.height = height;
-      inputDom.style.bottom = '0';
+      inputDom ? (inputDom.style.bottom = '0') : '';
     } else {
       element.style.pointerEvents = 'auto';
+      inputDom ? (inputDom.style.bottom = '-100px') : '';
+    }
+    if (!chatDom) return;
+    const height = chatDom.style.height;
+    if (!fixedBottomBarVisible && foldToolBar) {
+      chatDom.style.height = height;
+    } else {
       chatDom.style.height = '0';
-      inputDom.style.bottom = '-100px';
     }
   }, [fixedBottomBarVisible, foldToolBar]);
 
@@ -113,7 +118,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     // prevent first animation play
     'fcr-board-toolbar--unfolded': typeof foldToolBar !== 'undefined' && !foldToolBar,
   });
-
+  // console.log('this-----toolbar', connectionState, canOperate, isLandscape, !fixedBottomBarVisible);
   if (!canOperate) return null;
   return (
     <>

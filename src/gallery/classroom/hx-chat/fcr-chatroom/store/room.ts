@@ -29,7 +29,7 @@ export class RoomStore {
   private _widgetInstances: Record<string, AgoraWidgetBase> = {};
   @observable
   private _widgetInstanceList: AgoraWidgetBase[] = [];
-  @observable currentWidget:AgoraWidgetBase | undefined = undefined;
+  @observable currentWidget: AgoraWidgetBase | undefined = undefined;
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
   //缓存本地点赞要上报的个数
@@ -66,7 +66,7 @@ export class RoomStore {
     this._thumbsUpCountCache = thumbsUpCount;
   }
   @action.bound
-  addToast(message: string, type: "error" | "warning" | "success" | undefined) {
+  addToast(message: string, type: 'error' | 'warning' | 'success' | undefined) {
     return this._widget.ui.addToast(message, type);
   }
   @action.bound
@@ -79,23 +79,27 @@ export class RoomStore {
   }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
-    console.log('AgoraExtensionRoomEvent.GetApplications_handleGetWidgets', widgetInstances,  Object.values(widgetInstances))
-   this._widgetInstanceList = Object.values(widgetInstances);
+    console.log(
+      'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
+      widgetInstances,
+      Object.values(widgetInstances),
+    );
+    this._widgetInstanceList = Object.values(widgetInstances);
   }
   @computed
   get z0Widgets() {
-    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList)
+    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
     return this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
   }
   @action.bound
   setCurrentWidget(widget: any) {
-    this.currentWidget = widget
+    this.currentWidget = widget;
     this._widget.broadcast(AgoraExtensionRoomEvent.SetCurrentApplication, widget);
   }
   @action.bound
   _handleGetDefaultWidget(widget: any) {
     if (widget) {
-      this.setCurrentWidget(widget)
+      this.setCurrentWidget(widget);
     }
   }
   private _addEventListeners() {
@@ -108,7 +112,7 @@ export class RoomStore {
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.GetApplications,
       onMessage: this._handleGetWidgets,
-    })
+    });
     this._widget.broadcast(AgoraExtensionWidgetEvent.QueryPollMinimizeState, undefined);
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileCallStateChanged,
@@ -118,7 +122,7 @@ export class RoomStore {
       messageType: AgoraExtensionRoomEvent.DefaultCurrentApplication,
       onMessage: this._handleGetDefaultWidget,
     });
-  
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
       onMessage: this._handleMobileLandscapeToolBarStateChanged,
@@ -153,7 +157,7 @@ export class RoomStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.GetApplications,
       onMessage: this._handleGetWidgets,
-    })
+    });
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -330,7 +334,7 @@ export class RoomStore {
     operator: any,
     cause: any,
   ) {
-    if (cause.data?.thumbsUp) {
+    if (cause?.data?.thumbsUp) {
       const count = roomProperties['flexProps']['thumbsUp'];
 
       //远端用户点赞个数 = 服务端点赞总数 - 上一次服务端点赞总数 - 本地点赞个数
