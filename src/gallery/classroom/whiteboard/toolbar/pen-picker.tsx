@@ -104,39 +104,37 @@ const PenWeightsItem = observer(() => {
     {
       value: 1,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_1SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_1SIZE,
     },
     {
       value: 2,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_2SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_2SIZE,
     },
     {
       value: 3,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_3SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_3SIZE,
     },
     {
       value: 4,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_4SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_4SIZE,
     },
   ];
   const handleClick = (value: number) => {
     setStrokeWidth(value);
   };
+  const currentVal = observables.currentStrokeWidth;
+  console.log('this-----lineIcon', currentVal);
 
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--pen">
-      {weights.map(({ value, icon }) => {
-        const cls = classNames({
-          'fcr-board-toolbar-panel--strokeactive': observables.currentStrokeWidth === value,
-        });
-
-        return (
-          <div key={value} className={cls} onClick={() => handleClick(value)}>
-            <div className="fcr-board-pen__cycle">
-              <SvgImg type={icon} size={28} />
-            </div>
-          </div>
-        );
-      })}
+      {weights.map(({ value, lineIcon, icon }) => (
+        <div key={value} onClick={() => handleClick(value)}>
+          <SvgImg type={currentVal === value ? lineIcon : icon} size={28} />
+        </div>
+      ))}
     </div>
   );
 });
