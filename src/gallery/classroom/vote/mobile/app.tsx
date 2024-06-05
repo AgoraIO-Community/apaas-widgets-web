@@ -33,11 +33,9 @@ export const PollH5 = observer(() => {
   const [width, setWidth] = useState<number | null>(null);
   const timer = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    const content = document.querySelector('.fcr-mobile-poll-widget-minimize-content')
-    const rect = content?.getBoundingClientRect()
-    if (rect) {
-      setWidth(rect.width)
-    }
+    const content = document.querySelector('.fcr-mobile-poll-widget-minimize-content') as HTMLElement
+  
+    setWidth(content?.offsetWidth)
   }, [])
   useEffect(() => {
     if (timer.current) {
