@@ -31,6 +31,7 @@ export const MessageList = observer(() => {
     roomStore: { isLandscape, messageVisible, forceLandscape, landscapeToolBarVisible },
     fcrChatRoom,
   } = useStore();
+  console.log('MessageListMessageList', unreadMessageCount,messageVisible)
   const scrollingRef = useRef(false);
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
@@ -146,7 +147,7 @@ export const MessageList = observer(() => {
             size={120}></SvgImgMobile>
         ) : null}
       </div>
-      {unreadMessageCount !== 0 && messageVisible && (
+      {unreadMessageCount !== 0 && (isLandscape ? messageVisible : true) && (
         <UnreadMessage
           unreadMessageCount={unreadMessageCount}
           isLandscape={isLandscape}
