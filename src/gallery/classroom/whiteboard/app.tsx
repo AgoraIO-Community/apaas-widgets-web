@@ -5,6 +5,7 @@ import './style.css';
 import { Toolbar } from './toolbar';
 import { FcrBoardWidget } from '.';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
+import { debounce } from 'lodash';
 
 export const App = ({ widget }: { widget: FcrBoardWidget }) => {
   const { setLandscape, handleDragOver, handleDrop, handleBoardDomLoad, handleCollectorDomLoad } =
@@ -27,17 +28,67 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
       );
     }, 200);
 
+    const targetElement = document.querySelector('.streams-swiper-vert');
+    let resizeObserver: any = null;
+
+    if (targetElement) {
+      resizeObserver = new ResizeObserver((entries) => {
+        for (let entry of entries) {
+          const slideWidth = entry.contentRect.width;
+          _setToolbarDockPosition(slideWidth);
+        }
+      });
+
+      resizeObserver.observe(targetElement);
+    }
+
     widget.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: _handleOrientationChanged,
     });
+    widget.widgetController.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: (bool: boolean) => {
+        if (!bool) {
+          const containeTop =
+            document.querySelector('.netless-whiteboard-wrapper')?.getBoundingClientRect()?.top ||
+            0;
+          runInAction(() => {
+            observables.toolbarDockPosition.y = containeTop + 12;
+          });
+        } else {
+          const slideWidth = (document.querySelector('.streams-swiper-vert') as HTMLElement)
+            ?.offsetWidth;
+          _setToolbarDockPosition(slideWidth);
+        }
+      },
+    });
     return () => {
+      resizeObserver.unobserve(targetElement);
       widget.widgetController.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
         onMessage: _handleOrientationChanged,
       });
     };
   }, []);
+
+  const _setToolbarDockPosition = debounce((slideWidth) => {
+    const targetToolPanel = (document.querySelector('.landscape-tool-panel') as HTMLElement)
+      ?.offsetHeight;
+    if (slideWidth > 0 && targetToolPanel > 0) {
+      runInAction(() => {
+        observables.toolbarDockPosition.y = 40 + 12;
+      });
+    } else if (targetToolPanel > 0) {
+      runInAction(() => {
+        observables.toolbarDockPosition.y = 40 + 12;
+      });
+    } else {
+      runInAction(() => {
+        observables.toolbarDockPosition.y = 12;
+      });
+    }
+  }, 200);
 
   const handleCloseToolbar = () => {
     widget.widgetController.broadcast(

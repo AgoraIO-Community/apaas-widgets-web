@@ -152,9 +152,9 @@ export const useVisibleTools = () => {
               });
               Dialog.show({
                 maskStyle: { background: 'var(--fcr_ui_scene_mask, rgba(8, 8, 8, 0.35))' },
-                getContainer: () => {
-                  return document.querySelector(`.${windowClassName}`) as HTMLElement;
-                },
+                // getContainer: () => {
+                //   return document.querySelector(`.${windowClassName}`) as HTMLElement;
+                // },
                 bodyStyle: {
                   width: 'max-content',
                 },
