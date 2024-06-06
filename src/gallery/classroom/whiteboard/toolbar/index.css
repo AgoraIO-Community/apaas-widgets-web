@@ -87,30 +87,11 @@
   padding: 0 6px;
   margin: 0 6px;
 }
-.fcr-board-toolbar-panel--pen > div.fcr-board-toolbar-panel--strokeactive {
-  border-color: currentColor;
-  border-radius: 6px;
-}
-.fcr-board-toolbar-panel--pen div.fcr-board-pen__cycle {
-  position: relative;
-}
-.fcr-board-toolbar-panel--pen div.fcr-board-pen__cycle::after {
-  content: '';
-  position: absolute;
-  top: 10%;
-  left: 10%;
-  width: 80%;
-  height: 80%;
-  border: 3px solid transparent;
-  border-radius: 50%;
-}
-.fcr-board-toolbar-panel--pen
-  div.fcr-board-toolbar-panel--strokeactive
-  div.fcr-board-pen__cycle::after {
-  border-color: currentColor;
-}
 .fcr-board-toolbar__fixedbottom .fcr-dialog-tooltip-overlay-content {
   padding: 0;
+}
+.fcr-board-toolbar__fixedbottom .fcr-dialog-tooltip-overlay-content-inner {
+  margin-top: 2.5px;
 }
 .fcr-board-toolbar__fixedbottom .fcr-tooltip-inner {
   border: 0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5)) !important;

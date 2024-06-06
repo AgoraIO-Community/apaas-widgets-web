@@ -104,39 +104,37 @@ const PenWeightsItem = observer(() => {
     {
       value: 1,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_1SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_1SIZE,
     },
     {
       value: 2,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_2SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_2SIZE,
     },
     {
       value: 3,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_3SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_3SIZE,
     },
     {
       value: 4,
       icon: SvgIconEnum.FCR_MOBILE_PEN_CURVE_4SIZE,
+      lineIcon: SvgIconEnum.FCR_MOBILE_PEN_LINE_4SIZE,
     },
   ];
   const handleClick = (value: number) => {
     setStrokeWidth(value);
   };
+  const currentVal = observables.currentStrokeWidth;
+  console.log('this-----lineIcon', currentVal);
 
   return (
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--pen">
-      {weights.map(({ value, icon }) => {
-        const cls = classNames({
-          'fcr-board-toolbar-panel--strokeactive': observables.currentStrokeWidth === value,
-        });
-
-        return (
-          <div key={value} className={cls} onClick={() => handleClick(value)}>
-            <div className="fcr-board-pen__cycle">
-              <SvgImg type={icon} size={28} />
-            </div>
-          </div>
-        );
-      })}
+      {weights.map(({ value, lineIcon, icon }) => (
+        <div key={value} onClick={() => handleClick(value)}>
+          <SvgImg type={currentVal === value ? lineIcon : icon} size={28} />
+        </div>
+      ))}
     </div>
   );
 });
@@ -170,13 +168,12 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
-      popoverOffset={2}
+      popoverOffset={4}
       overlayInnerStyle={{
         width: 'fit-content',
         background: 'rgba(41, 46, 51, 0.95)',
         borderRadius: '6px',
-        borderBottomLeftRadius: 0,
-        borderBottomRightRadius: 0,
+        paddingTop: '2.5px',
         border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
       }}
       popoverContent={<PenWeightsItem key={origin} />}
