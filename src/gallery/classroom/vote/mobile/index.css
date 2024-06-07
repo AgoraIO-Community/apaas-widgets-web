@@ -9,10 +9,16 @@
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
   padding: 0px 5px;
   position: relative;
   z-index: 1;
+}
+.fcr-mobile-poll-widget-minimize.min{
+  width: 30px;
+}
+.fcr-mobile-poll-widget-minimize.landmin{
+  width: 40px;
 }
 .fcr-mobile-poll-widget-minimize.active {
    position: fixed;
@@ -26,6 +32,9 @@
   white-space: nowrap;
   width: fit-content;
   transition: all 0.2s linear
+}
+.fcr-mobile-poll-widget-minimize-content.hidden{
+  display: none;
 }
 .fcr-mobile-poll-widget-minimize-content.hidden{
   width: 0;

@@ -1,4 +1,4 @@
-import { useI18n } from 'agora-common-libs';
+import { useI18n, getLanguage } from 'agora-common-libs';
 import { observer } from 'mobx-react';
 import { useEffect, useRef, useState } from 'react';
 import { SvgIconEnum, SvgImgMobile } from '../../../../components/svg-img';
@@ -31,25 +31,29 @@ export const PollH5 = observer(() => {
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState<number | null>(null);
+  const [isShow, setIsShow] = useState<boolean>(true);
   const timer = useRef<NodeJS.Timeout>();
+  const timer1 = useRef<NodeJS.Timeout>();
   useEffect(() => {
-    const content = document.querySelector('.fcr-mobile-poll-widget-minimize-content') as HTMLElement
-    const rect = content?.getBoundingClientRect();
-    if (rect && rect.width) {
-      setWidth(rect.width);
-    } else {
-      setWidth(content?.offsetWidth)
-    }
+    const language = getLanguage()
+    setWidth(language === 'en' ? 32 : 49) 
   }, [])
   useEffect(() => {
     if (timer.current) {
       clearTimeout(timer.current);
     }
+    if (timer1.current) {
+      clearTimeout(timer1.current);
+    }
     timer.current = setTimeout(() => {
       setWidth(0)
     }, 3000);
+    timer1.current = setTimeout(() => {
+      setIsShow(false)
+    }, 3200);
     return () => {
       clearTimeout(timer.current);
+      clearTimeout(timer1.current);
     };
   }, [])
   const handleOptionClick = (index: number) => {
@@ -94,7 +98,7 @@ export const PollH5 = observer(() => {
       {isLandscape
         ? createPortal(
             <>{landscapeToolBarVisible ? <div
-              className={`fcr-mobile-poll-widget-minimize fcr-mobile-poll-widget-minimize-landscape`}
+              className={classNames(`fcr-mobile-poll-widget-minimize fcr-mobile-poll-widget-minimize-landscape`, !isShow && 'landmin')}
               onClick={() => {
                 setMinimize(false);
               }}>
@@ -104,7 +108,7 @@ export const PollH5 = observer(() => {
                   landscape={isLandscape}
                   type={SvgIconEnum.POLL}></SvgImgMobile>
               </div>
-              <div className='fcr-mobile-poll-widget-minimize-content' style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: '50px'}}>
+              <div className={classNames('fcr-mobile-poll-widget-minimize-content', !isShow && 'hidden')} style={{ width: `${width}px`, transition: 'width 0.2s linear'}}>
                 <span>{transI18n('widget_polling.appName')}</span>
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
@@ -119,7 +123,7 @@ export const PollH5 = observer(() => {
           )
         : createPortal(
             <div
-              className={`fcr-mobile-poll-widget-minimize active`}
+              className={classNames(`fcr-mobile-poll-widget-minimize active`, !isShow && 'min')}
               onClick={() => {
                 setMinimize(false);
               }}>
@@ -130,7 +134,7 @@ export const PollH5 = observer(() => {
                   type={SvgIconEnum.POLL}></SvgImgMobile>
               </div>
 
-              <div className='fcr-mobile-poll-widget-minimize-content' style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: 'fit-content'}}>
+              <div className={classNames('fcr-mobile-poll-widget-minimize-content', !isShow && 'hidden')} style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: 'fit-content'}}>
                 <span>{transI18n('widget_polling.appName')}</span>
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
