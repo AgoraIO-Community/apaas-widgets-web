@@ -168,7 +168,7 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
       tooltipPlacement="top"
       popoverPlacement="top"
       popoverOverlayClassName="fcr-board-toolbar__picker__overlay"
-      popoverOffset={4}
+      popoverOffset={12}
       overlayInnerStyle={{
         width: 'fit-content',
         background: 'rgba(41, 46, 51, 0.95)',

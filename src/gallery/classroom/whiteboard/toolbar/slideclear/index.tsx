@@ -100,7 +100,7 @@ export default class CleanSimpleVerify extends React.Component<
    * 移除事件
    */
   public componentWillUnmount() {
-    this.currentObs && this.currentObs.unobserve();
+    this.currentObs && this.currentObs.unobserve(document.querySelector('.veriry-slide'));
     document.body.removeEventListener('mousemove', this.mousemove.bind(this));
     document.body.removeEventListener('touchmove', this.mousemove.bind(this));
     document.body.removeEventListener('mouseup', this.mouseup.bind(this));

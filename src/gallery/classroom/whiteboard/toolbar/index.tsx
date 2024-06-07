@@ -32,6 +32,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
       foldToolBar,
       fixedBottomBarVisible,
       hasSelectorContainer,
+      toolbarDockPosition,
     },
   } = useContext(ToolbarUIContext);
   const {
@@ -128,7 +129,12 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
             // <DraggableWrapper className={clsn}>
             <>
               {foldToolBar ? (
-                <div className="fcr-board-toolbar-fold" onClick={() => handleFoldClick(false)}>
+                <div
+                  className="fcr-board-toolbar-fold"
+                  style={{
+                    top: (toolbarDockPosition.y || 12) + 'px',
+                  }}
+                  onClick={() => handleFoldClick(false)}>
                   <div
                     className={classnames(
                       'fcr-mobile-board-expand fcr-t-0 fcr-l-0 fcr-h-full fcr-flex fcr-justify-center',
