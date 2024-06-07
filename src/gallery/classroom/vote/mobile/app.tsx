@@ -34,8 +34,12 @@ export const PollH5 = observer(() => {
   const timer = useRef<NodeJS.Timeout>();
   useEffect(() => {
     const content = document.querySelector('.fcr-mobile-poll-widget-minimize-content') as HTMLElement
-  
-    setWidth(content?.offsetWidth)
+    const rect = content?.getBoundingClientRect();
+    if (rect && rect.width) {
+      setWidth(rect.width);
+    } else {
+      setWidth(content?.offsetWidth)
+    }
   }, [])
   useEffect(() => {
     if (timer.current) {
@@ -100,7 +104,7 @@ export const PollH5 = observer(() => {
                   landscape={isLandscape}
                   type={SvgIconEnum.POLL}></SvgImgMobile>
               </div>
-              <div className='fcr-mobile-poll-widget-minimize-content' style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: 'fit-content'}}>
+              <div className='fcr-mobile-poll-widget-minimize-content' style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: '50px'}}>
                 <span>{transI18n('widget_polling.appName')}</span>
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
