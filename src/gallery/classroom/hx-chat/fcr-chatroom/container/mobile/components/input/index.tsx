@@ -126,7 +126,7 @@ export const FcrChatRoomH5Inputs = observer(
       }
     }, [widgets.length, roomId]);
     const isMuted = allMuted || userMuted;
-    const send = useCallback(() => {
+    const send = () => {
       // sendTextMessage(text);
 
       const isPrivateInRoom = userList.find((v) => v.userId === privateUser?.userId);
@@ -137,7 +137,7 @@ export const FcrChatRoomH5Inputs = observer(
       setText('');
       onShowEmojiChanged(false);
       inputRef.current?.blur();
-    }, [text, sendTextMessage]);
+    };
     const handleImgInputClick = () => {
       fileInputRef.current?.focus();
       fileInputRef.current?.click();

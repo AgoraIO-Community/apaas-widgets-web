@@ -161,8 +161,6 @@
   width: 296px;
   overflow-y: auto;
   pointer-events: all;
-  position: absolute;
-  bottom: 56px;
 }
 .fcr-chatroom-mobile-messages-landscape::-webkit-scrollbar {
   display: none;

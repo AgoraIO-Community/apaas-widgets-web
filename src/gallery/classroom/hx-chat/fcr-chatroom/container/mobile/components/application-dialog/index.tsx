@@ -8,21 +8,11 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
     const {
         roomStore: { isLandscape,  forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
-    const [allWidgets, setAllwidgets] = useState([])
-    useEffect(() => {
-        const arr: any = []
-        for (let i = 0; i < z0Widgets.length; i++) {
-            const item = z0Widgets[i];
-            arr.unshift(item)
-        }
-        setAllwidgets(arr)
-    }, [z0Widgets])
-    const widgets = useMemo(() => allWidgets.filter((v: any) => v.widgetName !== 'easemobIM'),[allWidgets])
-    useEffect(() => {
-        if (!currentWidget && widgets[0]) {
-            setCurrentWidget(widgets[0])
-        }
-    }, [currentWidget, setCurrentWidget, widgets])
+    console.log('currentWidgetcurrentWidgetdialog', currentWidget)
+    const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM')
+    // if (!currentWidget) {
+    //     setCurrentWidget(widgets[0])
+    // }
     const handleClose = () => {
         setIsShowApplication(false);
     }

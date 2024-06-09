@@ -119,7 +119,6 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
       messageType: AgoraExtensionRoomEvent.OpenStreamMediaPlayer,
       onMessage: handleOpen,
     });
-
     FcrStreamMediaPlayerWidget._installationDisposer = () => {
       controller.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.OpenStreamMediaPlayer,
@@ -173,6 +172,7 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   // this.render(this.locate() as HTMLElement);
  }
  get currentWidget() {
+  console.log('currentWidgetcurrentWidget11', this._currentWidget)
   return this._currentWidget
  }
   @bound
