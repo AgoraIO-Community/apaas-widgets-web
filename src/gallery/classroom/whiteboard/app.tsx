@@ -48,29 +48,35 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
     });
     widget.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
-      onMessage: (bool: boolean) => {
-        if (!bool) {
-          const containeTop =
-            document.querySelector('.netless-whiteboard-wrapper')?.getBoundingClientRect()?.top ||
-            0;
-          runInAction(() => {
-            observables.toolbarDockPosition.y = containeTop + 12;
-          });
-        } else {
-          const slideWidth = (document.querySelector('.streams-swiper-vert') as HTMLElement)
-            ?.offsetWidth;
-          _setToolbarDockPosition(slideWidth);
-        }
-      },
+      onMessage: _resetToolPosition,
     });
     return () => {
       resizeObserver.unobserve(targetElement);
+
+      widget.widgetController.removeBroadcastListener({
+        messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+        onMessage: _resetToolPosition,
+      });
       widget.widgetController.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
         onMessage: _handleOrientationChanged,
       });
     };
   }, []);
+
+  const _resetToolPosition = (bool: boolean) => {
+    if (!bool) {
+      const containeTop =
+        document.querySelector('.netless-whiteboard-wrapper')?.getBoundingClientRect()?.top || 0;
+      runInAction(() => {
+        observables.toolbarDockPosition.y = containeTop + 12;
+      });
+    } else {
+      const slideWidth = (document.querySelector('.streams-swiper-vert') as HTMLElement)
+        ?.offsetWidth;
+      _setToolbarDockPosition(slideWidth);
+    }
+  };
 
   const _setToolbarDockPosition = debounce((slideWidth) => {
     const targetToolPanel = (document.querySelector('.landscape-tool-panel') as HTMLElement)
@@ -88,7 +94,7 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
         observables.toolbarDockPosition.y = 12;
       });
     }
-  }, 200);
+  }, 10);
 
   const handleCloseToolbar = () => {
     widget.widgetController.broadcast(

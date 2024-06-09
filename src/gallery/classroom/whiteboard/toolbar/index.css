@@ -113,6 +113,7 @@
   top: 12px;
   left: 16px;
   z-index: 9;
+  transition: all 0.25s;
 }
 
 .fcr-board-toolbar-panel--shape > div:not(.fcr-divider-mobile-line) {

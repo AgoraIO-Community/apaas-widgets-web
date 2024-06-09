@@ -103,6 +103,11 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     } else {
       chatDom.style.height = '0';
     }
+    return () => {
+      if (chatDom) {
+        chatDom.style.height = '256px';
+      }
+    };
   }, [fixedBottomBarVisible, foldToolBar]);
 
   const handleFoldClick = (bool: boolean) => {
