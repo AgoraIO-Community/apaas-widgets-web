@@ -114,10 +114,15 @@ export class UserStore {
     });
     
   }
-  @observable privateUser?: AgoraIMUserInfo;
+  @observable 
+  private _privateUser?: AgoraIMUserInfo;
+  @computed
+  get privateUser() {
+    return this._privateUser;
+  }
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
-    this.privateUser = user;
+    this._privateUser = user;
   }
 
   @action.bound

@@ -83,13 +83,30 @@ export class RoomStore {
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
       widgetInstances,
       Object.values(widgetInstances),
+      this.currentWidget
     );
     this._widgetInstanceList = Object.values(widgetInstances);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    const arr: any = []
+    for (let i = 0; i < widgets.length; i++) {
+        const item = widgets[i];
+        arr.unshift(item)
+    }
+    const allWidgets = arr.filter((v) => v.widgetName !== 'easemobIM');
+    if (!this.currentWidget) {
+      this.setCurrentWidget(allWidgets[0]);
+    }
   }
   @computed
   get z0Widgets() {
     console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
-    return this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+      const arr: any = []
+    for (let i = 0; i < widgets.length; i++) {
+        const item = widgets[i];
+        arr.unshift(item)
+    }
+    return arr
   }
   @action.bound
   setCurrentWidget(widget: any) {
@@ -99,7 +116,9 @@ export class RoomStore {
   @action.bound
   _handleGetDefaultWidget(widget: any) {
     if (widget) {
+      console.log('_handleGetDefaultWidget_handleGetDefaultWidget', widget)
       this.setCurrentWidget(widget);
+      this.currentWidget = widget;
     }
   }
   private _addEventListeners() {
