@@ -162,7 +162,6 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
   return (
     <ExpansionToolbarItem
       isActive={isActive}
-      tooltip={transI18n('fcr_board_tool_extra')}
       icon={penIcon}
       // onClick={handlePenToolChange(clickShape)}
       tooltipPlacement="top"

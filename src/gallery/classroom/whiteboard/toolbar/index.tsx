@@ -87,13 +87,16 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     );
     const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
     const inputDom: any = document.querySelector('.landscape-bottom-tools');
+    const pptDom: any = document.querySelector('.netless-app-slide-wb-view');
 
     if (!element) return;
     if (!fixedBottomBarVisible && foldToolBar) {
       element.style.pointerEvents = 'none';
+      pptDom ? pptDom.style.setProperty('pointer-events', 'none', 'important') : '';
       inputDom ? (inputDom.style.bottom = '0') : '';
     } else {
       element.style.pointerEvents = 'auto';
+      pptDom ? pptDom.style.setProperty('pointer-events', 'auto', 'important') : '';
       inputDom ? (inputDom.style.bottom = '-100px') : '';
     }
     if (!chatDom) return;
@@ -124,7 +127,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     // prevent first animation play
     'fcr-board-toolbar--unfolded': typeof foldToolBar !== 'undefined' && !foldToolBar,
   });
-  // console.log('this-----toolbar', connectionState, canOperate, isLandscape, !fixedBottomBarVisible);
+  console.log('this-----toolbar', connectionState, canOperate, isLandscape, !fixedBottomBarVisible);
   if (!canOperate) return null;
   return (
     <>
@@ -221,7 +224,7 @@ export const ToolbarItem: FC<{
 
 /** @internal */
 export const ExpansionToolbarItem: FC<{
-  tooltip: string;
+  tooltip?: string;
   popoverContent: React.ReactNode;
   icon: SvgIconEnum;
   iconProps?: Partial<Omit<SvgImgProps, 'type'>>;
@@ -256,7 +259,7 @@ export const ExpansionToolbarItem: FC<{
   });
   return (
     <PopoverWithTooltip
-      toolTipProps={{ placement: tooltipPlacement, content: tooltip }}
+      toolTipProps={tooltip ? { placement: tooltipPlacement, content: tooltip } : undefined}
       popoverProps={{
         overlayOffset: popoverOffset,
         placement: popoverPlacement,

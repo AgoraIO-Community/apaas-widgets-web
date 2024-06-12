@@ -26,7 +26,7 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
         AgoraExtensionRoomEvent.OrientationStatesChangedAgain,
         true,
       );
-    }, 200);
+    }, 100);
 
     const targetElement = document.querySelector('.streams-swiper-vert');
     let resizeObserver: any = null;

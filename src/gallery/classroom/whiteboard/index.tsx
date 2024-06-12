@@ -80,6 +80,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     region: FcrBoardRegion;
   };
   protected _grantedUsers = new Set<string>();
+  protected _mockProps = {};
   private _joinSuccessed = false;
   protected _disposers: IReactionDisposer[] = [];
   private _toolbarContext?: ToolbarUIContextValue;
@@ -233,6 +234,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     // 处理
     this._checkBoard(props);
     // 处理授权列表变更
+    this._mockProps = props;
     this._checkPrivilege(props);
     // 处理讲台隐藏/显示，重新计算白板宽高比
     this._disposers.push(
@@ -517,6 +519,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       this._deliverWindowEvents(mainWindow);
       this._boardMainWindow = mainWindow;
       this._connectObservables();
+      if (this.classroomStore.groupStore.state === 1) {
+        setTimeout(() => {
+          this._checkPrivilege(this._mockProps, true);
+        }, 10);
+      }
       this.mount();
     });
 
@@ -675,14 +682,14 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     this.broadcast(AgoraExtensionWidgetEvent.BoardDrop, e);
   }
 
-  private async _checkPrivilege(props: any) {
+  private async _checkPrivilege(props: any, isAgain = false) {
     const { userUuid } = this.classroomConfig.sessionInfo;
     const prev = this._grantedUsers.has(userUuid);
     const keys = Object.keys(props.extra?.grantedUsers || {});
     this._grantedUsers = new Set<string>(keys);
     const grantedUsers = this._grantedUsers;
     const hasPrivilege = this.hasPrivilege;
-    if (prev !== hasPrivilege && this._boardMainWindow) {
+    if ((prev !== hasPrivilege || isAgain) && this._boardMainWindow) {
       await this._boardMainWindow.updateOperationPrivilege(hasPrivilege);
       this._boardContext?.setPrivilege(hasPrivilege);
     }
@@ -719,6 +726,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     // 处理
     this._checkBoard(props);
     // 处理授权列表变更
+    this._mockProps = props;
     this._checkPrivilege(props);
   }
   /**
