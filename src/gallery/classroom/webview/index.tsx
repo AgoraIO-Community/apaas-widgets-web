@@ -115,7 +115,7 @@ export class FcrWebviewWidget extends FcrUISceneWidget {
     const title = properties.extra?.webviewTitle;
 
     if (url) {
-      this._webviewUrl = url;
+      this._webviewUrl = url.replace('edit?', 'embed?');
     }
     if (title) {
       this._webviewTitle = title;

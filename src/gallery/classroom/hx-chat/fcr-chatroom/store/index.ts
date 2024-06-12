@@ -42,6 +42,7 @@ export class FcrChatRoomStore {
     this._addListeners();
     this._init();
     this.roomId = roomId;
+    console.log('roomIdroomIdroomId', roomId)
   }
   private _addListeners() {
     this.fcrChatRoom.on(
@@ -82,6 +83,7 @@ export class FcrChatRoomStore {
         );
       });
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
+      this.roomStore.getWidgets()
       this.messageStore.getHistoryMessageList();
       this.messageStore.getAnnouncement();
     }
