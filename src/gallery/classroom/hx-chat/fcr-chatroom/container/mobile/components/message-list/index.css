@@ -22,7 +22,7 @@
   content: '';
   width: 100vw;
   height: 36px;
-  background: linear-gradient(0deg, #282a32 32.95%, rgba(40, 42, 50, 0) 100%);
+  /* background: linear-gradient(0deg, #282a32 32.95%, rgba(40, 42, 50, 0) 100%); */
   position: absolute;
   left: -20px;
   bottom: 0;
