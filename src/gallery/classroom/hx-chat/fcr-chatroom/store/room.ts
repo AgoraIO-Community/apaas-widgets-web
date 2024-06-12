@@ -77,13 +77,23 @@ export class RoomStore {
   private _handleMobileCallStateChanged(state: MobileCallState) {
     this.mobileCallState = state;
   }
+  getWidgets() {
+    console.log('getWidgetsgetWidgetsgetWidgets')
+    this._widget.broadcast(AgoraExtensionRoomEvent.ChangeRoom, true)
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.DefaultCurrentApplication,
+      onMessage: this._handleGetDefaultWidget,
+    });
+  }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
     console.log(
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
-      widgetInstances,
-      Object.values(widgetInstances),
-      this.currentWidget
+      this._widget.classroomStore.widgetStore.widgetController
     );
     this._widgetInstanceList = Object.values(widgetInstances);
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
@@ -297,8 +307,10 @@ export class RoomStore {
   private _handleAllUserUnmuted() {
     this.allMuted = false;
   }
+
   async getChatRoomDetails() {
     const { mute, affiliations } = await this._fcrChatRoom.getChatRoomDetails();
+    
     runInAction(() => {
       this.allMuted = mute;
     });
@@ -390,6 +402,7 @@ export class RoomStore {
       );
     }
   }
+
   destroy() {
     this._removeEventListeners();
   }
