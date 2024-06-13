@@ -2,7 +2,7 @@
   overflow-y: auto;
   background: #27292f;
   position: relative;
-  transition: height 0.2s;
+  /* transition: height 0.2s; */
   flex: 1;
   padding-top: 30px;
   border-radius: 20px 20px 0 0;
