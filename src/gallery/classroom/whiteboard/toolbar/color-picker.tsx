@@ -40,7 +40,6 @@ export const ColorToolPickerItem = observer(({ origin }: any) => {
     <ExpansionToolbarItem
       isActive={isActive}
       onClick={handleShapeToolChange(clickShape)}
-      tooltip={transI18n('fcr_board_tool_extra')}
       icon={SvgIconEnum.FCR_MOBILE_COLOR_SIZE}
       tooltipPlacement="top"
       popoverPlacement="top"
