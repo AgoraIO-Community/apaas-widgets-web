@@ -48,7 +48,9 @@ export const YoutubePlayer = observer(
         className={widget.hasPrivilege ? '' : 'player-not-controlled'}>
         {!isTriggeredPlay && (
           <div
-            onClick={() => {
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
               if (syncRef.current && syncRef.current.isPlayerSetup) {
                 syncRef.current.play();
                 if (!widget.state?.isPlaying) {
