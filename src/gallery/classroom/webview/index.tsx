@@ -115,7 +115,51 @@ export class FcrWebviewWidget extends FcrUISceneWidget {
     const title = properties.extra?.webviewTitle;
 
     if (url) {
-      this._webviewUrl = url.replace('edit?', 'embed?');
+      const isGoogleDocs = /docs.google.com/.test(url);
+      if (isGoogleDocs) {
+        function convertToIframeUrl(url: string): string {
+          const patterns: { [key: string]: string } = {
+            // Presentation
+            'https://docs.google.com/presentation/d/([^/]+)/edit':
+              'https://docs.google.com/presentation/d/$1/embed',
+            // Sheets
+            'https://docs.google.com/spreadsheets/d/([^/]+)/edit':
+              'https://docs.google.com/spreadsheets/d/$1/pubhtml',
+            // Document
+            'https://docs.google.com/document/d/([^/]+)/edit':
+              'https://docs.google.com/document/d/$1/pub',
+            // Forms (we need to check for viewform format)
+            'https://docs.google.com/forms/d/e/([^/]+)/viewform':
+              'https://docs.google.com/forms/d/e/$1/viewform',
+          };
+
+          for (const pattern in patterns) {
+            const regex = new RegExp(pattern);
+            if (regex.test(url)) {
+              // Replace the URL path to convert it to an embed URL
+              const newUrl = url.replace(regex, patterns[pattern]);
+
+              // Parse the new and original URLs
+              const newUrlObj = new URL(newUrl);
+              const originalUrlObj = new URL(url);
+
+              // Copy search parameters from the original URL to the new URL, if they don't already exist
+              originalUrlObj.searchParams.forEach((value, key) => {
+                if (!newUrlObj.searchParams.has(key)) {
+                  newUrlObj.searchParams.append(key, value);
+                }
+              });
+
+              return newUrlObj.toString();
+            }
+          }
+
+          return url;
+        }
+        this._webviewUrl = convertToIframeUrl(url);
+      } else {
+        this._webviewUrl = url;
+      }
     }
     if (title) {
       this._webviewTitle = title;
