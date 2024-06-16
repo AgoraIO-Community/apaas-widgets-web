@@ -5,6 +5,7 @@ import { bound } from 'agora-common-libs';
 import { reaction } from 'mobx';
 
 export class PlayerSync {
+  isPlayerSetup = false;
   private _player: Plyr | null = null;
   private _isBuffering = false;
   private _disposer: (() => void) | null = null;
@@ -21,6 +22,7 @@ export class PlayerSync {
   }
   @bound
   addListeners() {
+    this.isPlayerSetup = true;
     this._player?.on('ended', () => {
       this._player?.stop();
       this.isOwner && this.send({ isPlaying: false, currentTime: 0 });
@@ -112,6 +114,12 @@ export class PlayerSync {
     if (!this.isOwner) {
       this.controlled && this.send({ operatorId: this._widget.operatorId, ...extra });
     }
+  }
+  play() {
+    this._player?.play();
+  }
+  pause() {
+    this._player?.pause();
   }
   destroy() {
     this._disposer?.();

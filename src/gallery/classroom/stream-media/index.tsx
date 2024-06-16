@@ -5,6 +5,7 @@ import { observable, computed } from 'mobx';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { FcrUISceneWidget, bound } from 'agora-common-libs';
 import { SvgIconEnum } from '@components/svg-img';
+import { addResource } from './i18n/config';
 
 export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -21,7 +22,7 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
     operatorId: string;
   };
   @observable
-  private _currentWidget: any = undefined
+  private _currentWidget: any = undefined;
   get widgetName() {
     return 'mediaPlayer';
   }
@@ -88,6 +89,7 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
     return this._state;
   }
   onInstall(controller: AgoraWidgetController) {
+    addResource();
     const handleOpen = ({
       url,
       resourceUuid,
@@ -166,15 +168,14 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
 
     this._state = state;
   }
- @bound
- private _setCurrentWidget(currentWidget: any) {
-  this._currentWidget = currentWidget;
-  // this.render(this.locate() as HTMLElement);
- }
- get currentWidget() {
-  console.log('currentWidgetcurrentWidget11', this._currentWidget)
-  return this._currentWidget
- }
+  @bound
+  private _setCurrentWidget(currentWidget: any) {
+    this._currentWidget = currentWidget;
+    // this.render(this.locate() as HTMLElement);
+  }
+  get currentWidget() {
+    return this._currentWidget;
+  }
   @bound
   private _handleGranted(grantedUsers: Set<string>) {
     const { userUuid } = this.classroomConfig.sessionInfo;
