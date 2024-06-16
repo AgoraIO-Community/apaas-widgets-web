@@ -125,7 +125,7 @@
   height: 36px;
   border-radius: 50%;
   background: rgba(91, 89, 152, 0.20);
-  border: 1px solid rgba(74, 76, 95, 0.50);
+  /* border: 1px solid rgba(74, 76, 95, 0.50); */
   display: flex;
   justify-content: center;
   align-items: center;
