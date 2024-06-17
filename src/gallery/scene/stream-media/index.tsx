@@ -43,8 +43,8 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
       y: clientRect.height / 2 - this.defaultHeight / 2,
     };
   }
-  defaultWidth = 800;
-  defaultHeight = 600;
+  defaultWidth = 600;
+  defaultHeight = 400;
   get minimizedProperties() {
     return {
       minimizedIcon: SvgIconEnum.FCR_FILE_ALF,

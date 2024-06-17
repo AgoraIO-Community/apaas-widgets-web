@@ -35,8 +35,8 @@ export class FcrWebviewWidget extends FcrUISceneWidget {
     };
   }
 
-  defaultWidth = 800;
-  defaultHeight = 600;
+  defaultWidth = 600;
+  defaultHeight = 400;
   get minimizedProperties() {
     return {
       minimizedIcon: SvgIconEnum.FCR_FILE_ALF,
