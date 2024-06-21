@@ -30,6 +30,7 @@ export class RoomStore {
   @observable
   private _widgetInstanceList: AgoraWidgetBase[] = [];
   @observable currentWidget: AgoraWidgetBase | undefined = undefined;
+
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
   //缓存本地点赞要上报的个数
@@ -76,6 +77,27 @@ export class RoomStore {
   @action.bound
   private _handleMobileCallStateChanged(state: MobileCallState) {
     this.mobileCallState = state;
+  }
+  /**
+   * 分组开启
+   */
+  @computed
+  get isBreakOutRoomEnabled() {
+    return this._widget.classroomStore.groupStore.state === 1;
+  }
+  /**
+   * 分组关闭
+   */
+  @computed
+  get isBreakOutRoomDisable() {
+    return this._widget.classroomStore.groupStore.state === 0;
+  }
+  /**
+   * 当前用户是否在分组房间
+   */
+  @computed
+  get isBreakOutRoomIn() {
+    return this._widget.classroomStore.groupStore.currentSubRoom !== undefined;
   }
   getWidgets() {
     console.log('getWidgetsgetWidgetsgetWidgets')

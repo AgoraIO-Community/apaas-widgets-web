@@ -12,6 +12,9 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
         roomStore: {
           isLandscape,
           forceLandscape,
+          isBreakOutRoomDisable,
+          isBreakOutRoomEnabled,
+          isBreakOutRoomIn
         },
         fcrChatRoom,
         userStore: { searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser },
@@ -89,7 +92,8 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
                       size={32} />
                   </div>
                   
-                  <span className='fcr-chatroom-mobile-inputs-chat-list-name-val'>{transI18n('chat.chat_option_all')}</span>
+                  <span className='fcr-chatroom-mobile-inputs-chat-list-name-val'>{isBreakOutRoomEnabled && isBreakOutRoomIn  ?  transI18n('chat.chat_option_my_group') :
+                          isBreakOutRoomEnabled && !isBreakOutRoomIn  ?  transI18n('chat.chat_option_main_room') : transI18n('chat.chat_option_all')}</span>
                 </div>
                 {!privateUser?.userId ? <div className='fcr-chatroom-mobile-inputs-chat-list-select'>
                   <SvgImgMobile

@@ -25,6 +25,8 @@ const enUS = {
     unmute_user_msg: 'You have been unmuted by {0} teacher',
     send_to: 'To',
     chat_option_all: 'All',
+    chat_option_main_room: 'Main Room',
+    chat_option_my_group: 'My Group',
     private: 'Private',
     send: 'Send',
     enter_contents: 'Please enter message',
