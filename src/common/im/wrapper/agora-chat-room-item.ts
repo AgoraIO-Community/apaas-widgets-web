@@ -286,19 +286,39 @@ export class FcrChatRoomItem extends AgoraIMBase {
       sessionInfo: { roomUuid },
       appId,
     } = EduClassroomConfig.shared;
-    const httpClient = axios.create({
-      headers: {
-        'Content-Type': 'application/json',
-      },
-    });
+    const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
+      }/scenario/im/apps/${appId}`;
+    
+
+
+    // const {
+    //   rteEngineConfig: { ignoreUrlRegionPrefix, region },
+    //   sessionInfo: { roomUuid },
+    //   appId,
+    // } = EduClassroomConfig.shared;
+    // const httpClient = axios.create({
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //   },
+    // });
     const allMsgList = []
     const currentUserId = this._currentUserInfo.userId;
     //当前群组消息
-    const pubMsg = await httpClient.get("https://api-solutions.bj2.agoralab.co/scenario/im/apps/" + appId + "/v1/rooms/" + roomUuid + "/history/messages?to=" + this._currentChatRoomId + "&chatType=groupchat")
+    const pubMsg = await new ApiBase().fetch({
+      path: `/v1/rooms/${roomUuid}` + "/history/messages?to=" + this._currentChatRoomId + "&chatType=groupchat",
+      method: 'GET',
+      pathPrefix,
+    });
     allMsgList.push(...pubMsg.data.data.list)
     //默认大群群组消息
     if (this._currentChatRoomId !== this._defaultChatRoomeId) {
-      const defMsg = await httpClient.get("https://api-solutions.bj2.agoralab.co/scenario/im/apps/" + appId + "/v1/rooms/" + roomUuid + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat")
+      const defMsg = await new ApiBase().fetch({
+        path: `/v1/rooms/${roomUuid}` + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat",
+        method: 'GET',
+        pathPrefix,
+      });
+
+      // httpClient.get("https://api-solutions.bj2.agoralab.co/scenario/im/apps/" + appId + "/v1/rooms/" + roomUuid + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat")
       for (const msg of defMsg.data.data.list) {
         const list = JSON.parse(msg.ext.receiverList)
         for (const data of list) {
