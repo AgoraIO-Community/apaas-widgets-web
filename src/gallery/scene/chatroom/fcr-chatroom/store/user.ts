@@ -22,12 +22,35 @@ export class UserStore {
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
     this.privateUser = user;
+    this._fcrChatRoom.setPrivateUser(user)
   }
   @observable userMap: Map<string, AgoraIMUserInfo> = new Map();
   @observable userCarouselAnimDelay = 3000;
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
 
+  /**
+   * 分组开启
+   */
+  @computed
+  get isBreakOutRoomEnabled() {
+    return this._widget.classroomStore.groupStore.state === 1;
+  }
+  /**
+   * 分组关闭
+   */
+  @computed
+  get isBreakOutRoomDisable() {
+    return this._widget.classroomStore.groupStore.state === 0;
+  }
+  /**
+   * 当前用户是否在分组房间
+   */
+  @computed
+  get isBreakOutRoomIn() {
+    return this._widget.classroomStore.groupStore.currentSubRoom !== undefined;
+  }
+  
   @computed
   get userList() {
     return iterateMap(this.userMap, {
@@ -50,12 +73,23 @@ export class UserStore {
       });
   }
   constructor(private _widget: FcrChatroomWidget, private _fcrChatRoom: AgoraIMBase) {
+    this.privateUser = this._fcrChatRoom.getPrivateUser();
     this._addEventListeners();
     this._initUserMuted();
   }
   @bound
   async updateUsers(userUuids: string[]) {
     const users = await this._fcrChatRoom.getUserInfoList(userUuids);
+    runInAction(() => {
+      users.forEach((user) => {
+        if (user.ext.role === 1 || user.ext.role === 2) {
+          this.userMap.set(user.userId, user);
+        }
+      });
+    });
+  }
+  @bound
+  async updateAllUsers(users: AgoraIMUserInfo[]) {
     runInAction(() => {
       users.forEach((user) => {
         if (user.ext.role === 1 || user.ext.role === 2) {
@@ -83,6 +117,7 @@ export class UserStore {
       UserMutedState.Muted;
   }
   private _addEventListeners() {
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
 
@@ -94,6 +129,7 @@ export class UserStore {
     });
   }
   private _removeEventListeners() {
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._onUserLeft);
 
@@ -145,6 +181,10 @@ export class UserStore {
   @bound
   private async _onUserJoined(userUuid: string) {
     this.updateUsers([userUuid]);
+  }
+  @bound
+  private async _onUserListUpdated() {
+    this.updateAllUsers(await this._fcrChatRoom.getAllUserInfoList());
   }
   @action.bound
   private async _onUserLeft(userUuid: string) {

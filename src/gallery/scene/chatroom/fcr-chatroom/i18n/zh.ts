@@ -10,6 +10,8 @@ export default {
   fcr_chat_teacher_unmute_all: '老师关闭全体禁言',
   fcr_chat_label_send_to: '发送至',
   fcr_chat_option_all: '所有人',
+  fcr_chat_option_main_room: '主房间',
+  fcr_chat_option_my_group: '当前组',
   fcr_chat_button_send_image: '发送图片',
   fcr_chat_button_announcement_send: '发送',
   fcr_chat_button_announcement_cancel: '取消',

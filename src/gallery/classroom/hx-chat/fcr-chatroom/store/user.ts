@@ -90,6 +90,7 @@ export class UserStore {
 
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.PrivateChat,
       onMessage: this._handlePrivateChat,
@@ -98,12 +99,14 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserLeft);
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
+    this._fcrChatRoom.off(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.PrivateChat,
       onMessage: this._handlePrivateChat,
@@ -118,11 +121,12 @@ export class UserStore {
   private _privateUser?: AgoraIMUserInfo;
   @computed
   get privateUser() {
-    return this._privateUser;
+    return this._privateUser ? this._privateUser : this._fcrChatRoom.getPrivateUser();
   }
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
     this._privateUser = user;
+    this._fcrChatRoom.setPrivateUser(user)
   }
 
   @action.bound
@@ -187,6 +191,20 @@ export class UserStore {
   private _onUserUnmuted() {
     this.userMuted = false;
     this._updateUserMutedState(UserMutedState.Unmuted);
+  }
+  @action.bound
+  private async _onUserListUpdated() {
+    this.updateAllUsers(await this._fcrChatRoom.getAllUserInfoList());
+  }
+  @bound
+  async updateAllUsers(users: AgoraIMUserInfo[]) {
+    runInAction(() => {
+      users.forEach((user) => {
+        if (user.ext.role === 1 || user.ext.role === 2) {
+          this.userMap.set(user.userId, user);
+        }
+      });
+    });
   }
   @bound
   private async _onUserJoined(user: string) {

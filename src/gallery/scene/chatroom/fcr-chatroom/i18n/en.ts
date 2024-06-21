@@ -10,6 +10,8 @@ export default {
   fcr_chat_teacher_unmute_all: 'The teacher unmuted all',
   fcr_chat_label_send_to: 'Send to',
   fcr_chat_option_all: 'All',
+  fcr_chat_option_main_room: 'Main Room',
+  fcr_chat_option_my_group: 'My Group',
   fcr_chat_button_send_image: 'Send Image',
   fcr_chat_button_announcement_send: 'Send',
   fcr_chat_button_announcement_cancel: 'Cancel',

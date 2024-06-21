@@ -11,6 +11,7 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract init(appKey: string): void;
   abstract join(joinOptions: { token: string }): Promise<void>;
   abstract leave(): Promise<void>;
+  abstract getRoomId():string
   abstract sendMessage(message: AgoraIMMessageBase): Promise<AgoraIMMessageBase>;
   abstract getUserList(params: { pageNum: number; pageSize: number }): Promise<AgoraIMUserInfo[]>;
   abstract getHistoryMessageList(params?: {
@@ -20,12 +21,15 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract getAnnouncement(): Promise<string>;
   abstract setAnnouncement(announcement: string): Promise<void>;
   abstract deleteAnnouncement(): Promise<void>;
+  abstract setPrivateUser(user: AgoraIMUserInfo | undefined): void;
+  abstract getPrivateUser(): AgoraIMUserInfo | undefined;
   abstract muteAllUserList(): Promise<void>;
   abstract unmuteAllUserList(): Promise<void>;
   abstract muteUserList(params: { userList: string[]; duration?: number }): Promise<void>;
   abstract unmuteUserList(params: { userList: string[] }): Promise<void>;
   abstract getMutedUserList(): Promise<string[]>;
   abstract getUserInfoList(userIdList: string[]): Promise<AgoraIMUserInfo[]>;
+  abstract getAllUserInfoList(): Promise<AgoraIMUserInfo[]>;
   abstract setSelfUserInfo(userInfo: AgoraIMUserInfo): Promise<AgoraIMUserInfo>;
   abstract createTextMessage(msg: string, receiverList?: AgoraIMUserInfo[]): AgoraIMTextMessage;
   abstract createImageMessage(

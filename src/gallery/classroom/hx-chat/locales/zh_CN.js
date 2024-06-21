@@ -28,6 +28,8 @@ const im_CN = {
     send_to: '发送至',
     private: '私聊',
     chat_option_all: '所有人',
+    chat_option_main_room: '主房间',
+    chat_option_my_group: '当前组',
     enter_contents: '请输入内容',
     enter_content_is_empty: '消息内容不能为空',
     enter_content_is_too_long: '您的消息过长，请拆分成多条消息发送',

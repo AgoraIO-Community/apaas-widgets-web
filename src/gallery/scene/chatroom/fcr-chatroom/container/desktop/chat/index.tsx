@@ -679,7 +679,7 @@ const AnnounceMent = observer(() => {
 
 const PrivateChat = observer(() => {
   const {
-    userStore: { privateUser, setSearchKey },
+    userStore: { isBreakOutRoomEnabled,isBreakOutRoomDisable,isBreakOutRoomIn,privateUser, setSearchKey },
   } = useStore();
   const transI18n = useI18n();
   const [popoverVisible, setPopoverVisible] = useState(false);
@@ -702,7 +702,7 @@ const PrivateChat = observer(() => {
           className={classnames('fcr-private-base-icon fcr-private-name', {
             'fcr-private-name-active': !!privateUser,
           })}>
-          <span>{privateUser ? privateUser.nickName : transI18n('fcr_chat_option_all')}</span>
+          <span>{privateUser ? privateUser.nickName : transI18n(isBreakOutRoomEnabled && isBreakOutRoomIn ? 'fcr_chat_option_my_group' : isBreakOutRoomEnabled && !isBreakOutRoomIn ? 'fcr_chat_option_main_room' : 'fcr_chat_option_all')}</span>
 
           <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
         </span>
@@ -761,7 +761,7 @@ const SearchInput = observer(() => {
 
 const AllUserItem = observer(() => {
   const {
-    userStore: { setPrivateUser },
+    userStore: { isBreakOutRoomEnabled,isBreakOutRoomDisable,isBreakOutRoomIn,setPrivateUser },
   } = useStore();
   const transI18n = useI18n();
   return (
@@ -775,7 +775,7 @@ const AllUserItem = observer(() => {
             <SvgImg type={SvgIconEnum.FCR_PEOPLE} size={24} />
           </span>
         </div>
-        <div className="fcr-chatroom-member-list-item-name">{transI18n('fcr_chat_option_all')}</div>
+        <div className="fcr-chatroom-member-list-item-name">{transI18n(isBreakOutRoomEnabled && isBreakOutRoomIn ? 'fcr_chat_option_my_group' : isBreakOutRoomEnabled && !isBreakOutRoomIn ? 'fcr_chat_option_main_room' : 'fcr_chat_option_all')}</div>
       </div>
     </div>
   );

@@ -50,6 +50,9 @@ export const FcrChatRoomH5Inputs = observer(
         z0Widgets,
         addToast,
         currentWidget, // 当前正在使用的widget-不能删
+        isBreakOutRoomEnabled,
+        isBreakOutRoomDisable,
+        isBreakOutRoomIn,
       },
       userStore: {
         userList,
@@ -217,7 +220,9 @@ export const FcrChatRoomH5Inputs = observer(
                   className="fcr-chatroom-mobile-inputs-private-select"
                   onClick={handleShowDialog}>
                   <span className="fcr-chatroom-mobile-inputs-private-select-val">
-                    {privateUser?.userId ? privateUser.nickName : transI18n('chat.chat_option_all')}
+                    {privateUser?.userId ? privateUser.nickName : 
+                    isBreakOutRoomEnabled && isBreakOutRoomIn  ?  transI18n('chat.chat_option_my_group') :
+                    isBreakOutRoomEnabled && !isBreakOutRoomIn  ?  transI18n('chat.chat_option_main_room') : transI18n('chat.chat_option_all')}
                   </span>
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
@@ -471,7 +476,8 @@ export const FcrChatRoomH5Inputs = observer(
                       <span className="fcr-chatroom-mobile-inputs-private-select-val">
                         {privateUser?.userId
                           ? privateUser.nickName
-                          : transI18n('chat.chat_option_all')}
+                          : isBreakOutRoomEnabled && isBreakOutRoomIn  ?  transI18n('chat.chat_option_my_group') :
+                          isBreakOutRoomEnabled && !isBreakOutRoomIn  ?  transI18n('chat.chat_option_main_room') :  transI18n('chat.chat_option_all')}
                       </span>
                       <SvgImgMobile
                         forceLandscape={forceLandscape}
@@ -634,32 +640,32 @@ export const FcrChatRoomH5Inputs = observer(
                           forceLandscape={forceLandscape}></SvgImgMobile>
                       </div>
                     </ToolTip>
-                    
+
                   </>
                 )}
               </div>
               <div className="fcr-chatroom-mobile-inputs-mobile-right">
                 <ToolTip
-                      placement="topLeft"
-                      content={transI18n('fcr_teacher_use_collected_tip')}
-                      visible={collectVisible}>
-                      <div
-                        className={classNames(
-                          'fcr-chatroom-mobile-inputs-application landscape',
-                          widgets.length === 0 && 'zero',
-                          isShowApplication && 'active',
-                        )}
-                        onClick={handleShowApplicatioon}>
-                        <SvgImgMobile
-                          forceLandscape={forceLandscape}
-                          landscape={isLandscape}
-                          type={SvgIconEnum.APPLICATION}
-                          size={30}></SvgImgMobile>
-                        <span className="fcr-chatroom-mobile-inputs-application-count">
-                          {widgets.length > 99 ? '...' : widgets.length}
-                        </span>
-                      </div>
-                    </ToolTip>
+                  placement="topLeft"
+                  content={transI18n('fcr_teacher_use_collected_tip')}
+                  visible={collectVisible}>
+                  <div
+                    className={classNames(
+                      'fcr-chatroom-mobile-inputs-application landscape',
+                      widgets.length === 0 && 'zero',
+                      isShowApplication && 'active',
+                    )}
+                    onClick={handleShowApplicatioon}>
+                    <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.APPLICATION}
+                      size={30}></SvgImgMobile>
+                    <span className="fcr-chatroom-mobile-inputs-application-count">
+                      {widgets.length > 99 ? '...' : widgets.length}
+                    </span>
+                  </div>
+                </ToolTip>
               </div>
             </div>
           )}
