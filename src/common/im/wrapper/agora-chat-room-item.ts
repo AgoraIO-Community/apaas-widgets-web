@@ -3,9 +3,7 @@ import {
   AgoraIMBase,
   AgoraIMChatRoomDetails,
   AgoraIMCmdActionEnum,
-  AgoraIMConnectionState,
   AgoraIMCustomMessage,
-  AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
   AgoraIMMessageExt,
@@ -15,16 +13,11 @@ import {
   AgoraIMUserInfoExt,
 } from './typs';
 import websdk, { AgoraChat } from 'agora-chat';
-import { agoraChatConfig } from './WebIMConfig';
-import { convertHXMessage, convertHXHistoryMessage } from './utils';
+import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { AgoraIM } from '.';
-import { reject } from 'lodash';
 import { ApiBase } from 'agora-rte-sdk';
 import { EduClassroomConfig } from 'agora-edu-core';
-import { to } from 'react-spring';
-import axios from 'axios';
-import { message } from 'antd';
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;
   logs: [string, unknown];
@@ -33,9 +26,11 @@ type AgoraChatLog = {
 
 @Log.attach({ proxyMethods: true })
 export class FcrChatRoomItem extends AgoraIMBase {
+  // eslint-disable-next-line no-unused-vars
   getUserList(params: { pageNum: number; pageSize: number; }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
     throw new Error('Method not implemented.');
   }
+  // eslint-disable-next-line no-unused-vars
   setSelfUserInfo(userInfo: AgoraIMUserInfo<AgoraIMUserInfoExt>): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>> {
     throw new Error('Method not implemented.');
   }
@@ -67,7 +62,8 @@ export class FcrChatRoomItem extends AgoraIMBase {
     this._defaultChatRoomeId = defaultChatRoomeId
     this._enableLog()
   }
-  init(appKey: string): void {
+  // eslint-disable-next-line no-unused-vars
+  init(_appKey: string): void {
     // throw new Error('Method not implemented.');
   }
   /**
@@ -272,7 +268,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     return this.getUserInfoList(affiliations
       .filter((item) => !!item.member)
       .map((item) => {
-        return item.member!;
+        return item.member ? item.member : "";
       }));
   }
 
@@ -288,7 +284,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     } = EduClassroomConfig.shared;
     const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
       }/scenario/im/apps/${appId}`;
-    
+
 
 
     // const {
@@ -301,7 +297,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     //     'Content-Type': 'application/json',
     //   },
     // });
-    const allMsgList = []
+    const allMsg = new Map<string, any>()
     const currentUserId = this._currentUserInfo.userId;
     //当前群组消息
     const pubMsg = await new ApiBase().fetch({
@@ -309,7 +305,9 @@ export class FcrChatRoomItem extends AgoraIMBase {
       method: 'GET',
       pathPrefix,
     });
-    allMsgList.push(...pubMsg.data.data.list)
+    for (const element of pubMsg.data.list) {
+      allMsg.set(element.msgId, element)
+    }
     //默认大群群组消息
     if (this._currentChatRoomId !== this._defaultChatRoomeId) {
       const defMsg = await new ApiBase().fetch({
@@ -319,17 +317,18 @@ export class FcrChatRoomItem extends AgoraIMBase {
       });
 
       // httpClient.get("https://api-solutions.bj2.agoralab.co/scenario/im/apps/" + appId + "/v1/rooms/" + roomUuid + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat")
-      for (const msg of defMsg.data.data.list) {
+      for (const msg of defMsg.data.list) {
         const list = JSON.parse(msg.ext.receiverList)
         for (const data of list) {
           if (data.userId === currentUserId || data.ext.userUuid === currentUserId || currentUserId == msg.from) {
-            allMsgList.push(msg)
+            allMsg.set(msg.msgId, msg)
             break
           }
         }
       }
     }
     //按照时间升序排序
+    const allMsgList = [...allMsg.values()]
     allMsgList.sort((a, b) => b.timestamp - a.timestamp);
     const msgList: AgoraIMMessageBase[] = [];
     allMsgList.forEach(msg => {
@@ -383,8 +382,13 @@ export class FcrChatRoomItem extends AgoraIMBase {
           msg: textMsg,
           type: 'txt',
           chatType: 'chatRoom',
-          ext: { ...textExt } as AgoraIMMessageExt,
+          ext: {
+            ...textExt,
+            receiver: textReceiverList?.[0]?.userId || '',
+            isPrivate: !!textReceiverList && textReceiverList.length > 0
+          } as AgoraIMMessageExt,
           receiverList: textReceiverList?.map((user) => user.userId),
+
         });
         break;
       case AgoraIMMessageType.Image:
@@ -402,8 +406,13 @@ export class FcrChatRoomItem extends AgoraIMBase {
           to: receiverList != null && receiverList.length > 0 ? this._defaultChatRoomeId : this._currentChatRoomId,
           type: 'img',
           chatType: 'chatRoom',
-          ext: { ...imageExt } as AgoraIMMessageExt,
+          ext: {
+            ...imageExt,
+            receiver: imageReceiverList?.[0]?.userId || '',
+            isPrivate: !!imageReceiverList && imageReceiverList.length > 0,
+          } as AgoraIMMessageExt,
           receiverList: imageReceiverList?.map((user) => user.userId),
+
           width,
           height,
           file: file
@@ -432,7 +441,11 @@ export class FcrChatRoomItem extends AgoraIMBase {
           action: customAction,
           type: 'cmd',
           chatType: 'chatRoom',
-          ext: { ...customExt } as AgoraIMMessageExt,
+          ext: {
+            ...customExt,
+            receiver: customReceiverList?.[0]?.userId || '',
+            isPrivate: !!customReceiverList && customReceiverList.length > 0,
+          } as AgoraIMMessageExt,
           receiverList: receiverList,
         });
         break;
@@ -441,7 +454,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     }
     if (!newMsg) return Promise.reject();
 
-    const res = await this._classRoomConnection.send(newMsg);
+    const res = await this._classRoomConnection.send(newMsg)
     message.id = res.serverMsgId;
     return message;
   }
