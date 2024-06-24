@@ -561,7 +561,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           )}
           {!isSelfMessage && checkIsPrivateMessage(lastMessage) && (
             <div className="fcr-chat-private-tag">
-              {transI18n('fcr_chat_label_said_to_me')}
+              &nbsp;{transI18n('fcr_chat_label_said_to_me')}
               <span className="fcr-text-yellow">&nbsp;({transI18n('fcr_chat_label_private')})</span>
             </div>
           )}

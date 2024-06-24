@@ -468,7 +468,7 @@ export const FcrChatRoomH5Inputs = observer(
                       transition: 'opacity .2s',
                     }}>
                     <span style={{ whiteSpace: 'nowrap' }}>
-                      {transI18n('fcr_chat_label_i_said_to')}:
+                      {transI18n('fcr_chat_label_i_said_to')}&nbsp;:
                     </span>
                     <div
                       className="fcr-chatroom-mobile-inputs-private-select"
