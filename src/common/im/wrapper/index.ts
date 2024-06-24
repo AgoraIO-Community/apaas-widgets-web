@@ -19,12 +19,14 @@ export class AgoraIM {
   ): AgoraIMBase {
     switch (type) {
       case 'easemob':
+        // eslint-disable-next-line no-case-declarations
         const classRoomId = opt.ext.roomUuid
+        // eslint-disable-next-line no-case-declarations
         const optionsChatRoomId = opt.roomId
         if (AgoraIM._roomImManager.has(classRoomId)) {
           return AgoraIM._roomImManager.get(classRoomId)!!.createChat(optionsChatRoomId)
         } else {
-          let manager = new FcrChatRoomManager(opt.appKey, opt.userInfo, classRoomId, optionsChatRoomId)
+          const manager = new FcrChatRoomManager(opt.appKey, opt.userInfo, classRoomId, optionsChatRoomId)
           window.imManager = manager
           AgoraIM._roomImManager.set(classRoomId, manager)
           return manager.createChat(optionsChatRoomId)
@@ -38,8 +40,8 @@ export class AgoraIM {
    */
   static async joinChatRoom(roomId: string, chatRoomId: string, token: string) {
     if (AgoraIM._roomImManager.has(roomId)) {
-      let manager = AgoraIM._roomImManager.get(roomId)!!
-      await manager.joinChatRoom(chatRoomId, token)
+      const manager = AgoraIM._roomImManager.get(roomId)
+      await manager?.joinChatRoom(chatRoomId, token)
     }
   }
   /**
@@ -49,9 +51,9 @@ export class AgoraIM {
    */
   static async leaveChatRoom(roomId: string, chatRoomId: string) {
     if (AgoraIM._roomImManager.has(roomId)) {
-      let manager = AgoraIM._roomImManager.get(roomId)!!
-      await manager.leaveChatRoom(chatRoomId)
-      if (!manager.haveChatRoom()) {
+      const manager = AgoraIM._roomImManager.get(roomId)
+      await manager?.leaveChatRoom(chatRoomId)
+      if (!manager?.haveChatRoom()) {
         AgoraIM._roomImManager.delete(roomId)
       }
     }
