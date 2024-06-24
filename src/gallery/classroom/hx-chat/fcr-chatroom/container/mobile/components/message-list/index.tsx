@@ -251,7 +251,7 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
       {isSelfMessage && checkIsPrivateMessage(message) && (
         <span className="fcr-chat-private-tag">
           <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
-          {transI18n('fcr_chat_label_i_said_to')}
+          {transI18n('fcr_chat_label_i_said_to')}&nbsp;
           <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
           <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
           <span className='fcr-text-split'>:</span>
@@ -260,7 +260,7 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
       {!isSelfMessage && checkIsPrivateMessage(message) && (
         <span className="fcr-chat-private-tag">
           <span className="fcr-text-blue">{message.ext?.nickName}</span>
-          {transI18n('fcr_chat_label_said_to_me')}
+          &nbsp;{transI18n('fcr_chat_label_said_to_me')}
           <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
           <span className='fcr-text-split'>:</span>
         </span>
@@ -336,7 +336,7 @@ const ImageMessage = observer(
           {isSelfMessage && checkIsPrivateMessage(message) && (
             <span className="fcr-chat-private-tag">
               <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
-              {transI18n('fcr_chat_label_i_said_to')}
+              {transI18n('fcr_chat_label_i_said_to')}&nbsp;
               <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
               <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
               <span className='fcr-text-split'>:</span>
@@ -345,7 +345,7 @@ const ImageMessage = observer(
           {!isSelfMessage && checkIsPrivateMessage(message) && (
             <span className="fcr-chat-private-tag">
               <span className="fcr-text-blue">{message.ext?.nickName}</span>
-              {transI18n('fcr_chat_label_said_to_me')}
+              &nbsp;{transI18n('fcr_chat_label_said_to_me')}
               <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
               <span className='fcr-text-split'>:</span>
             </span>
@@ -376,7 +376,7 @@ const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) =>
         {isSelfMessage && checkIsPrivateMessage(message) && (
           <span className="fcr-chat-private-tag">
             <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
-            {transI18n('fcr_chat_label_i_said_to')}
+            {transI18n('fcr_chat_label_i_said_to')}&nbsp;
             <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
             <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
             <span className='fcr-text-split'>:</span>
@@ -385,7 +385,7 @@ const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) =>
         {!isSelfMessage && checkIsPrivateMessage(message) && (
           <span className="fcr-chat-private-tag">
             <span className="fcr-text-blue">{message.ext?.nickName}</span>
-            {transI18n('fcr_chat_label_said_to_me')}
+            &nbsp;{transI18n('fcr_chat_label_said_to_me')}
             <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
             <span className='fcr-text-split'>:</span>
           </span>
