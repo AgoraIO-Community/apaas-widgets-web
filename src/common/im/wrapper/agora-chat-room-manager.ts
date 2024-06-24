@@ -1,25 +1,14 @@
 import { Logger, Log } from 'agora-common-libs';
 import {
-    AgoraIMBase,
-    AgoraIMChatRoomDetails,
-    AgoraIMCmdActionEnum,
     AgoraIMConnectionState,
-    AgoraIMCustomMessage,
     AgoraIMEvents,
-    AgoraIMImageMessage,
-    AgoraIMMessageBase,
-    AgoraIMMessageExt,
-    AgoraIMMessageType,
-    AgoraIMTextMessage,
     AgoraIMUserInfo,
-    AgoraIMUserInfoExt,
 } from './typs';
 import websdk, { AgoraChat } from 'agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
 import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { FcrChatRoomItem } from './agora-chat-room-item';
-import { join } from 'lodash';
 import { AgoraIM } from '.';
 type AgoraChatLog = {
     level: Lowercase<AgoraChat.DefaultLevel>;
@@ -34,7 +23,7 @@ export class FcrChatRoomManager {
     //当前连接状态
     private _connectionState: AgoraIMConnectionState = AgoraIMConnectionState.DisConnected;
     //教室总的连接实例
-    private _classRoomConnection?: AgoraChat.Connection;
+    private _classRoomConnection: AgoraChat.Connection;
     //当前教室id
     private _currentClassRoomId: string
     //当前登录的用户信息
@@ -43,7 +32,9 @@ export class FcrChatRoomManager {
     private _defaultChatRoomeId: string
 
     constructor(appKey: string, userInfo: AgoraIMUserInfo, classRoomId: string, defaultChatRoomeId: string) {
-        this.init(appKey);
+        const config = Object.assign(agoraChatConfig, { appKey });
+        this._classRoomConnection = new websdk.connection(config);
+        this._addEventListener();
         this._currentClassRoomId = classRoomId;
         this._currentUserInfo = userInfo;
         this._defaultChatRoomeId = defaultChatRoomeId;
@@ -54,8 +45,8 @@ export class FcrChatRoomManager {
      * @param chatRoomId 聊天室id
      */
     createChat(chatRoomId: string): FcrChatRoomItem {
-        if (this._chatRoomItemMap.has(chatRoomId)) {
-            return this._chatRoomItemMap.get(chatRoomId)!!
+        if (this._chatRoomItemMap.has(chatRoomId) && this._chatRoomItemMap.get(chatRoomId) !== undefined) {
+            return this._chatRoomItemMap.get(chatRoomId) as FcrChatRoomItem
         } else {
             return this.createChatRoomItem(chatRoomId)
         }
@@ -68,11 +59,11 @@ export class FcrChatRoomManager {
     async joinChatRoom(chatRoomId: string, token: string) {
         try {
             if (this._connectionState === AgoraIMConnectionState.Connected) {
-                let manager = this._chatRoomItemMap.get(chatRoomId)!!
+                let manager = this.createChat(chatRoomId)
                 await manager.managerOptionsJoin()
                 //判断默认的是否加入了，没有的话从新加入下
                 if (this._defaultChatRoomeId != chatRoomId) {
-                    manager = this._chatRoomItemMap.get(this._defaultChatRoomeId)!!
+                    manager = this.createChat(this._defaultChatRoomeId)
                     await manager.managerOptionsJoin()
                 }
                 if (manager.isJoin) {
@@ -94,7 +85,7 @@ export class FcrChatRoomManager {
      */
     async leaveChatRoom(chatRoomId: string) {
         if (this._chatRoomItemMap.has(chatRoomId)) {
-            await this._chatRoomItemMap.get(chatRoomId)!!.managerOptionsLeave(false)
+            await this.createChat(chatRoomId).managerOptionsLeave(false)
         }
     }
     /**
@@ -105,17 +96,11 @@ export class FcrChatRoomManager {
         return this._chatRoomItemMap.size > 0
     }
 
-    private init(appKey: string): void {
-        const config = Object.assign(agoraChatConfig, { appKey });
-        this._classRoomConnection = new websdk.connection(config);
-        this._addEventListener();
-    }
-
     private async login(joinOptions: { token: string }): Promise<void> {
         const { token } = joinOptions;
         this.setConnectionState(AgoraIMConnectionState.Connecting);
         try {
-            await this._classRoomConnection!!.open({
+            await this._classRoomConnection.open({
                 accessToken: token,
                 user: this._currentUserInfo.userId,
             });
@@ -134,12 +119,12 @@ export class FcrChatRoomManager {
         try {
             //如果聊天室mao中没有的话则加人
             if (!this._chatRoomItemMap.has(toItemRoomId)) {
-                let item = new FcrChatRoomItem(this._classRoomConnection!!, this._currentUserInfo, this._currentClassRoomId, this._defaultChatRoomeId, toItemRoomId)
+                const item = new FcrChatRoomItem(this._classRoomConnection, this._currentUserInfo, this._currentClassRoomId, this._defaultChatRoomeId, toItemRoomId)
                 // item.join({ token: '' })
                 this._chatRoomItemMap.set(toItemRoomId, item)
                 return item
             } else {
-                return this._chatRoomItemMap.get(toItemRoomId)!!
+                return this.createChat(toItemRoomId)
             }
         } catch (e) {
             this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
@@ -190,7 +175,7 @@ export class FcrChatRoomManager {
    */
     private async setSelfUserInfo(userInfo: Partial<Exclude<AgoraIMUserInfo, 'userId'>>): Promise<AgoraIMUserInfo> {
         this._currentUserInfo = Object.assign(this._currentUserInfo, userInfo);
-        await this._classRoomConnection!!.updateUserInfo({
+        await this._classRoomConnection.updateUserInfo({
             nickname: this._currentUserInfo.nickName,
             avatarurl: this._currentUserInfo.avatarUrl,
             //兼容老版本
@@ -202,19 +187,19 @@ export class FcrChatRoomManager {
 
     @Log.silence
     private _addEventListener() {
-        this._classRoomConnection!!.onTextMessage = (msg) => {
+        this._classRoomConnection.onTextMessage = (msg) => {
             const textMessage = convertHXMessage(msg);
-            this.emitEventsInfo(AgoraIMEvents.TextMessageReceived, textMessage, textMessage != null && textMessage.ext != null && textMessage.ext.receiverList != null && textMessage.ext.receiverList!!.length > 0 ? null : msg.to)
+            this.emitEventsInfo(AgoraIMEvents.TextMessageReceived, textMessage, textMessage?.ext?.receiverList != null && textMessage.ext.receiverList.length > 0 ? null : msg.to)
         };
-        this._classRoomConnection!!.onPictureMessage = (msg) => {
+        this._classRoomConnection.onPictureMessage = (msg) => {
             const imageMessage = convertHXMessage(msg);
-            this.emitEventsInfo(AgoraIMEvents.ImageMessageReceived, imageMessage, imageMessage != null && imageMessage.ext != null && imageMessage.ext.receiverList != null && imageMessage.ext.receiverList.length > 0 ? null : msg.to)
+            this.emitEventsInfo(AgoraIMEvents.ImageMessageReceived, imageMessage, imageMessage?.ext?.receiverList != null && imageMessage.ext.receiverList.length > 0 ? null : msg.to)
         };
-        this._classRoomConnection!!.onCmdMessage = (msg) => {
+        this._classRoomConnection.onCmdMessage = (msg) => {
             const cmdMessage = convertHXMessage(msg);
-            this.emitEventsInfo(AgoraIMEvents.CustomMessageReceived, cmdMessage, cmdMessage != null && cmdMessage.ext != null && cmdMessage.ext.receiverList != null && cmdMessage.ext.receiverList.length > 0 ? null : msg.to)
+            this.emitEventsInfo(AgoraIMEvents.CustomMessageReceived, cmdMessage, cmdMessage?.ext?.receiverList != null && cmdMessage.ext.receiverList.length > 0 ? null : msg.to)
         };
-        this._classRoomConnection!!.addEventHandler('chatroom', {
+        this._classRoomConnection.addEventHandler('chatroom', {
             onChatroomEvent: async (msg) => {
                 switch (msg.operation) {
                     case 'memberPresence':
@@ -246,7 +231,7 @@ export class FcrChatRoomManager {
                 }
             },
         });
-        this._classRoomConnection!!.addEventHandler('connection', {
+        this._classRoomConnection.addEventHandler('connection', {
             onError: (e) => {
                 this._logger.error(this._formateLogs({ level: 'error', logs: ['connection error', e] }));
                 this.emitEventsInfo(AgoraIMEvents.ErrorOccurred)
@@ -267,7 +252,7 @@ export class FcrChatRoomManager {
                     throw e;
                 }
                 try {
-                    const chatRoom = this.createChatRoomItem(this._defaultChatRoomeId)!!
+                    const chatRoom = this.createChatRoomItem(this._defaultChatRoomeId)
                     await chatRoom.managerOptionsJoin()
                     if (chatRoom.isJoin) {
                         this.emitEventsInfo(AgoraIMEvents.UserListUpdated, null)
@@ -302,7 +287,7 @@ export class FcrChatRoomManager {
                 }
             });
         } else {
-            this._chatRoomItemMap.forEach((value, key) => {
+            this._chatRoomItemMap.forEach((value) => {
                 if (data != null) {
                     value.emit(events, data)
                 } else {
@@ -312,7 +297,7 @@ export class FcrChatRoomManager {
         }
     }
     destory() {
-        this._chatRoomItemMap.forEach((value, key) => {
+        this._chatRoomItemMap.forEach((value) => {
             value.managerOptionsLeave(true)
         });
         AgoraIM.leaveChatRoom(this._currentClassRoomId, this._defaultChatRoomeId)

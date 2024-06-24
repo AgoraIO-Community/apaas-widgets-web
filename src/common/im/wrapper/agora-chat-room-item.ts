@@ -3,9 +3,7 @@ import {
   AgoraIMBase,
   AgoraIMChatRoomDetails,
   AgoraIMCmdActionEnum,
-  AgoraIMConnectionState,
   AgoraIMCustomMessage,
-  AgoraIMEvents,
   AgoraIMImageMessage,
   AgoraIMMessageBase,
   AgoraIMMessageExt,
@@ -15,16 +13,11 @@ import {
   AgoraIMUserInfoExt,
 } from './typs';
 import websdk, { AgoraChat } from 'agora-chat';
-import { agoraChatConfig } from './WebIMConfig';
-import { convertHXMessage, convertHXHistoryMessage } from './utils';
+import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { AgoraIM } from '.';
-import { reject } from 'lodash';
 import { ApiBase } from 'agora-rte-sdk';
 import { EduClassroomConfig } from 'agora-edu-core';
-import { to } from 'react-spring';
-import axios from 'axios';
-import { message } from 'antd';
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;
   logs: [string, unknown];
@@ -33,9 +26,11 @@ type AgoraChatLog = {
 
 @Log.attach({ proxyMethods: true })
 export class FcrChatRoomItem extends AgoraIMBase {
+  // eslint-disable-next-line no-unused-vars
   getUserList(params: { pageNum: number; pageSize: number; }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
     throw new Error('Method not implemented.');
   }
+  // eslint-disable-next-line no-unused-vars
   setSelfUserInfo(userInfo: AgoraIMUserInfo<AgoraIMUserInfoExt>): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>> {
     throw new Error('Method not implemented.');
   }
@@ -67,7 +62,8 @@ export class FcrChatRoomItem extends AgoraIMBase {
     this._defaultChatRoomeId = defaultChatRoomeId
     this._enableLog()
   }
-  init(appKey: string): void {
+  // eslint-disable-next-line no-unused-vars
+  init(_appKey: string): void {
     // throw new Error('Method not implemented.');
   }
   /**
@@ -272,7 +268,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     return this.getUserInfoList(affiliations
       .filter((item) => !!item.member)
       .map((item) => {
-        return item.member!;
+        return item.member ? item.member : "";
       }));
   }
 
@@ -332,7 +328,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
       }
     }
     //按照时间升序排序
-    let allMsgList = [...allMsg.values()]
+    const allMsgList = [...allMsg.values()]
     allMsgList.sort((a, b) => b.timestamp - a.timestamp);
     const msgList: AgoraIMMessageBase[] = [];
     allMsgList.forEach(msg => {
