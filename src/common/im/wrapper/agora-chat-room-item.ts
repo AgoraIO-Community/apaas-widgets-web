@@ -384,7 +384,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
           chatType: 'chatRoom',
           ext: {
             ...textExt,
-            receiver: textReceiverList?.[0]?.userId,
+            receiver: textReceiverList?.[0]?.userId || '',
             isPrivate: !!textReceiverList && textReceiverList.length > 0
           } as AgoraIMMessageExt,
           receiverList: textReceiverList?.map((user) => user.userId),
@@ -408,7 +408,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
           chatType: 'chatRoom',
           ext: {
             ...imageExt,
-            receiver: imageReceiverList?.[0]?.userId,
+            receiver: imageReceiverList?.[0]?.userId || '',
             isPrivate: !!imageReceiverList && imageReceiverList.length > 0,
           } as AgoraIMMessageExt,
           receiverList: imageReceiverList?.map((user) => user.userId),
@@ -443,7 +443,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
           chatType: 'chatRoom',
           ext: {
             ...customExt,
-            receiver: customReceiverList?.[0]?.userId,
+            receiver: customReceiverList?.[0]?.userId || '',
             isPrivate: !!customReceiverList && customReceiverList.length > 0,
           } as AgoraIMMessageExt,
           receiverList: receiverList,
@@ -454,7 +454,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     }
     if (!newMsg) return Promise.reject();
 
-    const res = await this._classRoomConnection.send(newMsg);
+    const res = await this._classRoomConnection.send(newMsg)
     message.id = res.serverMsgId;
     return message;
   }
