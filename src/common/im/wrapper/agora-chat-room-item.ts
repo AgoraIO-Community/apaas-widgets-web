@@ -185,12 +185,21 @@ export class FcrChatRoomItem extends AgoraIMBase {
    */
   setPrivateUser(user: AgoraIMUserInfo | undefined): void {
     AgoraIM.setPrivateUser(this._currentClassRoomUuid, user)
+    // if(user !== undefined){
+    //   localStorage.setItem(`${this._currentClassRoomUuid}_${this._currentChatRoomId}_${this._currentUserInfo.userId}`,JSON.stringify(user))
+    // }else{
+    //   localStorage.removeItem(`${this._currentClassRoomUuid}_${this._currentChatRoomId}_${this._currentUserInfo.userId}`)
+    // }
   }
   /**
    * 获取私聊对象
    */
   getPrivateUser(): AgoraIMUserInfo | undefined {
-    return AgoraIM.getRoomPrivateUser(this._currentClassRoomUuid)
+    let user =  AgoraIM.getRoomPrivateUser(this._currentClassRoomUuid)
+    // if(user === undefined && localStorage.getItem(`${this._currentClassRoomUuid}_${this._currentChatRoomId}_${this._currentUserInfo.userId}`) != null){
+    //   user = JSON.parse(localStorage.getItem(`${this._currentClassRoomUuid}_${this._currentChatRoomId}_${this._currentUserInfo.userId}`)!!)
+    // }
+    return user
   }
   /**
    * 对指定的人禁言
