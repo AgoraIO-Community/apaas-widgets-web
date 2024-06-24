@@ -209,7 +209,7 @@ export class MessageStore {
   async getHistoryMessageList() {
     const messages = await this._fcrChatRoom.getHistoryMessageList({ msgId: -1 });
     runInAction(() => {
-      this._messageQueue = this._messageQueue.concat(messages);
+      this._messageQueue = [...messages];
       this.historyMessageLoaded = true;
     });
     this._startPollingMessageTask();
