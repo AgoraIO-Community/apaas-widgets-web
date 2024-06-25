@@ -16,8 +16,6 @@ import websdk, { AgoraChat } from 'agora-chat';
 import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { AgoraIM } from '.';
-import { ApiBase } from 'agora-rte-sdk';
-import { EduClassroomConfig } from 'agora-edu-core';
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;
   logs: [string, unknown];
@@ -27,40 +25,51 @@ type AgoraChatLog = {
 @Log.attach({ proxyMethods: true })
 export class FcrChatRoomItem extends AgoraIMBase {
   // eslint-disable-next-line no-unused-vars
-  getUserList(params: { pageNum: number; pageSize: number; }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
+  getUserList(params: {
+    pageNum: number;
+    pageSize: number;
+  }): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>[]> {
     throw new Error('Method not implemented.');
   }
   // eslint-disable-next-line no-unused-vars
-  setSelfUserInfo(userInfo: AgoraIMUserInfo<AgoraIMUserInfoExt>): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>> {
+  setSelfUserInfo(
+    userInfo: AgoraIMUserInfo<AgoraIMUserInfoExt>,
+  ): Promise<AgoraIMUserInfo<AgoraIMUserInfoExt>> {
     throw new Error('Method not implemented.');
   }
   userInfo?: AgoraIMUserInfo<AgoraIMUserInfoExt> | undefined;
-
+  // @ts-ignore
   private _logger = new Logger('agora-chat-room-item', { console: true, database: true });
   //教室总的链接实例
   private _classRoomConnection: AgoraChat.Connection;
   //当前登录的用户信息
   private _currentUserInfo: AgoraIMUserInfo;
   //当前教室Id
-  private _currentClassRoomUuid: string
+  private _currentClassRoomUuid: string;
   //默认聊天室Id
-  private _defaultChatRoomeId: string
+  private _defaultChatRoomeId: string;
   //当前聊天室的Id
-  private _currentChatRoomId: string
+  private _currentChatRoomId: string;
   //是否加入了
-  isJoin = false
+  isJoin = false;
   //是否退出了
-  private _isLeave = true
+  private _isLeave = true;
 
-  constructor(connection: AgoraChat.Connection, userInfo: AgoraIMUserInfo, classRoomUuid: string, defaultChatRoomeId: string, chatRoomId: string) {
+  constructor(
+    connection: AgoraChat.Connection,
+    userInfo: AgoraIMUserInfo,
+    classRoomUuid: string,
+    defaultChatRoomeId: string,
+    chatRoomId: string,
+  ) {
     super();
     this._classRoomConnection = connection;
-    this._currentUserInfo = userInfo
-    this.userInfo = userInfo
-    this._currentClassRoomUuid = classRoomUuid
-    this._currentChatRoomId = chatRoomId
-    this._defaultChatRoomeId = defaultChatRoomeId
-    this._enableLog()
+    this._currentUserInfo = userInfo;
+    this.userInfo = userInfo;
+    this._currentClassRoomUuid = classRoomUuid;
+    this._currentChatRoomId = chatRoomId;
+    this._defaultChatRoomeId = defaultChatRoomeId;
+    this._enableLog();
   }
   // eslint-disable-next-line no-unused-vars
   init(_appKey: string): void {
@@ -69,20 +78,20 @@ export class FcrChatRoomItem extends AgoraIMBase {
   /**
    * 加人(主/子)聊天室
    */
-  async join(joinOptions: { token: string; }): Promise<void> {
-    AgoraIM.joinChatRoom(this._currentClassRoomUuid, this._currentChatRoomId, joinOptions.token)
+  async join(joinOptions: { token: string }): Promise<void> {
+    AgoraIM.joinChatRoom(this._currentClassRoomUuid, this._currentChatRoomId, joinOptions.token);
   }
   /**
    * 退出(主/子)聊天室
    */
   async leave(): Promise<void> {
-    AgoraIM.leaveChatRoom(this._currentClassRoomUuid, this._currentChatRoomId)
+    AgoraIM.leaveChatRoom(this._currentClassRoomUuid, this._currentChatRoomId);
   }
   /**
    * 当前教室id
    */
   getRoomId(): string {
-    return this._currentClassRoomUuid
+    return this._currentClassRoomUuid;
   }
   /**
    * 管理实例操作的加入房间逻辑
@@ -90,12 +99,12 @@ export class FcrChatRoomItem extends AgoraIMBase {
   async managerOptionsJoin() {
     try {
       if (this._isLeave) {
-        this._isLeave = false
+        this._isLeave = false;
         await this._classRoomConnection.joinChatRoom({ roomId: this._currentChatRoomId });
-        this.isJoin = true
+        this.isJoin = true;
       }
     } catch (e) {
-      console.log(e)
+      console.log(e);
       this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
       throw e;
     }
@@ -106,11 +115,11 @@ export class FcrChatRoomItem extends AgoraIMBase {
    */
   async managerOptionsLeave(focus: boolean) {
     if (this.isJoin && (this._defaultChatRoomeId !== this._currentChatRoomId || focus)) {
-      this.isJoin = false
+      this.isJoin = false;
       await this._classRoomConnection.leaveChatRoom({
-        roomId: this._currentChatRoomId
+        roomId: this._currentChatRoomId,
       });
-      this._isLeave = true
+      this._isLeave = true;
     }
   }
   /**
@@ -118,7 +127,9 @@ export class FcrChatRoomItem extends AgoraIMBase {
    * @returns 目标聊天室详细信息
    */
   async getChatRoomDetails() {
-    const { data } = await this._classRoomConnection.getChatRoomDetails({ chatRoomId: this._currentChatRoomId, });
+    const { data } = await this._classRoomConnection.getChatRoomDetails({
+      chatRoomId: this._currentChatRoomId,
+    });
     const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
     return {
       mute: !!res?.mute,
@@ -139,7 +150,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
   }
   /**
    * 获取聊天室的公告
-   * @returns 
+   * @returns
    */
   @Log.silence
   async getAnnouncement(): Promise<string> {
@@ -160,8 +171,8 @@ export class FcrChatRoomItem extends AgoraIMBase {
     await this._classRoomConnection.updateChatRoomAnnouncement({
       roomId: this._currentChatRoomId,
       announcement,
-      success: () => { },
-      error: () => { },
+      success: () => {},
+      error: () => {},
     });
   }
   /**
@@ -172,21 +183,21 @@ export class FcrChatRoomItem extends AgoraIMBase {
     await this._classRoomConnection.updateChatRoomAnnouncement({
       roomId: this._currentChatRoomId,
       announcement: '',
-      success: () => { },
-      error: () => { },
+      success: () => {},
+      error: () => {},
     });
   }
   /**
    * 设置私聊对象
    */
   setPrivateUser(user: AgoraIMUserInfo | undefined): void {
-    AgoraIM.setPrivateUser(this._currentClassRoomUuid, user)
+    AgoraIM.setPrivateUser(this._currentClassRoomUuid, user);
   }
   /**
    * 获取私聊对象
    */
   getPrivateUser(): AgoraIMUserInfo | undefined {
-    return AgoraIM.getRoomPrivateUser(this._currentClassRoomUuid)
+    return AgoraIM.getRoomPrivateUser(this._currentClassRoomUuid);
   }
   /**
    * 对指定的人禁言
@@ -204,9 +215,9 @@ export class FcrChatRoomItem extends AgoraIMBase {
     });
   }
   /**
-  * 对指定的人取消禁言
-  * @param params.userList 要禁言的人员列表
-  */
+   * 对指定的人取消禁言
+   * @param params.userList 要禁言的人员列表
+   */
   async unmuteUserList(params: { userList: string[] }): Promise<void> {
     const { userList } = params;
     userList.forEach((user) => {
@@ -222,12 +233,12 @@ export class FcrChatRoomItem extends AgoraIMBase {
    */
   async getMutedUserList(): Promise<string[]> {
     const { data } = await this._classRoomConnection.getChatRoomMutelist({
-      chatRoomId: this._currentChatRoomId
+      chatRoomId: this._currentChatRoomId,
     });
     return data
       ? data.map((i) => {
-        return i.user;
-      })
+          return i.user;
+        })
       : [];
   }
   /**
@@ -244,7 +255,9 @@ export class FcrChatRoomItem extends AgoraIMBase {
       acc[groupIndex].push(cur);
       return acc;
     }, [] as string[][]);
-    const res = await Promise.all(newArr.map((item) => this._classRoomConnection.fetchUserInfoById(item)));
+    const res = await Promise.all(
+      newArr.map((item) => this._classRoomConnection.fetchUserInfoById(item)),
+    );
     const newUserList: Record<string, AgoraChat.UpdateOwnUserInfoParams> = {};
     res.forEach((i) => Object.assign(newUserList, i.data));
     return Object.keys(newUserList).map((userId) => {
@@ -262,14 +275,18 @@ export class FcrChatRoomItem extends AgoraIMBase {
    * 获取所有的用户信息(从默认聊天室中取，所有聊天室地方要显示全量的，但是分组还是各自的)
    */
   async getAllUserInfoList(): Promise<AgoraIMUserInfo[]> {
-    const { data } = await this._classRoomConnection.getChatRoomDetails({ chatRoomId: this._defaultChatRoomeId, });
+    const { data } = await this._classRoomConnection.getChatRoomDetails({
+      chatRoomId: this._defaultChatRoomeId,
+    });
     const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
     const affiliations = res.affiliations;
-    return this.getUserInfoList(affiliations
-      .filter((item) => !!item.member)
-      .map((item) => {
-        return item.member ? item.member : "";
-      }));
+    return this.getUserInfoList(
+      affiliations
+        .filter((item) => !!item.member)
+        .map((item) => {
+          return item.member ? item.member : '';
+        }),
+    );
   }
 
   /**
@@ -281,82 +298,86 @@ export class FcrChatRoomItem extends AgoraIMBase {
       rteEngineConfig: { ignoreUrlRegionPrefix, region },
       sessionInfo: { roomUuid },
       appId,
-    } = EduClassroomConfig.shared;
-    const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
-      }/scenario/im/apps/${appId}`;
+      //@ts-ignore
+    } = window.EduClassroomConfig;
+    const pathPrefix = `${
+      ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
+    }/scenario/im/apps/${appId}`;
 
-
-
-    // const {
-    //   rteEngineConfig: { ignoreUrlRegionPrefix, region },
-    //   sessionInfo: { roomUuid },
-    //   appId,
-    // } = EduClassroomConfig.shared;
-    // const httpClient = axios.create({
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //   },
-    // });
-    const allMsg = new Map<string, any>()
+    const allMsg = new Map<string, any>();
     const currentUserId = this._currentUserInfo.userId;
     //当前群组消息
-    const pubMsg = await new ApiBase().fetch({
-      path: `/v1/rooms/${roomUuid}` + "/history/messages?to=" + this._currentChatRoomId + "&chatType=groupchat",
+    //@ts-ignore
+    const pubMsg = await globalStore.classroomStore.api.fetch({
+      path:
+        `/v1/rooms/${roomUuid}` +
+        '/history/messages?to=' +
+        this._currentChatRoomId +
+        '&chatType=groupchat',
       method: 'GET',
       pathPrefix,
     });
     for (const element of pubMsg.data.list) {
-      allMsg.set(element.msgId, element)
+      allMsg.set(element.msgId, element);
     }
     //默认大群群组消息
     if (this._currentChatRoomId !== this._defaultChatRoomeId) {
-      const defMsg = await new ApiBase().fetch({
-        path: `/v1/rooms/${roomUuid}` + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat",
+      //@ts-ignore
+      const defMsg = await globalStore.classroomStore.api.fetch({
+        path:
+          `/v1/rooms/${roomUuid}` +
+          '/history/messages?to=' +
+          this._defaultChatRoomeId +
+          '&chatType=groupchat',
         method: 'GET',
         pathPrefix,
       });
 
       // httpClient.get("https://api-solutions.bj2.agoralab.co/scenario/im/apps/" + appId + "/v1/rooms/" + roomUuid + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat")
       for (const msg of defMsg.data.list) {
-        const list = JSON.parse(msg.ext.receiverList)
+        const list = JSON.parse(msg.ext.receiverList);
         for (const data of list) {
-          if (data.userId === currentUserId || data.ext.userUuid === currentUserId || currentUserId == msg.from) {
-            allMsg.set(msg.msgId, msg)
-            break
+          if (
+            data.userId === currentUserId ||
+            data.ext.userUuid === currentUserId ||
+            currentUserId == msg.from
+          ) {
+            allMsg.set(msg.msgId, msg);
+            break;
           }
         }
       }
     }
     //按照时间升序排序
-    const allMsgList = [...allMsg.values()]
+    const allMsgList = [...allMsg.values()];
     allMsgList.sort((a, b) => b.timestamp - a.timestamp);
     const msgList: AgoraIMMessageBase[] = [];
-    allMsgList.forEach(msg => {
+    allMsgList.forEach((msg) => {
       //数据向指定格式处理
-      msg.id = msg.msgId
-      msg.time = msg.timestamp
-      msg.ext.receiverList = JSON.parse(msg.ext.receiverList)
-      msg.receiverList = msg.ext.receiverList
-      let needAdd = msg.ext.receiverList.length === 0 || msg.from === currentUserId
+      msg.id = msg.msgId;
+      msg.time = msg.timestamp;
+      msg.ext.receiverList = JSON.parse(msg.ext.receiverList);
+      msg.receiverList = msg.ext.receiverList;
+      let needAdd = msg.ext.receiverList.length === 0 || msg.from === currentUserId;
       for (const data of msg.ext.receiverList) {
         if (data.userId === currentUserId || data.ext.userUuid === currentUserId) {
-          needAdd = true
+          needAdd = true;
         }
       }
       if (needAdd) {
         switch (msg.type) {
-          case "txt":
-            msg.contentsType = "TEXT"
-            msg.data = msg.payload.msg
+          case 'txt':
+            msg.contentsType = 'TEXT';
+            msg.data = msg.payload.msg;
             break;
-          case "img":
-            msg.contentsType = "IMAGE"
-            msg.url = msg.payload.url
+          case 'img':
+            msg.contentsType = 'IMAGE';
+            msg.url = msg.payload.url;
             break;
         }
-        msgList.push(convertHXMessage(msg))
+        msgList.push(convertHXMessage(msg));
       }
-    })
+    });
     return msgList.reverse();
   }
   /**
@@ -376,19 +397,21 @@ export class FcrChatRoomItem extends AgoraIMBase {
           receiverList: textReceiverList,
         } = message as AgoraIMTextMessage;
         //私聊消息通过群组进行发送
-        receiverList = textReceiverList?.map((user) => user.userId)
+        receiverList = textReceiverList?.map((user) => user.userId);
         newMsg = websdk.message.create({
-          to: receiverList != null && receiverList.length > 0 ? this._defaultChatRoomeId : this._currentChatRoomId,
+          to:
+            receiverList != null && receiverList.length > 0
+              ? this._defaultChatRoomeId
+              : this._currentChatRoomId,
           msg: textMsg,
           type: 'txt',
           chatType: 'chatRoom',
           ext: {
             ...textExt,
             receiver: textReceiverList?.[0]?.userId || '',
-            isPrivate: !!textReceiverList && textReceiverList.length > 0
+            isPrivate: !!textReceiverList && textReceiverList.length > 0,
           } as AgoraIMMessageExt,
           receiverList: textReceiverList?.map((user) => user.userId),
-
         });
         break;
       case AgoraIMMessageType.Image:
@@ -401,9 +424,12 @@ export class FcrChatRoomItem extends AgoraIMBase {
           receiverList: imageReceiverList,
         } = message as AgoraIMImageMessage<AgoraIMMessageExt>;
         //私聊消息通过群组进行发送
-        receiverList = imageReceiverList?.map((user) => user.userId)
+        receiverList = imageReceiverList?.map((user) => user.userId);
         newMsg = websdk.message.create({
-          to: receiverList != null && receiverList.length > 0 ? this._defaultChatRoomeId : this._currentChatRoomId,
+          to:
+            receiverList != null && receiverList.length > 0
+              ? this._defaultChatRoomeId
+              : this._currentChatRoomId,
           type: 'img',
           chatType: 'chatRoom',
           ext: {
@@ -417,11 +443,11 @@ export class FcrChatRoomItem extends AgoraIMBase {
           height,
           file: file
             ? {
-              filename: '',
-              filetype: '',
-              url: '',
-              data: file,
-            }
+                filename: '',
+                filetype: '',
+                url: '',
+                data: file,
+              }
             : undefined,
 
           url,
@@ -435,9 +461,12 @@ export class FcrChatRoomItem extends AgoraIMBase {
         } = message as AgoraIMCustomMessage;
 
         //私聊消息通过群组进行发送
-        receiverList = customReceiverList?.map((user) => user.userId)
+        receiverList = customReceiverList?.map((user) => user.userId);
         newMsg = websdk.message.create({
-          to: receiverList != null && receiverList.length > 0 ? this._defaultChatRoomeId : this._currentChatRoomId,
+          to:
+            receiverList != null && receiverList.length > 0
+              ? this._defaultChatRoomeId
+              : this._currentChatRoomId,
           action: customAction,
           type: 'cmd',
           chatType: 'chatRoom',
@@ -454,7 +483,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     }
     if (!newMsg) return Promise.reject();
 
-    const res = await this._classRoomConnection.send(newMsg)
+    const res = await this._classRoomConnection.send(newMsg);
     message.id = res.serverMsgId;
     return message;
   }
@@ -546,8 +575,8 @@ export class FcrChatRoomItem extends AgoraIMBase {
   }
 
   /**
-    * 开启log日志
-    */
+   * 开启log日志
+   */
   private _enableLog() {
     websdk.logger.setLevel('DEBUG', true, 'agora-chat');
     //@ts-ignore
@@ -568,9 +597,10 @@ export class FcrChatRoomItem extends AgoraIMBase {
   @Log.silence
   private _formateLogs(log: AgoraChatLog) {
     const [logInfo, ...args] = log.logs;
-    return `${log.time
-      ? `${dayjs().format('YYYY-MM-DD')} ${log.time}`
-      : `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
-      } [Agora-Chat] ${logInfo}, args: ${JSON.stringify(log)}`;
+    return `${
+      log.time
+        ? `${dayjs().format('YYYY-MM-DD')} ${log.time}`
+        : `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
+    } [Agora-Chat] ${logInfo}, args: ${JSON.stringify(log)}`;
   }
 }
