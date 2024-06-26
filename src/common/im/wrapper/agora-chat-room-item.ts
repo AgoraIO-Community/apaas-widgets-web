@@ -327,7 +327,6 @@ export class FcrChatRoomItem extends AgoraIMBase {
       }
       allMsg.set(element.id, element);
     }
-    debugger
     //按照时间升序排序
     const allMsgList = [...allMsg.values()];
     allMsgList.sort((a, b) => b.timestamp - a.timestamp);
