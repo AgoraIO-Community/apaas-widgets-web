@@ -1,5 +1,5 @@
 import { FcrChatRoomManager } from './agora-chat-room-manager';
-import { AgoraIMBase, AgoraIMUserInfo, AgoraIMUserInfoExt } from './typs';
+import { AgoraIMBase, AgoraIMConnectionState, AgoraIMUserInfo, AgoraIMUserInfoExt } from './typs';
 
 export class AgoraIM {
   //教室管理结合
@@ -21,7 +21,7 @@ export class AgoraIM {
         const classRoomId = opt.ext.roomUuid;
         const optionsChatRoomId = opt.roomId;
         if (AgoraIM._roomImManager.has(classRoomId)) {
-          return AgoraIM._roomImManager.get(classRoomId)?.createChat(optionsChatRoomId);
+          return (AgoraIM._roomImManager.get(classRoomId) as FcrChatRoomManager).createChat(optionsChatRoomId)
         } else {
           const manager = new FcrChatRoomManager(
             opt.appKey,
@@ -40,10 +40,10 @@ export class AgoraIM {
    * @param roomId 教室ID
    * @param chatRoomId 聊天室id
    */
-  static async joinChatRoom(roomId: string, chatRoomId: string, token: string) {
+  static async joinChatRoom(roomId: string, chatRoomId: string, token: string): Promise<void>  {
     if (AgoraIM._roomImManager.has(roomId)) {
       const manager = AgoraIM._roomImManager.get(roomId);
-      await manager?.joinChatRoom(chatRoomId, token);
+    return  await manager?.joinChatRoom(chatRoomId, token);
     }
   }
   /**
@@ -51,7 +51,7 @@ export class AgoraIM {
    * @param roomId 教室ID
    * @param chatRoomId 聊天室id
    */
-  static async leaveChatRoom(roomId: string, chatRoomId: string) {
+  static async leaveChatRoom(roomId: string, chatRoomId: string) : Promise<void> {
     if (AgoraIM._roomImManager.has(roomId)) {
       const manager = AgoraIM._roomImManager.get(roomId);
       await manager?.leaveChatRoom(chatRoomId);
@@ -76,6 +76,16 @@ export class AgoraIM {
   static getRoomPrivateUser(roomId: string): AgoraIMUserInfo | undefined {
     if (this._roomCurrentPrivateManager.has(roomId)) {
       return this._roomCurrentPrivateManager.get(roomId);
+    } else {
+      return undefined;
+    }
+  }
+/**
+ * 获取链接状态
+ */
+  static getConnectState(roomId:string):AgoraIMConnectionState|undefined{
+    if (this._roomImManager.has(roomId)) {
+      return this._roomImManager.get(roomId)?.getConnectState();
     } else {
       return undefined;
     }

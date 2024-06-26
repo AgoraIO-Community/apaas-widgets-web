@@ -84,7 +84,7 @@ export class FcrChatRoomStore {
       });
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
       this.roomStore.getWidgets()
-      // this.messageStore.getHistoryMessageList();
+      this.messageStore.getHistoryMessageList();
       this.messageStore.getAnnouncement();
     }
   }
@@ -126,9 +126,22 @@ export class FcrChatRoomStore {
       //@ts-ignore
       return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
     }
-    this.roomStore.getChatRoomDetails();
-    this.messageStore.getAnnouncement();
-    this.messageStore.getHistoryMessageList();
+    if (AgoraIM.getConnectState(this.fcrChatRoom.getRoomId()) === AgoraIMConnectionState.Connected) {
+      this.roomStore.getChatRoomDetails().then((details) => {
+        const { affiliations } = details;
+        this.userStore.updateUsers(
+          affiliations
+            .filter((item) => !!item.member)
+            .map((item) => {
+              return item.member!;
+            }),
+        );
+      });
+      if (this.roomStore.isHost) this.userStore.getMutedUserList();
+      this.roomStore.getWidgets()
+      this.messageStore.getHistoryMessageList();
+      this.messageStore.getAnnouncement();
+    }
   }
   @bound
   broadcastWidgetMessage(messageType: string, message: unknown) {

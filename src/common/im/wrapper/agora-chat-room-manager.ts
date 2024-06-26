@@ -43,6 +43,13 @@ export class FcrChatRoomManager {
     this._enableLog();
   }
   /**
+   * 获取链接状态
+   */
+  getConnectState():AgoraIMConnectionState{
+    return this._connectionState
+  }
+  
+  /**
    * 创建聊天室
    * @param chatRoomId 聊天室id
    */
@@ -61,7 +68,7 @@ export class FcrChatRoomManager {
    * @param chatRoomId 聊天室id
    * @param token token
    */
-  async joinChatRoom(chatRoomId: string, token: string) {
+  async joinChatRoom(chatRoomId: string, token: string) : Promise<void> {
     try {
       if (this._connectionState === AgoraIMConnectionState.Connected) {
         let manager = this.createChat(chatRoomId);
@@ -76,7 +83,7 @@ export class FcrChatRoomManager {
         }
       } else {
         //初次未连接肯定是主房间，所以就不做特殊处理
-        this.login({ token });
+      await  this.login({ token });
       }
     } catch (e) {
       this._formateLogs({ level: 'error', logs: ['join chatroom error', e] });
@@ -88,7 +95,7 @@ export class FcrChatRoomManager {
    * 退出聊天室
    * @param chatRoomId 聊天室id
    */
-  async leaveChatRoom(chatRoomId: string) {
+  async leaveChatRoom(chatRoomId: string): Promise<void>  {
     if (this._chatRoomItemMap.has(chatRoomId)) {
       await this.createChat(chatRoomId).managerOptionsLeave(false);
     }
