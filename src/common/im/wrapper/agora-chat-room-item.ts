@@ -16,6 +16,7 @@ import websdk, { AgoraChat } from 'agora-chat';
 import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { AgoraIM } from '.';
+import { v4 } from 'uuid';
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;
   logs: [string, unknown];
@@ -296,57 +297,35 @@ export class FcrChatRoomItem extends AgoraIMBase {
   async getHistoryMessageList(): Promise<AgoraIMMessageBase[]> {
     const {
       rteEngineConfig: { ignoreUrlRegionPrefix, region },
-      sessionInfo: { roomUuid },
+      sessionInfo: { roomUuid, userUuid },
       appId,
       //@ts-ignore
     } = window.EduClassroomConfig;
     const pathPrefix = `${
       ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
-    }/scenario/im/apps/${appId}`;
+    }/edu/apps/${appId}`;
 
     const allMsg = new Map<string, any>();
-    const currentUserId = this._currentUserInfo.userId;
     //当前群组消息
     //@ts-ignore
-    const pubMsg = await globalStore.classroomStore.api.fetch({
-      path:
-        `/v1/rooms/${roomUuid}` +
-        '/history/messages?to=' +
-        this._currentChatRoomId +
-        '&chatType=groupchat',
+    const privateMsg = await globalStore.classroomStore.api.fetch({
+      path: `/v2/rooms/${roomUuid}/users/${userUuid}/widgets/easemobIM/private/messages`,
       method: 'GET',
       pathPrefix,
     });
-    for (const element of pubMsg.data.list) {
+    for (const element of privateMsg.data.list) {
       allMsg.set(element.msgId, element);
     }
-    //默认大群群组消息
-    if (this._currentChatRoomId !== this._defaultChatRoomeId) {
-      //@ts-ignore
-      const defMsg = await globalStore.classroomStore.api.fetch({
-        path:
-          `/v1/rooms/${roomUuid}` +
-          '/history/messages?to=' +
-          this._defaultChatRoomeId +
-          '&chatType=groupchat',
-        method: 'GET',
-        pathPrefix,
-      });
-
-      // httpClient.get("https://api-solutions.bj2.agoralab.co/scenario/im/apps/" + appId + "/v1/rooms/" + roomUuid + "/history/messages?to=" + this._defaultChatRoomeId + "&chatType=groupchat")
-      for (const msg of defMsg.data.list) {
-        const list = JSON.parse(msg.ext.receiverList);
-        for (const data of list) {
-          if (
-            data.userId === currentUserId ||
-            data.ext.userUuid === currentUserId ||
-            currentUserId == msg.from
-          ) {
-            allMsg.set(msg.msgId, msg);
-            break;
-          }
-        }
+    const groupMsg = await this._classRoomConnection.fetchHistoryMessages({
+      queue: this._currentChatRoomId,
+      isGroup: true,
+      count: 50,
+    });
+    for (const element of groupMsg) {
+      if (!element.id) {
+        element.id = v4();
       }
+      allMsg.set(element.id, element);
     }
     //按照时间升序排序
     const allMsgList = [...allMsg.values()];
@@ -354,29 +333,23 @@ export class FcrChatRoomItem extends AgoraIMBase {
     const msgList: AgoraIMMessageBase[] = [];
     allMsgList.forEach((msg) => {
       //数据向指定格式处理
-      msg.id = msg.msgId;
+      msg.id = msg.msgId || msg.id;
       msg.time = msg.timestamp;
-      msg.ext.receiverList = JSON.parse(msg.ext.receiverList);
+      if (typeof msg.ext.receiverList === 'string') {
+        msg.ext.receiverList = JSON.parse(msg.ext.receiverList);
+      }
       msg.receiverList = msg.ext.receiverList;
-      let needAdd = msg.ext.receiverList.length === 0 || msg.from === currentUserId;
-      for (const data of msg.ext.receiverList) {
-        if (data.userId === currentUserId || data.ext.userUuid === currentUserId) {
-          needAdd = true;
-        }
+      switch (msg.type) {
+        case 'txt':
+          msg.contentsType = 'TEXT';
+          msg.data = msg.payload.msg;
+          break;
+        case 'img':
+          msg.contentsType = 'IMAGE';
+          msg.url = msg.payload.url;
+          break;
       }
-      if (needAdd) {
-        switch (msg.type) {
-          case 'txt':
-            msg.contentsType = 'TEXT';
-            msg.data = msg.payload.msg;
-            break;
-          case 'img':
-            msg.contentsType = 'IMAGE';
-            msg.url = msg.payload.url;
-            break;
-        }
-        msgList.push(convertHXMessage(msg));
-      }
+      msgList.push(convertHXMessage(msg));
     });
     return msgList.reverse();
   }
