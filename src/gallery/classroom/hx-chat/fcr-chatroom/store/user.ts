@@ -27,7 +27,9 @@ export class UserStore {
   private _raiseHandTooltipTask: Scheduler.Task | null = null;
   
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
-    this._privateUser = this._fcrChatRoom.getPrivateUser()
+    runInAction(()=>{
+      this._privateUser = this._fcrChatRoom.getPrivateUser()
+    })
     this._addEventListeners();
     this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
