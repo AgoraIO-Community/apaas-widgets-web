@@ -316,15 +316,17 @@ export class FcrChatRoomItem extends AgoraIMBase {
     for (const element of privateMsg.data.list) {
       allMsg.set(element.msgId, element);
     }
-    const groupMsg = await this._classRoomConnection.fetchHistoryMessages({
-      queue: this._currentChatRoomId,
-      isGroup: true,
-      count: 50,
-    });
+    const groupMsgList = await this._classRoomConnection.getHistoryMessages({targetId:this._currentChatRoomId,chatType:'groupChat', pageSize: 50})
+    const groupMsg = groupMsgList.messages;
+    // const groupMsg = await this._classRoomConnection.fetchHistoryMessages({
+    //   queue: this._currentChatRoomId,
+    //   isGroup: true,
+    //   count: 50,
+    // });
     for (const element of groupMsg) {
-      if (!element.id) {
-        element.id = v4();
-      }
+      // if (!element.id) {
+      //   element.id = v4();
+      // }
       allMsg.set(element.id, element);
     }
     //按照时间升序排序
@@ -342,11 +344,11 @@ export class FcrChatRoomItem extends AgoraIMBase {
       switch (msg.type) {
         case 'txt':
           msg.contentsType = 'TEXT';
-          msg.data = msg.payload.msg;
+          msg.data = msg.payload ? msg.payload.msg : msg.msg;
           break;
         case 'img':
           msg.contentsType = 'IMAGE';
-          msg.url = msg.payload.url;
+          msg.url = msg.payload ? msg.payload.url : msg.url;
           break;
       }
       msgList.push(convertHXMessage(msg));
