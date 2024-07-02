@@ -316,6 +316,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     for (const element of privateMsg.data.list) {
       allMsg.set(element.msgId, element);
     }
+    this._classRoomConnection.mr_cache = [];
     const groupMsg = await this._classRoomConnection.fetchHistoryMessages({
       queue: this._currentChatRoomId,
       isGroup: true,
