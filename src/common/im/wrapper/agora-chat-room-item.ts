@@ -333,13 +333,13 @@ export class FcrChatRoomItem extends AgoraIMBase {
       allMsg.set(element.id, element);
     }
     //按照时间升序排序
-    const allMsgList = [...allMsg.values()];
-    allMsgList.sort((a, b) => b.timestamp - a.timestamp);
+    let allMsgList = [...allMsg.values()];
+    allMsgList = allMsgList.sort((a, b) => (b.timestamp ? b.timestamp : Number(b.time)) - (a.timestamp ? a.timestamp : Number(a.time)));
     const msgList: AgoraIMMessageBase[] = [];
     allMsgList.forEach((msg) => {
       //数据向指定格式处理
       msg.id = msg.msgId || msg.id;
-      msg.time = msg.timestamp;
+      msg.time = msg.time  ? msg.time  :msg.timestamp;
       if (typeof msg.ext.receiverList === 'string') {
         msg.ext.receiverList = JSON.parse(msg.ext.receiverList);
       }
