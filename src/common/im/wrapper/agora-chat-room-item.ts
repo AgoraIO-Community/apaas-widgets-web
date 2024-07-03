@@ -80,7 +80,11 @@ export class FcrChatRoomItem extends AgoraIMBase {
    * 加人(主/子)聊天室
    */
   async join(joinOptions: { token: string }): Promise<void> {
-    return AgoraIM.joinChatRoom(this._currentClassRoomUuid, this._currentChatRoomId, joinOptions.token);
+    return AgoraIM.joinChatRoom(
+      this._currentClassRoomUuid,
+      this._currentChatRoomId,
+      joinOptions.token,
+    );
   }
   /**
    * 退出(主/子)聊天室
@@ -267,7 +271,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
         userId,
         nickName: user.nickname || '',
         avatarUrl: user.avatarurl || '',
-        ext: JSON.parse(user?.ext ? user?.ext : "{}" as unknown as string) as AgoraIMUserInfoExt,
+        ext: JSON.parse(user?.ext ? user?.ext : ('{}' as unknown as string)) as AgoraIMUserInfoExt,
       };
     });
   }
@@ -309,7 +313,7 @@ export class FcrChatRoomItem extends AgoraIMBase {
     //当前群组消息
     //@ts-ignore
     const privateMsg = await globalStore.classroomStore.api.fetch({
-      path: `/v2/rooms/${roomUuid}/users/${userUuid}/widgets/easemobIM/private/messages`,
+      path: `/v2/rooms/${roomUuid}/users/${userUuid}/widgets/easemobIM/private/messages?pageSize=30`,
       method: 'GET',
       pathPrefix,
     });
