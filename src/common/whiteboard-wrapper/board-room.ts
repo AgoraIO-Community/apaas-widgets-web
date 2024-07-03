@@ -114,6 +114,8 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
       this._updateConnnectionState(BoardConnectionState.Connecting);
       await retryAttempt(
         async () => {
+          // WindowManager extends InvisiblePlugin not InvisiblePluginClass
+          //@ts-ignore
           const room = await this._client.joinRoom(joinParams, {
             onPhaseChanged: this._handleConnectionStateUpdated,
             onRoomStateChanged: this._handleRoomStateUpdated,

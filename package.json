@@ -38,7 +38,7 @@
     "ci:build": "run-s bundle:npm:classroom bundle:npm:proctor bundle:npm:scene"
   },
   "dependencies": {
-    "@netless/app-slide": "0.2.27",
+    "@netless/app-slide": "0.2.59",
     "@netless/app-talkative": "0.1.0",
     "@netless/combine-player": "1.1.4",
     "@netless/cursor-tool": "0.0.7",
@@ -49,7 +49,7 @@
     "@netless/white-snapshot": "0.4.1",
     "@netless/white-video-plugin": "1.2.23",
     "@netless/white-video-plugin2": "2.0.5",
-    "@netless/window-manager": "0.4.57",
+    "@netless/window-manager": "0.4.73",
     "agora-chat": "~1.2.0",
     "antd-mobile": "5.28.0",
     "antd": "4.23.0",
@@ -66,7 +66,7 @@
     "react-redux": "7.2.4",
     "redux": "4.1.0",
     "twemoji": "13.1.0",
-    "white-web-sdk": "2.16.37",
+    "white-web-sdk": "2.16.51",
     "agora-common-libs": "~2.9.0",
     "agora-edu-core": "~2.9.0",
     "agora-rte-sdk": "~2.9.0",

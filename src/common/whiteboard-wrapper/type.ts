@@ -172,6 +172,8 @@ export type FcrBoardMaterialWindowConfig<T = unknown> = {
   pageList: T[];
   taskUuid: string;
   resourceHasAnimation: boolean;
+  previewList?: string[];
+  resourceList?: string[];
 };
 
 export type FcrBoardMediaWindowConfig = {
