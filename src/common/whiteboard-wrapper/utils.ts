@@ -137,14 +137,27 @@ export const mergeCanvasImage = async (scenes: (() => Promise<HTMLCanvasElement 
   const canvasArray = [];
 
   for (const canvasPromise of scenes) {
-    const canvas = await canvasPromise();
-
+    let canvas = await canvasPromise();
+    if("data:," === canvas?.toDataURL()){
+      canvas = getDefaultCanvas(width,height)
+    }
+    if (canvas) {
+      width = Math.max(canvas.width, width);
+      height = Math.max(canvas.height, height);
+    }
+  }
+  for (const canvasPromise of scenes) {
+    let canvas = await canvasPromise();
+    if("data:," === canvas?.toDataURL()){
+      canvas = getDefaultCanvas(width,height)
+    }
     if (canvas) {
       width = Math.max(canvas.width, width);
       height = Math.max(canvas.height, height);
       canvasArray.push(canvas);
     }
   }
+
   bigCanvas.setAttribute('width', `${width}`);
   bigCanvas.setAttribute('height', `${height * canvasArray.length}`);
 
@@ -154,3 +167,16 @@ export const mergeCanvasImage = async (scenes: (() => Promise<HTMLCanvasElement 
 
   return bigCanvas;
 };
+
+function getDefaultCanvas(width:number,height:number):HTMLCanvasElement{
+  // 创建新的 canvas 元素
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d')!;
+  // 设置 canvas 尺寸为图像尺寸
+  canvas.width = width;
+  canvas.height = height;
+  // 设置填充颜色为白色，并填充整个 canvas
+  ctx.fillStyle = 'white';
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
+  return canvas;
+}
