@@ -1,5 +1,6 @@
 export default {
   fcr_savecanvas_tips_save_successfully: '保存成功',
+  fcr_savecanvas_tips_save_empty: '暂无板书内容，无法保存。',
   fcr_savecanvas_tips_save_failed: '保存失败',
   fcr_board_resource_already_opened: '课件已打开',
   fcr_board_tool_eraser: '橡皮擦',
