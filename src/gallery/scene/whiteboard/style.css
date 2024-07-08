@@ -2,6 +2,7 @@
   height: 100%;
   width: 100%;
   pointer-events: none;
+  max-width: unset !important;
 }
 .netless-whiteboard-wrapper > * {
   pointer-events: all;
@@ -10,7 +11,9 @@
 .board-widget-app {
   height: 100%;
 }
-
+.board-widget-app img,video {
+  max-width: unset !important;
+}
 .fcr-board-toolbar {
   position: absolute;
   width: 40px;
