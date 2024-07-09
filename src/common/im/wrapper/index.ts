@@ -36,6 +36,17 @@ export class AgoraIM {
     }
   }
   /**
+   * 获取教室房间管理
+   */
+  static getRoomManager(classRoomId:string):FcrChatRoomManager | null{
+    if (AgoraIM._roomImManager.has(classRoomId)) {
+      return AgoraIM._roomImManager.get(classRoomId) as FcrChatRoomManager
+    }else{
+      return null
+    }
+  }
+
+  /**
    * 加人聊天室
    * @param roomId 教室ID
    * @param chatRoomId 聊天室id

@@ -277,24 +277,6 @@ export class FcrChatRoomItem extends AgoraIMBase {
   }
 
   /**
-   * 获取所有的用户信息(从默认聊天室中取，所有聊天室地方要显示全量的，但是分组还是各自的)
-   */
-  async getAllUserInfoList(): Promise<AgoraIMUserInfo[]> {
-    const { data } = await this._classRoomConnection.getChatRoomDetails({
-      chatRoomId: this._defaultChatRoomeId,
-    });
-    const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
-    const affiliations = res.affiliations;
-    return this.getUserInfoList(
-      affiliations
-        .filter((item) => !!item.member)
-        .map((item) => {
-          return item.member ? item.member : '';
-        }),
-    );
-  }
-
-  /**
    * 获取当前聊天室的历史消息
    * @returns 历史消息
    */
@@ -580,5 +562,18 @@ export class FcrChatRoomItem extends AgoraIMBase {
         ? `${dayjs().format('YYYY-MM-DD')} ${log.time}`
         : `${dayjs().format('YYYY-MM-DD HH:mm:ss')}`
     } [Agora-Chat] ${logInfo}, args: ${JSON.stringify(log)}`;
+  }
+
+  /**
+   * 是否是默认主房间
+   */
+  checkDefChatRoom(): boolean {
+      return this._currentChatRoomId === this._defaultChatRoomeId
+  }
+  /**
+   * 获取当前聊天室id
+   */
+  getCurrentChatRoomId(): string {
+      return this._currentChatRoomId;
   }
 }
