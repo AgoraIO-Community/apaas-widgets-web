@@ -64,7 +64,7 @@
   border-radius: 6px;
 }
 .fcr-board-toolbar-item-surrounding.fcr-board-toolbar-item-surrounding--disabled {
-  opacity: 0.3;
+  opacity: 0.5;
 }
 .fcr-board-toolbar-panel {
   display: flex;

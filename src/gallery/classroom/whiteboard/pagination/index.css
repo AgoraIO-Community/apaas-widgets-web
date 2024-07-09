@@ -5,6 +5,8 @@
   bottom: 0;
   padding: 12px 0;
   z-index: 3;
+  display: flex;
+  align-items: flex-end
 }
 
 .fcr-mobile-pagination {
@@ -34,12 +36,11 @@
   justify-content: center;
   align-items: center;
   flex-direction: column;
-  margin-top: 14px;
+  margin-top: 16px;
   color: #fff;
 }
 .fcr-pagination__exundo {
   bottom: 12px;
-  position: absolute;
   text-align: center;
 }
 .fcr-pagination__expage > div {
