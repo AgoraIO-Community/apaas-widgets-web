@@ -72,16 +72,20 @@ export class FcrChatRoomStore {
       Logger.error('[FcrChatRoom] connection disConnected');
     }
     if (connectionState === AgoraIMConnectionState.Connected) {
-      this.roomStore.getChatRoomDetails().then((details) => {
-        const { affiliations } = details;
-        this.userStore.updateUsers(
-          affiliations
-            .filter((item) => !!item.member)
-            .map((item) => {
-              return item.member!;
-            }),
-        );
-      });
+      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList()
+      if(users){
+        this.userStore.updateAllUsers(users)
+      }
+      // this.roomStore.getChatRoomDetails().then((details) => {
+      //   const { affiliations } = details;
+      //   this.userStore.updateUsers(
+      //     affiliations
+      //       .filter((item) => !!item.member)
+      //       .map((item) => {
+      //         return item.member!;
+      //       }),
+      //   );
+      // });
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
       this.roomStore.getWidgets()
       this.messageStore.getHistoryMessageList();
@@ -127,16 +131,20 @@ export class FcrChatRoomStore {
       return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
     }
     if (AgoraIM.getConnectState(this.fcrChatRoom.getRoomId()) === AgoraIMConnectionState.Connected) {
-      this.roomStore.getChatRoomDetails().then((details) => {
-        const { affiliations } = details;
-        this.userStore.updateUsers(
-          affiliations
-            .filter((item) => !!item.member)
-            .map((item) => {
-              return item.member!;
-            }),
-        );
-      });
+      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList()
+      if(users){
+        this.userStore.updateAllUsers(users)
+      }
+      // this.roomStore.getChatRoomDetails().then((details) => {
+      //   const { affiliations } = details;
+      //   this.userStore.updateUsers(
+      //     affiliations
+      //       .filter((item) => !!item.member)
+      //       .map((item) => {
+      //         return item.member!;
+      //       }),
+      //   );
+      // });
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
       this.roomStore.getWidgets()
       this.messageStore.getHistoryMessageList();

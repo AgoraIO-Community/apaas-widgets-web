@@ -2,9 +2,10 @@ import { FcrChatroomWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
 
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
-import { bound } from 'agora-common-libs';
+import { bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent } from '../../../../../events';
 import { iterateMap } from 'agora-common-libs';
+import { AgoraIM } from '../../../../../common/im/wrapper';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -117,7 +118,6 @@ export class UserStore {
       UserMutedState.Muted;
   }
   private _addEventListeners() {
-    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
 
@@ -129,7 +129,6 @@ export class UserStore {
     });
   }
   private _removeEventListeners() {
-    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListUpdated);
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._onUserLeft);
 
@@ -182,19 +181,22 @@ export class UserStore {
   private async _onUserJoined(userUuid: string) {
     this.updateUsers([userUuid]);
   }
-  @bound
-  private async _onUserListUpdated() {
-    this.updateAllUsers(await this._fcrChatRoom.getAllUserInfoList());
-  }
   @action.bound
   private async _onUserLeft(userUuid: string) {
-    this.userMap.delete(userUuid);
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList()
+    if(users){
+      this.updateAllUsers(users)
+    }
   }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];
   }
   @bound
   async muteUserList(userList: string[]) {
+    if(!this.checkUserInCurrentGroup(userList)){
+      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'))
+      return
+    }
     await this._fcrChatRoom.muteUserList({ userList });
     runInAction(() => {
       this.muteList = this.muteList.concat(userList);
@@ -202,6 +204,10 @@ export class UserStore {
   }
   @bound
   async unmuteUserList(userList: string[]) {
+    if(!this.checkUserInCurrentGroup(userList)){
+      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'))
+      return
+    }
     await this._fcrChatRoom.unmuteUserList({ userList });
     runInAction(() => {
       this.muteList = this.muteList.filter((user) => {
@@ -218,5 +224,45 @@ export class UserStore {
   }
   destroy() {
     this._removeEventListeners();
+  }
+  /**
+   * 判断用户是否在当前聊天室中
+   */
+  private checkUserInCurrentGroup(userList: string[]):boolean{
+    //获取所有用户列表
+    const allList = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList()
+    //获取所有分组的用户列表
+    const groupInfo = this._widget.classroomStore.groupStore.groupDetails
+    //获取需要判断的用户列表
+    const judgeUserList:string[] = []
+    let find;
+    if(this._fcrChatRoom.checkDefChatRoom()){
+      //当前是主房间
+      const otherUser = new Set<string>()
+      groupInfo.forEach((value) => {
+        value.users.forEach(user=>{
+         find = allList?.find(item=>user.userUuid === item.ext.userUuid)
+          if(find){
+            otherUser.add(find.userId)
+          }
+        })
+      });
+      if(allList != null){
+        judgeUserList.push(...(allList.filter(item => !otherUser.has(item.userId)).map(item=>item.userId)));
+      }
+    }else{
+      //当前是分组聊天室
+      if(this._widget.classroomStore.groupStore.currentSubRoom != null 
+            && groupInfo.has(this._widget.classroomStore.groupStore.currentSubRoom)){
+          groupInfo.get(this._widget.classroomStore.groupStore.currentSubRoom)?.users?.forEach(user => {
+          find = allList?.find(item=>user.userUuid === item.ext.userUuid)
+          if(find){
+            judgeUserList.push(find.userId)
+          }
+        });
+      }
+    }
+    //判断要禁言的用户是不是实际在当前房间里
+    return userList.every(element => judgeUserList.includes(element));
   }
 }

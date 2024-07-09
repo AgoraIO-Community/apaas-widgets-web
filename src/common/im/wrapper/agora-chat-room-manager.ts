@@ -1,11 +1,12 @@
 import { Logger, Log } from 'agora-common-libs';
-import { AgoraIMConnectionState, AgoraIMEvents, AgoraIMUserInfo } from './typs';
+import { AgoraIMChatRoomDetails, AgoraIMConnectionState, AgoraIMEvents, AgoraIMUserInfo } from './typs';
 import websdk, { AgoraChat } from 'agora-chat';
 import { agoraChatConfig } from './WebIMConfig';
 import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { FcrChatRoomItem } from './agora-chat-room-item';
 import { AgoraIM } from '.';
+import { join } from 'lodash';
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;
   logs: [string, unknown];
@@ -27,6 +28,8 @@ export class FcrChatRoomManager {
   private _currentUserInfo: AgoraIMUserInfo;
   //默认聊天室Id
   private _defaultChatRoomeId: string;
+  //房间用户列表
+  private _roomeUserMap = new Map<string,AgoraIMUserInfo[]>();
 
   constructor(
     appKey: string,
@@ -71,13 +74,11 @@ export class FcrChatRoomManager {
   async joinChatRoom(chatRoomId: string, token: string) : Promise<void> {
     try {
       if (this._connectionState === AgoraIMConnectionState.Connected) {
-        let manager = this.createChat(chatRoomId);
+        const manager = this.createChat(chatRoomId);
         await manager.managerOptionsJoin();
-        //判断默认的是否加入了，没有的话从新加入下
-        if (this._defaultChatRoomeId != chatRoomId) {
-          manager = this.createChat(this._defaultChatRoomeId);
-          await manager.managerOptionsJoin();
-        }
+        //刷新当前用户列表
+        await this.refreshRoomUserList(chatRoomId)
+
         if (manager.isJoin) {
           this.emitEventsInfo(AgoraIMEvents.UserListUpdated, null);
         }
@@ -98,6 +99,10 @@ export class FcrChatRoomManager {
   async leaveChatRoom(chatRoomId: string): Promise<void>  {
     if (this._chatRoomItemMap.has(chatRoomId)) {
       await this.createChat(chatRoomId).managerOptionsLeave(false);
+      //从用户列表中移除当前房间的(非主房间)
+      if(!this.createChat(chatRoomId).checkDefChatRoom()){
+        this._roomeUserMap.delete(chatRoomId)
+      }
     }
   }
   /**
@@ -242,12 +247,24 @@ export class FcrChatRoomManager {
       onChatroomEvent: async (msg) => {
         switch (msg.operation) {
           case 'memberPresence':
-            this.emitEventsInfo(AgoraIMEvents.UserJoined, msg.from, null);
-            this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, null);
+            await this.listenerUserJoin(msg.from,msg.id)
+            this.emitEventsInfo(AgoraIMEvents.UserJoined, msg.from, msg.id);
+            this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, msg.id);
+            //非主房间要通知下主房间，因为主房间包含所有
+            if(this._defaultChatRoomeId !== msg.id){
+              this.emitEventsInfo(AgoraIMEvents.UserJoined, msg.from, this._defaultChatRoomeId);
+              this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, this._defaultChatRoomeId);
+            }
             break;
           case 'memberAbsence':
-            this.emitEventsInfo(AgoraIMEvents.UserLeft, msg.from, null);
-            this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, null);
+            await this.listenerUserLeft(msg.from,msg.id)
+            this.emitEventsInfo(AgoraIMEvents.UserLeft, msg.from, msg.id);
+            this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, msg.id);
+              //非主房间要通知下主房间，因为主房间包含所有
+            if(this._defaultChatRoomeId !== msg.id){
+              this.emitEventsInfo(AgoraIMEvents.UserJoined, msg.from, this._defaultChatRoomeId);
+              this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, this._defaultChatRoomeId);
+            }
             break;
           case 'updateAnnouncement':
             this.emitEventsInfo(AgoraIMEvents.AnnouncementUpdated, msg.id, msg.id);
@@ -293,6 +310,8 @@ export class FcrChatRoomManager {
         try {
           const chatRoom = this.createChatRoomItem(this._defaultChatRoomeId);
           await chatRoom.managerOptionsJoin();
+          //刷新当前用户列表
+          await this.refreshRoomUserList(this._defaultChatRoomeId)
           if (chatRoom.isJoin) {
             this.emitEventsInfo(AgoraIMEvents.UserListUpdated, null);
           }
@@ -339,6 +358,76 @@ export class FcrChatRoomManager {
     this._chatRoomItemMap.forEach((value) => {
       value.managerOptionsLeave(true);
     });
+    //移除所有用户
+    this._roomeUserMap.clear()
     AgoraIM.leaveChatRoom(this._currentClassRoomId, this._defaultChatRoomeId);
+  }
+  /**
+   * 刷新默认房间的用户列表
+   */
+  private async refreshRoomUserList(roomId:string){
+    const { data } = await this._classRoomConnection.getChatRoomDetails({
+      chatRoomId: roomId,
+    });
+    const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
+    const affiliations = res.affiliations;
+    const manager = this.createChat(roomId);
+    const list = await manager.getUserInfoList( affiliations
+      .filter((item) => !!item.member)
+      .map((item) => {
+        return item.member ? item.member : '';
+      }));
+    this._roomeUserMap.set(roomId,list);
+  }
+  /**
+   * 监听到用户进入房间
+   */
+  private async listenerUserJoin(userId:string,chatRoomId:string){
+    const manager = this.createChat(this._defaultChatRoomeId);
+    const userInfoList = await manager.getUserInfoList([userId]);
+    this.changeRoomUserList(chatRoomId,userInfoList,true,false)
+    if(chatRoomId !== this._defaultChatRoomeId){
+      this.changeRoomUserList(this._defaultChatRoomeId,userInfoList,true,false)
+    }
+  }
+  /**
+   * 监听到用户离开房间
+   */
+  private async listenerUserLeft(userId:string,chatRoomId:string){
+    const manager = this.createChat(this._defaultChatRoomeId);
+    const userInfoList = await manager.getUserInfoList([userId]);
+    this.changeRoomUserList(chatRoomId,userInfoList,false,true)
+    if(chatRoomId !== this._defaultChatRoomeId){
+      this.changeRoomUserList(this._defaultChatRoomeId,userInfoList,false,true)
+    }
+  }
+  /**
+   * 修改指定房间的用户列表
+   */
+  private changeRoomUserList(roomId:string,userList:AgoraIMUserInfo[],join:boolean,left:boolean){
+    let list:AgoraIMUserInfo[] = [];
+    if(this._roomeUserMap.has(roomId)){
+       list = this._roomeUserMap.get(roomId) || []
+    }else{
+      list = []
+    }
+    if(join){
+      list?.push(...userList)
+    }
+    if(left){
+      const idsToRemove = new Set(userList.map(item => item.userId));
+      list = list.filter(item => !idsToRemove.has(item.userId));
+    }
+    this._roomeUserMap.set(roomId,list)
+  }
+  /**
+   * 获取所有用户列表
+   */
+  getAllUserList(){
+    if(this._roomeUserMap.has(this._defaultChatRoomeId)){
+      return this._roomeUserMap.get(this._defaultChatRoomeId) || []
+   }else{
+     return []
+   }
   }
 }

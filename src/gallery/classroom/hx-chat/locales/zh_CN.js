@@ -84,5 +84,6 @@ const im_CN = {
   fcr_teacher_no_use_textbooks: '当前无教材',
   fcr_teacher_use_collected_tip: '课程中使用的教材会收纳到此处',
   fcr_participants_tips_lower_hand: '手放下',
+  fcr_chat_options_no_one_room: '该学生和您不在一个房间，无法操作',
 };
 export default im_CN;
