@@ -6,9 +6,7 @@ import { Scheduler, bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { CustomMessageHandsUpState } from '../../type';
 import { iterateMap } from 'agora-common-libs';
-import { AgoraIM } from 'src/common/im/wrapper';
-import { AgoraUser } from 'agora-rte-sdk';
-import { set } from 'lodash';
+import { AgoraIM } from '../../../../../common/im/wrapper';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -28,11 +26,11 @@ export class UserStore {
     this.searchKey = key;
   }
   private _raiseHandTooltipTask: Scheduler.Task | null = null;
-  
+
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
-    runInAction(()=>{
-      this._privateUser = this._fcrChatRoom.getPrivateUser()
-    })
+    runInAction(() => {
+      this._privateUser = this._fcrChatRoom.getPrivateUser();
+    });
     this._addEventListeners();
     this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
@@ -70,9 +68,9 @@ export class UserStore {
   }
   @action.bound
   private async _onUserLeft(userUuid: string) {
-    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList()
-    if(users){
-      this.updateAllUsers(users)
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
     }
   }
   @computed
@@ -121,9 +119,8 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
-    
   }
-  @observable 
+  @observable
   private _privateUser?: AgoraIMUserInfo;
   @computed
   get privateUser() {
@@ -131,7 +128,7 @@ export class UserStore {
   }
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
-    this._fcrChatRoom.setPrivateUser(user)
+    this._fcrChatRoom.setPrivateUser(user);
     this._privateUser = user;
   }
 
@@ -142,7 +139,7 @@ export class UserStore {
       this.setPrivateUser(privateChatUser);
     }
   }
- 
+
   @action.bound
   private _onRaiseHandStateChanged(data: CustomMessageHandsUpState) {
     this.isRaiseHand = data === CustomMessageHandsUpState.raiseHand;
@@ -229,9 +226,9 @@ export class UserStore {
   }
   @bound
   async muteUserList(userList: string[]) {
-    if(!this.checkUserInCurrentGroup(userList)){
-      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'))
-      return
+    if (!this.checkUserInCurrentGroup(userList)) {
+      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'));
+      return;
     }
     await this._fcrChatRoom.muteUserList({ userList });
     runInAction(() => {
@@ -240,9 +237,9 @@ export class UserStore {
   }
   @bound
   async unmuteUserList(userList: string[]) {
-    if(!this.checkUserInCurrentGroup(userList)){
-      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'))
-      return
+    if (!this.checkUserInCurrentGroup(userList)) {
+      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'));
+      return;
     }
     await this._fcrChatRoom.unmuteUserList({ userList });
     runInAction(() => {
@@ -264,41 +261,47 @@ export class UserStore {
   /**
    * 判断用户是否在当前聊天室中
    */
-  private checkUserInCurrentGroup(userList: string[]):boolean{
+  private checkUserInCurrentGroup(userList: string[]): boolean {
     //获取所有用户列表
-    const allList = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList()
+    const allList = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
     //获取所有分组的用户列表
-    const groupInfo = this._widget.classroomStore.groupStore.groupDetails
+    const groupInfo = this._widget.classroomStore.groupStore.groupDetails;
     //获取需要判断的用户列表
-    const judgeUserList:string[] = []
+    const judgeUserList: string[] = [];
     let find;
-    if(this._fcrChatRoom.checkDefChatRoom()){
+    if (this._fcrChatRoom.checkDefChatRoom()) {
       //当前是主房间
-      const otherUser = new Set<string>()
+      const otherUser = new Set<string>();
       groupInfo.forEach((value) => {
-        value.users.forEach(user=>{
-         find = allList?.find(item=>user.userUuid === item.ext.userUuid)
-          if(find){
-            otherUser.add(find.userId)
-          }
-        })
-      });
-      if(allList != null){
-        judgeUserList.push(...(allList.filter(item => !otherUser.has(item.userId)).map(item=>item.userId)));
-      }
-    }else{
-      //当前是分组聊天室
-      if(this._widget.classroomStore.groupStore.currentSubRoom != null 
-          && groupInfo.has(this._widget.classroomStore.groupStore.currentSubRoom)){
-          groupInfo.get(this._widget.classroomStore.groupStore.currentSubRoom)?.users?.forEach(user => {
-          find = allList?.find(item=>user.userUuid === item.ext.userUuid)
-          if(find){
-            judgeUserList.push(find.userId)
+        value.users.forEach((user) => {
+          find = allList?.find((item) => user.userUuid === item.ext.userUuid);
+          if (find) {
+            otherUser.add(find.userId);
           }
         });
-      }  
+      });
+      if (allList != null) {
+        judgeUserList.push(
+          ...allList.filter((item) => !otherUser.has(item.userId)).map((item) => item.userId),
+        );
+      }
+    } else {
+      //当前是分组聊天室
+      if (
+        this._widget.classroomStore.groupStore.currentSubRoom != null &&
+        groupInfo.has(this._widget.classroomStore.groupStore.currentSubRoom)
+      ) {
+        groupInfo
+          .get(this._widget.classroomStore.groupStore.currentSubRoom)
+          ?.users?.forEach((user) => {
+            find = allList?.find((item) => user.userUuid === item.ext.userUuid);
+            if (find) {
+              judgeUserList.push(find.userId);
+            }
+          });
+      }
     }
     //判断要禁言的用户是不是实际在当前房间里
-    return userList.every(element => judgeUserList.includes(element));
+    return userList.every((element) => judgeUserList.includes(element));
   }
 }
