@@ -125,7 +125,7 @@ export const downloadCanvasImage = (
 ) => {
   const a = document.createElement('a');
   a.download = filename;
-  a.href = canvas.toDataURL().replace("data:image/png","data:image/jpg");
+  a.href = canvas.toDataURL("image/jpeg");
   a.click();
 };
 
