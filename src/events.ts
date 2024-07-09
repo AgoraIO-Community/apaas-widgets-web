@@ -181,4 +181,5 @@ export enum AgoraExtensionWidgetEvent {
   QueryMobileCallState = 'query-mobile-call-state',
   PollMinimizeStateChanged = 'poll-minimize-state-changed',
   QueryPollMinimizeState = 'query-poll-minimize-state',
+  GetEmojiState = 'get-emoji-state',
 }

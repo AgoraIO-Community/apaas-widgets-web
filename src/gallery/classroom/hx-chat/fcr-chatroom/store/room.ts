@@ -311,7 +311,10 @@ export class RoomStore {
   setThumbsUpAni(thumbsUpAni: ThumbsUpAni) {
     this._thumbsUpAni = thumbsUpAni;
   }
-
+  @action.bound
+  getEmojiState(visible: boolean) {
+    this._widget.broadcast(AgoraExtensionWidgetEvent.GetEmojiState, visible);
+  }
   @action.bound
   setMessageVisible(visible: boolean) {
     this._widget.broadcast(AgoraExtensionWidgetEvent.AddSingletonToast, {

@@ -49,6 +49,7 @@ export const FcrChatRoomH5Inputs = observer(
         mobileCallState,
         z0Widgets,
         addToast,
+        getEmojiState,
         currentWidget, // 当前正在使用的widget-不能删
         isBreakOutRoomEnabled,
         isBreakOutRoomDisable,
@@ -65,7 +66,10 @@ export const FcrChatRoomH5Inputs = observer(
         raiseHandTooltipVisible,
       },
     } = useStore();
-    const widgets = z0Widgets.filter((v) => v.widgetName !== 'easemobIM');
+    const widgets = z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
+    useEffect(() => {
+      getEmojiState(showEmoji)
+    }, [showEmoji, getEmojiState])
     const getCallIcon = () => {
       switch (mobileCallState) {
         case MobileCallState.Initialize:
@@ -704,7 +708,7 @@ const EmojiContainer = observer(
         className={classNames('fcr-chatroom-mobile-input-emoji-container', {
           'fcr-chatroom-mobile-input-emoji-container-landscape': isLandscape,
         })}
-        style={{ zIndex: 20 }}>
+        style={{ zIndex: 21 }}>
         {emojis.map((emoji) => {
           return (
             <div
