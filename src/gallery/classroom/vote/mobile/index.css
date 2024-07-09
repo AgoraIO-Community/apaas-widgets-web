@@ -1,6 +1,6 @@
 .fcr-mobile-poll-widget-minimize {
   width: fit-content;
-  height: 30px;
+  height: 40px;
   /* background: rgba(240, 242, 248, 0.95); */
   background: linear-gradient(90deg, rgba(241, 156, 186, 0.85) 0%, rgba(238, 128, 165, 0.85) 100%);
   box-shadow: 0px 0px 12.813px 0px rgba(151, 151, 151, 0.25);
@@ -15,14 +15,14 @@
   z-index: 1;
 }
 .fcr-mobile-poll-widget-minimize.min{
-  width: 30px;
+  width: 40px;
 }
 .fcr-mobile-poll-widget-minimize.landmin{
   width: 40px;
 }
 .fcr-mobile-poll-widget-minimize.active {
    position: fixed;
-   right: 10px;
+   right: 15px;
    bottom: 96px;
 }
 .fcr-mobile-poll-widget-minimize-content{
