@@ -10,6 +10,9 @@
 .board-widget-app {
   height: 100%;
 }
+.board-widget-app img {
+  max-width: initial;
+}
 .fcr-board-toolbar {
   position: absolute;
   width: 40px;

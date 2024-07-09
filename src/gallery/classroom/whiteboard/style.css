@@ -10,7 +10,9 @@
   width: 100%;
   position: absolute;
 }
-
+.board-widget-app img {
+  max-width: initial;
+}
 #fcr_board_center_position {
   width: 1px;
   height: 1px;
