@@ -32,7 +32,7 @@ export const FcrChatRoomH5 = observer(() => {
             <UserJoined></UserJoined>
             <MessageList></MessageList>
           </>
-        ) : showEmoji ? null : (
+        ) : (
           <div className="fcr-chatroom-mobile-container">
             <UserJoined></UserJoined>
             <div className="fcr-chatroom-mobile-mask"></div>

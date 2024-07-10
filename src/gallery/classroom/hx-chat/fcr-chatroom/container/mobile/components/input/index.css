@@ -210,10 +210,8 @@
   height: 140px;
   background: #000;
   overflow-y: auto;
-  position: fixed;
-  bottom: 84px;
-  left: 0;
-  width: 100%;
+  position: relative;
+  top: -135px;
   padding: 10px;
 }
 .fcr-chatroom-mobile-input-emoji-container.fcr-chatroom-mobile-input-emoji-container-landscape {
