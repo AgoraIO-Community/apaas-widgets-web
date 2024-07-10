@@ -14,29 +14,32 @@
   position: relative;
   z-index: 1;
 }
-.fcr-mobile-poll-widget-minimize.min{
+.fcr-mobile-poll-widget-minimize.min {
   width: 40px;
 }
-.fcr-mobile-poll-widget-minimize.landmin{
+.fcr-mobile-poll-widget-minimize.hidden {
+  display: none;
+}
+.fcr-mobile-poll-widget-minimize.landmin {
   width: 40px;
 }
 .fcr-mobile-poll-widget-minimize.active {
-   position: fixed;
-   right: 15px;
-   bottom: 96px;
+  position: fixed;
+  right: 15px;
+  bottom: 96px;
 }
-.fcr-mobile-poll-widget-minimize-content{
+.fcr-mobile-poll-widget-minimize-content {
   display: flex;
   align-items: center;
   overflow: hidden;
   white-space: nowrap;
   width: fit-content;
-  transition: all 0.2s linear
+  transition: all 0.2s linear;
 }
-.fcr-mobile-poll-widget-minimize-content.hidden{
+.fcr-mobile-poll-widget-minimize-content.hidden {
   display: none;
 }
-.fcr-mobile-poll-widget-minimize-content.hidden{
+.fcr-mobile-poll-widget-minimize-content.hidden {
   width: 0;
   transition: all 0.2s linear;
 }
@@ -50,7 +53,6 @@
   display: flex;
   align-items: center;
   justify-content: center;
-
 }
 .fcr-mobile-poll-widget-minimize-landscape > svg {
   /* transform: rotate(90deg); */

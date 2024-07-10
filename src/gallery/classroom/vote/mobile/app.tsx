@@ -24,6 +24,7 @@ export const PollH5 = observer(() => {
     pollingResultUserCount,
     isLandscape,
     forceLandscape,
+    showEmoji,
     addSubmitToast,
     landscapeToolBarVisible,
   } = usePluginStore();
@@ -123,7 +124,7 @@ export const PollH5 = observer(() => {
           )
         : createPortal(
             <div
-              className={classNames(`fcr-mobile-poll-widget-minimize active`, !isShow && 'min')}
+              className={classNames(`fcr-mobile-poll-widget-minimize active`, !isShow && 'min', showEmoji && 'hidden')}
               onClick={() => {
                 setMinimize(false);
               }}>
