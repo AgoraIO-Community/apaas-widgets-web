@@ -28,7 +28,7 @@ import {
   FcrBoardMaterialWindowConfig,
   FcrBoardMediaWindowConfig,
 } from './type';
-import { fetchImageInfoByUrl, paramsCanvasToList } from './utils';
+import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
 import isEqual from 'lodash/isEqual';
 import { BoardMountManager } from './mount-manager';
 import { when } from 'mobx';
@@ -483,7 +483,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         progressCallback(1);
 
         try {
-          const merged = await paramsCanvasToList(cps);
+          const merged = await mergeCanvasImage(cps);
 
           this._eventBus.emit(FcrBoardMainWindowEvent.SnapshotSuccess, merged);
         } catch (e) {
@@ -627,7 +627,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   on(eventName: FcrBoardMainWindowEvent.Unmount, cb: () => void): void;
   on(
     eventName: FcrBoardMainWindowEvent.SnapshotSuccess,
-    cb: (canvas: HTMLCanvasElement[]) => void,
+    cb: (canvas: HTMLCanvasElement) => void,
   ): void;
   on(
     eventName: FcrBoardMainWindowEvent.Failure,
