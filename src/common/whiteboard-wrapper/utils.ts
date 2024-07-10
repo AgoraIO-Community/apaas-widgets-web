@@ -129,50 +129,28 @@ export const downloadCanvasImage = (
   a.click();
 };
 
-export const paramsCanvasToList = async (scenes: (() => Promise<HTMLCanvasElement | null>)[]) => {
+export const mergeCanvasImage = async (scenes: (() => Promise<HTMLCanvasElement | null>)[]) => {
+  let width = 0,
+    height = 0;
+  const bigCanvas = document.createElement('canvas');
+  const ctx = bigCanvas.getContext('2d');
   const canvasArray = [];
+
   for (const canvasPromise of scenes) {
     const canvas = await canvasPromise();
-    if (canvas) {
+
+    if (canvas && "data:," !== canvas.toDataURL() && "" !== canvas.toDataURL()) {
+      width = Math.max(canvas.width, width);
+      height = Math.max(canvas.height, height);
       canvasArray.push(canvas);
     }
   }
-  return canvasArray;
-};
+  bigCanvas.setAttribute('width', `${width}`);
+  bigCanvas.setAttribute('height', `${height * canvasArray.length}`);
 
-export const downloadCanvasImageList = async(
-  scenes: HTMLCanvasElement[],
-  filename = 'fcr-board-snapshot.jpg',
-) => {
-  return new Promise<void>((resolve, reject) => {
-    let haveEmpty = true;
-    scenes.forEach( (canvas,index)=>{
-      if(canvas != null && "data:," !== canvas?.toDataURL() && !isCanvasBlank(canvas)){
-        haveEmpty = false;
-       downloadCanvasImage(canvas,filename.replace(".jpg","_" + (index + 1)))
-      }
-      if(index == scenes.length - 1 && !haveEmpty){
-        resolve();
-      }
-    })
-    if(haveEmpty){
-      reject();
-    }
+  canvasArray.forEach((canvas, index) => {
+    ctx && ctx.drawImage(canvas, 0, index * height, width, height);
   });
+
+  return bigCanvas;
 };
-/**
- * 判断图片是不是空白的
- */
-function isCanvasBlank(canvas: HTMLCanvasElement): boolean {
-  const context = canvas.getContext('2d');
-  if (!context) {
-    return false;
-  }
-  const pixelData = context.getImageData(0, 0, canvas.width, canvas.height).data;
-  for (let i = 0; i < pixelData.length; i += 4) {
-    if(!(pixelData[i] === 255 && pixelData[i + 1] === 255 && pixelData[i + 2] === 255)){
-      return false;
-    }
-  }
-  return true; // All pixels are transparent
-}

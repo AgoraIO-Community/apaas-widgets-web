@@ -28,7 +28,7 @@ import {
   FcrBoardShape,
   FcrBoardTool,
 } from '../../../common/whiteboard-wrapper/type';
-import { downloadCanvasImage, downloadCanvasImageList } from '../../../common/whiteboard-wrapper/utils';
+import { downloadCanvasImage } from '../../../common/whiteboard-wrapper/utils';
 import {
   BoardUIContext,
   BoardUIContextValue,
@@ -590,16 +590,13 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     mainWindow.on(FcrBoardMainWindowEvent.UndoStepsUpdated, (steps) => {
       this.broadcast(AgoraExtensionWidgetEvent.BoardUndoStepsChanged, steps);
     });
-    mainWindow.on(FcrBoardMainWindowEvent.SnapshotSuccess, (canvas: HTMLCanvasElement[]) => {
+    mainWindow.on(FcrBoardMainWindowEvent.SnapshotSuccess, (canvas: HTMLCanvasElement) => {
       const fileName = `${this.classroomConfig.sessionInfo.roomName}_${dayjs().format(
         'YYYYMMDD_HHmmSSS',
       )}.jpg`;
 
-      downloadCanvasImageList(canvas, fileName).then(()=>{
-        this.ui.addToast(transI18n('fcr_savecanvas_tips_save_successfully'));
-      }).catch(()=>{
-        this.ui.addToast(transI18n('fcr_savecanvas_tips_save_empty'));
-      })
+      downloadCanvasImage(canvas, fileName);
+      this.ui.addToast(transI18n('fcr_savecanvas_tips_save_successfully'));
     });
     mainWindow.on(FcrBoardMainWindowEvent.Failure, (reason) => {
       this.logger.error('operation failure, reason: ', reason);
