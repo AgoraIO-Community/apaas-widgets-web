@@ -43,10 +43,6 @@ export class PluginStore {
       onMessage: this.handleQueryPollMinimizeState,
     });
     this._widget.addBroadcastListener({
-      messageType: AgoraExtensionWidgetEvent.GetEmojiState,
-      onMessage: this._handleGetEmojiState,
-    });
-    this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
     });
@@ -72,21 +68,12 @@ export class PluginStore {
   @observable orientation: OrientationEnum = OrientationEnum.portrait;
   @observable forceLandscape = false;
   @observable landscapeToolBarVisible = false;
-  @observable
-  private _showEmoji = false
-  @computed
-  get showEmoji() {
-    return this._showEmoji;
-  }
+
   @computed
   get isLandscape() {
     return this.forceLandscape || this.orientation === OrientationEnum.landscape;
   }
 
-  @action.bound
-  private _handleGetEmojiState(visible: boolean) {
-    this._showEmoji = visible;
-  }
   @action.bound
   private _handleMobileLandscapeToolBarStateChanged(visible: boolean) {
     this.landscapeToolBarVisible = visible;
