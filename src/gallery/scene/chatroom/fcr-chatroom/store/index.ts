@@ -17,6 +17,7 @@ export class FcrChatRoomStore {
   messageStore: MessageStore;
   userStore: UserStore;
   roomStore: RoomStore;
+
   get widget() {
     return this._widget;
   }
@@ -71,16 +72,20 @@ export class FcrChatRoomStore {
       Logger.error('[FcrChatRoom] connection disConnected');
     }
     if (connectionState === AgoraIMConnectionState.Connected) {
-      this.roomStore.getChatRoomDetails().then((details) => {
-        const { affiliations } = details;
-        this.userStore.updateUsers(
-          affiliations
-            .filter((item) => !!item.member)
-            .map((item) => {
-              return item.member!;
-            }),
-        );
-      });
+      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList()
+      if(users){
+        this.userStore.updateAllUsers(users)
+      }
+      // this.roomStore.getChatRoomDetails().then((details) => {
+      //   const { affiliations } = details;
+      //   this.userStore.updateUsers(
+      //     affiliations
+      //       .filter((item) => !!item.member)
+      //       .map((item) => {
+      //         return item.member!;
+      //       }),
+      //   );
+      // });
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
       this.messageStore.getHistoryMessageList();
       this.messageStore.getAnnouncement();
@@ -96,6 +101,25 @@ export class FcrChatRoomStore {
     await this.fcrChatRoom.join({
       token,
     });
+    if (AgoraIM.getConnectState(this.fcrChatRoom.getRoomId()) === AgoraIMConnectionState.Connected) {
+      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList()
+      if(users){
+        this.userStore.updateAllUsers(users)
+      }
+      // this.roomStore.getChatRoomDetails().then((details) => {
+      //   const { affiliations } = details;
+      //   this.userStore.updateUsers(
+      //     affiliations
+      //       .filter((item) => !!item.member)
+      //       .map((item) => {
+      //         return item.member!;
+      //       }),
+      //   );
+      // });
+      if (this.roomStore.isHost) this.userStore.getMutedUserList();
+      this.messageStore.getHistoryMessageList();
+      this.messageStore.getAnnouncement();
+    }
   }
   @bound
   private async _init() {

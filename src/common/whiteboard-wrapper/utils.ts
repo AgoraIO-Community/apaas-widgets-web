@@ -125,7 +125,7 @@ export const downloadCanvasImage = (
 ) => {
   const a = document.createElement('a');
   a.download = filename;
-  a.href = canvas.toDataURL();
+  a.href = canvas.toDataURL("image/jpeg");
   a.click();
 };
 
@@ -139,7 +139,7 @@ export const mergeCanvasImage = async (scenes: (() => Promise<HTMLCanvasElement 
   for (const canvasPromise of scenes) {
     const canvas = await canvasPromise();
 
-    if (canvas) {
+    if (canvas && "data:," !== canvas.toDataURL() && "" !== canvas.toDataURL()) {
       width = Math.max(canvas.width, width);
       height = Math.max(canvas.height, height);
       canvasArray.push(canvas);

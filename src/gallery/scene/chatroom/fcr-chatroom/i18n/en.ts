@@ -10,6 +10,8 @@ export default {
   fcr_chat_teacher_unmute_all: 'The teacher unmuted all',
   fcr_chat_label_send_to: 'Send to',
   fcr_chat_option_all: 'All',
+  fcr_chat_option_main_room: 'Main Room',
+  fcr_chat_option_my_group: 'My Group',
   fcr_chat_button_send_image: 'Send Image',
   fcr_chat_button_announcement_send: 'Send',
   fcr_chat_button_announcement_cancel: 'Cancel',
@@ -42,5 +44,6 @@ export default {
   fcr_chat_label_no_announcement: 'No announcement',
   fcr_chat_you_are_muted_by_teacher: 'You are muted by teacher',
   fcr_chat_enter_message_placehoder: 'Enter a message...',
-  fcr_chat_tips_message_too_long: 'Your message is too long, please split it into multiple messages'
+  fcr_chat_tips_message_too_long: 'Your message is too long, please split it into multiple messages',
+  fcr_chat_options_no_one_room: 'The student and you are not in the same room, so it is impossible to operate.',
 };

@@ -28,6 +28,8 @@ const im_CN = {
     send_to: '发送至',
     private: '私聊',
     chat_option_all: '所有人',
+    chat_option_main_room: '主房间',
+    chat_option_my_group: '当前组',
     enter_contents: '请输入内容',
     enter_content_is_empty: '消息内容不能为空',
     enter_content_is_too_long: '您的消息过长，请拆分成多条消息发送',
@@ -82,5 +84,6 @@ const im_CN = {
   fcr_teacher_no_use_textbooks: '当前无教材',
   fcr_teacher_use_collected_tip: '课程中使用的教材会收纳到此处',
   fcr_participants_tips_lower_hand: '手放下',
+  fcr_chat_options_no_one_room: '该学生和您不在一个房间，无法操作',
 };
 export default im_CN;

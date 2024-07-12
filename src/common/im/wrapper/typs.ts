@@ -11,6 +11,7 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract init(appKey: string): void;
   abstract join(joinOptions: { token: string }): Promise<void>;
   abstract leave(): Promise<void>;
+  abstract getRoomId():string
   abstract sendMessage(message: AgoraIMMessageBase): Promise<AgoraIMMessageBase>;
   abstract getUserList(params: { pageNum: number; pageSize: number }): Promise<AgoraIMUserInfo[]>;
   abstract getHistoryMessageList(params?: {
@@ -20,6 +21,8 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   abstract getAnnouncement(): Promise<string>;
   abstract setAnnouncement(announcement: string): Promise<void>;
   abstract deleteAnnouncement(): Promise<void>;
+  abstract setPrivateUser(user: AgoraIMUserInfo | undefined): void;
+  abstract getPrivateUser(): AgoraIMUserInfo | undefined;
   abstract muteAllUserList(): Promise<void>;
   abstract unmuteAllUserList(): Promise<void>;
   abstract muteUserList(params: { userList: string[]; duration?: number }): Promise<void>;
@@ -39,6 +42,10 @@ export abstract class AgoraIMBase extends AGEventEmitter implements AgoraIMEvent
   ): AgoraIMCustomMessage;
 
   abstract getChatRoomDetails(): Promise<AgoraIMChatRoomDetails>;
+  //是否是默认主房间
+  abstract checkDefChatRoom():boolean;
+  //获取当前聊天室id
+  abstract getCurrentChatRoomId():string
 }
 
 export interface AgoraIMEventEmitter {

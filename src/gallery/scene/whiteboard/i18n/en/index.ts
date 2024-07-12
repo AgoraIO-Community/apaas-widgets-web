@@ -1,5 +1,6 @@
 export default {
   fcr_savecanvas_tips_save_successfully: 'Save successfully',
+  fcr_savecanvas_tips_save_empty: 'There\'s no content on the board to save.',
   fcr_savecanvas_tips_save_failed: 'Save failed',
   fcr_board_resource_already_opened: 'The resource is already opened',
   fcr_board_tool_eraser: 'Eraser',

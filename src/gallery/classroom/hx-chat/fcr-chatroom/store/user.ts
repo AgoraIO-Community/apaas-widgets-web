@@ -2,10 +2,11 @@ import { AgoraHXChatWidget } from '../..';
 import { computed, observable, runInAction, action } from 'mobx';
 
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
-import { Scheduler, bound } from 'agora-common-libs';
+import { Scheduler, bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { CustomMessageHandsUpState } from '../../type';
 import { iterateMap } from 'agora-common-libs';
+import { AgoraIM } from '../../../../../common/im/wrapper';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -25,8 +26,11 @@ export class UserStore {
     this.searchKey = key;
   }
   private _raiseHandTooltipTask: Scheduler.Task | null = null;
-  
+
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
+    runInAction(() => {
+      this._privateUser = this._fcrChatRoom.getPrivateUser();
+    });
     this._addEventListeners();
     this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
@@ -64,7 +68,10 @@ export class UserStore {
   }
   @action.bound
   private async _onUserLeft(userUuid: string) {
-    this.userMap.delete(userUuid);
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
+    }
   }
   @computed
   get searchUserList() {
@@ -112,9 +119,8 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
-    
   }
-  @observable 
+  @observable
   private _privateUser?: AgoraIMUserInfo;
   @computed
   get privateUser() {
@@ -122,6 +128,7 @@ export class UserStore {
   }
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
+    this._fcrChatRoom.setPrivateUser(user);
     this._privateUser = user;
   }
 
@@ -132,7 +139,7 @@ export class UserStore {
       this.setPrivateUser(privateChatUser);
     }
   }
- 
+
   @action.bound
   private _onRaiseHandStateChanged(data: CustomMessageHandsUpState) {
     this.isRaiseHand = data === CustomMessageHandsUpState.raiseHand;
@@ -189,6 +196,16 @@ export class UserStore {
     this._updateUserMutedState(UserMutedState.Unmuted);
   }
   @bound
+  async updateAllUsers(users: AgoraIMUserInfo[]) {
+    runInAction(() => {
+      users.forEach((user) => {
+        if (user.ext.role === 1 || user.ext.role === 2) {
+          this.userMap.set(user.userId, user);
+        }
+      });
+    });
+  }
+  @bound
   private async _onUserJoined(user: string) {
     this.updateUsers([user]);
     if (this.joinedUser) return;
@@ -209,6 +226,10 @@ export class UserStore {
   }
   @bound
   async muteUserList(userList: string[]) {
+    if (!this.checkUserInCurrentGroup(userList)) {
+      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'));
+      return;
+    }
     await this._fcrChatRoom.muteUserList({ userList });
     runInAction(() => {
       this.muteList = this.muteList.concat(userList);
@@ -216,6 +237,10 @@ export class UserStore {
   }
   @bound
   async unmuteUserList(userList: string[]) {
+    if (!this.checkUserInCurrentGroup(userList)) {
+      this._widget.ui.addToast(transI18n('fcr_chat_options_no_one_room'));
+      return;
+    }
     await this._fcrChatRoom.unmuteUserList({ userList });
     runInAction(() => {
       this.muteList = this.muteList.filter((user) => {
@@ -232,5 +257,51 @@ export class UserStore {
   }
   destroy() {
     this._removeEventListeners();
+  }
+  /**
+   * 判断用户是否在当前聊天室中
+   */
+  private checkUserInCurrentGroup(userList: string[]): boolean {
+    //获取所有用户列表
+    const allList = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    //获取所有分组的用户列表
+    const groupInfo = this._widget.classroomStore.groupStore.groupDetails;
+    //获取需要判断的用户列表
+    const judgeUserList: string[] = [];
+    let find;
+    if (this._fcrChatRoom.checkDefChatRoom()) {
+      //当前是主房间
+      const otherUser = new Set<string>();
+      groupInfo.forEach((value) => {
+        value.users.forEach((user) => {
+          find = allList?.find((item) => user.userUuid === item.ext.userUuid);
+          if (find) {
+            otherUser.add(find.userId);
+          }
+        });
+      });
+      if (allList != null) {
+        judgeUserList.push(
+          ...allList.filter((item) => !otherUser.has(item.userId)).map((item) => item.userId),
+        );
+      }
+    } else {
+      //当前是分组聊天室
+      if (
+        this._widget.classroomStore.groupStore.currentSubRoom != null &&
+        groupInfo.has(this._widget.classroomStore.groupStore.currentSubRoom)
+      ) {
+        groupInfo
+          .get(this._widget.classroomStore.groupStore.currentSubRoom)
+          ?.users?.forEach((user) => {
+            find = allList?.find((item) => user.userUuid === item.ext.userUuid);
+            if (find) {
+              judgeUserList.push(find.userId);
+            }
+          });
+      }
+    }
+    //判断要禁言的用户是不是实际在当前房间里
+    return userList.every((element) => judgeUserList.includes(element));
   }
 }

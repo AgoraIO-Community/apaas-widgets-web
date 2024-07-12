@@ -299,6 +299,8 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         attributes: {
           taskId: config.taskUuid,
           url: config.urlPrefix,
+          resourceList: config.resourceList,
+          previewList: config.previewList,
         },
       });
     } else {

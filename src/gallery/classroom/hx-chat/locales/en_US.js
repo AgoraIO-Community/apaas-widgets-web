@@ -25,6 +25,8 @@ const enUS = {
     unmute_user_msg: 'You have been unmuted by {0} teacher',
     send_to: 'To',
     chat_option_all: 'All',
+    chat_option_main_room: 'Main Room',
+    chat_option_my_group: 'My Group',
     private: 'Private',
     send: 'Send',
     enter_contents: 'Please enter message',
@@ -80,6 +82,7 @@ const enUS = {
   fcr_teacher_no_use_textbooks: 'No teaching materials currently available',
   fcr_teacher_use_collected_tip: 'The teaching materials used in the course will be collected here',
   fcr_participants_tips_lower_hand: 'Lower Hand',
+  fcr_chat_options_no_one_room: 'The student and you are not in the same room, so it is impossible to operate.',
 };
 
 export default enUS;

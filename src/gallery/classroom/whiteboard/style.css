@@ -10,7 +10,9 @@
   width: 100%;
   position: absolute;
 }
-
+.board-widget-app img {
+  max-width: initial;
+}
 #fcr_board_center_position {
   width: 1px;
   height: 1px;
@@ -142,4 +144,7 @@
 .fcr-popover-trigger-opened {
   border-radius: var(--fcr_cornerradius_xs, 6px) !important;
   background: var(--fcr_ui_scene_mobile_click, rgba(0, 0, 0, 0.2)) !important;
+}
+.netless-whiteboard-wrapper .telebox-titlebar .telebox-titlebar-btns {
+  position: initial;
 }

@@ -10,7 +10,9 @@
 .board-widget-app {
   height: 100%;
 }
-
+.board-widget-app img {
+  max-width: initial;
+}
 .fcr-board-toolbar {
   position: absolute;
   width: 40px;
@@ -498,6 +500,9 @@
 .netless-whiteboard-wrapper .telebox-titlebar {
   @apply fcr-bg-2 fcr-border-1;
   flex-direction: row-reverse;
+}
+.netless-whiteboard-wrapper .telebox-titlebar .telebox-titlebar-btns {
+  position: initial;
 }
 .netless-whiteboard-wrapper .telebox-title {
   @apply fcr-text-1;

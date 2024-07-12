@@ -58,18 +58,18 @@ export const useVisibleTools = () => {
     {
       renderItem: ({ offset }: { offset?: number } = {}) => <ShapePickerItem offset={offset} />,
     },
-    {
-      renderItem: () => (
-        <ToolbarItem
-          tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
-          tooltip={transI18n('fcr_board_tool_save')}
-          texttip={'Save png'}
-          icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
-          onClick={saveDraft}
-          isActive={false}
-        />
-      ),
-    },
+    // {
+    //   renderItem: () => (
+    //     <ToolbarItem
+    //       tooltipPlacement={toolbarDockPosition.placement === 'left' ? 'right' : 'left'}
+    //       tooltip={transI18n('fcr_board_tool_save')}
+    //       texttip={'Save png'}
+    //       icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
+    //       onClick={saveDraft}
+    //       isActive={false}
+    //     />
+    //   ),
+    // },
     {
       renderItem: () => {
         return (
@@ -116,17 +116,17 @@ export const useVisibleTools = () => {
         <ShapePickerItem offset={offset || -1} />
       ),
     },
-    {
-      renderItem: () => (
-        <ToolbarItem
-          tooltip={transI18n('fcr_board_tool_save')}
-          texttip={transI18n('fcr_board_tool_save')}
-          icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
-          onClick={saveDraft}
-          isActive={false}
-        />
-      ),
-    },
+    // {
+    //   renderItem: () => (
+    //     <ToolbarItem
+    //       tooltip={transI18n('fcr_board_tool_save')}
+    //       texttip={transI18n('fcr_board_tool_save')}
+    //       icon={SvgIconEnum.FCR_WHITEBOARD_SAVE}
+    //       onClick={saveDraft}
+    //       isActive={false}
+    //     />
+    //   ),
+    // },
     {
       renderItem: () => {
         const dialogToogle = (bool: boolean) => {
