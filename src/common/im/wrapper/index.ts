@@ -21,7 +21,9 @@ export class AgoraIM {
         const classRoomId = opt.ext.roomUuid;
         const optionsChatRoomId = opt.roomId;
         if (AgoraIM._roomImManager.has(classRoomId)) {
-          return (AgoraIM._roomImManager.get(classRoomId) as FcrChatRoomManager).createChat(optionsChatRoomId)
+          return (AgoraIM._roomImManager.get(classRoomId) as FcrChatRoomManager).createChat(
+            optionsChatRoomId,
+          );
         } else {
           const manager = new FcrChatRoomManager(
             opt.appKey,
@@ -29,6 +31,7 @@ export class AgoraIM {
             classRoomId,
             optionsChatRoomId,
           );
+          //@ts-ignore
           window.imManager = manager;
           AgoraIM._roomImManager.set(classRoomId, manager);
           return manager.createChat(optionsChatRoomId);
@@ -38,11 +41,11 @@ export class AgoraIM {
   /**
    * 获取教室房间管理
    */
-  static getRoomManager(classRoomId:string):FcrChatRoomManager | null{
+  static getRoomManager(classRoomId: string): FcrChatRoomManager | null {
     if (AgoraIM._roomImManager.has(classRoomId)) {
-      return AgoraIM._roomImManager.get(classRoomId) as FcrChatRoomManager
-    }else{
-      return null
+      return AgoraIM._roomImManager.get(classRoomId) as FcrChatRoomManager;
+    } else {
+      return null;
     }
   }
 
@@ -51,10 +54,10 @@ export class AgoraIM {
    * @param roomId 教室ID
    * @param chatRoomId 聊天室id
    */
-  static async joinChatRoom(roomId: string, chatRoomId: string, token: string): Promise<void>  {
+  static async joinChatRoom(roomId: string, chatRoomId: string, token: string): Promise<void> {
     if (AgoraIM._roomImManager.has(roomId)) {
       const manager = AgoraIM._roomImManager.get(roomId);
-    return  await manager?.joinChatRoom(chatRoomId, token);
+      return await manager?.joinChatRoom(chatRoomId, token);
     }
   }
   /**
@@ -62,7 +65,7 @@ export class AgoraIM {
    * @param roomId 教室ID
    * @param chatRoomId 聊天室id
    */
-  static async leaveChatRoom(roomId: string, chatRoomId: string) : Promise<void> {
+  static async leaveChatRoom(roomId: string, chatRoomId: string): Promise<void> {
     if (AgoraIM._roomImManager.has(roomId)) {
       const manager = AgoraIM._roomImManager.get(roomId);
       await manager?.leaveChatRoom(chatRoomId);
@@ -91,10 +94,10 @@ export class AgoraIM {
       return undefined;
     }
   }
-/**
- * 获取链接状态
- */
-  static getConnectState(roomId:string):AgoraIMConnectionState|undefined{
+  /**
+   * 获取链接状态
+   */
+  static getConnectState(roomId: string): AgoraIMConnectionState | undefined {
     if (this._roomImManager.has(roomId)) {
       return this._roomImManager.get(roomId)?.getConnectState();
     } else {
