@@ -59,7 +59,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   }
   @bound
   onCreate(properties: any) {
-    fcrRttManager.resetDefaultInfo(properties)
+    fcrRttManager.resetDefaultInfo(properties,this.classroomStore,this.classroomConfig)
     fcrRttManager.resetListener(this.widgetController)
     console.log("数据初始化了",properties)
     this.setVisible(true);

@@ -1,5 +1,5 @@
 // import { getLanguage } from "agora-common-libs/*";
-import { AgoraWidgetController, EduClassroomConfig } from "agora-edu-core";
+import { AgoraWidgetController, EduClassroomConfig, EduClassroomStore } from "agora-edu-core";
 import { AgoraExtensionRoomEvent } from "../../../src/events";
 import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
 
@@ -24,6 +24,8 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
      * 页面控制器
      */
     private widgetController: AgoraWidgetController | undefined;
+    private classroomStore: EduClassroomStore | undefined;
+    private classroomConfig: EduClassroomConfig | undefined;
 
     /**
      * 配置信息
@@ -41,7 +43,9 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
      * 重置默认信息
      * @param properties 房间初始信息
      */
-    resetDefaultInfo(properties: any) {
+    resetDefaultInfo(properties: any, classroomStore: EduClassroomStore, classroomConfig: EduClassroomConfig) {
+        this.classroomStore = classroomStore;
+        this.classroomConfig = classroomConfig;
         this.resetData()
         // console.log(getLanguage())
         console.log(localStorage.getItem("language"))
