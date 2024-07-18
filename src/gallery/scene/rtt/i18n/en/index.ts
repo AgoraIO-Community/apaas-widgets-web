@@ -19,4 +19,12 @@ export default {
   fcr_subtitles_option_original_audio_chinese_english: 'Chinese & English',
 
    fcr_device_option_subtitles:'',
+   fcr_device_option_font_size:'',
+   fcr_device_option_reset_font_size:'',
+   fcr_device_option_view_rtt:'',
+   fcr_device_option_change_sourc:'',
+   fcr_device_option_choose_lang:'',
+   fcr_device_option_choose_lang_content_1:'',
+   fcr_device_option_choose_lang_content_2:'',
+
 };

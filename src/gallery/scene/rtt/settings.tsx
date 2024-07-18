@@ -3,6 +3,8 @@ import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
 import { Modal } from 'antd';
+import { FcrRttManager } from '../../../common/rtt/rtt-manager';
+import { transI18n } from 'agora-common-libs';
 
 export const RttSettings = ({
   target,
@@ -17,13 +19,9 @@ export const RttSettings = ({
   onShowTranslateChanged: (enableTranslate: boolean) => void;
   onTargetChanged: (target: string) => void;
 }) => {
-  const targetItems = [
-    { label: '不翻译', value: '' },
-    { label: '中文', value: 'zh-CN' },
-    { label: '英文', value: 'en-US' },
-    { label: '日语', value: 'ja-JP' },
-  ];
-
+  const sourceLanguageList = FcrRttManager.getInstance().sourceLanguageList;
+  const targetLanguageList = FcrRttManager.getInstance().targetLanguageList;
+  // const sourceLanguageValue = FcrRttManager.getInstance().currentSourceLan;
   const [selectedLanguage, setSelectedLanguage] = useState(target);
   const [showBilingual, setShowBilingual] = useState(true);
   const [fontSize, setFontSize] = useState(14);
@@ -38,11 +36,11 @@ export const RttSettings = ({
   return (
     <div className="settings-container">
       <div className="settings-section">
-        <label className="settings-label">字幕设置</label>
+        <label className="settings-label">{transI18n('fcr_subtitles_button_subtitles_setting')}</label>
         <div className="settings-option">
-          <span>声源语言:</span>
+          <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
           <RttSettingsSelect
-            items={targetItems}
+            items={sourceLanguageList}
             value={sourceLanguageId}
             onChange={(value: any) => {
               setSourceLanguageId(value);
@@ -53,9 +51,9 @@ export const RttSettings = ({
 
         </div>
         <div className="settings-option">
-          <span>翻译语言:</span>
+          <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
           <RttSettingsSelect
-            items={targetItems}
+            items={targetLanguageList}
             value={translateLanguageId}
             onChange={(value: any) => {
               setTranslateLanguageId(value);
@@ -67,7 +65,7 @@ export const RttSettings = ({
         </div>
 
         <div className="settings-option" onClick={() => setShowBilingual(!showBilingual)}>
-          <span>同时显示双语</span>
+          <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
           {showBilingual && <SvgImg
             type={SvgIconEnum.FCR_CHOOSEIT}
             size={24}
@@ -78,7 +76,7 @@ export const RttSettings = ({
             onChange={() => setShowBilingual(!showBilingual)}
           /> */}
         </div>
-        <label className="settings-label">字号大小</label>
+        <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>
         <div className="settings-option" onClick={onShowTranslateChanged}>
           <input
             type="range"
@@ -91,10 +89,10 @@ export const RttSettings = ({
         </div>
       </div>
       <button className="restore-button" onClick={() => handleHorizontalChange(14)}>
-        恢复默认字号
+        {transI18n('fcr_device_option_reset_font_size')}
       </button>
       <button className="real-time-button" onClick={viewRtt}>
-        查看实时转写...
+                {transI18n('fcr_device_option_view_rtt')}
       </button>
     </div>
   );
@@ -122,11 +120,10 @@ const RttSettingsSelect = ({
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
-        {items.find((item: { value: any; }) => item.value === value)?.label || '选择语言'}
+        {items.find((item: { value: any; }) => item.value === value)?.label || transI18n('fcr_device_option_choose_lang')}
       </div>
-      <Modal title="修改声源语言" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>Some contents...</p>
-       
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <p>{transI18n('fcr_device_option_choose_lang_content_1')}sourceLanguageList[]{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
       {isOpen && (
         <div className="select-options">

@@ -22,4 +22,12 @@ export default {
   fcr_subtitles_text_turn_on: '正在开启字幕',
   fcr_subtitles_option_original_audio_chinese_english: '中文、英文',
   fcr_device_option_subtitles:'字幕',
+  fcr_device_option_font_size:'字号大小',
+  fcr_device_option_reset_font_size:'恢复默认字号',
+  fcr_device_option_view_rtt:'查看实时转写...',
+  fcr_device_option_change_sourc:'修改声源语言',
+  fcr_device_option_choose_lang:'选择语言',
+  fcr_device_option_choose_lang_content_1:'你修改本场会议的声源语言为“',
+  fcr_device_option_choose_lang_content_2:'”，将对会议所有参会者的字幕和转写生效。'
+
 };

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { transI18n } from './transI18n';
+import { FcrRttManager } from 'src/common/rtt/rtt-manager';
 
 export const RttSettings = ({
   target,
@@ -16,12 +17,10 @@ export const RttSettings = ({
   onShowTranslateChanged: (enableTranslate: boolean) => void;
   onTargetChanged: (target: string) => void;
 }) => {
-  const targetItems = [
-    { label: '不翻译', value: '' },
-    { label: '中文(简体)', value: 'zh-CN' },
-    { label: '英文', value: 'en-US' },
-    { label: '日语', value: 'ja-JP' }
-  ];
+  const sourceLanguageList = FcrRttManager.getInstance().sourceLanguageList;
+  const targetLanguageList = FcrRttManager.getInstance().targetLanguageList;
+
+  
 
   const [selectedLanguage, setSelectedLanguage] = useState(target);
   const [showBilingual, setShowBilingual] = useState(true);
@@ -45,7 +44,7 @@ export const RttSettings = ({
         <div className="settings-option">
           <span>声源语言:</span>
           <RttSettingsSelect
-            items={targetItems}
+            items={sourceLanguageList}
             value={sourceLanguageId}
             onChange={(value: any) => {
               setSourceLanguageId(value);
@@ -67,7 +66,7 @@ export const RttSettings = ({
         <div className="settings-option">
           <span>翻译语言:</span>
           <RttSettingsSelect
-            items={targetItems}
+            items={targetLanguageList}
             value={translateLanguageId}
             onChange={(value: any) => {
               setTranslateLanguageId(value);
