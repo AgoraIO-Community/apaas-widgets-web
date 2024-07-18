@@ -76,7 +76,6 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.widgetController.addBroadcastListener( {
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
       onMessage: () => {
-        debugger
         this.setRttVisible(true)
       }
     }

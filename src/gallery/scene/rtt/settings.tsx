@@ -65,7 +65,7 @@ export const RttSettings = ({
 
         </div>
 
-        <div className="settings-option" onClick={() => {setShowBilingual(!showBilingual);onShowTranslateChanged}}>
+        <div className="settings-option" onClick={() => setShowBilingual(!showBilingual)}>
           <span>同时显示双语</span>
           {showBilingual && <SvgImg
             type={SvgIconEnum.FCR_CHOOSEIT}

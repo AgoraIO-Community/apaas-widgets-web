@@ -158,7 +158,14 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     setStarting(true);
     try {
       await changeRtt(1);
+      widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
       setIsOpenrtt(true)
+      ToastApi.open({
+        toastProps: {
+          type: 'normal',
+          content: "老师(我) 开启了实时转写服务，全体用户可见。",
+        },
+      });
     } finally {
       setStarting(false);
     }
@@ -244,9 +251,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   };
 
   useEffect(() => {
-    // debugger
-    // widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
-    // start();
+  
   }, []);
 
   useEffect(() => {
@@ -519,7 +524,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
           )} */}
           <div className="footer">
             {isOpenrtt && <button className="stop-button" onClick={() => changeRtt(0)}>{transI18n('fcr_rtt_stop_transcription')}</button>}
-            {!isOpenrtt && <button className="stop-button" onClick={() => { changeRtt(1); widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto); }}>{transI18n('fcr_rtt_start_transcription')}</button>}
+            {!isOpenrtt && <button className="stop-button" onClick={() => {start()}}>{transI18n('fcr_rtt_start_transcription')}</button>}
             <PopoverWithTooltip
               popoverProps={{
                 onVisibleChange: setPopoverVisible,

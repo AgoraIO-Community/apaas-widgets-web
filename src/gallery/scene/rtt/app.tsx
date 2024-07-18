@@ -140,15 +140,14 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
           start();
     }
     return (
+      // 
       <Popover
-            // visible={popoverVisible}
             onVisibleChange={setPopoverVisible}
             content={
               <RttSettings
               showTranslate={showTranslate}
               onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
                 // broadcastOptions({ showTranslate: show, target });
-                debugger
                 setShowTranslate(show);
               }}
               // source={source}
@@ -156,10 +155,12 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
               onSourceChanged={() => { }}
               viewRtt={viewRtt}
               onTargetChanged={(target) => {
-                console.log("target", target)
                 debugger
+                console.log("target", target)
                 broadcastOptions({ showTranslate, target });
                 setTarget(target);
+                setPopoverVisible(false)
+                // setVisible(false)
 
               }}></RttSettings>
             }
@@ -248,7 +249,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   }
   const start = async () => {
     setStarting(true);
-    debugger
     try {
       await changeRtt(1);
     } finally {
@@ -410,7 +410,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     target: string;
     showTranslate: boolean;
   }) => {
-    debugger
     setShowTranslate(showTranslate);
     setTarget(target);
     start()
@@ -471,7 +470,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
               <RttSettings
                 showTranslate={showTranslate}
                 onShowTranslateChanged={(show) => {
-                  debugger
                   // broadcastOptions({ showTranslate: show, target });
                   setShowTranslate(show);
                 }}
@@ -483,7 +481,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
                 onSourceChanged={() => { }}
                 onTargetChanged={(target) => {
                   console.log("target", target)
-                  debugger
                   // broadcastOptions({ showTranslate, target });
                   setTarget(target);
                 }}></RttSettings>
