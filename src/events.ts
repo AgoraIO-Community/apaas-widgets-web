@@ -94,6 +94,8 @@ export enum AgoraExtensionRoomEvent {
   //mobile连麦状态变更
   MobileCallStateChanged = 'mobile-call-state-changed',
   ChangeRttlanguage = "ChangeRttlanguage",
+  //修改声源语言
+  changeRttSourceLan = "ChangeRttSourceLan"
 }
 
 /**
