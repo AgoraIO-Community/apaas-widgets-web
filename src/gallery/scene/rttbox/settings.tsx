@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
-import { transI18n } from './transI18n';
-import { FcrRttManager } from 'src/common/rtt/rtt-manager';
+// import { transI18n } from './transI18n';
+// import { FcrRttManager } from 'src/common/rtt/rtt-manager';
 
 export const RttSettings = ({
   target,
@@ -17,8 +17,8 @@ export const RttSettings = ({
   onShowTranslateChanged: (enableTranslate: boolean) => void;
   onTargetChanged: (target: string) => void;
 }) => {
-  const sourceLanguageList = FcrRttManager.getInstance().sourceLanguageList;
-  const targetLanguageList = FcrRttManager.getInstance().targetLanguageList;
+  // const sourceLanguageList = FcrRttManager.getInstance().sourceLanguageList;
+  // const targetLanguageList = FcrRttManager.getInstance().targetLanguageList;
 
   
 

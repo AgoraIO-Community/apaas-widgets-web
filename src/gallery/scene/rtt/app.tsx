@@ -501,12 +501,12 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         </ToolTip>
       </div>
       {isRunoutTime && <div className="fcr-limited-box">
-       <div className="fcr-limited-box-title">限时体验</div>
+       <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
        每个账号限时10分钟体验字幕和转写功能，体验时间已用完。
       </div>}
        {!isRunoutTime && 
         <div className="fcr-limited-box">
-       <div className="fcr-limited-box-title">限时体验</div>
+       <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
        每个账号限时10分钟体验字幕和转写功能，剩余{formatTime(countdown)}分钟。
       </div>}
       {/* 开启中 */}

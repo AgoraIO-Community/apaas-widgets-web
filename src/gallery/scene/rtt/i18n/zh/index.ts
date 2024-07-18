@@ -28,6 +28,8 @@ export default {
   fcr_device_option_change_sourc:'修改声源语言',
   fcr_device_option_choose_lang:'选择语言',
   fcr_device_option_choose_lang_content_1:'你修改本场会议的声源语言为“',
-  fcr_device_option_choose_lang_content_2:'”，将对会议所有参会者的字幕和转写生效。'
+  fcr_device_option_choose_lang_content_2:'”，将对会议所有参会者的字幕和转写生效。',
+  fcr_limited_time_experience:'限时体验',
+
 
 };

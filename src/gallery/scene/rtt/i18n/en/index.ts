@@ -26,5 +26,5 @@ export default {
    fcr_device_option_choose_lang:'',
    fcr_device_option_choose_lang_content_1:'',
    fcr_device_option_choose_lang_content_2:'',
-
+   fcr_limited_time_experience:'',
 };
