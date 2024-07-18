@@ -20,8 +20,9 @@ export const RttSettings = ({
   onTargetChanged: (target: string) => void;
 }) => {
   const sourceLanguageList = fcrRttManager.sourceLanguageList;
+  console.log("sourceLanguageList",sourceLanguageList)
   const targetLanguageList = fcrRttManager.targetLanguageList;
-  const sourceLanguageValue = fcrRttManager.getConfigInfo();
+  const configInfo = fcrRttManager.getConfigInfo();
   const [selectedLanguage, setSelectedLanguage] = useState(target);
   const [showBilingual, setShowBilingual] = useState(true);
   const [fontSize, setFontSize] = useState(14);
@@ -41,12 +42,6 @@ export const RttSettings = ({
           <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
           <RttSettingsSelect
             items={sourceLanguageList}
-            value={sourceLanguageId}
-            onChange={(value: any) => {
-              setSourceLanguageId(value);
-              localStorage.setItem("sourceLanguageId", value);
-              onTargetChanged(value);
-            }}
           />
 
         </div>
@@ -54,12 +49,6 @@ export const RttSettings = ({
           <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
           <RttSettingsSelect
             items={targetLanguageList}
-            value={translateLanguageId}
-            onChange={(value: any) => {
-              setTranslateLanguageId(value);
-              localStorage.setItem("translatelanguageId", value);
-              onTargetChanged(value);
-            }}
           />
 
         </div>
@@ -100,18 +89,22 @@ export const RttSettings = ({
 
 const RttSettingsSelect = ({
   items,
-  value,
-  onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState(false);
+
+// const configInfo = fcrRttManager.getConfigInfo();
+  const configInfo = fcrRttManager.getConfigInfo();
+  const [sourceLan, setSourceLan] = useState(configInfo.getSourceLan());
   const showModal = () => {
+    setIsOpen(false);
     setIsModalOpen(true);
   };
 
   const handleOk = () => {
     setIsModalOpen(false);
+    fcrRttManager.setCurrentSourceLan(sourceLan)
   };
 
   const handleCancel = () => {
@@ -120,25 +113,26 @@ const RttSettingsSelect = ({
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
-        {items.find((item: { value: any; }) => item.value === value)?.label || transI18n('fcr_device_option_choose_lang')}
+        {items.find((item: { value: any; }) => item.value === sourceLan.value)?.label || transI18n('fcr_device_option_choose_lang')}
       </div>
       <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>{transI18n('fcr_device_option_choose_lang_content_1')}sourceLanguageList[]{transI18n('fcr_device_option_choose_lang_content_2')}</p>
+        <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{color:'#4262FF'}}>{transI18n(configInfo.getSourceLan().text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
       {isOpen && (
         <div className="select-options">
-          {items.map((item: { value: React.Key | null | undefined; label: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
+          {items.map((item: {
+            text(text: any): React.ReactNode; value: React.Key | null | undefined; label: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; 
+}) => (
             <div
               key={item.value}
-              className={classnames('select-option', { 'selected': item.value === value })}
+              className={classnames('select-option')}
               onClick={() => {
-                onChange(item.value);
-                setIsOpen(false);
                 showModal()
+                setSourceLan(item)
               }}
             >
-              {item.label}
-              {item.value === value && <SvgImg
+              {transI18n(item.text)}
+              {item.value === sourceLan.value && <SvgImg
                 type={SvgIconEnum.FCR_CHOOSEIT}
                 size={24}
                 colors='white'></SvgImg>}

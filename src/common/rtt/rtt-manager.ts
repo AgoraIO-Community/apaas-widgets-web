@@ -2,15 +2,17 @@
 import { AgoraWidgetController, EduClassroomConfig, EduClassroomStore } from "agora-edu-core";
 import { AgoraExtensionRoomEvent } from "../../../src/events";
 import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
+import { transI18n } from 'agora-common-libs';
+
 
  class FcrRttManager {
     /**
      * 可选择源语言列表
      */
     sourceLanguageList = [
-        new FcrRttLanguageData("zh-CN",""),
-        new FcrRttLanguageData("en-US",""),
-        new FcrRttLanguageData("ja-JP",""),
+        new FcrRttLanguageData('fcr_subtitles_option_translation_display_chinese',"zh-CN"),
+        new FcrRttLanguageData('fcr_subtitles_option_translation_display_english',"en-US",),
+        new FcrRttLanguageData('fcr_subtitles_option_translation_display_japanese',"ja-JP",),
     ];
     /**
      * 可选择语言列表
@@ -36,6 +38,7 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
         if(this.rttConfigInfo == null){
             this.resetData()
         }
+
         return this.rttConfigInfo
     }
 
@@ -87,7 +90,10 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
     /**
      * 设置当前源语言
      */
-    setCurrentSourceLan() { }
+    setCurrentSourceLan(lan: any) {
+        this.rttConfigInfo.setSourceLan(lan)
+        console.log( "getSourceLan",this.rttConfigInfo.getSourceLan())
+     }
 
     /**
      * 设置当前翻译语言
@@ -113,7 +119,7 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
      * @param tartDomId 要展示的目标父级容器的domId
      */
     showSetting(tartDomId: string) {
-
+        
     }
 
     /**
@@ -121,16 +127,15 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
      */
     private sendRequest(state:number,sceneId:string){
         const {
-            rteEngineConfig: { ignoreUrlRegionPrefix, region,widget},
+            rteEngineConfig: { ignoreUrlRegionPrefix, region},
             appId,
             //@ts-ignore
           } = window.EduClassroomConfig;
           const data = {
             languages: {
-                      source: localStorage.getItem("sourceLanguageId") || 'zh-CN',
+                
+                      source:this.rttConfigInfo.getSourceLan(),
                       target: [localStorage.getItem("translatelanguageId") || 'en-US'],
-                      // source: 'zh-CN',
-                      // target: ['en-US'],
                     },
                     transcribe: 0,
                     subtitle:1
@@ -138,7 +143,7 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
           const pathPrefix = `${
             ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
           }/edu/apps/${appId}`;
-          widget.classroomStore.api.fetch({
+          this.classroomStore?.api.fetch({
             path: `/v2/rooms/${sceneId}/widgets/rtt/states/${state}`,
             method: 'PUT',
             data: {
