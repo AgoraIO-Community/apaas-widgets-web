@@ -1,0 +1,10 @@
+.ant-modal-header{
+    border-radius: 16px;
+    overflow: hidden;
+}
+.ant-modal-header{
+    border-bottom: none;
+}
+.ant-modal-footer{
+    border-top: none;
+}

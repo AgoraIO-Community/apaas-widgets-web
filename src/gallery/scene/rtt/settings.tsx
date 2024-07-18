@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
-import { transI18n } from './transI18n';
+// import { transI18n } from './transI18n';
+import { Modal } from 'antd';
 
 export const RttSettings = ({
   target,
@@ -105,12 +106,28 @@ const RttSettingsSelect = ({
   onChange,
 }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const showModal = () => {
+    setIsModalOpen(true);
+  };
 
+  const handleOk = () => {
+    setIsModalOpen(false);
+  };
+
+  const handleCancel = () => {
+    setIsModalOpen(false);
+  };
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
         {items.find((item: { value: any; }) => item.value === value)?.label || '选择语言'}
       </div>
+      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+        <p>Some contents...</p>
+       
+      </Modal>
       {isOpen && (
         <div className="select-options">
           {items.map((item: { value: React.Key | null | undefined; label: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined; }) => (
@@ -120,6 +137,7 @@ const RttSettingsSelect = ({
               onClick={() => {
                 onChange(item.value);
                 setIsOpen(false);
+                showModal()
               }}
             >
               {item.label}

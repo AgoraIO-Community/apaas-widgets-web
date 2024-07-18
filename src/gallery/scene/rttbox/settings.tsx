@@ -34,6 +34,10 @@ export const RttSettings = ({
     localStorage.setItem("subtitleFontSize", value);
 
   };
+  function addDialog(arg0: string, arg1: { title: any; content: any; onOk: () => void; okButtonProps: { styleType: string; }; okText: any; }) {
+    throw new Error('Function not implemented.');
+  }
+
   return (
     <div className="settings-container">
       <div className="settings-section">
@@ -47,9 +51,18 @@ export const RttSettings = ({
               setSourceLanguageId(value);
               localStorage.setItem("sourceLanguageId", value);
               onTargetChanged(value);
+              addDialog('confirm', {
+                title: "修改声源语言",
+                content: "你修改本场会议的声源语言为“说英文”，将对会议所有参会者的字幕和转写生效。",
+                onOk: () => {
+                  debugger
+                },
+                okButtonProps: { styleType: 'danger' },
+          
+                okText: "确认修改",
+              });
             }}
           />
-
         </div>
         <div className="settings-option">
           <span>翻译语言:</span>

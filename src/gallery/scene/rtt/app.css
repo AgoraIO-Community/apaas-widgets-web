@@ -315,6 +315,18 @@
   margin-left: 5px;
   width: 60%;
 }
+
+.ant-modal-content{
+  border-radius: 16px !important;
+  overflow: hidden;
+}
+.ant-modal-header{
+  border-bottom: none;
+}
+.ant-modal-footer{
+  border-top: none;
+}
+
 /* 历史记录样式 */
 .search-container{
   padding: 15px;
