@@ -3,7 +3,7 @@ import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
 import { Modal } from 'antd';
-import { FcrRttManager } from '../../../common/rtt/rtt-manager';
+import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { transI18n } from 'agora-common-libs';
 
 export const RttSettings = ({
@@ -19,9 +19,9 @@ export const RttSettings = ({
   onShowTranslateChanged: (enableTranslate: boolean) => void;
   onTargetChanged: (target: string) => void;
 }) => {
-  const sourceLanguageList = FcrRttManager.getInstance().sourceLanguageList;
-  const targetLanguageList = FcrRttManager.getInstance().targetLanguageList;
-  const sourceLanguageValue = FcrRttManager.getInstance().currentSourceLan;
+  const sourceLanguageList = fcrRttManager.sourceLanguageList;
+  const targetLanguageList = fcrRttManager.targetLanguageList;
+  const sourceLanguageValue = fcrRttManager.getConfigInfo();
   const [selectedLanguage, setSelectedLanguage] = useState(target);
   const [showBilingual, setShowBilingual] = useState(true);
   const [fontSize, setFontSize] = useState(14);

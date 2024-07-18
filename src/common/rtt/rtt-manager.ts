@@ -4,6 +4,9 @@ import { AgoraExtensionRoomEvent } from "../../../src/events";
 import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
 
  class FcrRttManager {
+    getInstance() {
+      throw new Error('Method not implemented.');
+    }
     /**
      * 可选择源语言列表
      */
@@ -29,6 +32,13 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
      * 配置信息
      */
     private rttConfigInfo!:FcrRttConfig
+
+    getConfigInfo(){
+        if(this.rttConfigInfo == null){
+            this.resetData()
+        }
+        return this.rttConfigInfo
+    }
 
     /**
      * 重置默认信息
