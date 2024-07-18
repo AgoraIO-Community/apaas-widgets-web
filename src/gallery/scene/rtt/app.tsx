@@ -455,10 +455,9 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 
     <div
       style={{ display: visible ? 'block' : 'none' }}
-      className={classnames('fcr-rtt-widget-container', {
+      className={classnames('fcr-rtt-widget-container','fcr-bg-black-a80', {
         'fcr-bg-2-a50': !active,
         'fcr-border-transparent': !active,
-        'fcr-bg-black-a80': active,
         'fcr-border-brand': active,
       })}
       onMouseEnter={() => setMouseHover(true)}
