@@ -124,7 +124,7 @@ const RttSettingsSelect = ({
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
         {items.find((item: { value: any; }) => item.value === value)?.label || '选择语言'}
       </div>
-      <Modal title="Basic Modal" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title="修改声源语言" open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <p>Some contents...</p>
        
       </Modal>
