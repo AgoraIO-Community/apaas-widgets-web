@@ -7,7 +7,7 @@ import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 import { PopoverWithTooltip } from '@components/popover';
 import { message } from 'antd';
-import { FcrRttManager } from 'src/common/rtt/rtt-manager';
+import { fcrRttManager } from '../../../common/rtt/rtt-manager'
 
 export class FcrRTTWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -59,8 +59,8 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   }
   @bound
   onCreate(properties: any) {
-    FcrRttManager.getInstance().resetDefaultInfo(properties)
-    FcrRttManager.getInstance().resetListener(this.widgetController)
+    fcrRttManager.resetDefaultInfo(properties)
+    fcrRttManager.resetListener(this.widgetController)
     console.log("数据初始化了",properties)
     this.setVisible(true);
     // this.widgetController.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
@@ -133,7 +133,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   }
 
   onDestroy() {
-    FcrRttManager.getInstance().release()
+    fcrRttManager.release()
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: transI18n('fcr_subtitles_button_open'),

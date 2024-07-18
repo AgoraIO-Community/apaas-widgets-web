@@ -1,39 +1,24 @@
-import { getLanguage } from "agora-common-libs/*";
+// import { getLanguage } from "agora-common-libs/*";
 import { AgoraWidgetController, EduClassroomConfig } from "agora-edu-core";
-import { createContext } from "react";
-import { AgoraExtensionRoomEvent } from "src/events";
+import { AgoraExtensionRoomEvent } from "../../../src/events";
+import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
 
-export class FcrRttManager {
-    private static manager = new FcrRttManager();
-
-    public static getInstance(): FcrRttManager {
-        return this.manager;
-    }
+ class FcrRttManager {
     /**
      * 可选择源语言列表
      */
     sourceLanguageList = [
-        { text: '中文(简体)', value: 'zh-CN' },
-        { text: '英文', value: 'en-US' },
-        { text: '日语', value: 'ja-JP' },
+        new FcrRttLanguageData("zh-CN",""),
+        new FcrRttLanguageData("en-US",""),
+        new FcrRttLanguageData("ja-JP",""),
     ];
     /**
      * 可选择语言列表
      */
     targetLanguageList = [
-        { text: '不翻译', value: '' },
+        new FcrRttLanguageData("",""),
         ...this.sourceLanguageList
     ];
-
-    /**
-     * 当前源语言
-     */
-    private currentSourceLan = this.sourceLanguageList[0]
-
-    /**
-     * 当前翻译语言
-     */
-    private currentTargetLan = this.targetLanguageList[0]
 
     /**
      * 页面控制器
@@ -41,12 +26,17 @@ export class FcrRttManager {
     private widgetController: AgoraWidgetController | undefined;
 
     /**
+     * 配置信息
+     */
+    private rttConfigInfo!:FcrRttConfig
+
+    /**
      * 重置默认信息
      * @param properties 房间初始信息
      */
     resetDefaultInfo(properties: any) {
         this.resetData()
-        console.log(getLanguage())
+        // console.log(getLanguage())
         console.log(localStorage.getItem("language"))
         // this.currentSourceLan = {}
     }
@@ -128,8 +118,7 @@ export class FcrRttManager {
      * 保存缓存信息
      */
     private saveStore(){
-        const {roomUuid} = EduClassroomConfig.shared.sessionInfo;
-        localStorage.setItem(`${roomUuid}_sourceLan`, this.currentSourceLan.value)
+        this.rttConfigInfo.setSourceLan(new FcrRttLanguageData("", ""))
     }
     /**
      * 清除所有缓存信息
@@ -142,8 +131,8 @@ export class FcrRttManager {
      * 重置所有变量数据
      */
     private resetData(){
-        this.currentSourceLan = this.sourceLanguageList[0]
-        this.currentTargetLan = this.targetLanguageList[0]
+        this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomName)
     }
 
 }
+export const fcrRttManager = new FcrRttManager();
