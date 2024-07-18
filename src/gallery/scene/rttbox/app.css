@@ -228,7 +228,10 @@
 .settings-label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 175);
+  padding-left: 9px;
+  padding-right: 9px;
 }
 
 .settings-option {
@@ -236,6 +239,22 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  padding-left: 9px;
+  padding-right: 9px;
+  font-size: 13px;
+  /* height: 32px; */
+}
+.settings-option:hover {
+  border-radius: 5px;
+  background-color:#4262FF;
+}
+.settings-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  padding-left: 9px;
+  padding-right: 9px;
   /* height: 32px; */
 }
 
@@ -250,6 +269,8 @@
   border-radius: 5px;
   cursor: pointer;
   text-align: left;
+  padding-left: 9px;
+  padding-right: 9px;
 }
 .restore-button:hover, .real-time-button:hover{
   background-color:#4262FF;
@@ -368,13 +389,35 @@
   justify-content: space-between; /* 两端对齐 */
 }
 
-.stop-button, .settings-button {
+.stop-button {
   background-color: #007bff;
   color: white;
   border: none;
   padding: 5px 10px;
   border-radius: 4px;
   cursor: pointer;
+}
+
+.settings-button {
+  color: white;
+  border-width: 1px;
+  border-radius: 4px;
+  border-style: solid;
+  border-color: white;
+  padding: 5px 10px;
+  cursor: pointer;
+  text-align: center;
+}
+.settings-button-arrow-down {
+  display: inline-block;
+  width: 0; 
+  height: 0; 
+  vertical-align: middle;
+  transform: translateY(-2px);
+  border-left: 8px solid transparent;
+  border-right: 8px solid transparent;
+  border-top: 8px solid #ffffff;
+  border-radius: 8px;
 }
 .stop-button{
   flex-grow: 7;

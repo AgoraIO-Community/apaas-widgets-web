@@ -201,7 +201,7 @@
 
 /* RttSettings.css */
 .settings-container {
-  padding: 20px;
+  padding: 20px 10px;
   background: #333;
   color: #fff;
   border-radius: 8px;
@@ -216,7 +216,10 @@
 .settings-label {
   display: block;
   margin-bottom: 5px;
-  font-weight: bold;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 175);
+  padding-left: 9px;
+  padding-right: 9px;
 }
 
 .settings-option {
@@ -224,7 +227,14 @@
   align-items: center;
   justify-content: space-between;
   margin-bottom: 10px;
+  padding-left: 9px;
+  padding-right: 9px;
+  font-size: 13px;
   /* height: 32px; */
+}
+.settings-option:hover {
+  border-radius: 5px;
+  background-color:#4262FF;
 }
 
 .restore-button, .real-time-button {
@@ -239,6 +249,8 @@
   cursor: pointer;
   text-align: left;
   font-size: 13px;
+  padding-left: 9px;
+  padding-right: 9px;
 }
 .restore-button:hover, .real-time-button:hover{
   background-color:#4262FF;

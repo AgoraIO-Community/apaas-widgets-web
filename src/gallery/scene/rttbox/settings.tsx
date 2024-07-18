@@ -77,7 +77,7 @@ export const RttSettings = ({
             onChange={() => setShowBilingual(!showBilingual)}
           /> */}
         </div>
-        <span style={{fontSize:'13px'}}>字号大小:</span>
+        <label className="settings-label">字号大小</label>
         <div className="settings-option" onClick={onShowTranslateChanged}>
           <input
             type="range"

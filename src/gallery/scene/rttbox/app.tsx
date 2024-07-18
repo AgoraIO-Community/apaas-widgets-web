@@ -542,7 +542,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
                 overlayInnerStyle: { width: 175 },
               }}>
               {/* toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }} */}
-              <button className="settings-button">{transI18n('fcr_rtt_settings')}</button>
+              <button className="settings-button">{transI18n('fcr_rtt_settings')} <span className="settings-button-arrow-down"></span></button>
             </PopoverWithTooltip>
           </div>
         </div>
