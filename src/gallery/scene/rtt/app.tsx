@@ -147,7 +147,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
               <RttSettings
               showTranslate={showTranslate}
               onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
-                broadcastOptions({ showTranslate: show, target });
+                // broadcastOptions({ showTranslate: show, target });
+                debugger
                 setShowTranslate(show);
               }}
               // source={source}
@@ -156,6 +157,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
               viewRtt={viewRtt}
               onTargetChanged={(target) => {
                 console.log("target", target)
+                debugger
                 broadcastOptions({ showTranslate, target });
                 setTarget(target);
 
@@ -399,7 +401,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       showTranslate,
       target,
     });
-    start()
   };
 
   const handleRttOptionsChanged = ({
@@ -409,10 +410,10 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     target: string;
     showTranslate: boolean;
   }) => {
+    debugger
     setShowTranslate(showTranslate);
     setTarget(target);
     start()
-
   };
 
   const enableTranslate = !!target;
@@ -471,7 +472,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
               <RttSettings
                 showTranslate={showTranslate}
                 onShowTranslateChanged={(show) => {
-                  broadcastOptions({ showTranslate: show, target });
+                  debugger
+                  // broadcastOptions({ showTranslate: show, target });
                   setShowTranslate(show);
                 }}
                 // source={source}
@@ -482,7 +484,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
                 onSourceChanged={() => { }}
                 onTargetChanged={(target) => {
                   console.log("target", target)
-                  broadcastOptions({ showTranslate, target });
+                  debugger
+                  // broadcastOptions({ showTranslate, target });
                   setTarget(target);
                 }}></RttSettings>
             ),
