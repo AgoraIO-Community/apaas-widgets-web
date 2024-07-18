@@ -28,7 +28,7 @@ export const RttSettings = ({
   const [sourceLanguageId, setSourceLanguageId] = useState(localStorage.getItem("sourceLanguageId") || 'zh-CN');
   const [translateLanguageId, setTranslateLanguageId] = useState(localStorage.getItem("translatelanguageId") || 'zh-CN');
   const [horizontalValue, setHorizontalValue] = useState(localStorage.getItem("subtitleFontSize") || '14');
-  const handleHorizontalChange = (value) => {
+  const handleHorizontalChange = (value: number) => {
     setHorizontalValue(value);
     localStorage.setItem("subtitleFontSize", value);
 

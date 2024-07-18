@@ -4,9 +4,6 @@ import { AgoraExtensionRoomEvent } from "../../../src/events";
 import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
 
  class FcrRttManager {
-    getInstance() {
-      throw new Error('Method not implemented.');
-    }
     /**
      * 可选择源语言列表
      */
@@ -92,14 +89,12 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
      * 设置当前翻译语言
      */
     setCurrentTargetLan() {
-
     }
 
     /**
      * 设置当前文本大小
      */
     setCurrentTextSize() {
-
     }
 
     /**
@@ -120,8 +115,33 @@ import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
     /**
      * 发送请求
      */
-    private sendRequest(){
-
+    private sendRequest(state:number,sceneId:string){
+        const {
+            rteEngineConfig: { ignoreUrlRegionPrefix, region,widget},
+            appId,
+            //@ts-ignore
+          } = window.EduClassroomConfig;
+          const data = {
+            languages: {
+                      source: localStorage.getItem("sourceLanguageId") || 'zh-CN',
+                      target: [localStorage.getItem("translatelanguageId") || 'en-US'],
+                      // source: 'zh-CN',
+                      // target: ['en-US'],
+                    },
+                    transcribe: 0,
+                    subtitle:1
+          };
+          const pathPrefix = `${
+            ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
+          }/edu/apps/${appId}`;
+          widget.classroomStore.api.fetch({
+            path: `/v2/rooms/${sceneId}/widgets/rtt/states/${state}`,
+            method: 'PUT',
+            data: {
+              ...data
+            },
+            pathPrefix,
+          });
     }
 
     /**
