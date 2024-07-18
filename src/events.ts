@@ -63,6 +63,8 @@ export enum AgoraExtensionRoomEvent {
   OpenStreamMediaPlayer = 'open-stream-media-player',
   // 返回授权用户列表
   ResponseGrantedList = 'response-granted-list',
+  // 
+  RttOptionsChanged = 'rtt-options-changed',
   // 横竖屏切换
   OrientationStatesChanged = 'orientation-changed',
   // 移动端大班课横屏清屏状态变化
@@ -75,6 +77,10 @@ export enum AgoraExtensionRoomEvent {
   SetMinimize = 'set-minimize',
   //设置插件可见性
   VisibleChanged = 'visible-changed',
+  // 工具盒子可见性变化
+  ToolboxChanged = 'toolbox-changed',
+  // rtt盒子可见性变化
+    RttboxChanged = 'rttbox-changed',
   // 布局变化
   LayoutChanged = 'layout-changed',
   // webview/streamMedia 插件刷新
@@ -87,6 +93,7 @@ export enum AgoraExtensionRoomEvent {
   SetFullscreen = 'set-fullscreen',
   //mobile连麦状态变更
   MobileCallStateChanged = 'mobile-call-state-changed',
+  ChangeRttlanguage = "ChangeRttlanguage",
 }
 
 /**
@@ -129,6 +136,10 @@ export enum AgoraExtensionWidgetEvent {
   UnregisterCabinetTool = 'unregister-cabinet-tool',
   // 请求授权用户列表
   RequestGrantedList = 'request-granted-list',
+  // 
+  RttOptionsChanged = 'rtt-options-changed',
+  // 
+  RequestRttOptions = 'request-rtt-options',
   //请求当前横竖屏状态
   RequestOrientationStates = 'request-orientation',
   //取消强制横屏
@@ -151,6 +162,8 @@ export enum AgoraExtensionWidgetEvent {
   WidgetDestroyed = 'widget-destroyed',
   //设置插件可见性
   SetVisible = 'set-visible',
+  // 切换声源语言
+  ChangeRttlanguage = "change-rttlanguage",
   //设置插件最小化
   SetMinimize = 'set-minimize',
   //设置插件全屏

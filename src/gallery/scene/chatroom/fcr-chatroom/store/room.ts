@@ -38,6 +38,10 @@ export class RoomStore {
       this.chatDialogVisible = message.visible;
     }
   }
+  @action.bound
+  private _handleToolBoxVisibleChanged() {
+    
+  }
   @observable
   allMuted = false;
 
@@ -48,6 +52,14 @@ export class RoomStore {
       messageType: AgoraExtensionRoomEvent.VisibleChanged,
       onMessage: this._handleWidgetVisibleChanged,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+      onMessage: this._handleToolBoxVisibleChanged,
+    });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttboxChanged,
+      onMessage: this._handleToolBoxVisibleChanged,
+    });
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.AllUserMuted, this._handleAllUserMuted);
@@ -55,6 +67,14 @@ export class RoomStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.VisibleChanged,
       onMessage: this._handleWidgetVisibleChanged,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+      onMessage: this._handleToolBoxVisibleChanged,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttboxChanged,
+      onMessage: this._handleToolBoxVisibleChanged,
     });
   }
   @computed
