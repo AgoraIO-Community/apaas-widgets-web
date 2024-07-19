@@ -27,4 +27,13 @@ export default {
    fcr_device_option_choose_lang_content_1:'',
    fcr_device_option_choose_lang_content_2:'',
    fcr_limited_time_experience:'',
+   fcr_dialog_rtt_text_conversion_state_open:'',
+   fcr_dialog_rtt_text_conversion_state_close:'',
+   fcr_dialog_rtt_text_open_target_language:'',
+   fcr_dialog_rtt_toast_conversion_state_open_me_show:'',
+   fcr_dialog_rtt_toast_conversion_state_close_me_show:'',
+   fcr_dialog_rtt_toast_conversion_state_open:'',
+   fcr_dialog_rtt_toast_conversion_state_close:'',
+   fcr_modal_okText:'',
+   fcr_modal_cancelText:'',
 };
