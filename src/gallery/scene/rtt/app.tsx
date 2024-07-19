@@ -161,7 +161,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
       onMessage: (data: { visible: boolean }) => {
-        debugger
         if (data.visible) {
           fcrRttManager.showSubtitle()
         } else {

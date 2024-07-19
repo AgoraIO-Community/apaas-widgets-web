@@ -377,6 +377,7 @@ class FcrRttManager {
             }, 3000)
             this.openSubtitleTimerList.push(id)
         } else {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToOpening)
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.openSubtitle = true
             this.sendRequest(config)?.then(() => {

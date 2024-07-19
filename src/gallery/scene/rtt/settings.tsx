@@ -151,7 +151,6 @@ const RttSettingsSelect = ({
               key={item.value}
               className={classnames('select-option')}
               onClick={() => {
-                debugger
                 if (items[0].value == "") {
                   fcrRttManager.setCurrentTargetLan(item.value, true)
                 } else {

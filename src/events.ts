@@ -120,13 +120,13 @@ export enum AgoraExtensionRoomEvent {
   //接收到内容信息变更
   RttContentChange = "RttContentChange",
   //接收到内容信息变更
-  RttListChange = "RttContentChange",
+  RttListChange = "RttListChange",
   //状态改变到正在开启
   RttStateToOpening = "RttStateToOpening",
   //状态改变到正在聆听
-  RttStateToListener = "RttContentChange",
+  RttStateToListener = "RttStateToListener",
   //状态改变到无人讲话
-  RttStateToNoSpeack = "RttContentChange",
+  RttStateToNoSpeack = "RttStateToNoSpeack",
   //状态接收到声源语言变更
   RttStateReceiveSourceLanChange = "RttStateReceiveSourceLanChange",
   //倒计时修改通知
