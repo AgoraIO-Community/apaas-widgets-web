@@ -31,6 +31,13 @@ export default {
   fcr_device_option_choose_lang_content_1:'你修改本场会议的声源语言为“',
   fcr_device_option_choose_lang_content_2:'”，将对会议所有参会者的字幕和转写生效。',
   fcr_limited_time_experience:'限时体验',
+  fcr_dialog_rtt_text_conversion_state_open:'已开启实时转写',
+  fcr_dialog_rtt_text_conversion_state_close:'已停止实时转写',
+  fcr_dialog_rtt_text_open_target_language:'开启翻译识别内容',
+  fcr_dialog_rtt_toast_conversion_state_open_me_show:'开启了实时转写服务，全体用户可见。',
+  fcr_dialog_rtt_toast_conversion_state_close_me_show:'停止了实时转写服务，全体用户可见。',
+  fcr_dialog_rtt_toast_conversion_state_open:'开启了实时转写服务。',
+  fcr_dialog_rtt_toast_conversion_state_close:'停止了实时转写服务，全体用户可见',
 
 
 };

@@ -285,11 +285,11 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 
 
   const decodeProto = (uid: string, data: Uint8Array) => {
-    debugger
-    setRttVisible(true)
-    setVisible(true)
-    fcrRttManager.messageDataProcessing(data)
-    setRttList([...fcrRttManager.getRttList()]);
+    // debugger
+    // setRttVisible(true)
+    // setVisible(true)
+    // fcrRttManager.messageDataProcessing(data)
+    // setRttList([...fcrRttManager.getRttList()]);
   };
   useEffect(() => {
     console.log("rttList", rttList)
@@ -366,9 +366,14 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttContentChange,
       onMessage(message) {
+        setRttList([...fcrRttManager.getRttList()]);
+        setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
+        setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
         setRttVisible(true)
         setVisible(true)
-        setRttList([...fcrRttManager.getRttList()]);
+        setStarting(false)
+        setListening(false)
+        setNoOnespeakig(false)
       },
     })
 
@@ -376,8 +381,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
       onMessage: (data) => {
         if(data.visible){
-          // debugger
-          widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
+          // // debugger
+          // widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
           fcrRttManager.showSubtitle()
         }else{
           fcrRttManager.closeSubtitle()

@@ -1,7 +1,6 @@
 import { fcrRttManager } from "./rtt-manager"
 import { AgoraExtensionRoomEvent } from "../../../src/events";
 import { AgoraWidgetController } from "agora-edu-core";
-import { List } from "lodash";
 
 /**
  * 配置数据

@@ -159,7 +159,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     setStarting(true);
     try {
       await changeRtt(1);
-      widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
+      // widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
       setIsOpenrtt(true)
       ToastApi.open({
         toastProps: {
