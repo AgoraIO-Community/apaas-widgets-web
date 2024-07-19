@@ -243,7 +243,6 @@ class FcrRttManager {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
         }
 
-
         //消息传递后开启三秒无回调隐藏字幕
         const id = setTimeout(() => {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
@@ -254,9 +253,66 @@ class FcrRttManager {
     /**
      * 房间属性变更监听
      */
-    onRoomWidgetPropertiesChange(properties:Map<string,unknown>){
-        console.log("xxxxxxxxxx")
-        console.log(properties)
+    onRoomWidgetPropertiesChange(properties:never | null){
+        if (properties && Object.keys(properties).length > 0) {
+            const config = properties["extra"]
+            //判断是否改变了转写状态
+            if(this.rttConfigInfo.openTranscribe !== (Number(config["transcribe"]) == 1 ? true : false)){
+                this.rttList = this.rttList.concat([
+                    {
+                        uuid: uuidV4(),
+                        culture: '',
+                        text: 'xxx已' + (Number(config["transcribe"]) == 1 ? "开启" : "关闭") + "实时转写",
+                        uid: '',
+                        time: 0,
+                        isFinal: true,
+                        confidence: 0,
+                    },
+                ])
+                .slice(-100);
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+            }
+            //判断是否开启了翻译
+            const targetLan = config["languages"]["target"] as any
+            if (targetLan && targetLan.length > 0) {
+                if (this.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0]) {
+                    this.rttList = this.rttList.concat([
+                        {
+                            uuid: uuidV4(),
+                            culture: '',
+                            text: "开启翻译识别内容",
+                            uid: '',
+                            time: 0,
+                            isFinal: true,
+                            confidence: 0,
+                        },
+                    ])
+                    .slice(-100);
+                    this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                }
+            }
+             //判断是否修改了声源语言
+             const sourceLan = config["languages"]["source"]
+             if (sourceLan) {
+                 if (this.rttConfigInfo.getSourceLan().value !== sourceLan) {
+                    this.rttList = this.rttList.concat([
+                        {
+                            uuid: uuidV4(),
+                            culture: '',
+                            text: "xxx修改了声源语言",
+                            uid: '',
+                            time: 0,
+                            isFinal: true,
+                            confidence: 0,
+                        },
+                    ])
+                    .slice(-100);
+                    this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
+                    this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                }
+            }
+            this.rttConfigInfo.initRoomeConfigInfo(properties)
+        }
     }
 
 
@@ -321,7 +377,7 @@ class FcrRttManager {
     /**
      * 重置所有变量数据
      */
-    private resetData(properties: Map<string, unknown> | null) {
+    private resetData(properties: never | null) {
         this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomUuid, this.widgetController)
         this.rttConfigInfo.initRoomeConfigInfo(properties)
     }

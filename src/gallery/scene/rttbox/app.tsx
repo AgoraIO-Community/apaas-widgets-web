@@ -20,6 +20,7 @@ import { notification } from "antd";
 import { Button } from '@components/button';
 import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { ToastApi } from '@components/toast';
+import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -173,81 +174,83 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
 
 
   const decodeProto = (uid: string, data: Uint8Array) => {
-    const pb = protoRoot.lookup('Text');
-    if (pb) {
-      //@ts-ignore
-      const textstream = pb.decode(data);
-      const lastItemByUid = rttListRef.current.findLast((item) => item.uid === textstream.uid);
-      const lastItemIndexByUid = rttListRef.current.findLastIndex(
-        (item) => item.uid === textstream.uid,
-      );
+    fcrRttManager.messageDataProcessing(data)
+    setRttList([...fcrRttManager.getRttList()]);
+    // const pb = protoRoot.lookup('Text');
+    // if (pb) {
+    //   //@ts-ignore
+    //   const textstream = pb.decode(data);
+    //   const lastItemByUid = rttListRef.current.findLast((item) => item.uid === textstream.uid);
+    //   const lastItemIndexByUid = rttListRef.current.findLastIndex(
+    //     (item) => item.uid === textstream.uid,
+    //   );
 
-      switch (textstream.dataType) {
-        case 'transcribe':
-          let textStr = '';
-          let isFinal = false;
-          let confidence = 0.0;
+    //   switch (textstream.dataType) {
+    //     case 'transcribe':
+    //       let textStr = '';
+    //       let isFinal = false;
+    //       let confidence = 0.0;
 
-          //@ts-ignore
-          textstream.words.forEach((word) => {
-            textStr += word.text;
-            confidence = word.confidence;
-            isFinal = word.isFinal;
-          });
-          console.log('transcribe: ' + lastItemIndexByUid + textStr);
+    //       //@ts-ignore
+    //       textstream.words.forEach((word) => {
+    //         textStr += word.text;
+    //         confidence = word.confidence;
+    //         isFinal = word.isFinal;
+    //       });
+    //       console.log('transcribe: ' + lastItemIndexByUid + textStr);
 
-          if (!lastItemByUid || lastItemByUid.isFinal) {
-            rttListRef.current = rttListRef.current
-              .concat([
-                {
-                  uuid: uuidV4(),
-                  culture: textstream.culture,
-                  text: textStr,
-                  uid: textstream.uid,
-                  time: textstream.time,
-                  isFinal: isFinal,
-                  confidence: confidence,
-                },
-              ])
-              .slice(-100);
-          } else {
-            rttListRef.current[lastItemIndexByUid] = {
-              ...lastItemByUid,
-              uuid: uuidV4(),
-              text: textStr,
-              time: textstream.time,
-              isFinal: isFinal,
-              confidence: confidence,
-            };
-          }
+    //       if (!lastItemByUid || lastItemByUid.isFinal) {
+    //         rttListRef.current = rttListRef.current
+    //           .concat([
+    //             {
+    //               uuid: uuidV4(),
+    //               culture: textstream.culture,
+    //               text: textStr,
+    //               uid: textstream.uid,
+    //               time: textstream.time,
+    //               isFinal: isFinal,
+    //               confidence: confidence,
+    //             },
+    //           ])
+    //           .slice(-100);
+    //       } else {
+    //         rttListRef.current[lastItemIndexByUid] = {
+    //           ...lastItemByUid,
+    //           uuid: uuidV4(),
+    //           text: textStr,
+    //           time: textstream.time,
+    //           isFinal: isFinal,
+    //           confidence: confidence,
+    //         };
+    //       }
 
-          break;
-        case 'translate':
-          console.log('Translation: ' + JSON.stringify(textstream));
-          const trans: { culture: string; text: string }[] = [];
-          //@ts-ignore
-          textstream.trans.forEach((transItem) => {
-            let transTextStr = '';
-            //@ts-ignore
-            transItem.texts.forEach((text) => {
-              console.log('Translation: ' + lastItemIndexByUid + text);
-              transTextStr += text;
-            });
-            trans.push({
-              culture: transItem.lang,
-              text: transTextStr,
-            });
-          });
-          rttListRef.current[lastItemIndexByUid] = {
-            ...lastItemByUid!,
-            uuid: uuidV4(),
-            trans,
-          };
+    //       break;
+    //     case 'translate':
+    //       console.log('Translation: ' + JSON.stringify(textstream));
+    //       const trans: { culture: string; text: string }[] = [];
+    //       //@ts-ignore
+    //       textstream.trans.forEach((transItem) => {
+    //         let transTextStr = '';
+    //         //@ts-ignore
+    //         transItem.texts.forEach((text) => {
+    //           console.log('Translation: ' + lastItemIndexByUid + text);
+    //           transTextStr += text;
+    //         });
+    //         trans.push({
+    //           culture: transItem.lang,
+    //           text: transTextStr,
+    //         });
+    //       });
+    //       rttListRef.current[lastItemIndexByUid] = {
+    //         ...lastItemByUid!,
+    //         uuid: uuidV4(),
+    //         trans,
+    //       };
 
-          break;
-      }
-      setRttList([...rttListRef.current]);
-    }
+    //       break;
+    //   }
+    //   setRttList([...rttListRef.current]);
+    // }
   };
 
   useEffect(() => {

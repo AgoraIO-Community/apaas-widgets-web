@@ -19,6 +19,7 @@ import { createPortal } from 'react-dom';
 import ReactDOM from 'react-dom';
 import { left } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { Loading } from '../whiteboard/loading';
+import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 
 
 export type WebviewInterface = {
@@ -286,80 +287,83 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   const decodeProto = (uid: string, data: Uint8Array) => {
     setRttVisible(true)
     setVisible(true)
-    const pb = protoRoot.lookup('Text');
-    if (pb) {
-      //@ts-ignore
-      const textstream = pb.decode(data);
-      const lastItemByUid = rttListRef.current.findLast((item) => item.uid === textstream.uid);
-      const lastItemIndexByUid = rttListRef.current.findLastIndex(
-        (item) => item.uid === textstream.uid,
-      );
-      switch (textstream.dataType) {
-        case 'transcribe':
-          let textStr = '';
-          let isFinal = false;
-          let confidence = 0.0;
+    fcrRttManager.messageDataProcessing(data)
+    setRttList([...fcrRttManager.getRttList()]);
 
-          //@ts-ignore
-          textstream.words.forEach((word) => {
-            textStr += word.text;
-            confidence = word.confidence;
-            isFinal = word.isFinal;
-          });
-          console.log('transcribe: ' + lastItemIndexByUid + textStr);
+    // const pb = protoRoot.lookup('Text');
+    // if (pb) {
+    //   //@ts-ignore
+    //   const textstream = pb.decode(data);
+    //   const lastItemByUid = rttListRef.current.findLast((item) => item.uid === textstream.uid);
+    //   const lastItemIndexByUid = rttListRef.current.findLastIndex(
+    //     (item) => item.uid === textstream.uid,
+    //   );
+    //   switch (textstream.dataType) {
+    //     case 'transcribe':
+    //       let textStr = '';
+    //       let isFinal = false;
+    //       let confidence = 0.0;
 
-          if (!lastItemByUid || lastItemByUid.isFinal) {
-            rttListRef.current = rttListRef.current
-              .concat([
-                {
-                  uuid: uuidV4(),
-                  culture: textstream.culture,
-                  text: textStr,
-                  uid: textstream.uid,
-                  time: textstream.time,
-                  isFinal: isFinal,
-                  confidence: confidence,
-                },
-              ])
-              .slice(-100);
-          } else {
-            rttListRef.current[lastItemIndexByUid] = {
-              ...lastItemByUid,
-              uuid: uuidV4(),
-              text: textStr,
-              time: textstream.time,
-              isFinal: isFinal,
-              confidence: confidence,
-            };
-          }
+    //       //@ts-ignore
+    //       textstream.words.forEach((word) => {
+    //         textStr += word.text;
+    //         confidence = word.confidence;
+    //         isFinal = word.isFinal;
+    //       });
+    //       console.log('transcribe: ' + lastItemIndexByUid + textStr);
 
-          break;
-        case 'translate':
-          console.log('Translation: ' + JSON.stringify(textstream));
-          const trans: { culture: string; text: string }[] = [];
-          //@ts-ignore
-          textstream.trans.forEach((transItem) => {
-            let transTextStr = '';
-            //@ts-ignore
-            transItem.texts.forEach((text) => {
-              console.log('Translation: ' + lastItemIndexByUid + text);
-              transTextStr += text;
-            });
-            trans.push({
-              culture: transItem.lang,
-              text: transTextStr,
-            });
-          });
-          rttListRef.current[lastItemIndexByUid] = {
-            ...lastItemByUid!,
-            uuid: uuidV4(),
-            trans,
-          };
+    //       if (!lastItemByUid || lastItemByUid.isFinal) {
+    //         rttListRef.current = rttListRef.current
+    //           .concat([
+    //             {
+    //               uuid: uuidV4(),
+    //               culture: textstream.culture,
+    //               text: textStr,
+    //               uid: textstream.uid,
+    //               time: textstream.time,
+    //               isFinal: isFinal,
+    //               confidence: confidence,
+    //             },
+    //           ])
+    //           .slice(-100);
+    //       } else {
+    //         rttListRef.current[lastItemIndexByUid] = {
+    //           ...lastItemByUid,
+    //           uuid: uuidV4(),
+    //           text: textStr,
+    //           time: textstream.time,
+    //           isFinal: isFinal,
+    //           confidence: confidence,
+    //         };
+    //       }
 
-          break;
-      }
-      setRttList([...rttListRef.current]);
-    }
+    //       break;
+    //     case 'translate':
+    //       console.log('Translation: ' + JSON.stringify(textstream));
+    //       const trans: { culture: string; text: string }[] = [];
+    //       //@ts-ignore
+    //       textstream.trans.forEach((transItem) => {
+    //         let transTextStr = '';
+    //         //@ts-ignore
+    //         transItem.texts.forEach((text) => {
+    //           console.log('Translation: ' + lastItemIndexByUid + text);
+    //           transTextStr += text;
+    //         });
+    //         trans.push({
+    //           culture: transItem.lang,
+    //           text: transTextStr,
+    //         });
+    //       });
+    //       rttListRef.current[lastItemIndexByUid] = {
+    //         ...lastItemByUid!,
+    //         uuid: uuidV4(),
+    //         trans,
+    //       };
+
+    //       break;
+    //   }
+    //   setRttList([...rttListRef.current]);
+    // }
   };
   useEffect(() => {
     console.log("rttList", rttList)
