@@ -95,7 +95,7 @@ class FcrRttManager {
      * @param notify 是否发送广播通知
      */
     setCurrentSourceLan(lan: string, notify: boolean) {
-        const findData = this.sourceLanguageList.find(item => item.value === lan);
+        const findData:FcrRttLanguageData|undefined = this.sourceLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.setSourceLan(findData, false)

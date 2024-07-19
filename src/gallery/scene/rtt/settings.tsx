@@ -23,7 +23,6 @@ export const RttSettings = ({
   onTargetChanged: (target: string) => void;
 }) => {
   const sourceLanguageList = fcrRttManager.sourceLanguageList;
-  console.log("sourceLanguageList",sourceLanguageList)
   const targetLanguageList = fcrRttManager.targetLanguageList;
   const configInfo = fcrRttManager.getConfigInfo();
   const [selectedLanguage, setSelectedLanguage] = useState(target);
@@ -32,10 +31,15 @@ export const RttSettings = ({
   const [sourceLanguageId, setSourceLanguageId] = useState(localStorage.getItem("sourceLanguageId") || 'zh-CN');
   const [translateLanguageId, setTranslateLanguageId] = useState(localStorage.getItem("translatelanguageId") || 'zh-CN');
   const [horizontalValue, setHorizontalValue] = useState(localStorage.getItem("subtitleFontSize") || '14');
+  const [isShowSetting, setIsShowSetting] = useState(true);
+
   const handleHorizontalChange = (value: number) => {
     setHorizontalValue(value);
     localStorage.setItem("subtitleFontSize", value);
   };
+  const handelCloseSetting = ()=>{
+    setIsShowSetting(false)
+  }
   useEffect(()=>{
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ChangeRttlanguage,
@@ -45,7 +49,7 @@ export const RttSettings = ({
     });
   },[])
   return (
-    <div className="settings-container">
+     <div className="settings-container" style={{display:isShowSetting?'block':'none'}}>
       <div className="settings-section">
         <label className="settings-label">{transI18n('fcr_subtitles_button_subtitles_setting')}</label>
         <div className="settings-option">
@@ -53,15 +57,16 @@ export const RttSettings = ({
           <RttSettingsSelect
             items={sourceLanguageList}
             currentLang={transI18n(configInfo.getSourceLan().text)}
+            onSelectLang={handelCloseSetting}
           />
 
         </div>
         <div className="settings-option">
           <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
-          <RttSettingsSelect
+          {/* <RttSettingsSelect
             items={targetLanguageList}
             currentLang={transI18n(configInfo.getSourceLan().text)}
-          />
+          /> */}
 
         </div>
 
@@ -101,7 +106,12 @@ export const RttSettings = ({
 
 const RttSettingsSelect = ({
   items,
-  currentLang
+  currentLang,
+  onSelectLang,
+}:{
+  items:any,
+  currentLang:string,
+  onSelectLang: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -126,7 +136,7 @@ const RttSettingsSelect = ({
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
-        {currentLang || transI18n('fcr_device_option_choose_lang')}
+        {transI18n(sourceLan.text) || transI18n('fcr_device_option_choose_lang')}
       </div>
       <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{color:'#4262FF'}}>{transI18n(sourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
@@ -142,6 +152,7 @@ const RttSettingsSelect = ({
               onClick={() => {
                 showModal()
                 setSourceLan(item)
+                onSelectLang()
               }}
             >
               {transI18n(item.text)}

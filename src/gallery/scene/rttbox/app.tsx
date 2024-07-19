@@ -275,6 +275,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             },
           });
         }, 100);
+        // rttList.push({text:"老师(我) 已停止实时转写"})
       }
     });
 
