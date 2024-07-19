@@ -42,7 +42,7 @@ export class FcrRttConfig {
     /**
      * 默认体验时间,单位-秒
      */
-    readonly experienceDefTime = 60000
+    readonly experienceDefTime = 600
     /**
      * 剩余体验时间
      */
@@ -101,7 +101,8 @@ export class FcrRttConfig {
                 }
             }
             //剩余体验时间
-            this.experienceReduceTime = this.experienceDefTime - (properties["duration"] ? Number(properties["duration"]) : 0)
+            this.experienceReduceTime = Math.max(this.experienceDefTime - (config["duration"] ? Number(config["duration"]) : 0), 0)
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttReduceTimeChange,{reduce:this.experienceDefTime,sum:this.experienceDefTime})
         }
     }
 

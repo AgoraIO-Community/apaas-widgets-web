@@ -108,7 +108,7 @@ export enum AgoraExtensionRoomEvent {
   //显示转写弹窗
   RttShowConversion = "RttShowConversion",
   //关闭转写弹窗
-  RttHideConversion = "RttHideConversion",
+  RttCloseConversion = "RttCloseConversion",
   //显示字幕
   RttShowSubtitle = "RttShowSubtitle",
   //rtt功能开启成功
@@ -129,6 +129,8 @@ export enum AgoraExtensionRoomEvent {
   RttStateToNoSpeack = "RttContentChange",
   //状态接收到声源语言变更
   RttStateReceiveSourceLanChange = "RttStateReceiveSourceLanChange",
+  //倒计时修改通知
+  RttReduceTimeChange = "RttReduceTimeChange",
   ChangeRttlanguage = "ChangeRttlanguage",
 }
 

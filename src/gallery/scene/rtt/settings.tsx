@@ -26,7 +26,6 @@ export const RttSettings = ({
   const targetLanguageList = fcrRttManager.targetLanguageList;
   
   const configInfo = fcrRttManager.getConfigInfo();
-  debugger
   const [selectedLanguage, setSelectedLanguage] = useState(target);
   const [showBilingual, setShowBilingual] = useState(true);
   const [fontSize, setFontSize] = useState(14);

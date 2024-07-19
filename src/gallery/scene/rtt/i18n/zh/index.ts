@@ -38,6 +38,9 @@ export default {
   fcr_dialog_rtt_toast_conversion_state_close_me_show:'停止了实时转写服务，全体用户可见。',
   fcr_dialog_rtt_toast_conversion_state_open:'开启了实时转写服务。',
   fcr_dialog_rtt_toast_conversion_state_close:'停止了实时转写服务，全体用户可见',
+  fcr_dialog_rtt_time_limit_status_empty:'暂无内容',
+  fcr_dialog_rtt_subtitles_dialog_time_limit_reduce: '每个账号限时{reason1}分钟体验字幕和转写功能，剩余 {reason2} 分钟。',
+   fcr_dialog_rtt_subtitles_dialog_time_limit_end:'每个账号限时{reason1}分钟体验字幕和转写功能，体验时间已用完。'
 
 
 };

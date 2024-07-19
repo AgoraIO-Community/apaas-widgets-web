@@ -1,10 +1,7 @@
 import React, { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { FcrRTTWidget } from '.';
-import axios from 'axios';
-import protoRoot from './proto';
 import loadingPng from './loading.png';
-import { v4 as uuidV4 } from 'uuid';
 import './app.css';
 import { Avatar } from '@components/avatar';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
@@ -15,76 +12,32 @@ import { RttSettings } from './settings';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { Scheduler } from 'agora-rte-sdk';
 import { transI18n } from 'agora-common-libs';
-import { createPortal } from 'react-dom';
 import ReactDOM from 'react-dom';
-import { left } from '@antv/g2plot/lib/plots/sankey/sankey';
-import { Loading } from '../whiteboard/loading';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
-
+import { FcrRttItem } from '../../../common/rtt/rtt-item';
 
 export type WebviewInterface = {
   refresh: () => void;
 };
 
-const rttSubscribeUser = '999999';
-const rttPublishUser = '888888';
-
-interface RttItem {
-  uuid: string;
-  culture: string;
-  uid: string;
-  text: string;
-  trans?: {
-    culture: string;
-    text: string;
-  }[];
-  time: number;
-  isFinal: boolean;
-  confidence: number;
-}
-
 export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }>(function W(
   { widget }: { widget: FcrRTTWidget },
-  ref,
 ) {
   const [mouseHover, setMouseHover] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const [countdown, setCountdown] = useState(600); // 5分钟倒计时，单位为秒
-
+  const [countdownDef, setCountdownDef] = useState(600); // 5分钟倒计时，单位为秒
   const rttContainerRef = useRef<HTMLDivElement>(null);
-  const rttParamsRef = useRef({
-    appId: '',
-    taskId: '',
-    rttToken: '',
-  });
-  const [rttList, setRttList] = useState<RttItem[]>([]);
+  const [rttList, setRttList] = useState<FcrRttItem[]>([]);
   const [starting, setStarting] = useState(false);
   const [listening, setListening] = useState(false);
   const [noOnespeakig, setNoOnespeakig] = useState(false);
-  
-  const [source, setSource] = useState('zh-CN,en-US');
   const [target, setTarget] = useState('');
   const [showTranslate, setShowTranslate] = useState(false);
   const [visible, setVisible] = useState(false);
-  const [toolVisible, setToolVisible] = useState(true);
   const [rttVisible, setRttVisible] = useState(true);
-  const [isRunoutTime, setIsRunoutTime] = useState(false);
-  
+  const [isRunoutTime, setIsRunoutTime] = useState(true);
   const visibleTaskRef = useRef<Scheduler.Task | null>(null);
-  const rttListRef = useRef(rttList);
-  const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
-  const showSetting = () => {
-    const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
-    const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
-    if(portalTargetElement1){
-      ReactDOM.render(<SetttingPopo />, portalTargetElement1)
-    }
-    if(portalTargetElement2){
-      ReactDOM.render(<SetttingPopo />, portalTargetElement2)
-    }
-   
-
-  };
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
@@ -92,245 +45,66 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   };
 
   useEffect(scrollToBottom, [rttList]);
-  useEffect(()=>{
-    widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.ChangeRttlanguage,
-      onMessage: (data) => {
-        console.log("接收到的数据", data)
-      }
-    });
-  },[])
-  useEffect(() => {
-    const timer = setInterval(() => {
-
-      setCountdown((prevCountdown) => {
-        if (prevCountdown <= 0) {
-          setIsRunoutTime(true)
-          clearInterval(timer);
-          return 0;
-        }
-        return prevCountdown - 1;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
-  }, []);
-
-  useEffect(() => {
-    if (!visible) return false
-    visibleTaskRef.current?.stop();
-    if (!starting && !popoverVisible) {
-      visibleTaskRef.current = Scheduler.shared.addDelayTask(() => {
-        setVisible(false);
-        widget.setVisible(true)
-      }, 5000);
+  //倒计时计时器
+  let countDownTimer: NodeJS.Timeout | null = null;
+  const startTimer = (message: { reduce: number, sum: number }) => {
+    setCountdownDef(message.sum)
+    if (countDownTimer != null) {
+      clearInterval(countDownTimer)
     }
-  }, [starting, rttList, popoverVisible, visible]);
-  useEffect(() => {
-    widget.setVisible(true)
-  }, [rttVisible,rttList,starting,visible]);
-  useEffect(() => {
-    showSetting()
-  }, [toolVisible, visible]);
-  const SetttingPopo: React.FC = () => {
-    // 查看实时转写
-    const viewRtt = () => {
-      setVisible(true)
-      setPopoverVisible(false)
-      widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
-          start();
-    }
-    return (
-      // 
-      <Popover
-            onVisibleChange={setPopoverVisible}
-            content={
-              <RttSettings
-              widget={widget}
-              showTranslate={showTranslate}
-              onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
-                // broadcastOptions({ showTranslate: show, target });
-                setShowTranslate(show);
-              }}
-              // source={source}
-              target={target}
-              onSourceChanged={() => { }}
-              viewRtt={viewRtt}
-              onTargetChanged={(target) => {
-                debugger
-                console.log("target", target)
-                broadcastOptions({ showTranslate, target });
-                setTarget(target);
-                setPopoverVisible(false)
-                // setVisible(false)
-
-              }}></RttSettings>
-            }
-            trigger="click">
-            <div
-              onClick={(e) => {
-                e.stopPropagation();
-              }}
-              className="fcr-rtt-box">
-              <SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg>
-            </div>
-          </Popover>
-    );
-  };
-  
-  const getApaasToken = async (user: string) => {
-    const sceneId = widget.classroomStore.connectionStore.scene?.sceneId || '';
-    const res = await axios.get<{
-      data: {
-        streamUuid: string;
-        rtcToken: string;
-        appId: string;
-        roomUuid: string;
-      };
-    }>(
-      `${process.env.NODE_ENV === 'development'
-        ? widget.classroomConfig.host
-        : 'https://api-solutions-pre.bj2.agoralab.co'
-      }/edu/v2/rooms/${sceneId}/streams/${user}/token`,
-    );
-    return res.data.data;
-  };
-
-  const getRttToken = async (appId: string) => {
-    const sceneId = widget.classroomStore.connectionStore.scene?.sceneId;
-    const res = await axios.post<{ createTs: number; instanceId: string; tokenName: string }>(
-      `https://api.agora.io/v1/projects/${appId}/rtsc/speech-to-text/builderTokens`,
-      {
-        instanceId: sceneId,
-      },
-      {
-        headers: {
-          Authorization:
-            'Basic OGJmMzUzMzM1MjA2NDg1NThhZDFiNzM2Y2ZhNWQyZjE6NzQ1NDIxYzgxYWJiNGFjOWExZmM3YzdlNTBlOTE5OTk=',
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    return res.data;
- 
-  };
-  const changeRtt = async (state:number) => {
-    const sceneId = widget.classroomStore.connectionStore.scene?.sceneId;
-    const {
-      rteEngineConfig: { ignoreUrlRegionPrefix, region },
-      appId,
-      //@ts-ignore
-    } = window.EduClassroomConfig;
-    const data = {
-      languages: {
-                source: localStorage.getItem("sourceLanguageId") || 'zh-CN',
-                target: [localStorage.getItem("translatelanguageId") || 'en-US'],
-                // source: 'zh-CN',
-                // target: ['en-US'],
-              },
-              transcribe: 0,
-              subtitle:1
-    };
-    const pathPrefix = `${
-      ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
-    }/edu/apps/${appId}`;
-    widget.classroomStore.api.fetch({
-      path: `/v2/rooms/${sceneId}/widgets/rtt/states/${state}`,
-      method: 'PUT',
-      data: {
-        ...data
-      },
-      pathPrefix,
-    });
-  };
-  const stop = async ()=>{
-    await changeRtt(0);
-    setRttVisible(false)
-    setVisible(false)
+    setCountdown(message.reduce)
     setIsRunoutTime(true)
-  }
-  const start = async () => {
-    setStarting(true);
-    try {
-      await changeRtt(1);
-    } finally {
+    if (message.reduce > 0) {
+      countDownTimer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          setIsRunoutTime(false)
+          if (prevCountdown <= 0) {
+            setIsRunoutTime(true)
+            if (countDownTimer) {
+              clearInterval(countDownTimer);
+            }
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000)
     }
-  };
-  useEffect(() => {
-  if(starting){
-    const timer = setTimeout(() => {
-      setStarting(false)
-      setListening(true)
-    }, 2000);
-    return () => clearTimeout(timer);
   }
-  }, [starting]);
+  //所有的监听处理
   useEffect(() => {
-    if(listening){
-      const timer = setTimeout(() => {
-       setListening(false)
-       setNoOnespeakig(true)
-      }, 2000);
-      return () => clearTimeout(timer);
-    }
-    }, [listening]);
-    useEffect(() => {
-      if(noOnespeakig){
-        const timer = setTimeout(() => {
-         setNoOnespeakig(false)
-        }, 3000);
-        return () => clearTimeout(timer);
-      }
-      }, [noOnespeakig]);
-
-
-  const decodeProto = (uid: string, data: Uint8Array) => {
-    // debugger
-    // setRttVisible(true)
-    // setVisible(true)
-    // fcrRttManager.messageDataProcessing(data)
-    // setRttList([...fcrRttManager.getRttList()]);
-  };
-  useEffect(() => {
-    console.log("rttList", rttList)
-  }, [rttList]);
-
-  useEffect(() => {
+    //倒计时修改监听
     widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttOptionsChanged,
-      onMessage: handleRttOptionsChanged,
-    });
-    widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
-      onMessage: () => {
-        showSetting()
+      messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
+      onMessage(message: { reduce: number, sum: number }) {
+        startTimer(message)
       },
-    });
+    })
+    //默认启动下倒计时，用来初始化相关变量
+    startTimer({ reduce: fcrRttManager.getConfigInfo().experienceReduceTime, sum: fcrRttManager.getConfigInfo().experienceDefTime })
     //字幕显示监听
     widget.addBroadcastListener({
-      messageType:AgoraExtensionRoomEvent.RttShowSubtitle,
+      messageType: AgoraExtensionRoomEvent.RttShowSubtitle,
       onMessage() {
         setVisible(true)
       },
     })
     //字幕隐藏监听
     widget.addBroadcastListener({
-      messageType:AgoraExtensionRoomEvent.RttHideSubtitle,
+      messageType: AgoraExtensionRoomEvent.RttHideSubtitle,
       onMessage() {
         setVisible(false)
       },
     })
     //字幕开启中监听
     widget.addBroadcastListener({
-      messageType:AgoraExtensionRoomEvent.RttStateToOpening,
+      messageType: AgoraExtensionRoomEvent.RttStateToOpening,
       onMessage() {
-        debugger
         setStarting(true)
       },
     })
     //字幕正在聆听监听
     widget.addBroadcastListener({
-      messageType:AgoraExtensionRoomEvent.RttStateToListener,
+      messageType: AgoraExtensionRoomEvent.RttStateToListener,
       onMessage() {
         setStarting(false)
         setListening(true)
@@ -339,7 +113,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     })
     //字幕开启成功
     widget.addBroadcastListener({
-      messageType:AgoraExtensionRoomEvent.RttRttOpenSuccess,
+      messageType: AgoraExtensionRoomEvent.RttRttOpenSuccess,
       onMessage() {
         setStarting(false)
         setListening(false)
@@ -359,13 +133,13 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
       onMessage() {
-      widget.clsoe()
+        widget.clsoe()
       },
     })
     //字幕内容改变
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttContentChange,
-      onMessage(message) {
+      onMessage() {
         setRttList([...fcrRttManager.getRttList()]);
         setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
         setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
@@ -376,28 +150,95 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         setNoOnespeakig(false)
       },
     })
-
+    //设置弹窗显示处理
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttShowSetting,
+      onMessage() {
+      },
+    })
+    //字幕按钮点击监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
-      onMessage: (data) => {
-        if(data.visible){
-          // // debugger
-          // widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
+      onMessage: (data: { visible: boolean }) => {
+        if (data.visible) {
           fcrRttManager.showSubtitle()
-        }else{
+        } else {
           fcrRttManager.closeSubtitle()
         }
-        // if(data.visible){
-        //   widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
-        //   start();
-        // }else{
-        //   widget.clsoe()
-        // }
-        // setVisible(data.visible)
       },
     });
-    widget.broadcast(AgoraExtensionWidgetEvent.RequestRttOptions, '');
-  }, []);
+  },[])
+  //默认将设置弹窗render到布局中
+  useEffect(() => {
+    const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
+    const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
+    const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
+    if (portalTargetElement1) {
+      ReactDOM.render(<SetttingPopo />, portalTargetElement1)
+    }
+    if (portalTargetElement2) {
+      ReactDOM.render(<SetttingPopo />, portalTargetElement2)
+    }
+  }, [visible]);
+
+
+  useEffect(() => {
+    if (!visible) return 
+    visibleTaskRef.current?.stop();
+    if (!starting && !popoverVisible) {
+      visibleTaskRef.current = Scheduler.shared.addDelayTask(() => {
+        setVisible(false);
+        widget.setVisible(true)
+      }, 5000);
+    }
+  }, [starting, rttList, popoverVisible, visible]);
+  useEffect(() => {
+    widget.setVisible(true)
+  }, [rttVisible, rttList, starting, visible]);
+
+  const SetttingPopo: React.FC = () => {
+    // 查看实时转写
+    const viewRtt = () => {
+      setVisible(true)
+      setPopoverVisible(false)
+      fcrRttManager.showConversion()
+    }
+    return (
+      // 
+      <Popover
+        onVisibleChange={setPopoverVisible}
+        content={
+          <RttSettings
+            widget={widget}
+            showTranslate={showTranslate}
+            onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
+              // broadcastOptions({ showTranslate: show, target });
+              setShowTranslate(show);
+            }}
+            // source={source}
+            target={target}
+            onSourceChanged={() => { }}
+            viewRtt={viewRtt}
+            onTargetChanged={(target) => {
+              console.log("target", target)
+              broadcastOptions({ showTranslate, target });
+              setTarget(target);
+              setPopoverVisible(false)
+              // setVisible(false)
+
+            }}></RttSettings>
+        }
+        trigger="click">
+        <div
+          onClick={(e) => {
+            e.stopPropagation();
+          }}
+          className="fcr-rtt-box">
+          <SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg>
+        </div>
+      </Popover>
+    );
+  };
 
   const broadcastOptions = ({
     target,
@@ -412,31 +253,14 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     });
   };
 
-  const handleRttOptionsChanged = ({
-    target,
-    showTranslate,
-  }: {
-    target: string;
-    showTranslate: boolean;
-  }) => {
-    setShowTranslate(showTranslate);
-    setTarget(target);
-    start()
-  };
-
   const enableTranslate = !!target;
   const showTranslateOnly = enableTranslate && !showTranslate;
-  const lastItem = showTranslateOnly
-    ? rttList.findLast((item) => {
+  const lastItem = showTranslateOnly ? rttList.findLast((item) => {
       return !!item.trans?.find((item) => {
         return item.culture === target;
       });
-    })
-    : rttList[rttList.length - 1];
-  const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(
-    String(lastItem?.uid),
-  )?.fromUser.userName;
-
+  }) : rttList[rttList.length - 1];
+  const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(String(lastItem?.uid),)?.fromUser.userName;
   const active = mouseHover || popoverVisible;
   const sourceText = lastItem?.text;
   const translateText = lastItem?.trans?.find((item) => {
@@ -446,24 +270,16 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   const lastItemAvalible = lastItem && lastItemName;
 
   // 将秒数格式化为分钟和秒钟
-  const formatTime = (seconds) => {
+  const formatTime = (seconds:number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
   // 查看实时转写
-  const viewRtt = () => {
-    setVisible(true)
-    setVisible(true)
-    setPopoverVisible(false)
-    widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
-        start();
-  }
   return (
-
     <div
       style={{ display: visible ? 'block' : 'none' }}
-      className={classnames('fcr-rtt-widget-container','fcr-bg-black-a80', {
+      className={classnames('fcr-rtt-widget-container', 'fcr-bg-black-a80', {
         'fcr-bg-2-a50': !active,
         'fcr-border-transparent': !active,
         'fcr-border-brand': active,
@@ -485,7 +301,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
                 // source={source}
                 target={target}
                 viewRtt={() => {
-  
+
                 }}
                 onSourceChanged={() => { }}
                 onTargetChanged={(target) => {
@@ -504,37 +320,41 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 
         </PopoverWithTooltip>
         <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
-          <div onClick={()=>stop()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
+          <div onClick={() => stop()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
             <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
           </div>
         </ToolTip>
       </div>
       {isRunoutTime && <div className="fcr-limited-box">
-       <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-       每个账号限时10分钟体验字幕和转写功能，体验时间已用完。
+        <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+        {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
+            reason1: countdownDef / 60,
+          })}
       </div>}
-       {!isRunoutTime && 
+      {!isRunoutTime &&
         <div className="fcr-limited-box">
-       <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-       每个账号限时10分钟体验字幕和转写功能，剩余{formatTime(countdown)}分钟。
-      </div>}
+          <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+          {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
+            reason1: countdownDef / 60,
+            reason2: formatTime(countdown),
+          })}
+        </div>}
       {/* 开启中 */}
       {starting && !isRunoutTime && (
         <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-         <img src={loadingPng} style={{width:'20px',height:'20px',marginRight:'10px',verticalAlign:'middle',animation:'rotate 1s linear infinite',}}></img>
+          <img src={loadingPng} style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle', animation: 'rotate 1s linear infinite', }}></img>
           {transI18n('fcr_subtitles_text_turn_on')} ...
         </div>
       )}
-       {isRunoutTime && (
+      {isRunoutTime && (
         <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          {/* {transI18n('fcr_subtitles_text_turn_on')} ... */}
-          暂无内容
+          {transI18n('fcr_dialog_rtt_time_limit_status_empty')} 
         </div>
       )}
-       {/* 正在聆听 */}
-       {listening && !starting && !noOnespeakig && !isRunoutTime &&  (
+      {/* 正在聆听 */}
+      {listening && !starting && !noOnespeakig && !isRunoutTime && (
         <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          <SvgImg type={SvgIconEnum.FCR_V2_HEAR} size={16} style={{verticalAlign:'middle',marginRight:'10px',marginBottom:'4px'}}></SvgImg>
+          <SvgImg type={SvgIconEnum.FCR_V2_HEAR} size={16} style={{ verticalAlign: 'middle', marginRight: '10px', marginBottom: '4px' }}></SvgImg>
           {transI18n('fcr_subtitles_text_listening')} ...
         </div>
       )}
@@ -544,8 +364,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
           {transI18n('fcr_subtitles_text_no_one_speaking')}
         </div>
       )}
-     
-      {lastItemAvalible && !listening &&  !starting && !noOnespeakig && !isRunoutTime && (
+
+      {lastItemAvalible && !listening && !starting && !noOnespeakig && !isRunoutTime && (
         <div className="fcr-rtt-widget-text">
           <Avatar textSize={14} size={30} nickName={lastItemName}></Avatar>
           <div>

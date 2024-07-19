@@ -54,7 +54,6 @@ export const RttSettings = ({
                 title: "修改声源语言",
                 content: "你修改本场会议的声源语言为“说英文”，将对会议所有参会者的字幕和转写生效。",
                 onOk: () => {
-                  debugger
                 },
                 okButtonProps: { styleType: 'danger' },
           

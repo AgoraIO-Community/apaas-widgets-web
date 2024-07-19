@@ -8,6 +8,8 @@ import { addResource } from './i18n/config';
 import { PopoverWithTooltip } from '@components/popover';
 import { message } from 'antd';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager'
+import { IAgoraUserData } from 'agora-rte-sdk/lib/core/processor/type';
+import { IAgoraUserSessionInfo } from 'agora-edu-core/lib/stores/domain/common/user/struct';
 
 export class FcrRTTWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -53,15 +55,15 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     });
    
   }
-  onPropertiesUpdate(properties: any,operator:unknown): void {
+  onPropertiesUpdate(properties: any,operator:IAgoraUserSessionInfo|null): void {
     // 获取下发数据
     console.log("更新数据了",properties + operator)
     fcrRttManager.onRoomWidgetPropertiesChange(properties,operator)
   }
   @bound
   onCreate(properties: any) {
-    fcrRttManager.resetDefaultInfo(properties,this.classroomStore,this.classroomConfig)
     fcrRttManager.resetListener(this.widgetController)
+    fcrRttManager.resetDefaultInfo(properties,this.classroomStore,this.classroomConfig)
     console.log("数据初始化了",properties)
     this.setVisible(true);
     // this.widgetController.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);

@@ -257,7 +257,6 @@ class FcrRttManager {
      * 房间属性变更监听
      */
     onRoomWidgetPropertiesChange(properties: never | null, operator: IAgoraUserSessionInfo | null) {
-        debugger
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
             const localUser = this.classroomStore?.userStore.localUser
@@ -412,6 +411,33 @@ class FcrRttManager {
     }
 
     /**
+     * 显示转写
+     */
+    showConversion(){
+        //消息实际处理
+        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
+        if (this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe) {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttRttOpenSuccess)
+        }else {
+            const config: FcrRttConfig = this.rttConfigInfo.copy()
+            config.openTranscribe = true
+            this.sendRequest(config)?.then(() => {
+                this.rttConfigInfo.openTranscribe = true
+            })
+        }
+    }
+    /**
+     * 关闭转写
+     */
+    closeConversion(){
+        const config: FcrRttConfig = this.rttConfigInfo.copy()
+        config.openTranscribe = false
+        this.sendRequest(config)?.then(() => {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
+        })
+    }
+
+    /**
      * 发送请求
      */
     private sendRequest(tartgetConfig: FcrRttConfig | null): Promise<unknown> | undefined {
@@ -424,10 +450,10 @@ class FcrRttManager {
         const data = {
             languages: {
                 source: config.getSourceLan().value,
-                target: [config.getTargetLan().value],
+                target: "" === config.getTargetLan().value ? [] : [config.getTargetLan().value],
             },
-            transcribe: config.openTranscribe,
-            subtitle: config.openSubtitle
+            transcribe: config.openTranscribe ? 1 : 0,
+            subtitle: config.openSubtitle ? 1 : 0
         };
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
             }/edu/apps/${appId}`;
