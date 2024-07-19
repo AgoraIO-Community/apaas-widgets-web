@@ -253,7 +253,8 @@ class FcrRttManager {
     /**
      * 房间属性变更监听
      */
-    onRoomWidgetPropertiesChange(properties:never | null){
+    onRoomWidgetPropertiesChange(properties: never | null, operator: unknown){
+        debugger
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
             //判断是否改变了转写状态
@@ -320,9 +321,11 @@ class FcrRttManager {
      * 显示字幕
      */
     showSubtitle() {
+        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowSubtitle)
         if (this.rttConfigInfo.openSubtitle) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttRttOpenSuccess)
         } else {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToOpening)
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.openSubtitle = true
             this.sendRequest(config)?.then(() => {
@@ -341,7 +344,7 @@ class FcrRttManager {
      * 发送请求
      */
     private sendRequest(tartgetConfig: FcrRttConfig | null): Promise<unknown> | undefined {
-        tartgetConfig = tartgetConfig ? tartgetConfig : this.rttConfigInfo
+        const config: FcrRttConfig = tartgetConfig ? tartgetConfig : this.rttConfigInfo
         const {
             rteEngineConfig: { ignoreUrlRegionPrefix, region },
             appId,
@@ -349,16 +352,16 @@ class FcrRttManager {
         } = window.EduClassroomConfig;
         const data = {
             languages: {
-                source: tartgetConfig.getSourceLan().value,
-                target: [tartgetConfig.getTargetLan().value],
+                source: config.getSourceLan().value,
+                target: "" === config.getTargetLan().value ? [] : [config.getTargetLan().value],
             },
-            transcribe: tartgetConfig.openTranscribe,
-            subtitle: tartgetConfig.openSubtitle
+            transcribe: config.openTranscribe ? 1 : 0,
+            subtitle: config.openSubtitle ? 1 : 0
         };
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
             }/edu/apps/${appId}`;
         return this.classroomStore?.api.fetch({
-            path: `/v2/rooms/${EduClassroomConfig.shared.sessionInfo.roomUuid}/widgets/rtt/states/${tartgetConfig.openTranscribe || tartgetConfig.openSubtitle ? 1 : 0}`,
+            path: `/v2/rooms/${EduClassroomConfig.shared.sessionInfo.roomUuid}/widgets/rtt/states/${config.openTranscribe || config.openSubtitle ? 1 : 0}`,
             method: 'PUT',
             data: {
                 ...data

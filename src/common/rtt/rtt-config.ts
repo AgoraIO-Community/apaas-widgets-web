@@ -63,9 +63,15 @@ export class FcrRttConfig {
     }
 
     copy(){
-        // const config = new FcrRttConfig(this.roomUuid,this.widgetController)
-        // config.currentSourceLan = this.currentSourceLan;
-        return JSON.parse(JSON.stringify(this))
+        const config = new FcrRttConfig(this.roomUuid,this.widgetController)
+        config.currentSourceLan = this.currentSourceLan;
+        config.currentTargetLan = this.currentTargetLan;
+        config.showDoubleLan = this.showDoubleLan;
+        config.textSize = this.textSize;
+        config.openTranscribe = this.openTranscribe;
+        config.openSubtitle = this.openSubtitle;
+        config.experienceReduceTime = this.experienceReduceTime;
+        return config
     }
 
     /**
