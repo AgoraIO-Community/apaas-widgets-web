@@ -134,6 +134,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
       onMessage() {
         widget.clsoe()
+        setVisible(false)
       },
     })
     //字幕内容改变
@@ -160,6 +161,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
       onMessage: (data: { visible: boolean }) => {
+        debugger
         if (data.visible) {
           fcrRttManager.showSubtitle()
         } else {
@@ -167,19 +169,22 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         }
       },
     });
+    //字幕按钮点击监听
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+      onMessage: () => {
+        const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
+        const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
+        const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
+        if (portalTargetElement1) {
+          ReactDOM.render(<SetttingPopo />, portalTargetElement1)
+        }
+        if (portalTargetElement2) {
+          ReactDOM.render(<SetttingPopo />, portalTargetElement2)
+        }
+      },
+    });
   },[])
-  //默认将设置弹窗render到布局中
-  useEffect(() => {
-    const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
-    const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
-    const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
-    if (portalTargetElement1) {
-      ReactDOM.render(<SetttingPopo />, portalTargetElement1)
-    }
-    if (portalTargetElement2) {
-      ReactDOM.render(<SetttingPopo />, portalTargetElement2)
-    }
-  }, [visible]);
 
 
   useEffect(() => {
@@ -320,7 +325,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 
         </PopoverWithTooltip>
         <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
-          <div onClick={() => stop()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
+          <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
             <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
           </div>
         </ToolTip>
