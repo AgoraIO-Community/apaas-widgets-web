@@ -93,9 +93,40 @@ export enum AgoraExtensionRoomEvent {
   SetFullscreen = 'set-fullscreen',
   //mobile连麦状态变更
   MobileCallStateChanged = 'mobile-call-state-changed',
-  ChangeRttlanguage = "ChangeRttlanguage",
   //修改声源语言
-  changeRttSourceLan = "ChangeRttSourceLan"
+  ChangeRttSourceLan = "ChangeRttSourceLan",
+  //修改翻译语言
+  ChangeRttTargetLan = "changeRttTargetLan",
+  //修改Rtt文本大小
+  ChangeRttTextSize = "changeRttTextSize",
+  //修改Rtt双语显示
+  ChangeRttShowDoubleLan = "changeRttShowDoubleLan",
+  //显示设置弹窗
+  RttShowSetting = "RttShowSetting",
+  //隐藏设置弹窗
+  RttHideSetting = "RttHideSetting",
+  //显示转写弹窗
+  RttShowConversion = "RttShowConversion",
+  //关闭转写弹窗
+  RttHideConversion = "RttHideConversion",
+  //显示字幕
+  RttShowSubtitle = "RttShowSubtitle",
+  //rtt功能开启成功
+  RttRttOpenSuccess = "RttRttOpenSuccess",
+  //隐藏字幕
+  RttHideSubtitle = "RttHideSubtitle",
+  //关闭字幕
+  RttCloseSubtitle = "RttCloseSubtitle",
+  //接收到内容信息变更
+  RttContentChange = "RttContentChange",
+  //接收到内容信息变更
+  RttListChange = "RttContentChange",
+  //状态改变到正在聆听
+  RttStateToListener = "RttContentChange",
+  //状态改变到无人讲话
+  RttStateToNoSpeack = "RttContentChange",
+  //状态接收到声源语言变更
+  RttStateReceiveSourceLanChange = "RttStateReceiveSourceLanChange",
 }
 
 /**
