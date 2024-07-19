@@ -285,85 +285,11 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 
 
   const decodeProto = (uid: string, data: Uint8Array) => {
+    debugger
     setRttVisible(true)
     setVisible(true)
     fcrRttManager.messageDataProcessing(data)
     setRttList([...fcrRttManager.getRttList()]);
-
-    // const pb = protoRoot.lookup('Text');
-    // if (pb) {
-    //   //@ts-ignore
-    //   const textstream = pb.decode(data);
-    //   const lastItemByUid = rttListRef.current.findLast((item) => item.uid === textstream.uid);
-    //   const lastItemIndexByUid = rttListRef.current.findLastIndex(
-    //     (item) => item.uid === textstream.uid,
-    //   );
-    //   switch (textstream.dataType) {
-    //     case 'transcribe':
-    //       let textStr = '';
-    //       let isFinal = false;
-    //       let confidence = 0.0;
-
-    //       //@ts-ignore
-    //       textstream.words.forEach((word) => {
-    //         textStr += word.text;
-    //         confidence = word.confidence;
-    //         isFinal = word.isFinal;
-    //       });
-    //       console.log('transcribe: ' + lastItemIndexByUid + textStr);
-
-    //       if (!lastItemByUid || lastItemByUid.isFinal) {
-    //         rttListRef.current = rttListRef.current
-    //           .concat([
-    //             {
-    //               uuid: uuidV4(),
-    //               culture: textstream.culture,
-    //               text: textStr,
-    //               uid: textstream.uid,
-    //               time: textstream.time,
-    //               isFinal: isFinal,
-    //               confidence: confidence,
-    //             },
-    //           ])
-    //           .slice(-100);
-    //       } else {
-    //         rttListRef.current[lastItemIndexByUid] = {
-    //           ...lastItemByUid,
-    //           uuid: uuidV4(),
-    //           text: textStr,
-    //           time: textstream.time,
-    //           isFinal: isFinal,
-    //           confidence: confidence,
-    //         };
-    //       }
-
-    //       break;
-    //     case 'translate':
-    //       console.log('Translation: ' + JSON.stringify(textstream));
-    //       const trans: { culture: string; text: string }[] = [];
-    //       //@ts-ignore
-    //       textstream.trans.forEach((transItem) => {
-    //         let transTextStr = '';
-    //         //@ts-ignore
-    //         transItem.texts.forEach((text) => {
-    //           console.log('Translation: ' + lastItemIndexByUid + text);
-    //           transTextStr += text;
-    //         });
-    //         trans.push({
-    //           culture: transItem.lang,
-    //           text: transTextStr,
-    //         });
-    //       });
-    //       rttListRef.current[lastItemIndexByUid] = {
-    //         ...lastItemByUid!,
-    //         uuid: uuidV4(),
-    //         trans,
-    //       };
-
-    //       break;
-    //   }
-    //   setRttList([...rttListRef.current]);
-    // }
   };
   useEffect(() => {
     console.log("rttList", rttList)
@@ -380,16 +306,89 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         showSetting()
       },
     });
+    //字幕显示监听
+    widget.addBroadcastListener({
+      messageType:AgoraExtensionRoomEvent.RttShowSubtitle,
+      onMessage() {
+        setVisible(true)
+      },
+    })
+    //字幕隐藏监听
+    widget.addBroadcastListener({
+      messageType:AgoraExtensionRoomEvent.RttHideSubtitle,
+      onMessage() {
+        setVisible(false)
+      },
+    })
+    //字幕开启中监听
+    widget.addBroadcastListener({
+      messageType:AgoraExtensionRoomEvent.RttStateToOpening,
+      onMessage() {
+        debugger
+        setStarting(true)
+      },
+    })
+    //字幕正在聆听监听
+    widget.addBroadcastListener({
+      messageType:AgoraExtensionRoomEvent.RttStateToListener,
+      onMessage() {
+        setStarting(false)
+        setListening(true)
+        setNoOnespeakig(false)
+      },
+    })
+    //字幕开启成功
+    widget.addBroadcastListener({
+      messageType:AgoraExtensionRoomEvent.RttRttOpenSuccess,
+      onMessage() {
+        setStarting(false)
+        setListening(false)
+        setNoOnespeakig(true)
+      },
+    })
+    //字幕无人讲话监听
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,
+      onMessage() {
+        setStarting(false)
+        setListening(false)
+        setNoOnespeakig(true)
+      },
+    })
+    //字幕关闭
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
+      onMessage() {
+      widget.clsoe()
+      },
+    })
+    //字幕内容改变
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttContentChange,
+      onMessage(message) {
+        setRttVisible(true)
+        setVisible(true)
+        setRttList([...fcrRttManager.getRttList()]);
+      },
+    })
+
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
       onMessage: (data) => {
         if(data.visible){
+          // debugger
           widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
-          start();
+          fcrRttManager.showSubtitle()
         }else{
-          widget.clsoe()
+          fcrRttManager.closeSubtitle()
         }
-        setVisible(data.visible)
+        // if(data.visible){
+        //   widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
+        //   start();
+        // }else{
+        //   widget.clsoe()
+        // }
+        // setVisible(data.visible)
       },
     });
     widget.broadcast(AgoraExtensionWidgetEvent.RequestRttOptions, '');

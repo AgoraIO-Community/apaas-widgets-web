@@ -174,6 +174,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
 
 
   const decodeProto = (uid: string, data: Uint8Array) => {
+    debugger
     fcrRttManager.messageDataProcessing(data)
     setRttList([...fcrRttManager.getRttList()]);
     // const pb = protoRoot.lookup('Text');

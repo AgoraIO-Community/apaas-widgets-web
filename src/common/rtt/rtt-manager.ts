@@ -159,7 +159,8 @@ class FcrRttManager {
     /**
      * 消息数据处理
      */
-    messageDataProcessing(data: Uint8Array) {
+    private messageDataProcessing(uid: string,data: Uint8Array) {
+        debugger
         //清除字幕定时器
         for (const item of this.openSubtitleTimerList) {
             clearTimeout(item)
@@ -237,6 +238,7 @@ class FcrRttManager {
                     break;
             }
         }
+        debugger
         if(this.rttList.length > 0){
             const last = this.rttList[this.rttList.length - 1]
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange,last)
@@ -321,6 +323,7 @@ class FcrRttManager {
      * 显示字幕
      */
     showSubtitle() {
+        //消息实际处理
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowSubtitle)
         if (this.rttConfigInfo.openSubtitle) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttRttOpenSuccess)
@@ -329,6 +332,8 @@ class FcrRttManager {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.openSubtitle = true
             this.sendRequest(config)?.then(() => {
+                //开启消息监听
+                this.addMessageListener()
                 //字幕开启成功，发送文本修改
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToListener)
                 //两秒后显示当前没有人说话
@@ -338,6 +343,21 @@ class FcrRttManager {
                 this.openSubtitleTimerList.push(id)
             })
         }
+        //消息传递后开启三秒无回调隐藏字幕
+        const id = setTimeout(() => {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
+        }, 3000)
+        this.openSubtitleTimerList.push(id)
+    }
+    /**
+     * 关闭字幕
+     */
+    closeSubtitle(){
+        const config: FcrRttConfig = this.rttConfigInfo.copy()
+        config.openSubtitle = false
+        this.sendRequest(config)?.then(() => {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
+        })
     }
 
     /**
@@ -383,6 +403,27 @@ class FcrRttManager {
     private resetData(properties: never | null) {
         this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomUuid, this.widgetController)
         this.rttConfigInfo.initRoomeConfigInfo(properties)
+        //做监听判断
+        this.addMessageListener()
+    }
+
+    /**
+     * 新增消息监听
+     */
+    private addMessageListener(){
+        if(this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe){
+            debugger
+            this.classroomStore?.connectionStore.scene?.removeListener('stream-message-recieved', this.messageDataProcessing);
+            this.classroomStore?.connectionStore.scene?.on('stream-message-recieved', this.messageDataProcessing);
+        }
+    }
+    /**
+     * 移除消息监听
+     */
+    private removeMessageListener(){
+        if (!(this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe)) {
+        this.classroomStore?.connectionStore.scene?.removeListener('stream-message-recieved', this.messageDataProcessing);
+        }
     }
 
 }
