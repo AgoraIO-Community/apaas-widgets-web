@@ -241,8 +241,12 @@ class FcrRttManager {
         }
         if (fcrRttManager.rttList.length > 0) {
             const last = fcrRttManager.rttList[fcrRttManager.rttList.length - 1]
-            fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
-            fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+            if(fcrRttManager.rttConfigInfo.openSubtitle){
+                fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
+            }
+            if(fcrRttManager.rttConfigInfo.openTranscribe){
+                fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+            }
         }
 
 
