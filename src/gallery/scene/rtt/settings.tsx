@@ -117,7 +117,7 @@ const RttSettingsSelect = ({
 
   const handleOk = () => {
     setIsModalOpen(false);
-    fcrRttManager.setCurrentSourceLan(sourceLan)
+    fcrRttManager.setCurrentSourceLan(sourceLan.value,true)
   };
 
   const handleCancel = () => {

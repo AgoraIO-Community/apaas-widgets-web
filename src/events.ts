@@ -127,6 +127,7 @@ export enum AgoraExtensionRoomEvent {
   RttStateToNoSpeack = "RttContentChange",
   //状态接收到声源语言变更
   RttStateReceiveSourceLanChange = "RttStateReceiveSourceLanChange",
+  ChangeRttlanguage = "ChangeRttlanguage",
 }
 
 /**
