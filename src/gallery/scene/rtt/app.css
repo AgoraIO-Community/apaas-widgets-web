@@ -318,10 +318,15 @@
 
 .ant-modal-content{
   border-radius: 16px !important;
+  width: 415px;
+  height: 180px;
   overflow: hidden;
 }
 .ant-modal-header{
   border-bottom: none;
+}
+.ant-modal-body{
+  padding: 16px;
 }
 .ant-modal-footer{
   border-top: none;

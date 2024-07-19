@@ -145,6 +145,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
             onVisibleChange={setPopoverVisible}
             content={
               <RttSettings
+              widget={widget}
               showTranslate={showTranslate}
               onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
                 // broadcastOptions({ showTranslate: show, target });

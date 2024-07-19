@@ -5,16 +5,19 @@ import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { Modal } from 'antd';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { transI18n } from 'agora-common-libs';
+import { AgoraExtensionRoomEvent } from '../../../events';
 
 export const RttSettings = ({
   target,
   onTargetChanged,
   viewRtt,
+  widget,
   onShowTranslateChanged
 }: {
   showTranslate: boolean;
   source: string;
   target: string;
+  widget: any;
   viewRtt: () => void;
   onShowTranslateChanged: (enableTranslate: boolean) => void;
   onTargetChanged: (target: string) => void;
@@ -32,8 +35,15 @@ export const RttSettings = ({
   const handleHorizontalChange = (value: number) => {
     setHorizontalValue(value);
     localStorage.setItem("subtitleFontSize", value);
-
   };
+  useEffect(()=>{
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ChangeRttlanguage,
+      onMessage: (data) => {
+        console.log("接收到的数据", data)
+      }
+    });
+  },[])
   return (
     <div className="settings-container">
       <div className="settings-section">
@@ -42,6 +52,7 @@ export const RttSettings = ({
           <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
           <RttSettingsSelect
             items={sourceLanguageList}
+            currentLang={transI18n(configInfo.getSourceLan().text)}
           />
 
         </div>
@@ -49,6 +60,7 @@ export const RttSettings = ({
           <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
           <RttSettingsSelect
             items={targetLanguageList}
+            currentLang={transI18n(configInfo.getSourceLan().text)}
           />
 
         </div>
@@ -89,6 +101,7 @@ export const RttSettings = ({
 
 const RttSettingsSelect = ({
   items,
+  currentLang
 }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [open, setOpen] = useState(false);
@@ -113,10 +126,10 @@ const RttSettingsSelect = ({
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
-        {items.find((item: { value: any; }) => item.value === sourceLan.value)?.label || transI18n('fcr_device_option_choose_lang')}
+        {currentLang || transI18n('fcr_device_option_choose_lang')}
       </div>
       <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
-        <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{color:'#4262FF'}}>{transI18n(configInfo.getSourceLan().text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
+        <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{color:'#4262FF'}}>{transI18n(sourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
       {isOpen && (
         <div className="select-options">
