@@ -2,7 +2,7 @@ import ReactDOM from 'react-dom';
 import { App } from './app';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import { FcrUISceneWidget, bound, transI18n } from 'agora-common-libs';
-import { AgoraExtensionWidgetEvent } from '../../../events';
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
 import { message } from 'antd';
@@ -96,6 +96,10 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   render(dom: HTMLElement) {
     this._dom = dom;
     ReactDOM.render(<App widget={this} />, dom);
+    //动态添加设置按钮，需要延迟一定时间，让界面先渲染下
+    setTimeout(() => {
+      this.widgetController.broadcast(AgoraExtensionRoomEvent.RttShowSetting, { targetClsName: "fcr_rtt_settings_show", buttonView: <button className="settings-button">{transI18n('fcr_rtt_settings')} <span className="settings-button-arrow-down"></span></button> })
+    }, 200);
   }
   @bound
   clsoe() {

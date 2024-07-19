@@ -154,7 +154,11 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     //设置弹窗显示处理
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttShowSetting,
-      onMessage() {
+      onMessage(message:{targetClsName:string,buttonView:Element}) {
+        const element = document.getElementsByClassName(message.targetClsName)
+        if (element) {
+          ReactDOM.render(<SettingPopView buttonView={message.buttonView} />, element[0])
+        }
       },
     })
     //字幕按钮点击监听
@@ -199,6 +203,48 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   useEffect(() => {
     widget.setVisible(true)
   }, [rttVisible, rttList, starting, visible]);
+
+  
+  interface SettingPopupProps {
+    buttonView: Element;
+  }
+  const SettingPopView:React.FC<SettingPopupProps> = ({buttonView}) => {
+      // 查看实时转写
+      const viewRtt = () => {
+        setVisible(true)
+        setPopoverVisible(false)
+        fcrRttManager.showConversion()
+      }
+      return (
+        // 
+        <Popover
+          onVisibleChange={setPopoverVisible}
+          content={
+            <RttSettings
+              widget={widget}
+              showTranslate={showTranslate}
+              onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
+                // broadcastOptions({ showTranslate: show, target });
+                setShowTranslate(show);
+              }}
+              // source={source}
+              target={target}
+              onSourceChanged={() => { }}
+              viewRtt={viewRtt}
+              onTargetChanged={(target) => {
+                console.log("target", target)
+                broadcastOptions({ showTranslate, target });
+                setTarget(target);
+                setPopoverVisible(false)
+                // setVisible(false)
+  
+              }}></RttSettings>
+          }
+          trigger="click">
+            {buttonView}
+        </Popover>
+      );
+  }
 
   const SetttingPopo: React.FC = () => {
     // 查看实时转写

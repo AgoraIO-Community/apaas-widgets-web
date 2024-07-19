@@ -174,10 +174,6 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
 
 
   useEffect(() => {
-  
-  }, []);
-
-  useEffect(() => {
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttOptionsChanged,
       onMessage: handleRttOptionsChanged,
@@ -198,7 +194,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       }
     });
 
-    widget.broadcast(AgoraExtensionWidgetEvent.RequestRttOptions, '');
+    widget.broadcast(AgoraExtensionWidgetEvent.RequestRttOptions, 'fcr_rtt_settings_show');
   }, []);
 
   const broadcastOptions = ({
@@ -448,30 +444,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
           <div className="footer">
             {isOpenrtt && <button className="stop-button" onClick={() => changeRtt(0)}>{transI18n('fcr_rtt_stop_transcription')}</button>}
             {!isOpenrtt && <button className="stop-button" onClick={() => {start()}}>{transI18n('fcr_rtt_start_transcription')}</button>}
-            <PopoverWithTooltip
-              popoverProps={{
-                onVisibleChange: setPopoverVisible,
-                content: (
-                  <RttSettings
-                    showTranslate={showTranslate}
-                    onShowTranslateChanged={(show) => {
-                      broadcastOptions({ showTranslate: show, target });
-                      setShowTranslate(show);
-                    }}
-                    source={source}
-                    target={target}
-                    onSourceChanged={() => { }}
-                    onTargetChanged={(target) => {
-                      broadcastOptions({ showTranslate, target });
-                      setTarget(target);
-                    }}></RttSettings>
-                ),
-                placement: 'top',
-                overlayInnerStyle: { width: 175 },
-              }}>
-              {/* toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }} */}
-              <button className="settings-button">{transI18n('fcr_rtt_settings')} <span className="settings-button-arrow-down"></span></button>
-            </PopoverWithTooltip>
+            <div className='fcr_rtt_settings_show'></div>
           </div>
         </div>
       </div>
