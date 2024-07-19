@@ -57,6 +57,10 @@ export class RoomStore {
       onMessage: this._handleToolBoxVisibleChanged,
     });
     this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttBoxshow,
+      onMessage: this._handleToolBoxVisibleChanged,
+    });
+    this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
       onMessage: this._handleToolBoxVisibleChanged,
     });
@@ -70,6 +74,10 @@ export class RoomStore {
     });
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+      onMessage: this._handleToolBoxVisibleChanged,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttBoxshow,
       onMessage: this._handleToolBoxVisibleChanged,
     });
     this._widget.removeBroadcastListener({

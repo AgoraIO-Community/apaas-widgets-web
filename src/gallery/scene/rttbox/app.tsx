@@ -22,6 +22,9 @@ import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { ToastApi } from '@components/toast';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { AgoraEduClassroomEvent } from 'agora-edu-core';
+import { FcrRttItem } from '../../../common/rtt/rtt-item';
+
+
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -64,7 +67,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const [source, setSource] = useState('zh-CN,en-US');
   const [target, setTarget] = useState('');
   const [showTranslate, setShowTranslate] = useState(false);
-  const [isOpenrtt, setIsOpenrtt] = useState(false);
+  
 
 
   const [visible, setVisible] = useState(true);
@@ -72,7 +75,8 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const [currentIndex, setCurrentIndex] = useState(1);
   const visibleTaskRef = useRef<Scheduler.Task | null>(null);
   const rttListRef = useRef(rttList);
-
+  const configInfo = fcrRttManager.getConfigInfo();
+  const [isOpenrtt, setIsOpenrtt] = useState(configInfo.openTranscribe);
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
@@ -106,41 +110,6 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     // }
   }, [starting, rttList, popoverVisible]);
 
-  const getApaasToken = async (user: string) => {
-    const sceneId = widget.classroomStore.connectionStore.scene?.sceneId || '';
-    const res = await axios.get<{
-      data: {
-        streamUuid: string;
-        rtcToken: string;
-        appId: string;
-        roomUuid: string;
-      };
-    }>(
-      `${process.env.NODE_ENV === 'development'
-        ? widget.classroomConfig.host
-        : 'https://api-solutions-pre.bj2.agoralab.co'
-      }/edu/v2/rooms/${sceneId}/streams/${user}/token`,
-    );
-    return res.data.data;
-  };
-
-  const getRttToken = async (appId: string) => {
-    const sceneId = widget.classroomStore.connectionStore.scene?.sceneId;
-    const res = await axios.post<{ createTs: number; instanceId: string; tokenName: string }>(
-      `https://api.agora.io/v1/projects/${appId}/rtsc/speech-to-text/builderTokens`,
-      {
-        instanceId: sceneId,
-      },
-      {
-        headers: {
-          Authorization:
-            'Basic OGJmMzUzMzM1MjA2NDg1NThhZDFiNzM2Y2ZhNWQyZjE6NzQ1NDIxYzgxYWJiNGFjOWExZmM3YzdlNTBlOTE5OTk=',
-          'Content-Type': 'application/json',
-        },
-      },
-    );
-    return res.data;
-  };
 
   const changeRtt = async (state: number) => {
     const sceneId = widget.classroomStore.connectionStore.scene?.sceneId;
@@ -174,21 +143,31 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
 
   const start = async () => {
     setStarting(true);
-    try {
-      await changeRtt(1);
-      // widget.classroomStore.connectionStore.scene?.on('stream-message-recieved', decodeProto);
-      setIsOpenrtt(true)
+      fcrRttManager.showConversion();
+      setRttList([...fcrRttManager.getRttList()]);
+      // setIsOpenrtt(true)
       ToastApi.open({
         toastProps: {
           type: 'normal',
           content: "老师(我) 开启了实时转写服务，全体用户可见。",
         },
       });
-    } finally {
-      setStarting(false);
-    }
+  
   };
-
+ 
+  useEffect(() => {
+    debugger
+    console.log(configInfo.openTranscribe)
+     //转写内容改变
+  widget.addBroadcastListener({
+    messageType: AgoraExtensionRoomEvent.RttListChange,
+    onMessage() {
+      setRttList([...fcrRttManager.getRttList()]);
+      setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
+      setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
+    },
+  })
+  }, []);
 
   useEffect(() => {
     widget.addBroadcastListener({

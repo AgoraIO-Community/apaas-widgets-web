@@ -25,8 +25,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 ) {
   const [mouseHover, setMouseHover] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
-  const [countdown, setCountdown] = useState(600); // 5分钟倒计时，单位为秒
-  const [countdownDef, setCountdownDef] = useState(600); // 5分钟倒计时，单位为秒
+  const [countdown, setCountdown] = useState(600); // 10分钟倒计时，单位为秒
+  const [countdownDef, setCountdownDef] = useState(600); // 10分钟倒计时，单位为秒
   const rttContainerRef = useRef<HTMLDivElement>(null);
   const [rttList, setRttList] = useState<FcrRttItem[]>([]);
   const [starting, setStarting] = useState(false);
@@ -172,7 +172,21 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         }
       },
     });
-    //字幕按钮点击监听
+    //实时转写按钮点击监听
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttBoxshow,
+      onMessage: () => {
+        const rttSettingBtn = document.getElementById('fcr-rtt-settings-button')
+        countDownTimer = setTimeout(() => {
+          if (rttSettingBtn) {
+            ReactDOM.render(<SetttingPopo />, rttSettingBtn)
+          }
+        }, 3000)
+       
+        debugger
+      },
+    });
+    //工具箱按钮点击监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
@@ -187,11 +201,11 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         }
       },
     });
-  },[])
+  }, [])
 
 
   useEffect(() => {
-    if (!visible) return 
+    if (!visible) return
     visibleTaskRef.current?.stop();
     if (!starting && !popoverVisible) {
       visibleTaskRef.current = Scheduler.shared.addDelayTask(() => {
@@ -306,9 +320,9 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   const enableTranslate = !!target;
   const showTranslateOnly = enableTranslate && !showTranslate;
   const lastItem = showTranslateOnly ? rttList.findLast((item) => {
-      return !!item.trans?.find((item) => {
-        return item.culture === target;
-      });
+    return !!item.trans?.find((item) => {
+      return item.culture === target;
+    });
   }) : rttList[rttList.length - 1];
   const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(String(lastItem?.uid),)?.fromUser.userName;
   const active = mouseHover || popoverVisible;
@@ -320,7 +334,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   const lastItemAvalible = lastItem && lastItemName;
 
   // 将秒数格式化为分钟和秒钟
-  const formatTime = (seconds:number) => {
+  const formatTime = (seconds: number) => {
     const minutes = Math.floor(seconds / 60);
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
@@ -378,8 +392,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       {isRunoutTime && <div className="fcr-limited-box">
         <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
         {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
-            reason1: countdownDef / 60,
-          })}
+          reason1: countdownDef / 60,
+        })}
       </div>}
       {!isRunoutTime &&
         <div className="fcr-limited-box">
@@ -398,7 +412,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       )}
       {isRunoutTime && (
         <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          {transI18n('fcr_dialog_rtt_time_limit_status_empty')} 
+          {transI18n('fcr_dialog_rtt_time_limit_status_empty')}
         </div>
       )}
       {/* 正在聆听 */}

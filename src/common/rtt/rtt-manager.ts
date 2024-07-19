@@ -416,13 +416,14 @@ class FcrRttManager {
      * 显示转写
      */
     showConversion(){
+        debugger
         //消息实际处理
         debugger
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
         if (this.rttConfigInfo.openTranscribe) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
         }else {
-            const config: FcrRttConfig = this.rttConfigInfo.copy()
+            const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             config.openTranscribe = true
             this.sendRequest(config)?.then(() => {
                 this.rttConfigInfo.openTranscribe = true
