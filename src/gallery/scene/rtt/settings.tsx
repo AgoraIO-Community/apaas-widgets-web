@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
-import { Modal,NotificationArgsProps } from 'antd';
+import { Modal } from 'antd';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent } from '../../../events';
@@ -100,7 +100,7 @@ export const RttSettings = ({
       <button className="restore-button" onClick={() => handleHorizontalChange(14)}>
         {transI18n('fcr_device_option_reset_font_size')}
       </button>
-      <button className="real-time-button" onClick={viewRtt}>
+      <button className="real-time-button" onClick={()=>{viewRtt();handelCloseSetting()}}>
         {transI18n('fcr_device_option_view_rtt')}
       </button>
     </div>
@@ -161,7 +161,7 @@ const RttSettingsSelect = ({
                 onSelectLang()
               }}
             >
-              {transI18n(item.text) || "不翻译"}
+              {transI18n(item.text) || transI18n('fcr_device_option_choose_lang')}
               {item.text === currentLan && <SvgImg
                 type={SvgIconEnum.FCR_CHOOSEIT}
                 size={24}
