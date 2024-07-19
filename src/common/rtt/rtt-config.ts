@@ -78,7 +78,7 @@ export class FcrRttConfig {
      * @param properties 房间配置信息
      */
     initRoomeConfigInfo(properties: never | null) {
-        if (properties && Object.keys(properties).length > 0) {
+        if(properties&& Object.keys(properties).length>0){
             const config = properties["extra"]
             this.openSubtitle = Number(config["subtitle"]) == 1 ? true : false
             this.openTranscribe = Number(config["transcribe"]) == 1 ? true : false

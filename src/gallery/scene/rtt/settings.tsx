@@ -24,7 +24,9 @@ export const RttSettings = ({
 }) => {
   const sourceLanguageList = fcrRttManager.sourceLanguageList;
   const targetLanguageList = fcrRttManager.targetLanguageList;
+  
   const configInfo = fcrRttManager.getConfigInfo();
+  debugger
   const [selectedLanguage, setSelectedLanguage] = useState(target);
   const [showBilingual, setShowBilingual] = useState(true);
   const [fontSize, setFontSize] = useState(14);
@@ -56,7 +58,7 @@ export const RttSettings = ({
           <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
           <RttSettingsSelect
             items={sourceLanguageList}
-            currentLang={transI18n(configInfo.getSourceLan().text)}
+            currentSourceLan={transI18n(configInfo.getSourceLan().text)}
             onSelectLang={handelCloseSetting}
           />
 
@@ -106,11 +108,11 @@ export const RttSettings = ({
 
 const RttSettingsSelect = ({
   items,
-  currentLang,
+  currentSourceLan,
   onSelectLang,
 }:{
   items:any,
-  currentLang:string,
+  currentSourceLan:string,
   onSelectLang: () => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -136,9 +138,9 @@ const RttSettingsSelect = ({
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
-        {transI18n(sourceLan.text) || transI18n('fcr_device_option_choose_lang')}
+        {transI18n(currentSourceLan.text) || transI18n('fcr_device_option_choose_lang')}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} onOk={handleOk} onCancel={handleCancel}>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText="确认修改" onOk={handleOk} cancelText="取消" onCancel={handleCancel}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{color:'#4262FF'}}>{transI18n(sourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
       {isOpen && (

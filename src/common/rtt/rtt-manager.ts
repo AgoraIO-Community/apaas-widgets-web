@@ -125,11 +125,8 @@ class FcrRttManager {
      * 设置当前文本大小
      */
     setCurrentTextSize(size: number, notify: boolean) {
-        const config: FcrRttConfig = this.rttConfigInfo.copy()
-        config.setTextSize(size, false, false)
-        this.sendRequest(config)?.then(() => {
-            this.rttConfigInfo.setTextSize(size, notify, true)
-        })
+        this.rttConfigInfo.setTextSize(size, notify, true)
+        
     }
 
     /**
@@ -247,6 +244,7 @@ class FcrRttManager {
             fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
             fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
         }
+
 
         //消息传递后开启三秒无回调隐藏字幕
         const id = setTimeout(() => {
@@ -380,7 +378,6 @@ class FcrRttManager {
             }, 3000)
             this.openSubtitleTimerList.push(id)
         } else {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToOpening)
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.openSubtitle = true
             this.sendRequest(config)?.then(() => {
@@ -418,7 +415,7 @@ class FcrRttManager {
      * 发送请求
      */
     private sendRequest(tartgetConfig: FcrRttConfig | null): Promise<unknown> | undefined {
-        const config: FcrRttConfig = tartgetConfig ? tartgetConfig : this.rttConfigInfo
+        tartgetConfig = tartgetConfig ? tartgetConfig : this.rttConfigInfo
         const {
             rteEngineConfig: { ignoreUrlRegionPrefix, region },
             appId,
@@ -426,11 +423,11 @@ class FcrRttManager {
         } = window.EduClassroomConfig;
         const data = {
             languages: {
-                source: config.getSourceLan().value,
-                target: "" === config.getTargetLan().value ? [] : [config.getTargetLan().value],
+                source: tartgetConfig.getSourceLan().value,
+                target: [tartgetConfig.getTargetLan().value],
             },
-            transcribe: config.openTranscribe ? 1 : 0,
-            subtitle: config.openSubtitle ? 1 : 0
+            transcribe: tartgetConfig.openTranscribe,
+            subtitle: tartgetConfig.openSubtitle
         };
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
             }/edu/apps/${appId}`;
@@ -454,7 +451,7 @@ class FcrRttManager {
     /**
      * 重置所有变量数据
      */
-    private resetData(properties: never | null) {
+    private resetData(properties: Map<string, unknown> | null) {
         this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomUuid, this.widgetController)
         this.rttConfigInfo.initRoomeConfigInfo(properties)
         //做监听判断

@@ -318,8 +318,8 @@
 
 .ant-modal-content{
   border-radius: 16px !important;
-  width: 415px;
-  height: 180px;
+  /* width: 415px;
+  height: 180px; */
   overflow: hidden;
 }
 .ant-modal-header{
@@ -330,6 +330,9 @@
 }
 .ant-modal-footer{
   border-top: none;
+}
+.ant-modal-footer button{
+  border-radius: 20px;
 }
 
 /* 历史记录样式 */
