@@ -13,7 +13,7 @@ import { PopoverWithTooltip } from '@components/popover';
 import { RttSettings } from './settings';
 import { SearchInput } from './searchinput';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
-import { Scheduler } from 'agora-rte-sdk';
+import { AGRemoteVideoStreamType, Scheduler } from 'agora-rte-sdk';
 import { transI18n } from 'agora-common-libs';
 import { Input } from '@components/input';
 import { notification } from "antd";
@@ -21,6 +21,7 @@ import { Button } from '@components/button';
 import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { ToastApi } from '@components/toast';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
+import { AgoraEduClassroomEvent } from 'agora-edu-core';
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -77,6 +78,22 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
     }
   };
+
+  //开启所有监听
+  useEffect(() => {
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,
+      onMessage() {
+        setIsOpenrtt(true)
+      },
+    })
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttConversionCloseSuccess,
+      onMessage() {
+        setIsOpenrtt(false)
+      },
+    })
+  }, []);
 
   useEffect(scrollToBottom, [rttList]);
   useEffect(() => {
@@ -442,8 +459,8 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             </div>
           )} */}
           <div className="footer">
-            {isOpenrtt && <button className="stop-button" onClick={() => changeRtt(0)}>{transI18n('fcr_rtt_stop_transcription')}</button>}
-            {!isOpenrtt && <button className="stop-button" onClick={() => {start()}}>{transI18n('fcr_rtt_start_transcription')}</button>}
+            {isOpenrtt && <button className="stop-button" onClick={() => fcrRttManager.closeConversion()}>{transI18n('fcr_rtt_stop_transcription')}</button>}
+            {!isOpenrtt && <button className="stop-button" onClick={() => {fcrRttManager.showConversion()}}>{transI18n('fcr_rtt_start_transcription')}</button>}
             <div className='fcr_rtt_settings_show'></div>
           </div>
         </div>

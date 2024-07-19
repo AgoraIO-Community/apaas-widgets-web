@@ -369,8 +369,8 @@ class FcrRttManager {
     showSubtitle() {
         //消息实际处理
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowSubtitle)
-        if (this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe) {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttRttOpenSuccess)
+        if (this.rttConfigInfo.openSubtitle) {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
             //消息传递后开启三秒无回调隐藏字幕
             const id = setTimeout(() => {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
@@ -381,6 +381,7 @@ class FcrRttManager {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.openSubtitle = true
             this.sendRequest(config)?.then(() => {
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
                 //开启消息监听
                 this.addMessageListener()
                 //字幕开启成功，发送文本修改
@@ -416,14 +417,16 @@ class FcrRttManager {
      */
     showConversion(){
         //消息实际处理
+        debugger
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
-        if (this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe) {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttRttOpenSuccess)
+        if (this.rttConfigInfo.openTranscribe) {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
         }else {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             config.openTranscribe = true
             this.sendRequest(config)?.then(() => {
                 this.rttConfigInfo.openTranscribe = true
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             })
         }
     }
@@ -431,10 +434,11 @@ class FcrRttManager {
      * 关闭转写
      */
     closeConversion(){
+        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = this.rttConfigInfo.copy()
         config.openTranscribe = false
         this.sendRequest(config)?.then(() => {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
         })
     }
 

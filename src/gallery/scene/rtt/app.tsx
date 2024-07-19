@@ -113,7 +113,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     })
     //字幕开启成功
     widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttRttOpenSuccess,
+      messageType: AgoraExtensionRoomEvent.RttSubtitleOpenSuccess,
       onMessage() {
         setStarting(false)
         setListening(false)
