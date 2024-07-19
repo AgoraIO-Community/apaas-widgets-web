@@ -56,6 +56,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   onPropertiesUpdate(properties: any): void {
     // 获取下发数据
     console.log("更新数据了",properties)
+    fcrRttManager.onRoomWidgetPropertiesChange(properties)
   }
   @bound
   onCreate(properties: any) {

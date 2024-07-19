@@ -255,7 +255,8 @@ class FcrRttManager {
      * 房间属性变更监听
      */
     onRoomWidgetPropertiesChange(properties:Map<string,unknown>){
-
+        console.log("xxxxxxxxxx")
+        console.log(properties)
     }
 
 

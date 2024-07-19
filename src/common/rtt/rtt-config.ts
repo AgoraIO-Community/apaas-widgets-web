@@ -72,14 +72,14 @@ export class FcrRttConfig {
      * 初始化房间配置信息
      * @param properties 房间配置信息
      */
-    initRoomeConfigInfo(properties: Map<string, unknown> | null) {
+    initRoomeConfigInfo(properties: never | null) {
         if(properties != null){
-            const config = (properties.get("extra") as Map<string,unknown>)
-            this.openSubtitle = Number(config.get("subtitle")) == 1 ? true : false
-            this.openTranscribe = Number(config.get("transcribe")) == 1 ? true : false
-            const lanConfig = (config.get("languages") as Map<string, unknown>)
+            const config = properties["extra"]
+            this.openSubtitle = Number(config["subtitle"]) == 1 ? true : false
+            this.openTranscribe = Number(config["transcribe"]) == 1 ? true : false
+            const lanConfig = config["languages"]
             //源语言
-            const sourceLan = lanConfig.get("source")
+            const sourceLan = lanConfig["source"]
             if (sourceLan) {
                 const findData = fcrRttManager.sourceLanguageList.find(item => item.value === String(sourceLan));
                 if (findData) {
@@ -87,7 +87,7 @@ export class FcrRttConfig {
                 }
             }
             //目标语言
-            let targetLan= lanConfig.get("target") as List<string>
+            let targetLan= lanConfig["target"] as any
             if (targetLan && targetLan.length > 0) {
                 targetLan = targetLan[0]
                 const findData = fcrRttManager.targetLanguageList.find(item => item.value === String(targetLan));
@@ -96,7 +96,7 @@ export class FcrRttConfig {
                 }
             }
             //剩余体验时间
-            this.experienceReduceTime = this.experienceDefTime - (properties.get("duration") ? Number(properties.get("duration")) : 0)
+            this.experienceReduceTime = this.experienceDefTime - (properties["duration"] ? Number(properties["duration"]) : 0)
         }
     }
 

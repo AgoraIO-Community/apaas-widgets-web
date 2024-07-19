@@ -64,6 +64,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   onPropertiesUpdate(properties: any): void {
     // 获取下发数据
     console.log("更新数据了",properties)
+    
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.ChangeRttlanguage, {
       widgetId: this.widgetId,
       message: properties,
