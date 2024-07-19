@@ -307,7 +307,7 @@ class FcrRttManager {
             const sourceLan = config["languages"]["source"]
             if (sourceLan) {
                 if (this.rttConfigInfo.getSourceLan().value !== sourceLan) {
-                    const findData = this.sourceLanguageList.find(item => item.value === lan);
+                    const findData = this.sourceLanguageList.find(item => item.value === sourceLan);
                     if (findData) {
                         const useText = `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}`
                         const languageText = transI18n(findData.text)
@@ -415,7 +415,7 @@ class FcrRttManager {
      * 发送请求
      */
     private sendRequest(tartgetConfig: FcrRttConfig | null): Promise<unknown> | undefined {
-        tartgetConfig = tartgetConfig ? tartgetConfig : this.rttConfigInfo
+        const config = tartgetConfig ? tartgetConfig : this.rttConfigInfo
         const {
             rteEngineConfig: { ignoreUrlRegionPrefix, region },
             appId,
@@ -423,11 +423,11 @@ class FcrRttManager {
         } = window.EduClassroomConfig;
         const data = {
             languages: {
-                source: tartgetConfig.getSourceLan().value,
-                target: [tartgetConfig.getTargetLan().value],
+                source: config.getSourceLan().value,
+                target: [config.getTargetLan().value],
             },
-            transcribe: tartgetConfig.openTranscribe,
-            subtitle: tartgetConfig.openSubtitle
+            transcribe: config.openTranscribe,
+            subtitle: config.openSubtitle
         };
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
             }/edu/apps/${appId}`;
@@ -451,7 +451,7 @@ class FcrRttManager {
     /**
      * 重置所有变量数据
      */
-    private resetData(properties: Map<string, unknown> | null) {
+    private resetData(properties: never | null) {
         this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomUuid, this.widgetController)
         this.rttConfigInfo.initRoomeConfigInfo(properties)
         //做监听判断
