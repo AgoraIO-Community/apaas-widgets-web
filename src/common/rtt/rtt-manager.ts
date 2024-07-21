@@ -281,21 +281,12 @@ class FcrRttManager {
                     },
                 ])
                     .slice(-100);
-<<<<<<< HEAD
                     ToastApi.open({
                         toastProps: {
                           type: 'normal',
                           content: textContent,
                         },
                       }); 
-=======
-                ToastApi.open({
-                    toastProps: {
-                        type: 'normal',
-                        content: "老师(我) 开启了实时转写服务，全体用户可见。",
-                    },
-                });
->>>>>>> 0e64d96 (调整配置)
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                 // 监听是否开启实时转写
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen,textContent)
