@@ -285,7 +285,15 @@ class FcrRttManager {
                     },
                 ])
                     .slice(-100);
+                    ToastApi.open({
+                        toastProps: {
+                          type: 'normal',
+                          content: "老师(我) 开启了实时转写服务，全体用户可见。",
+                        },
+                      }); 
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                // 监听是否开启实时转写
+                // this.widgetController?.broadcast(AgoraExtensionRoomEvent.OpenRtt)
             }
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any

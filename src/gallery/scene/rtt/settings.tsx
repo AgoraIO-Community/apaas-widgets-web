@@ -139,7 +139,23 @@ const RttSettingsSelect = ({
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
         {transI18n(currentLan) || transI18n('fcr_device_option_choose_lang')}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={handleOk} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={handleCancel}>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={handleOk} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={handleCancel}  footer={[
+          <button
+            key="back"
+            onClick={handleCancel}
+            style={{ borderRadius: '20px' }}
+          >
+            {transI18n('fcr_modal_cancelText')}
+          </button>,
+          <button
+            key="submit"
+            type="primary"
+            onClick={handleOk}
+            style={{ borderRadius: '20px' }}
+          >
+            {transI18n('fcr_modal_okText')}
+          </button>,
+        ]}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(sourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
       {isOpen && (

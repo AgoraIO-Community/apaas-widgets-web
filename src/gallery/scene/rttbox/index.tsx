@@ -58,7 +58,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: transI18n('fcr_rtt_button_open'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+      iconType: SvgIconEnum.FCR_V2_RTT,
     });
   }
   onPropertiesUpdate(properties: any): void {
@@ -76,7 +76,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: transI18n('fcr_subtitles_button_close'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+      iconType: SvgIconEnum.FCR_V2_RTT,
     });
   }
   @bound
@@ -117,7 +117,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: transI18n('fcr_rtt_button_open'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+      iconType: SvgIconEnum.FCR_V2_RTT,
     });
   }
 

@@ -16,7 +16,8 @@ import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../eve
 import { AGRemoteVideoStreamType, Scheduler } from 'agora-rte-sdk';
 import { transI18n } from 'agora-common-libs';
 import { Input } from '@components/input';
-import { notification } from "antd";
+import { notification } from 'antd';
+import 'antd/dist/antd.css';
 import { Button } from '@components/button';
 import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { ToastApi } from '@components/toast';
@@ -67,24 +68,65 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const [source, setSource] = useState('zh-CN,en-US');
   const [target, setTarget] = useState('');
   const [showTranslate, setShowTranslate] = useState(false);
-  
-
-
   const [visible, setVisible] = useState(true);
   const [searchKey, setsearchKey] = useState(null);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0);
   const visibleTaskRef = useRef<Scheduler.Task | null>(null);
   const rttListRef = useRef(rttList);
   const configInfo = fcrRttManager.getConfigInfo();
   const [isOpenrtt, setIsOpenrtt] = useState(configInfo.openTranscribe);
+  const [isRunoutTime, setIsRunoutTime] = useState(true);
+  const [countdown, setCountdown] = useState(600); // 10分钟倒计时，单位为秒
+  const [countdownDef, setCountdownDef] = useState(600); // 10分钟倒计时，单位为秒
+  const [api, contextHolder] = notification.useNotification();
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
     }
   };
+  const openNotification = () => {
+    const key = `open${Date.now()}`;
+    const btn = (
+      <div>
+        <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#555B69', borderRadius: '10px', color: '#ffffff', marginRight: '10px' }} onClick={() =>{notification.destroy()}}>
+          {transI18n('fcr_rtt_notification_view')}
+        </button>
+        <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => {notification.destroy()}}>
+        {transI18n('fcr_rtt_notification_ignore')}
+        </button>
+      </div>
+    );
 
+    notification.open({
+      message: <span style={{ color: '#ffffff', paddingLeft: '20px' }}>{transI18n('fcr_rtt_button_open')}</span>,
+      description: <p style={{ color: '#ffffff', paddingLeft: '20px' }}>老师(尹希尔)  开启了实时转写服务 ，全体用户可见。</p>,
+      btn,
+      key,
+      duration: null,
+      placement: 'topLeft',
+      top: 46,
+      style: {
+        background: 'rgba(47, 47, 47, 0.95)',
+        color: '#ffffff',
+        borderRadius: '10px'
+      },
+      // SvgIconEnum.FCR_V2_SUBTITIES
+      icon: <div style={{ width: '48px', height: '48px', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#16D1A4', borderRadius: '50%' }}><SvgImg type={SvgIconEnum.FCR_V2_RTT} size={36}></SvgImg></div>,
+      onClose: () => console.log('Notification was closed.'),
+    });
+
+  };
   //开启所有监听
   useEffect(() => {
+    //默认启动下倒计时，用来初始化相关变量
+    startTimer({ reduce: fcrRttManager.getConfigInfo().experienceReduceTime, sum: fcrRttManager.getConfigInfo().experienceDefTime })
+    //倒计时修改监听
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
+      onMessage(message: { reduce: number, sum: number }) {
+        startTimer(message)
+      },
+    })
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,
       onMessage() {
@@ -98,75 +140,56 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       },
     })
   }, []);
+  let countDownTimer: NodeJS.Timeout | null = null;
 
+  // 将秒数格式化为分钟和秒钟
+  const formatTime = (seconds: number) => {
+    const minutes = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  };
+  const startTimer = (message: { reduce: number, sum: number }) => {
+    setCountdownDef(message.sum)
+    if (countDownTimer != null) {
+      clearInterval(countDownTimer)
+    }
+    setCountdown(message.reduce)
+    setIsRunoutTime(true)
+    if (message.reduce > 0) {
+      countDownTimer = setInterval(() => {
+        setCountdown((prevCountdown) => {
+          setIsRunoutTime(false)
+          if (prevCountdown <= 0) {
+            setIsRunoutTime(true)
+            if (countDownTimer) {
+              clearInterval(countDownTimer);
+            }
+            return 0;
+          }
+          return prevCountdown - 1;
+        });
+      }, 1000)
+    }
+  }
   useEffect(scrollToBottom, [rttList]);
   useEffect(() => {
     setVisible(true);
     visibleTaskRef.current?.stop();
-    // if (!starting && !popoverVisible) {
-    //   visibleTaskRef.current = Scheduler.shared.addDelayTask(() => {
-    //     setVisible(false);
-    //   }, 5000);
-    // }
   }, [starting, rttList, popoverVisible]);
 
 
-  const changeRtt = async (state: number) => {
-    const sceneId = widget.classroomStore.connectionStore.scene?.sceneId;
-    const {
-      rteEngineConfig: { ignoreUrlRegionPrefix, region },
-      appId,
-      //@ts-ignore
-    } = window.EduClassroomConfig;
-    const data = {
-      languages: {
-        //         // source: localStorage.getItem("sourceLanguageId") || 'zh-CN',
-        // target: [localStorage.getItem("translatelanguageId") || 'en-US'],
-        source: 'zh-CN',
-        target: ['en-US'],
-      },
-      transcribe: 1,
-      subtitle: 0
-    };
-    const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
-      }/edu/apps/${appId}`;
-    widget.classroomStore.api.fetch({
-      path: `/v2/rooms/${sceneId}/widgets/rtt/states/${state}`,
-      method: 'PUT',
-      data: {
-        ...data
-      },
-      pathPrefix,
-    });
-  };
-
-
-  const start = async () => {
-    setStarting(true);
-      fcrRttManager.showConversion();
-      setRttList([...fcrRttManager.getRttList()]);
-      // setIsOpenrtt(true)
-      ToastApi.open({
-        toastProps: {
-          type: 'normal',
-          content: "老师(我) 开启了实时转写服务，全体用户可见。",
-        },
-      });
-  
-  };
- 
   useEffect(() => {
-    debugger
     console.log(configInfo.openTranscribe)
-     //转写内容改变
-  widget.addBroadcastListener({
-    messageType: AgoraExtensionRoomEvent.RttListChange,
-    onMessage() {
-      setRttList([...fcrRttManager.getRttList()]);
-      setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
-      setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
-    },
-  })
+    //转写内容改变
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttListChange,
+      onMessage() {
+        debugger
+        setRttList([...fcrRttManager.getRttList()]);
+        setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
+        setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
+      },
+    })
   }, []);
 
   useEffect(() => {
@@ -239,13 +262,13 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       <span>
         {parts.map((part, index) =>
           part.toLowerCase() === searchQuery.toLowerCase() && part ? (
-            <span key={index} className="highlighted">{part}</span>
+            <span key={index} className={index === currentIndex ? "highlighted-red" : "highlighted"}>{part}</span>
           ) : (
             part
           )
         )}
       </span>
-    );
+    ); 
   };
 
   // text.replaceAll(searchQuery,`<span style="background-color: '#4262FF'">${searchQuery}</span>`)
@@ -281,6 +304,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
   const handleArrowClick = (direction: string) => {
+    debugger
     if (direction === 'up' && currentIndex > 1) {
       setCurrentIndex(currentIndex - 1);
     } else if (direction === 'down' && currentIndex < totalResults) {
@@ -329,14 +353,34 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
               iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
               placeholder={transI18n('fcr_chat_label_search')}
             />
-            <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '32px', top: '9px' }}>
+            <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
               <span style={{ color: '#fff' }}>{`${currentIndex} / ${totalResults}`}</span>
-              <div className="button-box" style={{ position: 'relative', height: '36px' }}>
-                <SvgImg style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4} onClick={() => handleArrowClick('down')}></SvgImg>
-                <SvgImg style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
+              <div className="fcrr-drop-arrow-button-box">
+                
+                <div className="fcr-drop-arrow" onClick={() => handleArrowClick('up')}>
+                <SvgImg colors={{iconPrimary: currentIndex<=0?'rgba(255,255,255,0.5)':'#ffffff'}} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
+                </div>
+                <div className="fcr-drop-arrow" onClick={() => handleArrowClick('down')}>
+                  <SvgImg colors={{iconPrimary: currentIndex>=totalResults?'rgba(255,255,255,0.5)':'#ffffff'}} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
+                </div>
+                  
               </div>
             </div>
           </div>
+          {isRunoutTime && <div className="fcr-limited-time-experience">
+            <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+            {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
+              reason1: countdownDef / 60,
+            })}
+          </div>}
+          {!isRunoutTime && <div className="fcr-limited-time-experience">
+            <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+            {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
+              reason1: countdownDef / 60,
+              reason2: formatTime(countdown),
+            })}
+          </div>}
+
           {/* <SvgImg type={SvgIconEnum.FCR_V2_SEARCH} size={20} />
               <input
                 type="text"
@@ -347,17 +391,17 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
               <span>{searchResultsCount}</span> */}
           {/* </div> */}
           {/* </div> */}
-          <div className="rtt-list">
-            <div style={{textAlign:'center'}}>
-              <div className="open-language">开启翻译识别内容</div>
+          {!isRunoutTime && <div className="rtt-list" style={{ paddingBottom: '30px' }}>
+            <div style={{ textAlign: 'center' }}>
+              <div className="open-language" onClick={() => openNotification()}>开启翻译识别内容</div>
             </div>
 
             {filteredRttList.map(item => (
 
-              <div key={item.uuid} className="fcr-rtt-widget-text">
+              <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
                 <Avatar textSize={14} size={30} nickName={widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}></Avatar>
                 <div>
-                  <div className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}:</div>
+                  <div className="fcr-rtt-widget-name" style={{ fontSize: '12PX' }}>{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}:</div>
                   <div className="fcr-rtt-widget-transcribe">
 
                     {/* <rich-text nodes="<div>这里是富文本内容</div>"></rich-text> */}
@@ -370,7 +414,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
               </div>
             ))}
 
-          </div>
+          </div>}
           {active && (
             <div className="fcr-rtt-widget-actions">
               <PopoverWithTooltip
@@ -408,21 +452,6 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             </div>
           )}
 
-          {starting && (
-            <div className="fcr-text-2 fcr-text-center fcr-w-full">
-              {transI18n('fcr_subtitles_text_turn_on')} ...
-            </div>
-          )}
-          {!lastItemAvalible && !starting && !translating && (
-            <div className="fcr-text-2 fcr-text-center fcr-w-full">
-              {transI18n('fcr_subtitles_text_no_one_speaking')}
-            </div>
-          )}
-          {translating && !starting && (
-            <div className="fcr-text-2 fcr-text-center fcr-w-full">
-              {transI18n('fcr_subtitles_text_listening')} ...
-            </div>
-          )}
           {/* {lastItemAvalible && !translating && !starting && (
             <div className="fcr-rtt-widget-text">
               <Avatar textSize={14} size={30} nickName={lastItemName}></Avatar>
@@ -438,8 +467,8 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             </div>
           )} */}
           <div className="footer">
-            {isOpenrtt && <button className="stop-button" onClick={() => fcrRttManager.closeConversion()}>{transI18n('fcr_rtt_stop_transcription')}</button>}
-            {!isOpenrtt && <button className="stop-button" onClick={() => {fcrRttManager.showConversion()}}>{transI18n('fcr_rtt_start_transcription')}</button>}
+            {isOpenrtt && <button className="stop-button" style={{ backgroundColor: 'rgba(0,0,0,0)', border: '1px solid' }} onClick={() => fcrRttManager.closeConversion()}>{transI18n('fcr_rtt_stop_transcription')}</button>}
+            {!isOpenrtt && <button className="stop-button" onClick={() => { fcrRttManager.showConversion() }}>{transI18n('fcr_rtt_start_transcription')}</button>}
             <div className='fcr_rtt_settings_show'></div>
           </div>
         </div>

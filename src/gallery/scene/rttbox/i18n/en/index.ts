@@ -17,4 +17,10 @@ export default {
   fcr_subtitles_option_translation_display_bilingual: 'Bilingual Mode',
   fcr_subtitles_text_turn_on: 'Turn Subtitles On',
   fcr_subtitles_option_original_audio_chinese_english: 'Chinese & English',
+  fcr_rtt_search_placeholder:'',
+  fcr_rtt_settings:'',
+  fcr_rtt_start_transcription:'',
+  fcr_rtt_stop_transcription:'',
+  fcr_rtt_notification_view:'view',
+  fcr_rtt_notification_ignore:'ignore'
 };

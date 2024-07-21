@@ -62,7 +62,7 @@
   /* line-height: 18px; */
   font-size: 14px;
   font-weight: 500;
-  max-height: 36px;
+  /* max-height: 36px; */
   display: flex;
   overflow: hidden;
   align-items: flex-end;
@@ -316,10 +316,8 @@
   width: 60%;
 }
 
-.ant-modal-content{
+/* .ant-modal-content{
   border-radius: 16px !important;
-  /* width: 415px;
-  height: 180px; */
   overflow: hidden;
 }
 .ant-modal-header{
@@ -333,7 +331,7 @@
 }
 .ant-modal-footer button{
   border-radius: 20px;
-}
+} */
 
 /* 历史记录样式 */
 .search-container{

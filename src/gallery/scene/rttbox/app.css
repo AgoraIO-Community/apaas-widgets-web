@@ -72,7 +72,7 @@
 .fcr-rtt-widget-transcribe {
   font-size: 14px;
   font-weight: 500;
-  max-height: 36px;
+  /* max-height: 36px; */
   display: flex;
   overflow: hidden;
   align-items: flex-end;
@@ -203,10 +203,13 @@
   /* @apply fcr-bg-4 fcr-rounded-8; */
 }
 .highlighted{
+  background-color: rgba(66, 98, 255, 0.4);
+  padding: 2px;
+}
+.highlighted-current{
   background-color: #4262FF;
   padding: 2px;
 }
-
 .open-language{
   @apply fcr-bg-4;
   margin: 0 auto;
@@ -364,6 +367,7 @@
 
 .rtt-list {
   padding: 10px;
+  padding-bottom: 30px;
   overflow-y: auto;
   max-height: calc(100vh - 300px); /* Adjust based on the desired maximum height */
 }
@@ -438,9 +442,36 @@
 }
 
 .fcr-input-icon-wrap{
-  margin-right: 43px;
+  margin-right: 53px;
 }
 .fcr-rttbox-list-search{
+  @apply fcr-bg-4;
   position: relative;
-  
+  padding-bottom:5px
+}
+.fcr-limited-time-experience{
+  background-color: rgba(66, 98, 255, 0.6);
+  color: #ffffff;
+  padding: 5px 15px;
+}
+.ant-notification-notice-btn{
+  margin-top: 0 !important;
+}
+.ant-notification-notice-close {
+  color: #ffffff !important; 
+}
+.fcrr-drop-arrow-button-box{
+  margin-left: 10px;
+  border-radius: 6px;
+  overflow: hidden;
+  height: 36px;
+}
+.fcr-drop-arrow{
+  overflow: hidden;
+  width: 24px;
+  height: 18px;
+  cursor: pointer;
+}
+.fcr-drop-arrow:hover{
+  background-color: #4262FF;
 }

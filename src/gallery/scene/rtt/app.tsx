@@ -172,20 +172,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         }
       },
     });
-    //实时转写按钮点击监听
-    widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttBoxshow,
-      onMessage: () => {
-        const rttSettingBtn = document.getElementById('fcr-rtt-settings-button')
-        countDownTimer = setTimeout(() => {
-          if (rttSettingBtn) {
-            ReactDOM.render(<SetttingPopo />, rttSettingBtn)
-          }
-        }, 3000)
-       
-        debugger
-      },
-    });
+
     //工具箱按钮点击监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,

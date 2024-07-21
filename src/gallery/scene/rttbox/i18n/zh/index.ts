@@ -20,6 +20,8 @@ export default {
   fcr_rtt_search_placeholder:'查找',
   fcr_rtt_settings:'设置',
   fcr_rtt_start_transcription:'开始转写',
-  fcr_rtt_stop_transcription:'停止转写'
+  fcr_rtt_stop_transcription:'停止转写',
+  fcr_rtt_notification_view:'查看',
+  fcr_rtt_notification_ignore:'忽视'
 
 };
