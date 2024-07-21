@@ -213,24 +213,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       </span>
     );
   };
-  const lastItem = showTranslateOnly
-    ? rttList.findLast((item) => {
-      return !!item.trans?.find((item) => {
-        return item.culture === target;
-      });
-    })
-    : rttList[rttList.length - 1];
-  const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(
-    String(lastItem?.uid),
-  )?.fromUser.userName;
 
-  const active = mouseHover || popoverVisible;
-  const sourceText = lastItem?.text;
-  const translateText = lastItem?.trans?.find((item) => {
-    return item.culture === target;
-  })?.text;
-  const translating = !translateText && showTranslateOnly;
-  const lastItemAvalible = lastItem && lastItemName;
   const handleArrowClick = (direction: string) => {
     if (direction === 'up' && currentIndex >= 1) {
       setCurrentIndex(currentIndex - 1);
