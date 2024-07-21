@@ -280,13 +280,10 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
           </div>}
 
           {!isRunoutTime && <div className="rtt-list" style={{ paddingBottom: '30px' }}>
-            <div style={{ textAlign: 'center' }}>
-              <div className="open-language">开启翻译识别内容</div>
-            </div>
             {filteredRttList.map((item, index) => {
               const userInfo = widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid));
               return <div key={index}>
-                {item.uuid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+                {item.uid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
                   <Avatar textSize={14} size={30} nickName={userInfo ? userInfo.fromUser.userName : ""}></Avatar>
                   <div>
                     <div>
@@ -299,7 +296,9 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
                     {enableTranslate && showTranslate && (<div className="fcr-rtt-widget-translate">{item.trans?.find(transItem => transItem.culture === target)?.text}</div>)}
                   </div>
                 </div>}
-                {!item.uuid && <div style={{ textAlign: 'center' }}> <div className="open-language"></div></div>}
+                {!item.uid &&  <div style={{ textAlign: 'center' }}>
+              <div className="open-language">{item.text}</div>
+            </div>}
               </div>
             })}
 

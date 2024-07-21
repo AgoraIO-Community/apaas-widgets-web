@@ -211,12 +211,13 @@
   padding: 2px;
 }
 .open-language{
-  @apply fcr-bg-4;
+  background-color: #43434E;
   margin: 0 auto;
-  padding: 10px 20px;
+  padding: 7px 16px;
   border-radius: 20px;
   display: inline-block;
   color: #fff;
+  font-size: 12px;
 }
 
 
