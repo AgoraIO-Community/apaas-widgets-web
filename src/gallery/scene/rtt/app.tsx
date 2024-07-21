@@ -119,7 +119,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       messageType: AgoraExtensionRoomEvent.RttContentChange,
       onMessage() {
         setRttList([...fcrRttManager.getRttList()]);
-        setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
+        setShowTranslate(fcrRttManager.getConfigInfo().isOpenTranscribe());
         setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
         setRttVisible(true)
         setVisible(true)
