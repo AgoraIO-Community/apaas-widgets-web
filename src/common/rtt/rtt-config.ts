@@ -79,8 +79,8 @@ export class FcrRttConfig {
     initRoomeConfigInfo(properties: never | null) {
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
-            this.openSubtitle = Number(config["subtitle"]) == 1 ? true : false
-            this.openTranscribe = Number(config["transcribe"]) == 1 ? true : false
+            this.setOpenSubtitle(Number(config["subtitle"]) == 1 ? true : false,true)
+            this.setOpenTranscribe(Number(config["transcribe"]) == 1 ? true : false, true)
             if (this.openSubtitle) {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
             }
@@ -88,21 +88,23 @@ export class FcrRttConfig {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             }
             const lanConfig = config["languages"]
-            //源语言
-            const sourceLan = lanConfig["source"]
-            if (sourceLan) {
-                const findData = fcrRttManager.sourceLanguageList.find(item => item.value === String(sourceLan));
-                if (findData) {
-                    this.currentSourceLan = findData
+            if (lanConfig) {
+                //源语言
+                const sourceLan = Object.keys(lanConfig).indexOf("source") >= 0 ? lanConfig["source"] : null
+                if (sourceLan) {
+                    const findData = fcrRttManager.sourceLanguageList.find(item => item.value === String(sourceLan));
+                    if (findData) {
+                        this.currentSourceLan = findData
+                    }
                 }
-            }
-            //目标语言
-            let targetLan = lanConfig["target"] as any
-            if (targetLan && targetLan.length > 0) {
-                targetLan = targetLan[0]
-                const findData = fcrRttManager.targetLanguageList.find(item => item.value === String(targetLan));
-                if (findData) {
-                    this.currentTargetLan = findData
+                //目标语言
+                let targetLan = Object.keys(lanConfig).indexOf("target") >= 0 ? lanConfig["target"] as any : null
+                if (targetLan && targetLan.length > 0) {
+                    targetLan = targetLan[0]
+                    const findData = fcrRttManager.targetLanguageList.find(item => item.value === String(targetLan));
+                    if (findData) {
+                        this.currentTargetLan = findData
+                    }
                 }
             }
             //剩余体验时间
@@ -111,21 +113,25 @@ export class FcrRttConfig {
         }
     }
 
-    setOpenTranscribe(state: boolean) {
-        console.log("FcrRttConfigChange:", "修改是否开启转写->" + state)
+    setOpenTranscribe(state: boolean, needSaveLocal: boolean) {
         this.openTranscribe = state
-        localStorage.setItem(`${this.roomUuid}_transcribe`, state + "")
+        if(needSaveLocal){
+            console.log("FcrRttConfigChange:", "修改是否开启转写->" + state)
+            localStorage.setItem(`${this.roomUuid}_transcribe`, state + "")
+        }
     }
-    setOpenSubtitle(state: boolean) {
-        console.log("FcrRttConfigChange:", "修改是否开启字幕->" + state)
-        this.openTranscribe = state
-        localStorage.setItem(`${this.roomUuid}_subtitle`, state + "")
+    setOpenSubtitle(state: boolean, needSaveLocal: boolean) {
+        this.openSubtitle = state
+        if(needSaveLocal){
+            console.log("FcrRttConfigChange:", "修改是否开启字幕->" + state)
+            localStorage.setItem(`${this.roomUuid}_subtitle`, state + "")
+        }
     }
     isOpenTranscribe() {
         return this.openTranscribe
     }
     isOpenSubtitle() {
-        return this.openTranscribe
+        return this.openSubtitle
     }
 
     setSourceLan(lan: FcrRttLanguageData, needNotify: boolean) {

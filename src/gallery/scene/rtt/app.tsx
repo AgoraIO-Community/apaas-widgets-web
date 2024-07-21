@@ -90,7 +90,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttHideSubtitle,
       onMessage() {
-        // setVisible(false)
+        setVisible(false)
       },
     })
     //字幕开启中监听
@@ -132,7 +132,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
       onMessage() {
         widget.clsoe()
-        // setVisible(false)
+        setVisible(false)
       },
     })
     //字幕内容改变
