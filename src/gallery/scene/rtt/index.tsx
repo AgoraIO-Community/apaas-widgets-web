@@ -134,21 +134,21 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     }
   }
 
-    //注册视图widget
-    private registerWidget(controller: AgoraWidgetController){
-      controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-        id: this.widgetName,
-        name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
-        iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-      });
-    }
-    //取消注册视图widget
-    private unRegisterWidget(controller: AgoraWidgetController){
-      controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, {
-        id: this.widgetName,
-        name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
-        iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-      });
-    }
-  
+  //注册视图widget
+  private registerWidget(controller: AgoraWidgetController) {
+    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+      id: this.widgetName,
+      name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+    });
+  }
+  //取消注册视图widget
+  private unRegisterWidget(controller: AgoraWidgetController) {
+    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, {
+      id: this.widgetName,
+      name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+    });
+  }
+
 }

@@ -200,7 +200,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     return (
       <Popover
         onVisibleChange={setPopoverVisible}
-        visible={popoverVisible}
         content={<SettingView buttonView={null} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></SettingView>}
         trigger="click">
         {buttonView}

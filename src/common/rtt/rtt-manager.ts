@@ -292,8 +292,9 @@ class FcrRttManager {
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
             const localUser = this.classroomStore?.userStore.localUser
+            console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：" + JSON.stringify(config))
             //判断是否改变了转写状态
-            if (this.rttConfigInfo.isOpenTranscribe() !== (Number(config["transcribe"]) == 1 ? true : false)) {
+            if (Number(config["transcribe"])) {
                 const toOpen = 1 == Number(config["transcribe"])
                 const textContent = `${this.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
                 const toastContent = `${this.formatRoleName(operator, localUser)}${transI18n(
