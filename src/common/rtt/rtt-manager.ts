@@ -55,7 +55,6 @@ class FcrRttManager {
         this.classroomConfig = classroomConfig;
         this.resetData(properties)
         // console.log(getLanguage())
-        console.log(localStorage.getItem("language"))
         // this.currentSourceLan = {}
     }
 
