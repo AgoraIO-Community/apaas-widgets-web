@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { FcrRTTWidget } from '.';
 import loadingPng from './loading.png';
@@ -9,8 +9,7 @@ import { ToolTip } from '@components/tooltip';
 import classnames from 'classnames';
 import { Popover, PopoverWithTooltip } from '@components/popover';
 import { RttSettings } from './settings';
-import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
-import { Scheduler } from 'agora-rte-sdk';
+import { AgoraExtensionRoomEvent } from '../../../events';
 import { transI18n } from 'agora-common-libs';
 import ReactDOM from 'react-dom';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
@@ -37,7 +36,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   const [visible, setVisible] = useState(false);
   const [rttVisible, setRttVisible] = useState(true);
   const [isRunoutTime, setIsRunoutTime] = useState(true);
-  const visibleTaskRef = useRef<Scheduler.Task | null>(null);
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
@@ -92,7 +90,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttHideSubtitle,
       onMessage() {
-        setVisible(false)
+        // setVisible(false)
       },
     })
     //字幕开启中监听
@@ -134,7 +132,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
       onMessage() {
         widget.clsoe()
-        setVisible(false)
+        // setVisible(false)
       },
     })
     //字幕内容改变
@@ -154,10 +152,10 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     //设置弹窗显示处理
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttShowSetting,
-      onMessage(message:{targetClsName:string,buttonView:Element}) {
+      onMessage(message: { targetClsName: string, buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean }) {
         const element = document.getElementsByClassName(message.targetClsName)
         if (element) {
-          ReactDOM.render(<SettingPopView buttonView={message.buttonView} />, element[0])
+          ReactDOM.render(<SettingPopView buttonView={message.buttonView} showToConversionSetting={message.showToConversionSetting} showToSubtitleSetting={message.showToSubtitleSetting} />, element[0])
         }
       },
     })
@@ -172,7 +170,19 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         }
       },
     });
-
+    //实时转写按钮点击监听
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttBoxshow,
+      onMessage: () => {
+        const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
+        countDownTimer = setTimeout(() => {
+          if (rttSettingBtn) {
+            const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
+            ReactDOM.render(<SettingPopView buttonView={view} showToConversionSetting={false} showToSubtitleSetting={true} />, rttSettingBtn)
+          }
+        }, 3000)
+      },
+    });
     //工具箱按钮点击监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
@@ -180,129 +190,43 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
         const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
         const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
+        const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
         if (portalTargetElement1) {
-          ReactDOM.render(<SetttingPopo />, portalTargetElement1)
+          ReactDOM.render(<SettingPopView buttonView={view} showToConversionSetting={true} showToSubtitleSetting={false} />, portalTargetElement1)
         }
         if (portalTargetElement2) {
-          ReactDOM.render(<SetttingPopo />, portalTargetElement2)
+          ReactDOM.render(<SettingPopView buttonView={view} showToConversionSetting={false} showToSubtitleSetting={true} />, portalTargetElement2)
         }
       },
     });
   }, [])
 
-
-  useEffect(() => {
-    if (!visible) return
-    visibleTaskRef.current?.stop();
-    if (!starting && !popoverVisible) {
-      visibleTaskRef.current = Scheduler.shared.addDelayTask(() => {
-        setVisible(false);
-        widget.setVisible(true)
-      }, 5000);
-    }
-  }, [starting, rttList, popoverVisible, visible]);
   useEffect(() => {
     widget.setVisible(true)
   }, [rttVisible, rttList, starting, visible]);
 
-  
-  interface SettingPopupProps {
-    buttonView: Element;
+  //设置视图配置信息
+  interface SettingViewProps {
+    buttonView: ReactNode | null;
+    showToConversionSetting: boolean;
+    showToSubtitleSetting: boolean;
   }
-  const SettingPopView:React.FC<SettingPopupProps> = ({buttonView}) => {
-      // 查看实时转写
-      const viewRtt = () => {
-        setVisible(true)
-        setPopoverVisible(false)
-        fcrRttManager.showConversion()
-      }
-      return (
-        // 
-        <Popover
-          onVisibleChange={setPopoverVisible}
-          content={
-            <RttSettings
-              widget={widget}
-              showTranslate={showTranslate}
-              onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
-                // broadcastOptions({ showTranslate: show, target });
-                setShowTranslate(show);
-              }}
-              // source={source}
-              target={target}
-              onSourceChanged={() => { }}
-              viewRtt={viewRtt}
-              onTargetChanged={(target) => {
-                console.log("target", target)
-                broadcastOptions({ showTranslate, target });
-                setTarget(target);
-                setPopoverVisible(false)
-                // setVisible(false)
-  
-              }}></RttSettings>
-          }
-          trigger="click">
-            {buttonView}
-        </Popover>
-      );
+  //设置视图
+  const SettingView: React.FC<SettingViewProps> = ({ showToConversionSetting, showToSubtitleSetting }) => {
+    return <RttSettings widget={widget} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></RttSettings>
   }
-
-  const SetttingPopo: React.FC = () => {
-    // 查看实时转写
-    const viewRtt = () => {
-      setVisible(true)
-      setPopoverVisible(false)
-      fcrRttManager.showConversion()
-    }
+  //动态添加触发按钮的视图
+  const SettingPopView: React.FC<SettingViewProps> = ({ buttonView, showToConversionSetting, showToSubtitleSetting }) => {
     return (
-      // 
       <Popover
         onVisibleChange={setPopoverVisible}
-        content={
-          <RttSettings
-            widget={widget}
-            showTranslate={showTranslate}
-            onShowTranslateChanged={(show: boolean | ((prevState: boolean) => boolean)) => {
-              // broadcastOptions({ showTranslate: show, target });
-              setShowTranslate(show);
-            }}
-            // source={source}
-            target={target}
-            onSourceChanged={() => { }}
-            viewRtt={viewRtt}
-            onTargetChanged={(target) => {
-              console.log("target", target)
-              broadcastOptions({ showTranslate, target });
-              setTarget(target);
-              setPopoverVisible(false)
-              // setVisible(false)
-
-            }}></RttSettings>
-        }
+        visible={popoverVisible}
+        content={<SettingView buttonView={null} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></SettingView>}
         trigger="click">
-        <div
-          onClick={(e) => {
-            e.stopPropagation();
-          }}
-          className="fcr-rtt-box">
-          <SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg>
-        </div>
+        {buttonView}
       </Popover>
     );
-  };
-
-  const broadcastOptions = ({
-    target,
-    showTranslate,
-  }: {
-    target: string;
-    showTranslate: boolean;
-  }) => {
-    widget.broadcast(AgoraExtensionWidgetEvent.RttOptionsChanged, {
-      showTranslate,
-      target,
-    });
-  };
+  }
 
   const enableTranslate = !!target;
   const showTranslateOnly = enableTranslate && !showTranslate;
@@ -326,112 +250,99 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
     const secs = seconds % 60;
     return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
   };
-  // 查看实时转写
   return (
-    <div
-      style={{ display: visible ? 'block' : 'none' }}
-      className={classnames('fcr-rtt-widget-container', 'fcr-bg-black-a80', {
+    <div style={{ display: visible ? 'block' : 'none', paddingBottom: '14px' }}
+      ref={rttContainerRef}>
+      <div>
+        {isRunoutTime && <div className="fcr-limited-box">
+          <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+          {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
+            reason1: countdownDef / 60,
+          })}
+        </div>}
+        {!isRunoutTime &&
+          <div className="fcr-limited-box">
+            <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+            {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
+              reason1: countdownDef / 60,
+              reason2: formatTime(countdown),
+            })}
+          </div>}
+      </div>
+      <div className={classnames('fcr-rtt-subtitle-content', 'fcr-bg-black-a80', {
         'fcr-bg-2-a50': !active,
         'fcr-border-transparent': !active,
         'fcr-border-brand': active,
       })}
-      onMouseEnter={() => setMouseHover(true)}
-      onMouseLeave={() => setMouseHover(false)}
-      ref={rttContainerRef}>
-      <div className="fcr-rtt-widget-actions">
-        <PopoverWithTooltip
-          popoverProps={{
-            onVisibleChange: setPopoverVisible,
-            content: (
-              <RttSettings
-                showTranslate={showTranslate}
-                onShowTranslateChanged={(show) => {
-                  // broadcastOptions({ showTranslate: show, target });
-                  setShowTranslate(show);
-                }}
-                // source={source}
-                target={target}
-                viewRtt={() => {
-
-                }}
-                onSourceChanged={() => { }}
-                onTargetChanged={(target) => {
-                  console.log("target", target)
-                  // broadcastOptions({ showTranslate, target });
-                  setTarget(target);
-                }}></RttSettings>
-            ),
-            placement: 'top',
-            overlayInnerStyle: { width: 175 },
-          }}
-          toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
-          <div className="fcr-rtt-widget-action">
-            <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
-          </div>
-
-        </PopoverWithTooltip>
-        <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
-          <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
-            <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
-          </div>
-        </ToolTip>
-      </div>
-      {isRunoutTime && <div className="fcr-limited-box">
-        <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-        {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
-          reason1: countdownDef / 60,
-        })}
-      </div>}
-      {!isRunoutTime &&
-        <div className="fcr-limited-box">
-          <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-          {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
-            reason1: countdownDef / 60,
-            reason2: formatTime(countdown),
-          })}
-        </div>}
-      {/* 开启中 */}
-      {starting && !isRunoutTime && (
-        <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          <img src={loadingPng} style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle', animation: 'rotate 1s linear infinite', }}></img>
-          {transI18n('fcr_subtitles_text_turn_on')} ...
-        </div>
-      )}
-      {isRunoutTime && (
-        <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          {transI18n('fcr_dialog_rtt_time_limit_status_empty')}
-        </div>
-      )}
-      {/* 正在聆听 */}
-      {listening && !starting && !noOnespeakig && !isRunoutTime && (
-        <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          <SvgImg type={SvgIconEnum.FCR_V2_HEAR} size={16} style={{ verticalAlign: 'middle', marginRight: '10px', marginBottom: '4px' }}></SvgImg>
-          {transI18n('fcr_subtitles_text_listening')} ...
-        </div>
-      )}
-      {/* 没有人正在说话 */}
-      {noOnespeakig && !starting && !translating && !isRunoutTime && (
-        <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center">
-          {transI18n('fcr_subtitles_text_no_one_speaking')}
-        </div>
-      )}
-
-      {lastItemAvalible && !listening && !starting && !noOnespeakig && !isRunoutTime && (
-        <div className="fcr-rtt-widget-text">
-          <Avatar textSize={14} size={30} nickName={lastItemName}></Avatar>
-          <div>
-            <div className="fcr-rtt-widget-name">{lastItemName}:</div>
-            <div className="fcr-rtt-widget-transcribe" style={{ fontSize: localStorage.getItem("subtitleFontSize") + "px" }}>
-              {enableTranslate && !showTranslate ? translateText : sourceText}
+        onMouseEnter={() => setMouseHover(true)}
+        onMouseLeave={() => setMouseHover(false)}>
+        <div className="fcr-rtt-widget-actions">
+          <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
+            <PopoverWithTooltip
+              popoverProps={{
+                onVisibleChange: setPopoverVisible,
+                content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
+                placement: 'top',
+                overlayInnerStyle: { width: 175 },
+              }}
+              toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
+              <div className="fcr-rtt-widget-action">
+                <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
+              </div>
+            </PopoverWithTooltip>
+          </ToolTip>
+          <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
+            <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
+              <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
             </div>
-            {enableTranslate && showTranslate && (
-              <div className="fcr-rtt-widget-translate" style={{ fontSize: localStorage.getItem("subtitleFontSize") + "px" }}>{translateText}</div>
-            )}
-          </div>
+          </ToolTip>
         </div>
-      )}
+        <div>
+          {/* 开启中 */}
+          {starting && !isRunoutTime && (
+            <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
+              <img src={loadingPng} style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle', animation: 'rotate 1s linear infinite', }}></img>
+              {transI18n('fcr_subtitles_text_turn_on')} ...
+            </div>
+          )}
+          {isRunoutTime && (
+            <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
+              {transI18n('fcr_dialog_rtt_time_limit_status_empty')}
+            </div>
+          )}
+          {/* 正在聆听 */}
+          {listening && !starting && !noOnespeakig && !isRunoutTime && (
+            <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
+              <SvgImg type={SvgIconEnum.FCR_V2_HEAR} size={16} style={{ verticalAlign: 'middle', marginRight: '10px', marginBottom: '4px' }}></SvgImg>
+              {transI18n('fcr_subtitles_text_listening')} ...
+            </div>
+          )}
+          {/* 没有人正在说话 */}
+          {noOnespeakig && !starting && !translating && !isRunoutTime && (
+            <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
+              {transI18n('fcr_subtitles_text_no_one_speaking')}
+            </div>
+          )}
+        </div>
+
+        {lastItemAvalible && !listening && !starting && !noOnespeakig && !isRunoutTime && (
+          <div className="fcr-rtt-widget-text">
+            <Avatar textSize={14} size={30} nickName={lastItemName}></Avatar>
+            <div>
+              <div className="fcr-rtt-widget-name">{lastItemName}:</div>
+              <div className="fcr-rtt-widget-transcribe" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
+                {enableTranslate && !showTranslate ? translateText : sourceText}
+              </div>
+              {(
+                <div className="fcr-rtt-widget-translate" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>{translateText}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+      </div>
     </div>
-  );
+  )
 });
 
 export const App = observer(({ widget }: { widget: FcrRTTWidget }) => {

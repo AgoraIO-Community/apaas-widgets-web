@@ -99,8 +99,8 @@ export enum AgoraExtensionRoomEvent {
   ChangeRttSourceLan = "ChangeRttSourceLan",
   //修改翻译语言
   ChangeRttTargetLan = "changeRttTargetLan",
-  //修改Rtt文本大小
-  ChangeRttTextSize = "changeRttTextSize",
+  // //修改Rtt文本大小
+  // ChangeRttTextSize = "changeRttTextSize",
   //修改Rtt双语显示
   ChangeRttShowDoubleLan = "changeRttShowDoubleLan",
   //显示设置弹窗
@@ -139,6 +139,12 @@ export enum AgoraExtensionRoomEvent {
   RttStateReceiveSourceLanChange = "RttStateReceiveSourceLanChange",
   //倒计时修改通知
   RttReduceTimeChange = "RttReduceTimeChange",
+  //文本大小修改完成
+  RttTextSizeChagneFinish = "RttTextSizeChagneFinish",
+  //源语言修改完成
+  RttSourceLanChangeFinish = "RttSourceLanChangeFinish",
+  //翻译语言修改完成
+  RttTargetLanChangeFinish = "RttTargetLanChangeFinish",
   ChangeRttlanguage = "ChangeRttlanguage",
 }
 

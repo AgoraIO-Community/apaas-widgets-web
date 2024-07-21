@@ -126,18 +126,13 @@ class FcrRttManager {
      */
     setCurrentTextSize(size: number, notify: boolean) {
         this.rttConfigInfo.setTextSize(size, notify, true)
-        
     }
 
     /**
      * 是否同时显示双语
      */
     setShowDoubleLan(showDouble: boolean, notify: boolean) {
-        const config: FcrRttConfig = this.rttConfigInfo.copy()
-        config.setShowDoubleLan(showDouble, false, false)
-        this.sendRequest(config)?.then(() => {
-            this.rttConfigInfo.setShowDoubleLan(showDouble, notify, true)
-        })
+        this.rttConfigInfo.setShowDoubleLan(showDouble, notify, true)
     }
 
     /**
@@ -241,10 +236,10 @@ class FcrRttManager {
         }
         if (fcrRttManager.rttList.length > 0) {
             const last = fcrRttManager.rttList[fcrRttManager.rttList.length - 1]
-            if(fcrRttManager.rttConfigInfo.openSubtitle){
+            if(fcrRttManager.rttConfigInfo.isOpenSubtitle()){
                 fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
             }
-            if(fcrRttManager.rttConfigInfo.openTranscribe){
+            if(fcrRttManager.rttConfigInfo.isOpenTranscribe()){
                 fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
             }
         }
@@ -265,7 +260,7 @@ class FcrRttManager {
             const config = properties["extra"]
             const localUser = this.classroomStore?.userStore.localUser
             //判断是否改变了转写状态
-            if (this.rttConfigInfo.openTranscribe !== (Number(config["transcribe"]) == 1 ? true : false)) {
+            if (this.rttConfigInfo.isOpenTranscribe() !== (Number(config["transcribe"]) == 1 ? true : false)) {
                 const toOpen = 1 == Number(config["transcribe"])
                 const textContent = `${this.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
                 const toastContent = `${this.formatRoleName(operator, localUser)}${transI18n(
@@ -381,7 +376,7 @@ class FcrRttManager {
     showSubtitle() {
         //消息实际处理
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowSubtitle)
-        if (this.rttConfigInfo.openSubtitle) {
+        if (this.rttConfigInfo.isOpenSubtitle()) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
             //消息传递后开启三秒无回调隐藏字幕
             const id = setTimeout(() => {
@@ -391,7 +386,7 @@ class FcrRttManager {
         } else {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToOpening)
             const config: FcrRttConfig = this.rttConfigInfo.copy()
-            config.openSubtitle = true
+            config.setOpenSubtitle(true)
             this.sendRequest(config)?.then(() => {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
                 //开启消息监听
@@ -418,7 +413,7 @@ class FcrRttManager {
      */
     closeSubtitle() {
         const config: FcrRttConfig = this.rttConfigInfo.copy()
-        config.openSubtitle = false
+        config.setOpenSubtitle(false)
         this.sendRequest(config)?.then(() => {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
         })
@@ -428,17 +423,15 @@ class FcrRttManager {
      * 显示转写
      */
     showConversion(){
-        debugger
         //消息实际处理
-        debugger
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
-        if (this.rttConfigInfo.openTranscribe) {
+        if (this.rttConfigInfo.isOpenTranscribe() ) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
         }else {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
-            config.openTranscribe = true
+            config.setOpenTranscribe(true)
             this.sendRequest(config)?.then(() => {
-                this.rttConfigInfo.openTranscribe = true
+                this.rttConfigInfo.setOpenTranscribe(true)
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             })
         }
@@ -449,7 +442,7 @@ class FcrRttManager {
     closeConversion(){
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = this.rttConfigInfo.copy()
-        config.openTranscribe = false
+        config.setOpenTranscribe(false)
         this.sendRequest(config)?.then(() => {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
         })
@@ -470,13 +463,13 @@ class FcrRttManager {
                 source: config.getSourceLan().value,
                 target: "" === config.getTargetLan().value ? [] : [config.getTargetLan().value],
             },
-            transcribe: config.openTranscribe ? 1 : 0,
-            subtitle: config.openSubtitle ? 1 : 0
+            transcribe: config.isOpenTranscribe() ? 1 : 0,
+            subtitle: config.isOpenSubtitle() ? 1 : 0
         };
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
             }/edu/apps/${appId}`;
         return this.classroomStore?.api.fetch({
-            path: `/v2/rooms/${EduClassroomConfig.shared.sessionInfo.roomUuid}/widgets/rtt/states/${(config.openTranscribe || config.openSubtitle) ? 1 : 0}`,
+            path: `/v2/rooms/${EduClassroomConfig.shared.sessionInfo.roomUuid}/widgets/rtt/states/${(config.isOpenTranscribe() || config.isOpenSubtitle()) ? 1 : 0}`,
             method: 'PUT',
             data: {
                 ...data
@@ -506,7 +499,7 @@ class FcrRttManager {
      * 新增消息监听
      */
     private addMessageListener() {
-        if (this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe) {
+        if (this.rttConfigInfo.isOpenSubtitle() || this.rttConfigInfo.isOpenTranscribe()) {
             this.classroomStore?.connectionStore.scene?.removeListener('stream-message-recieved', this.messageDataProcessing);
             this.classroomStore?.connectionStore.scene?.on('stream-message-recieved', this.messageDataProcessing);
         }
@@ -515,7 +508,7 @@ class FcrRttManager {
      * 移除消息监听
      */
     private removeMessageListener() {
-        if (!(this.rttConfigInfo.openSubtitle || this.rttConfigInfo.openTranscribe)) {
+        if (!(this.rttConfigInfo.isOpenSubtitle() || this.rttConfigInfo.isOpenTranscribe())) {
             this.classroomStore?.connectionStore.scene?.removeListener('stream-message-recieved', this.messageDataProcessing);
         }
     }

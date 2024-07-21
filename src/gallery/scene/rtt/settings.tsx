@@ -6,103 +6,127 @@ import { Modal } from 'antd';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent } from '../../../events';
-import { ToastApi } from '@components/toast';
+import { FcrRTTWidget } from '.';
+import { FcrRttLanguageData } from '../../../common/rtt/rtt-config';
 
 export const RttSettings = ({
-  target,
-  onTargetChanged,
-  viewRtt,
   widget,
-  onShowTranslateChanged
+  showToSubtitleSetting,
+  showToConversionSetting,
 }: {
-  showTranslate: boolean;
-  source: string;
-  target: string;
-  widget: any;
-  viewRtt: () => void;
-  onShowTranslateChanged: (enableTranslate: boolean) => void;
-  onTargetChanged: (target: string) => void;
+  widget: FcrRTTWidget;
+  showToSubtitleSetting: boolean;//是否显示打开字幕设置
+  showToConversionSetting: boolean;//是否显示打开转写设置
 }) => {
-  const sourceLanguageList = fcrRttManager.sourceLanguageList;
-  const targetLanguageList = fcrRttManager.targetLanguageList;
-
-  const configInfo = fcrRttManager.getConfigInfo();
-  const [selectedLanguage, setSelectedLanguage] = useState(target);
+  const [sourceLan, setSourceLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getSourceLan());
+  const [targetLan, setTargetLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getTargetLan());
   const [showBilingual, setShowBilingual] = useState(true);
-  const [fontSize, setFontSize] = useState(14);
-  const [sourceLanguageId, setSourceLanguageId] = useState(localStorage.getItem("sourceLanguageId") || 'zh-CN');
-  const [translateLanguageId, setTranslateLanguageId] = useState(localStorage.getItem("translatelanguageId") || 'zh-CN');
-  const [horizontalValue, setHorizontalValue] = useState(localStorage.getItem("subtitleFontSize") || '14');
+  const [horizontalValue, setHorizontalValue] = useState(fcrRttManager.getConfigInfo().getTextSize());
   const [isShowSetting, setIsShowSetting] = useState(true);
-// 修改字号大小
-  const handleHorizontalChange = (value: number) => {
-    setHorizontalValue(value);
-    fcrRttManager.setCurrentTextSize(value,true)
-  };
-  const handelCloseSetting = () => {
-    setIsShowSetting(false)
-  }
+  const [isModalOpen, setIsModalOpen] = useState(false);//控制二次确认源语言弹层显示
+  const [preSourceLan, setPreSourceLan] = useState<FcrRttLanguageData>(new FcrRttLanguageData("", ""));//要修改的目标源语言
+
+  //初始化处理
   useEffect(() => {
+    if (isShowSetting) {
+      const configInfo = fcrRttManager.getConfigInfo()
+      setSourceLan(configInfo.getSourceLan())
+      setTargetLan(configInfo.getTargetLan())
+      setHorizontalValue(configInfo.getTextSize())
+      setShowBilingual(configInfo.isShowDoubleLan())
+    }
+  }, [isShowSetting])
+
+  //监听处理
+  useEffect(() => {
+    //源语言改变完成
     widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.ChangeRttlanguage,
-      onMessage: (data) => {
-        console.log("接收到的数据", data)
+      messageType: AgoraExtensionRoomEvent.RttSourceLanChangeFinish,
+      onMessage: (message: { config: unknown, value: FcrRttLanguageData }) => {
+        setSourceLan(message.value)
+      }
+    });
+    //源语言改变完成
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttTargetLanChangeFinish,
+      onMessage: (message: { config: unknown, value: FcrRttLanguageData }) => {
+        setTargetLan(message.value)
+      }
+    });
+    //文本大小改变完成
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttTextSizeChagneFinish,
+      onMessage: (message: { config: unknown, value: number }) => {
+        setHorizontalValue(message.value);
       }
     });
   }, [])
+
+  //隐藏所有弹窗
+  const hideAllModule = () => {
+    setIsModalOpen(false)
+    setIsShowSetting(false)
+  }
+
   return (
-    <div className="settings-container" style={{ display: isShowSetting ? 'block' : 'none' }}>
-      <div className="settings-section">
-        <label className="settings-label">{transI18n('fcr_subtitles_button_subtitles_setting')}</label>
-        <div className="settings-option">
-          <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
-          <RttSettingsSelect
-            items={sourceLanguageList}
-            currentLan={configInfo.getSourceLan().text}
-            onSelectLang={handelCloseSetting}
-          />
-
+    <div>
+      <div className="settings-container" style={{ display: isShowSetting ? 'block' : 'none' }}>
+        <div className="settings-section">
+          <label className="settings-label">{transI18n('fcr_subtitles_button_subtitles_setting')}</label>
+          <div className="settings-option">
+            <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
+            <RttSettingsSelect
+              items={fcrRttManager.sourceLanguageList}
+              currentLan={sourceLan}
+              onSelectLang={(lan: FcrRttLanguageData) => { setPreSourceLan(lan); setIsModalOpen(true); hideAllModule() }}
+            />
+            <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
+              size={24}
+              colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>
+          </div>
+          <div className="settings-option">
+            <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
+            <RttSettingsSelect
+              items={fcrRttManager.targetLanguageList}
+              currentLan={targetLan}
+              onSelectLang={(lan: FcrRttLanguageData) => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }}
+            />
+            <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
+              size={24}
+              colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>
+          </div>
+          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual); }}>
+            <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
+            {showBilingual && <SvgImg
+              type={SvgIconEnum.FCR_CHOOSEIT}
+              size={24}
+              colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>}
+          </div>
+          <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>
+          <div className="settings-option-textSize">
+            <input
+              type="range"
+              min="10"
+              max="30"
+              step="1"
+              value={horizontalValue}
+              onChange={(e) => { fcrRttManager.setCurrentTextSize(Number(e.target.value), true); setHorizontalValue(Number(e.target.value)) }}
+            />
+          </div>
         </div>
-        <div className="settings-option">
-          <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
-          <RttSettingsSelect
-            items={targetLanguageList}
-            currentLan={configInfo.getTargetLan().text}
-            onSelectLang={handelCloseSetting}
-          />
-
-        </div>
-
-        <div className="settings-option" onClick={() => {fcrRttManager.setShowDoubleLan(!showBilingual,true);setShowBilingual(!showBilingual);}}>
-          <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
-          {showBilingual && <SvgImg
-            type={SvgIconEnum.FCR_CHOOSEIT}
-            size={24}
-            colors='white'></SvgImg>}
-          {/* <input
-            type="checkbox"
-            checked={showBilingual}
-            onChange={() => setShowBilingual(!showBilingual)}
-          /> */}
-        </div>
-        <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>
-        <div className="settings-option" onClick={onShowTranslateChanged}>
-          <input
-            type="range"
-            min="10"
-            max="30"
-            value={horizontalValue}
-            onChange={(e) => { handleHorizontalChange(e.target.value) }}
-          />
-          <span>{horizontalValue}px</span>
-        </div>
+        <button className="restore-button" onClick={() => { fcrRttManager.setCurrentTextSize(14, true); setHorizontalValue(14) }}>
+          {transI18n('fcr_device_option_reset_font_size')}
+        </button>
+        {showToConversionSetting && <button className="real-time-button" onClick={() => { fcrRttManager.showConversion(); hideAllModule() }}>
+          {transI18n('fcr_device_option_view_rtt_open_conversion')}
+        </button>}
+        {showToSubtitleSetting && <button className="real-time-button" onClick={() => { fcrRttManager.showSubtitle(); hideAllModule() }}>
+          {transI18n('fcr_device_option_view_rtt_open_subtitle')}
+        </button>}
       </div>
-      <button className="restore-button" onClick={() => handleHorizontalChange(14)}>
-        {transI18n('fcr_device_option_reset_font_size')}
-      </button>
-      <button className="real-time-button" onClick={()=>{viewRtt();handelCloseSetting()}}>
-        {transI18n('fcr_device_option_view_rtt')}
-      </button>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
+        <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(preSourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
+      </Modal>
     </div>
   );
 };
@@ -112,77 +136,34 @@ const RttSettingsSelect = ({
   currentLan,
   onSelectLang,
 }: {
-  items: any,
-  currentLan: string,
-  onSelectLang: () => void;
+  items: FcrRttLanguageData[],
+  currentLan: FcrRttLanguageData,
+  onSelectLang: (item: FcrRttLanguageData) => void;
 }) => {
   const [isOpen, setIsOpen] = useState(false);//控制选择框的显示
-  const [isModalOpen, setIsModalOpen] = useState(false);//控制弹层显示
-  const [sourceLan, setSourceLan] = useState({});//设置当前源语言
-  // 显示弹层
-  const showModal = () => {
-    setIsOpen(false);
-    setIsModalOpen(true);
-  };
-  // 点击弹层的确认按钮
-  const handleOk = () => {
-    setIsModalOpen(false);
-    fcrRttManager.setCurrentSourceLan(sourceLan.value, true)
-    
-  };
-  // 点击弹层的取消按钮
-  const handleCancel = () => {
-    setIsModalOpen(false);
-  };
   return (
     <div className="select-container">
       <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
-        {transI18n(currentLan) || transI18n('fcr_device_option_choose_lang')}
+        {transI18n(currentLan.text) || transI18n('fcr_device_option_choose_lang')}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={handleOk} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={handleCancel}  footer={[
-          <button
-            key="back"
-            onClick={handleCancel}
-            style={{ borderRadius: '20px' }}
-          >
-            {transI18n('fcr_modal_cancelText')}
-          </button>,
-          <button
-            key="submit"
-            type="primary"
-            onClick={handleOk}
-            style={{ borderRadius: '20px' }}
-          >
-            {transI18n('fcr_modal_okText')}
-          </button>,
-        ]}>
-        <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(sourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
-      </Modal>
       {isOpen && (
         <div className="select-options">
-          {items.map((item: {
-            text(text: any): React.ReactNode; value: React.Key | null | undefined; label: string | number | boolean | React.ReactElement<any, string | React.JSXElementConstructor<any>> | React.ReactFragment | React.ReactPortal | null | undefined;
-          }) => (
-            <div
+          {items.map((item => {
+            return <div
               key={item.value}
               className={classnames('select-option')}
               onClick={() => {
-                if (items[0].value == "") {
-                  fcrRttManager.setCurrentTargetLan(item.value, true)
-                } else {
-                  showModal()
-                  setSourceLan(item)
-                }
-                onSelectLang()
-              }}
-            >
+                onSelectLang(item)
+                setIsOpen(false);
+              }}>
               {transI18n(item.text) || transI18n('fcr_device_option_choose_lang')}
-              {item.text === currentLan && <SvgImg
+              {item.value === currentLan.value && <SvgImg
                 type={SvgIconEnum.FCR_CHOOSEIT}
                 size={24}
-                colors='white'></SvgImg>}
+                colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>}
             </div>
-          ))}
+          }))
+          }
         </div>
       )}
     </div>
