@@ -17,7 +17,7 @@ import { AGRemoteVideoStreamType, Scheduler } from 'agora-rte-sdk';
 import { transI18n } from 'agora-common-libs';
 import { Input } from '@components/input';
 import { notification } from 'antd';
-import 'antd/dist/antd.css';
+import './NotificationStyle.css';
 import { Button } from '@components/button';
 import { center } from '@antv/g2plot/lib/plots/sankey/sankey';
 import { ToastApi } from '@components/toast';
