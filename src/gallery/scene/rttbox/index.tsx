@@ -43,6 +43,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   defaultWidth = 320;
   defaultHeight = 600;
   get minimizedProperties() {
+    
     return {
       minimized:true,
       minimizedTooltip: transI18n('fcr_rtt_tips_title'),
@@ -50,6 +51,8 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
       minimizedKey: this.widgetId,
       minimizedCollapsed: false
     };
+    
+   
   }
   async onInstall(controller: AgoraWidgetController) {
     await addResource();

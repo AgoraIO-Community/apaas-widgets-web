@@ -70,7 +70,8 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   };
   //开启所有监听
   useEffect(() => {
-    widget.setMinimize(true, { ...widget.minimizedProperties });
+    
+    // widget.setMinimize(true, { ...widget.minimizedProperties });
     //默认启动下倒计时，用来初始化相关变量
     startTimer({ reduce: fcrRttManager.getConfigInfo().experienceReduceTime, sum: fcrRttManager.getConfigInfo().experienceDefTime })
     //倒计时修改监听
@@ -143,6 +144,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,
       onMessage(data: string) {
         openNotification(data)
+        widget.setMinimize(false, { ...widget.minimizedProperties });
       },
     })
   }, []);
