@@ -67,8 +67,26 @@ class FcrRttManager {
         //新增修改声源语言监听
         widgetController.addBroadcastListener({
             messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
-            onMessage(message) {
-                // setCurrentSourceLan(message)
+            onMessage(message:string) {
+                fcrRttManager.setCurrentSourceLan(message,true)
+            },
+        })
+        widgetController.addBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttTargetLan,
+            onMessage(message:string) {
+                fcrRttManager.setCurrentTargetLan(message,true)
+            },
+        })
+        widgetController.addBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttTextSize,
+            onMessage(message:number) {
+                fcrRttManager.setCurrentTextSize(message,true)
+            },
+        })
+        widgetController.addBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttShowDoubleLan,
+            onMessage(message:boolean) {
+                fcrRttManager.setShowDoubleLan(message,true)
             },
         })
         widgetController.addBroadcastListener({
@@ -98,8 +116,26 @@ class FcrRttManager {
         //清除广播接收器
         this.widgetController?.removeBroadcastListener({
             messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
-            onMessage(message) {
-                console.log("修改目标语言" + message)
+            onMessage(message:string) {
+                fcrRttManager.setCurrentSourceLan(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttTargetLan,
+            onMessage(message:string) {
+                fcrRttManager.setCurrentTargetLan(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttTextSize,
+            onMessage(message:number) {
+                fcrRttManager.setCurrentTextSize(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttShowDoubleLan,
+            onMessage(message:boolean) {
+                fcrRttManager.setShowDoubleLan(message,true)
             },
         })
         this.widgetController?.removeBroadcastListener({
@@ -130,9 +166,9 @@ class FcrRttManager {
         const findData: FcrRttLanguageData | undefined = this.sourceLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
-            config.setSourceLan(findData, false)
+            config.setSourceLan(findData, false,false)
             this.sendRequest(config)?.then(() => {
-                this.rttConfigInfo.setSourceLan(findData, notify)
+                this.rttConfigInfo.setSourceLan(findData, notify,true)
             })
         }
     }
@@ -146,9 +182,9 @@ class FcrRttManager {
         const findData = this.targetLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
-            config.setTargetLan(findData, false)
+            config.setTargetLan(findData, false,false)
             this.sendRequest(config)?.then(() => {
-                this.rttConfigInfo.setTargetLan(findData, notify)
+                this.rttConfigInfo.setTargetLan(findData, notify,true)
             })
         }
     }

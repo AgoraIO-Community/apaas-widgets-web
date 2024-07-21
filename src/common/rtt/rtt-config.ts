@@ -134,9 +134,12 @@ export class FcrRttConfig {
         return this.openSubtitle
     }
 
-    setSourceLan(lan: FcrRttLanguageData, needNotify: boolean) {
+    setSourceLan(lan: FcrRttLanguageData, needNotify: boolean, needSaveLocal: boolean) {
         console.log("FcrRttConfigChange:", "修改目标源语言->" + lan.value)
         this.currentSourceLan = lan
+        if (needSaveLocal) {
+            localStorage.setItem(`${this.roomUuid}_sourceLan`, lan.value)
+        }
         if (needNotify) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSourceLanChangeFinish, { config: this, value: lan })
         }
@@ -144,9 +147,12 @@ export class FcrRttConfig {
     getSourceLan() {
         return this.currentSourceLan
     }
-    setTargetLan(lan: FcrRttLanguageData, needNotify: boolean) {
+    setTargetLan(lan: FcrRttLanguageData, needNotify: boolean, needSaveLocal: boolean) {
         console.log("FcrRttConfigChange:", "修改目标翻译语言->" + lan.value)
         this.currentTargetLan = lan
+        if (needSaveLocal) {
+            localStorage.setItem(`${this.roomUuid}_targetLan`, lan.value)
+        }
         if (needNotify) {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttTargetLanChangeFinish, { config: this, value: lan })
         }
