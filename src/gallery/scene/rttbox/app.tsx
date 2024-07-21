@@ -84,22 +84,22 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
     }
   };
-  const openNotification = () => {
+  const openNotification = (message: string) => {
     const key = `open${Date.now()}`;
     const btn = (
       <div>
-        <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#555B69', borderRadius: '10px', color: '#ffffff', marginRight: '10px' }} onClick={() =>{notification.destroy()}}>
+        <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#555B69', borderRadius: '10px', color: '#ffffff', marginRight: '10px' }} onClick={() => { notification.destroy() }}>
           {transI18n('fcr_rtt_notification_view')}
         </button>
-        <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => {notification.destroy()}}>
-        {transI18n('fcr_rtt_notification_ignore')}
+        <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => { notification.destroy() }}>
+          {transI18n('fcr_rtt_notification_ignore')}
         </button>
       </div>
     );
 
     notification.open({
       message: <span style={{ color: '#ffffff', paddingLeft: '20px' }}>{transI18n('fcr_rtt_button_open')}</span>,
-      description: <p style={{ color: '#ffffff', paddingLeft: '20px' }}>老师(尹希尔)  开启了实时转写服务 ，全体用户可见。</p>,
+      description: <p style={{ color: '#ffffff', paddingLeft: '20px' }}>{message}</p>,
       btn,
       key,
       duration: null,
@@ -180,14 +180,22 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
 
   useEffect(() => {
     console.log(configInfo.openTranscribe)
-    //转写内容改变
+    //转写列表改变
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttListChange,
       onMessage() {
-        debugger
         setRttList([...fcrRttManager.getRttList()]);
         setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
         setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
+
+      },
+    })
+    // 转写状态改变
+    widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,
+      onMessage(data) {
+        debugger
+        openNotification(data)
       },
     })
   }, []);
@@ -250,25 +258,56 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const enableTranslate = !!target;
   const showTranslateOnly = enableTranslate && !showTranslate;
   const filteredRttList = rttList.filter(item => item.text.includes(searchQuery) || (item.trans && item.trans.some(transItem => transItem.text.includes(searchQuery))));
+  useEffect(() => {
+    if (filteredRttList.length > 0 && currentIndex == 0) {
+      setCurrentIndex(1)
+    }
+    if (searchQuery == '') {
+      setTotalResults(0);
+      setCurrentIndex(0)
+      return false
+    }
+    const a = countMatches(filteredRttList, searchQuery)
+    setTotalResults(a);
+  }, [filteredRttList]);
+  const countMatches = (list: any, query: string) => {
+    debugger
+    return list.reduce((count: number, item: any) => {
+      let itemCount = 0;
 
+      if (item.text.includes(query)) {
+        itemCount += (item.text.match(new RegExp(query, 'gi')) || []).length;
+      }
+
+      if (item.trans) {
+        item.trans.forEach(transItem => {
+          if (transItem.text.includes(query)) {
+            itemCount += (transItem.text.match(new RegExp(query, 'gi')) || []).length;
+          }
+        });
+      }
+
+      return count + itemCount;
+    }, 0);
+  };
   // const result = text.replace(`/${searchQuery}/g`, (match) => {
   //     return `<span style="background-color: '#4262FF'">${newText}</span>`;
   // });
 
 
-  const renderHighlightedText = (text: string) => {
+  const renderHighlightedText = (text: string, currIndex: number) => {
     const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
     return (
       <span>
         {parts.map((part, index) =>
           part.toLowerCase() === searchQuery.toLowerCase() && part ? (
-            <span key={index} className={index === currentIndex ? "highlighted-red" : "highlighted"}>{part}</span>
+            <span key={index} className={index + currIndex === currentIndex ? "highlighted-current" : "highlighted"}>{part}</span>
           ) : (
             part
           )
         )}
       </span>
-    ); 
+    );
   };
 
   // text.replaceAll(searchQuery,`<span style="background-color: '#4262FF'">${searchQuery}</span>`)
@@ -348,22 +387,26 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             <Input
               shape="rounded"
               size="medium"
+              allowClear={false}
               value={searchKey}
               onChange={setSearchQuery}
               iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
               placeholder={transI18n('fcr_chat_label_search')}
             />
             <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
+              <div className='fcr-input-icon-clear'>
+                <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16} />
+              </div>
               <span style={{ color: '#fff' }}>{`${currentIndex} / ${totalResults}`}</span>
               <div className="fcrr-drop-arrow-button-box">
-                
+
                 <div className="fcr-drop-arrow" onClick={() => handleArrowClick('up')}>
-                <SvgImg colors={{iconPrimary: currentIndex<=0?'rgba(255,255,255,0.5)':'#ffffff'}} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
+                  <SvgImg colors={{ iconPrimary: currentIndex <= 1 ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
                 </div>
                 <div className="fcr-drop-arrow" onClick={() => handleArrowClick('down')}>
-                  <SvgImg colors={{iconPrimary: currentIndex>=totalResults?'rgba(255,255,255,0.5)':'#ffffff'}} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
+                  <SvgImg colors={{ iconPrimary: currentIndex >= totalResults ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
                 </div>
-                  
+
               </div>
             </div>
           </div>
@@ -393,10 +436,10 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
           {/* </div> */}
           {!isRunoutTime && <div className="rtt-list" style={{ paddingBottom: '30px' }}>
             <div style={{ textAlign: 'center' }}>
-              <div className="open-language" onClick={() => openNotification()}>开启翻译识别内容</div>
+              <div className="open-language">开启翻译识别内容</div>
             </div>
 
-            {filteredRttList.map(item => (
+            {filteredRttList.map((item, index) => (
 
               <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
                 <Avatar textSize={14} size={30} nickName={widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}></Avatar>
@@ -405,7 +448,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
                   <div className="fcr-rtt-widget-transcribe">
 
                     {/* <rich-text nodes="<div>这里是富文本内容</div>"></rich-text> */}
-                    {enableTranslate && !showTranslate ? item.trans?.find(transItem => transItem.culture === target)?.text : renderHighlightedText(item.text)}
+                    {enableTranslate && !showTranslate ? item.trans?.find(transItem => transItem.culture === target)?.text : renderHighlightedText(item.text, index)}
                   </div>
                   {enableTranslate && showTranslate && (
                     <div className="fcr-rtt-widget-translate">{item.trans?.find(transItem => transItem.culture === target)?.text}</div>

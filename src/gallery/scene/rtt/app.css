@@ -62,8 +62,8 @@
   font-size: 14px;
   font-weight: 500 !important;
   color: white;
-  max-height: 36px;
   margin-top: 2px;
+  font-weight: 500;
   display: flex;
   overflow: hidden;
   align-items: flex-end;

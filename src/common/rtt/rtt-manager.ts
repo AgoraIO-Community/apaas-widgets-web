@@ -283,12 +283,12 @@ class FcrRttManager {
                     ToastApi.open({
                         toastProps: {
                           type: 'normal',
-                          content: "老师(我) 开启了实时转写服务，全体用户可见。",
+                          content: textContent,
                         },
                       }); 
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                 // 监听是否开启实时转写
-                // this.widgetController?.broadcast(AgoraExtensionRoomEvent.OpenRtt)
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen,textContent)
             }
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any
@@ -310,7 +310,9 @@ class FcrRttManager {
                 }
             }
             //判断是否修改了声源语言
-            const sourceLan = config["languages"]["source"]
+            const sourceLan = config["languages"]["source"] 
+            const toOpen = 1 == Number(config["languages"]["source"])
+            const textContent = `${this.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
             if (sourceLan) {
                 if (this.rttConfigInfo.getSourceLan().value !== sourceLan) {
                     const findData = this.sourceLanguageList.find(item => item.value === sourceLan);
@@ -320,7 +322,7 @@ class FcrRttManager {
                         ToastApi.open({
                             toastProps: {
                                 type: 'normal',
-                                content: "老师(我) 开启了实时转写服务，全体用户可见。",
+                                content: textContent,
                             },
                         });
                         this.rttList = this.rttList.concat([
