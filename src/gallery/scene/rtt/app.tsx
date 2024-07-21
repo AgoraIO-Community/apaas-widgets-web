@@ -14,6 +14,7 @@ import { transI18n } from 'agora-common-libs';
 import ReactDOM from 'react-dom';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { FcrRttItem } from '../../../common/rtt/rtt-item';
+import { ToastApi } from '@components/toast';
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -112,6 +113,13 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       onMessage() {
         widget.clsoe()
         setVisible(false)
+        ToastApi.open({
+          toastProps: {
+              type: 'normal',
+              content: transI18n('fcr_already_close_subtitles'),
+          },
+      });
+        
       },
     })
     //字幕内容改变

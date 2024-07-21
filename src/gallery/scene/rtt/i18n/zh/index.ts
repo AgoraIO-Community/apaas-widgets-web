@@ -47,5 +47,6 @@ export default {
    fcr_rtt_role_me:'我',
   fcr_modal_okText:'确认修改',
   fcr_modal_cancelText:'取消',
+  fcr_already_close_subtitles:'你已关闭字幕',
 
 };
