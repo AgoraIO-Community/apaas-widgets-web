@@ -216,10 +216,18 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   }) : rttList[rttList.length - 1];
   const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(String(lastItem?.uid),)?.fromUser.userName;
   const active = mouseHover || popoverVisible;
+  //声源语言
   const sourceText = lastItem?.text;
+  //翻译语言
   const translateText = lastItem?.trans?.find((item) => {
     return item.culture === target;
   })?.text;
+  const configInfo = fcrRttManager.getConfigInfo();
+  //语言显示
+  const leve2Text = configInfo.isShowDoubleLan() && configInfo.getTargetLan() && configInfo.getTargetLan().value !== configInfo.getSourceLan().value ? translateText : null;
+  const leve1Text = !configInfo.isShowDoubleLan() && leve2Text !== null && leve2Text !== undefined ? leve2Text : sourceText
+  
+
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
   return (
@@ -303,10 +311,10 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
             <div>
               <div className="fcr-rtt-widget-name">{lastItemName}:</div>
               <div className="fcr-rtt-widget-transcribe" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
-                {enableTranslate && !showTranslate ? translateText : sourceText}
+                {leve1Text}
               </div>
               {(
-                <div className="fcr-rtt-widget-translate" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>{translateText}
+                <div className="fcr-rtt-widget-translate" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>{leve2Text}
                 </div>
               )}
             </div>
