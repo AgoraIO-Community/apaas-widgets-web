@@ -22,5 +22,6 @@ export default {
   fcr_rtt_start_transcription:'',
   fcr_rtt_stop_transcription:'',
   fcr_rtt_notification_view:'view',
-  fcr_rtt_notification_ignore:'ignore'
+  fcr_rtt_notification_ignore:'ignore',
+  fcr_rtt_tips_title:''
 };

@@ -70,6 +70,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   };
   //开启所有监听
   useEffect(() => {
+    widget.setMinimize(true, { ...widget.minimizedProperties });
     //默认启动下倒计时，用来初始化相关变量
     startTimer({ reduce: fcrRttManager.getConfigInfo().experienceReduceTime, sum: fcrRttManager.getConfigInfo().experienceDefTime })
     //倒计时修改监听
@@ -83,7 +84,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,
       onMessage() {
         setIsOpenrtt(true)
-        widget.setMinimize(true, { ...widget.minimizedProperties });
+        
       },
     })
     widget.addBroadcastListener({
@@ -189,7 +190,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
         itemCount += (item.text.match(new RegExp(query, 'gi')) || []).length;
       }
       if (item.trans) {
-        item.trans.forEach(transItem => {
+        item.trans.forEach((transItem: { text: string; }) => {
           if (transItem.text.includes(query)) {
             itemCount += (transItem.text.match(new RegExp(query, 'gi')) || []).length;
           }
@@ -215,7 +216,24 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       </span>
     );
   };
+  const lastItem = showTranslateOnly
+    ? rttList.findLast((item) => {
+      return !!item.trans?.find((item) => {
+        return item.culture === target;
+      });
+    })
+    : rttList[rttList.length - 1];
+  const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(
+    String(lastItem?.uid),
+  )?.fromUser.userName;
 
+  const active = mouseHover || popoverVisible;
+  const sourceText = lastItem?.text;
+  const translateText = lastItem?.trans?.find((item) => {
+    return item.culture === target;
+  })?.text;
+  const translating = !translateText && showTranslateOnly;
+  const lastItemAvalible = lastItem && lastItemName;
   const handleArrowClick = (direction: string) => {
     if (direction === 'up' && currentIndex > 1) {
       setCurrentIndex(currentIndex - 1);

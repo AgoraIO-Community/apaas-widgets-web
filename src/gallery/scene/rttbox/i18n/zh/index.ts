@@ -1,5 +1,6 @@
 export default {
   fcr_rtt_button_open: '实时转写',
+  fcr_rtt_tips_title: '转写中...',
   fcr_subtitles_button_close: '关闭字幕',
   fcr_subtitles_text_listening: '正在聆听',
   fcr_subtitles_text_no_one_speaking: '当前没有人在说话',
