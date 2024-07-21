@@ -131,6 +131,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,
       onMessage() {
         setIsOpenrtt(true)
+        widget.setMinimize(true, { ...widget.minimizedProperties });
       },
     })
     widget.addBroadcastListener({
@@ -171,6 +172,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       }, 1000)
     }
   }
+  
   useEffect(scrollToBottom, [rttList]);
   useEffect(() => {
     setVisible(true);
@@ -187,14 +189,13 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
         setRttList([...fcrRttManager.getRttList()]);
         setShowTranslate(fcrRttManager.getConfigInfo().openTranscribe);
         setTarget(fcrRttManager.getConfigInfo().getTargetLan().value);
-
+        scrollToBottom()
       },
     })
     // 转写状态改变
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,
       onMessage(data) {
-        debugger
         openNotification(data)
       },
     })
@@ -205,21 +206,21 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       messageType: AgoraExtensionRoomEvent.RttOptionsChanged,
       onMessage: handleRttOptionsChanged,
     });
-    widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.ChangeRttlanguage,
-      onMessage: (data) => {
-        console.log("接收到的数据", data)
-        setTimeout(() => {
-          ToastApi.open({
-            toastProps: {
-              type: 'normal',
-              content: "老师(我) 开启了实时转写服务，全体用户可见。",
-            },
-          });
-        }, 100);
-        // rttList.push({text:"老师(我) 已停止实时转写"})
-      }
-    });
+    // widget.addBroadcastListener({
+    //   messageType: AgoraExtensionRoomEvent.ChangeRttlanguage,
+    //   onMessage: (data) => {
+    //     console.log("接收到的数据", data)
+    //     setTimeout(() => {
+    //       ToastApi.open({
+    //         toastProps: {
+    //           type: 'normal',
+    //           content: "老师(我) 开启了实时转写服务，全体用户可见。",
+    //         },
+    //       });
+    //     }, 100);
+    //     // rttList.push({text:"老师(我) 已停止实时转写"})
+    //   }
+    // });
 
     widget.broadcast(AgoraExtensionWidgetEvent.RequestRttOptions, 'fcr_rtt_settings_show');
   }, []);
@@ -258,6 +259,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const enableTranslate = !!target;
   const showTranslateOnly = enableTranslate && !showTranslate;
   const filteredRttList = rttList.filter(item => item.text.includes(searchQuery) || (item.trans && item.trans.some(transItem => transItem.text.includes(searchQuery))));
+ 
   useEffect(() => {
     if (filteredRttList.length > 0 && currentIndex == 0) {
       setCurrentIndex(1)
@@ -271,7 +273,6 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     setTotalResults(a);
   }, [filteredRttList]);
   const countMatches = (list: any, query: string) => {
-    debugger
     return list.reduce((count: number, item: any) => {
       let itemCount = 0;
 
@@ -343,7 +344,6 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
   const handleArrowClick = (direction: string) => {
-    debugger
     if (direction === 'up' && currentIndex > 1) {
       setCurrentIndex(currentIndex - 1);
     } else if (direction === 'down' && currentIndex < totalResults) {
@@ -388,13 +388,13 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
               shape="rounded"
               size="medium"
               allowClear={false}
-              value={searchKey}
+              value={searchQuery}
               onChange={setSearchQuery}
               iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
               placeholder={transI18n('fcr_chat_label_search')}
             />
             <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
-              <div className='fcr-input-icon-clear'>
+              <div className='fcr-input-icon-clear' onClick={()=>{setSearchQuery("")}}>
                 <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16} />
               </div>
               <span style={{ color: '#fff' }}>{`${currentIndex} / ${totalResults}`}</span>
@@ -440,8 +440,8 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             </div>
 
             {filteredRttList.map((item, index) => (
-
-              <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+              <div>
+                {item.uuid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
                 <Avatar textSize={14} size={30} nickName={widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}></Avatar>
                 <div>
                   <div className="fcr-rtt-widget-name" style={{ fontSize: '12PX' }}>{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}:</div>
@@ -454,7 +454,15 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
                     <div className="fcr-rtt-widget-translate">{item.trans?.find(transItem => transItem.culture === target)?.text}</div>
                   )}
                 </div>
+              </div>}
+              {!item.uuid && 
+               <div style={{ textAlign: 'center' }}>
+               <div className="open-language"></div>
+             </div>
+              }
+              
               </div>
+              
             ))}
 
           </div>}

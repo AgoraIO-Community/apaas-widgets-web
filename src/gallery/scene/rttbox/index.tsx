@@ -45,12 +45,9 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   get minimizedProperties() {
     return {
       minimizedTooltip: transI18n('fcr_countdown_timer_title'),
-      minimizedIcon: SvgIconEnum.FCR_V2_TIMER,
+      minimizedIcon: SvgIconEnum.FCR_V2_RTT,
       minimizedKey: this.widgetId,
-      minimizedCollapsed: false,
-      extra: {
-        current: 0,
-      },
+      minimizedCollapsed: true,
     };
   }
   async onInstall(controller: AgoraWidgetController) {
