@@ -76,15 +76,15 @@ export class FcrRttConfig {
      * 初始化房间配置信息
      * @param properties 房间配置信息
      */
-    initRoomeConfigInfo(properties: never | null) {
+    initRoomeConfigInfo(properties: any | null, notify: boolean) {
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
-            this.setOpenSubtitle(Number(config["subtitle"]) == 1 ? true : false,true)
+            this.setOpenSubtitle(Number(config["subtitle"]) == 1 ? true : false, true)
             this.setOpenTranscribe(Number(config["transcribe"]) == 1 ? true : false, true)
-            if (this.openSubtitle) {
+            if (this.openSubtitle && notify) {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
             }
-            if (this.openTranscribe) {
+            if (this.openTranscribe && notify) {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             }
             const lanConfig = config["languages"]
@@ -109,20 +109,20 @@ export class FcrRttConfig {
             }
             //剩余体验时间
             this.experienceReduceTime = Math.max(this.experienceDefTime - (config["duration"] ? Number(config["duration"]) : 0), 0)
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttReduceTimeChange, { reduce: this.experienceDefTime, sum: this.experienceDefTime })
+            this.startReduceTimer()
         }
     }
 
     setOpenTranscribe(state: boolean, needSaveLocal: boolean) {
         this.openTranscribe = state
-        if(needSaveLocal){
+        if (needSaveLocal) {
             console.log("FcrRttConfigChange:", "修改是否开启转写->" + state)
             localStorage.setItem(`${this.roomUuid}_transcribe`, state + "")
         }
     }
     setOpenSubtitle(state: boolean, needSaveLocal: boolean) {
         this.openSubtitle = state
-        if(needSaveLocal){
+        if (needSaveLocal) {
             console.log("FcrRttConfigChange:", "修改是否开启字幕->" + state)
             localStorage.setItem(`${this.roomUuid}_subtitle`, state + "")
         }
@@ -179,6 +179,35 @@ export class FcrRttConfig {
     }
     getTextSize() {
         return this.textSize
+    }
+
+    //倒计时逻辑处理
+    private reduceTimerId: NodeJS.Timeout | undefined;
+    private startReduceTimer() {
+        if (this.reduceTimerId != null) {
+            clearInterval(this.reduceTimerId)
+        }
+        if (this.isOpenSubtitle() || this.isOpenTranscribe()) {
+            if (this.experienceReduceTime <= 0) {
+                this.experienceReduceTime = Math.max(this.experienceReduceTime, 0)
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttReduceTimeChange, { reduce: this.experienceReduceTime, sum: this.experienceDefTime, reduceTimeStr: this.formatReduceTime() })
+                return
+            }
+            this.reduceTimerId = setInterval(() => {
+                this.experienceReduceTime -= 1
+                this.experienceReduceTime = Math.max(this.experienceReduceTime, 0)
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttReduceTimeChange, { reduce: this.experienceReduceTime, sum: this.experienceDefTime, reduceTimeStr: this.formatReduceTime() })
+                if (this.experienceReduceTime <= 0) {
+                    clearInterval(this.reduceTimerId)
+                }
+            }, 1000)
+        }
+    }
+    //格式化时间
+    formatReduceTime(): string {
+        const minutes = Math.floor(this.experienceReduceTime / 60);
+        const secs = Math.floor(this.experienceReduceTime % 60);
+        return `${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
     }
 }
 /**

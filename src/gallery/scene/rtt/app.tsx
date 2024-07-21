@@ -24,7 +24,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 ) {
   const [mouseHover, setMouseHover] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
-  const [countdown, setCountdown] = useState(600); // 10分钟倒计时，单位为秒
+  const [countdown, setCountdown] = useState(""); // 10分钟倒计时，单位为秒
   const [countdownDef, setCountdownDef] = useState(600); // 10分钟倒计时，单位为秒
   const rttContainerRef = useRef<HTMLDivElement>(null);
   const [rttList, setRttList] = useState<FcrRttItem[]>([]);
@@ -43,42 +43,21 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   };
 
   useEffect(scrollToBottom, [rttList]);
-  //倒计时计时器
-  let countDownTimer: NodeJS.Timeout | null = null;
-  const startTimer = (message: { reduce: number, sum: number }) => {
-    setCountdownDef(message.sum)
-    if (countDownTimer != null) {
-      clearInterval(countDownTimer)
-    }
-    setCountdown(message.reduce)
-    setIsRunoutTime(true)
-    if (message.reduce > 0) {
-      countDownTimer = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          setIsRunoutTime(false)
-          if (prevCountdown <= 0) {
-            setIsRunoutTime(true)
-            if (countDownTimer) {
-              clearInterval(countDownTimer);
-            }
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000)
-    }
-  }
   //所有的监听处理
   useEffect(() => {
     //倒计时修改监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
-      onMessage(message: { reduce: number, sum: number }) {
-        startTimer(message)
+      onMessage(message: { reduce: number, sum: number,reduceTimeStr:string }) {
+        setCountdownDef(message.sum)
+        setCountdown(message.reduceTimeStr)
+        setIsRunoutTime(message.reduce <= 0)
       },
     })
     //默认启动下倒计时，用来初始化相关变量
-    startTimer({ reduce: fcrRttManager.getConfigInfo().experienceReduceTime, sum: fcrRttManager.getConfigInfo().experienceDefTime })
+    setCountdownDef(fcrRttManager.getConfigInfo().experienceDefTime)
+    setCountdown(fcrRttManager.getConfigInfo().formatReduceTime())
+    setIsRunoutTime(fcrRttManager.getConfigInfo().experienceReduceTime <= 0)
     //字幕显示监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttShowSubtitle,
@@ -175,7 +154,8 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       messageType: AgoraExtensionRoomEvent.RttBoxshow,
       onMessage: () => {
         const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
-        countDownTimer = setTimeout(() => {
+        fcrRttManager.showConversion()
+        setTimeout(() => {
           if (rttSettingBtn) {
             const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
             ReactDOM.render(<SettingPopView buttonView={view} showToConversionSetting={false} showToSubtitleSetting={true} />, rttSettingBtn)
@@ -243,13 +223,6 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   })?.text;
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
-
-  // 将秒数格式化为分钟和秒钟
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
-  };
   return (
     <div style={{ display: visible ? 'block' : 'none', paddingBottom: '14px' }}
       ref={rttContainerRef}>
@@ -265,7 +238,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
             <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
             {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
               reason1: countdownDef / 60,
-              reason2: formatTime(countdown),
+              reason2: countdown,
             })}
           </div>}
       </div>

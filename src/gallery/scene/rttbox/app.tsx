@@ -31,7 +31,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const configInfo = fcrRttManager.getConfigInfo();
   const [isOpenrtt, setIsOpenrtt] = useState(configInfo.isOpenTranscribe());
   const [isRunoutTime, setIsRunoutTime] = useState(true);
-  const [countdown, setCountdown] = useState(600); // 10分钟倒计时，单位为秒
+  const [countdown, setCountdown] = useState(""); // 10分钟倒计时，单位为秒
   const [countdownDef, setCountdownDef] = useState(600); // 10分钟倒计时，单位为秒
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
@@ -73,12 +73,16 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     
     // widget.setMinimize(true, { ...widget.minimizedProperties });
     //默认启动下倒计时，用来初始化相关变量
-    startTimer({ reduce: fcrRttManager.getConfigInfo().experienceReduceTime, sum: fcrRttManager.getConfigInfo().experienceDefTime })
+    setCountdownDef(fcrRttManager.getConfigInfo().experienceDefTime)
+    setCountdown(fcrRttManager.getConfigInfo().formatReduceTime())
+    setIsRunoutTime(fcrRttManager.getConfigInfo().experienceReduceTime <= 0)
     //倒计时修改监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
-      onMessage(message: { reduce: number, sum: number }) {
-        startTimer(message)
+      onMessage(message: { reduce: number, sum: number,reduceTimeStr:string }) {
+        setCountdownDef(message.sum)
+        setCountdown(message.reduceTimeStr)
+        setIsRunoutTime(message.reduce <= 0)
       },
     })
     widget.addBroadcastListener({
@@ -95,36 +99,19 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       },
     })
   }, []);
-  let countDownTimer: NodeJS.Timeout | null = null;
-  // 将秒数格式化为分钟和秒钟
-  const formatTime = (seconds: number) => {
-    const minutes = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+  const formatMillisecondsToDateTime = (milliseconds: number): string => {
+    if (milliseconds == 0) {
+      return ""
+    }
+    const date = new Date(milliseconds);
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, '0'); // 月份从0开始，所以要加1
+    const day = String(date.getDate()).padStart(2, '0');
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
+
+    return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
-  const startTimer = (message: { reduce: number, sum: number }) => {
-    setCountdownDef(message.sum)
-    if (countDownTimer != null) {
-      clearInterval(countDownTimer)
-    }
-    setCountdown(message.reduce)
-    setIsRunoutTime(true)
-    if (message.reduce > 0) {
-      countDownTimer = setInterval(() => {
-        setCountdown((prevCountdown) => {
-          setIsRunoutTime(false)
-          if (prevCountdown <= 0) {
-            setIsRunoutTime(true)
-            if (countDownTimer) {
-              clearInterval(countDownTimer);
-            }
-            return 0;
-          }
-          return prevCountdown - 1;
-        });
-      }, 1000)
-    }
-  }
 
   useEffect(scrollToBottom, [rttList]);
 
@@ -170,11 +157,11 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
 
 
   const enableTranslate = !!target;
+  //筛选结果列表
   const filteredRttList = rttList.filter(item => item.text.includes(searchQuery) || (item.trans && item.trans.some(transItem => transItem.text.includes(searchQuery))));
+  //没条数据查找到的数量
+  const fillterdCountList = filteredRttList.map((item) => { const match = item.text.match(new RegExp(`(${searchQuery})`, 'gi')); return match ? match.length : 0; })
   useEffect(() => {
-    if (filteredRttList.length > 0 && currentIndex == 0) {
-      setCurrentIndex(1)
-    }
     if (searchQuery == '') {
       setTotalResults(0);
       setCurrentIndex(0)
@@ -206,14 +193,22 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   //高亮匹配
   const renderHighlightedText = (text: string, currIndex: number) => {
     const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
+    //获取前面所有查到的数据
+    let lastSum = 0;
+    for (let index = 0; index < currIndex; index++) {
+      lastSum += fillterdCountList[index];
+    }
+    let textIndexOf = -1
     return (
       <span>
-        {parts.map((part, index) =>
-          part.toLowerCase() === searchQuery.toLowerCase() && part ? (
-            <span key={index} className={index + currIndex === currentIndex ? "highlighted-current" : "highlighted"}>{part}</span>
+        {parts.map((part, index) => {
+          textIndexOf = textIndexOf + (part.toLowerCase() === searchQuery.toLowerCase() && part ? 1 : 0)
+          return part.toLowerCase() === searchQuery.toLowerCase() && part ? (
+            <span key={index} className={textIndexOf + lastSum === currentIndex ? "highlighted-current" : "highlighted"}>{part}</span>
           ) : (
             part
           )
+        }
         )}
       </span>
     );
@@ -237,7 +232,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
   const handleArrowClick = (direction: string) => {
-    if (direction === 'up' && currentIndex > 1) {
+    if (direction === 'up' && currentIndex >= 1) {
       setCurrentIndex(currentIndex - 1);
     } else if (direction === 'down' && currentIndex < totalResults) {
       setCurrentIndex(currentIndex + 1);
@@ -270,22 +265,22 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
               iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
               placeholder={transI18n('fcr_chat_label_search')}
             />
-            <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
-              <div className='fcr-input-icon-clear' onClick={()=>{setSearchQuery("")}}>
+            {searchQuery && <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
+              <div className='fcr-input-icon-clear' onClick={() => { setSearchQuery("") }}>
                 <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16} />
               </div>
-              <span style={{ color: '#fff' }}>{`${currentIndex} / ${totalResults}`}</span>
+              <span style={{ color: '#fff' }}>{`${Math.min(currentIndex + 1, totalResults)} / ${totalResults}`}</span>
               <div className="fcrr-drop-arrow-button-box">
 
                 <div className="fcr-drop-arrow" onClick={() => handleArrowClick('up')}>
-                  <SvgImg colors={{ iconPrimary: currentIndex <= 1 ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
+                  <SvgImg colors={{ iconPrimary: currentIndex == 0 ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
                 </div>
                 <div className="fcr-drop-arrow" onClick={() => handleArrowClick('down')}>
-                  <SvgImg colors={{ iconPrimary: currentIndex >= totalResults ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
+                  <SvgImg colors={{ iconPrimary: currentIndex >= (totalResults - 1) ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
                 </div>
 
               </div>
-            </div>
+            </div>}
           </div>
           {isRunoutTime && <div className="fcr-limited-time-experience">
             <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
@@ -297,7 +292,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
             <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
             {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
               reason1: countdownDef / 60,
-              reason2: formatTime(countdown),
+              reason2: countdown,
             })}
           </div>}
 
@@ -311,7 +306,10 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
                 {item.uuid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
                   <Avatar textSize={14} size={30} nickName={userInfo ? userInfo.fromUser.userName : ""}></Avatar>
                   <div>
-                    <div className="fcr-rtt-widget-name" style={{ fontSize: '12PX' }}>{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}:</div>
+                    <div>
+                      <div style={{ fontSize: '12PX', display: 'inline-block' }} className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}</div>
+                      <div style={{ fontSize: '12PX', display: 'inline-block', color: '#BBBBBB', paddingLeft: '7px' }} >{formatMillisecondsToDateTime(item.time)}</div>
+                    </div>
                     <div className="fcr-rtt-widget-transcribe">
                       {enableTranslate && !showTranslate ? item.trans?.find(transItem => transItem.culture === target)?.text : renderHighlightedText(item.text, index)}
                     </div>

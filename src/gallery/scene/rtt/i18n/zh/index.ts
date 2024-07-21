@@ -42,6 +42,9 @@ export default {
   fcr_dialog_rtt_time_limit_status_empty:'暂无内容',
   fcr_dialog_rtt_subtitles_dialog_time_limit_reduce: '每个账号限时{reason1}分钟体验字幕和转写功能，剩余 {reason2} 分钟。',
    fcr_dialog_rtt_subtitles_dialog_time_limit_end:'每个账号限时{reason1}分钟体验字幕和转写功能，体验时间已用完。',
+   fcr_rtt_role_student:'学生',
+   fcr_rtt_role_teacher:'老师',
+   fcr_rtt_role_me:'我',
   fcr_modal_okText:'确认修改',
   fcr_modal_cancelText:'取消',
 

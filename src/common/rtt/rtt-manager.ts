@@ -279,17 +279,16 @@ class FcrRttManager {
                         isFinal: true,
                         confidence: 0,
                     },
-                ])
-                    .slice(-100);
-                    ToastApi.open({
-                        toastProps: {
-                          type: 'normal',
-                          content: textContent,
-                        },
-                      }); 
+                ]).slice(-100);
+                ToastApi.open({
+                    toastProps: {
+                        type: 'normal',
+                        content: toastContent,
+                    },
+                });
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                 // 监听是否开启实时转写
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen,textContent)
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen, textContent)
             }
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any
@@ -311,7 +310,7 @@ class FcrRttManager {
                 }
             }
             //判断是否修改了声源语言
-            const sourceLan = config["languages"]["source"] 
+            const sourceLan = config["languages"]["source"]
             const toOpen = 1 == Number(config["languages"]["source"])
             const textContent = `${this.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
             if (sourceLan) {
@@ -344,7 +343,7 @@ class FcrRttManager {
 
                 }
             }
-            this.rttConfigInfo.initRoomeConfigInfo(properties)
+            this.rttConfigInfo.initRoomeConfigInfo(properties, false)
         }
     }
 
@@ -354,24 +353,10 @@ class FcrRttManager {
      * @param localUser 当前本地的用户信息
      */
     formatRoleName(optionsUser: any, localUser: EduUserStruct | undefined) {
-        let roleName = ""
-        if (EduRoleTypeEnum.student == Number(optionsUser.role)) {
-            roleName += transI18n('role.student')
-        } else if (EduRoleTypeEnum.teacher == Number(optionsUser.role)) {
-            roleName += transI18n('role.teacher')
-        } else {
-            ""
-        }
-        roleName += "("
-        if (optionsUser.userUuid == localUser?.userUuid) {
-            roleName += transI18n('i')
-        } else {
-            roleName += optionsUser.userName
-        }
-        roleName += ")"
-        return roleName;
+        return `${EduRoleTypeEnum.student == Number(optionsUser.role) ? transI18n('fcr_rtt_role_student') :
+            EduRoleTypeEnum.teacher == Number(optionsUser.role) ? transI18n('fcr_rtt_role_teacher') : ''
+            }(${optionsUser.userUuid == localUser?.userUuid ? transI18n('fcr_rtt_role_me') : optionsUser.userName})  `
     }
-
 
     /**
      * 显示字幕
@@ -460,7 +445,7 @@ class FcrRttManager {
      * 发送请求
      */
     private sendRequest(tartgetConfig: FcrRttConfig | null): Promise<unknown> | undefined {
-        if(this.loadingRequest){
+        if (this.loadingRequest) {
             return
         }
         this.loadingRequest = true
@@ -487,7 +472,12 @@ class FcrRttManager {
                 ...data
             },
             pathPrefix,
-        }).finally(()=>{this.loadingRequest = false})
+        }).then((data) => {
+            if (data.data && Object.keys(data.data).length > 0) {
+                const map = { extra: data.data }
+                this.rttConfigInfo.initRoomeConfigInfo(map, false)
+            }
+        }).finally(() => { this.loadingRequest = false })
     }
 
     /**
@@ -502,7 +492,7 @@ class FcrRttManager {
      */
     private resetData(properties: never | null) {
         this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomUuid, this.widgetController)
-        this.rttConfigInfo.initRoomeConfigInfo(properties)
+        this.rttConfigInfo.initRoomeConfigInfo(properties, true)
         //做监听判断
         this.addMessageListener()
     }
