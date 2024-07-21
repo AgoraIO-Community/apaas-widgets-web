@@ -78,7 +78,7 @@ export const RttSettings = ({
             <RttSettingsSelect
               items={fcrRttManager.sourceLanguageList}
               currentLan={sourceLan}
-              onSelectLang={(lan: FcrRttLanguageData) => { setPreSourceLan(lan); setIsModalOpen(true); hideAllModule() }}
+              onSelectLang={(lan: FcrRttLanguageData) => { setPreSourceLan(lan); hideAllModule();setIsModalOpen(true);  }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}

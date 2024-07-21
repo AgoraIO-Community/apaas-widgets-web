@@ -387,12 +387,14 @@ class FcrRttManager {
                     if (findData) {
                         const useText = `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}`
                         const languageText = transI18n(findData.text)
-                        ToastApi.open({
-                            toastProps: {
-                                type: 'normal',
-                                content: textContent,
-                            },
-                        });
+                        if(fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()){
+                            ToastApi.open({
+                                toastProps: {
+                                    type: 'normal',
+                                    content: textContent,
+                                },
+                            });
+                        }
                         this.rttList = this.rttList.concat([
                             {
                                 uuid: uuidV4(),
@@ -403,8 +405,7 @@ class FcrRttManager {
                                 isFinal: true,
                                 confidence: 0,
                             },
-                        ])
-                            .slice(-100);
+                        ]).slice(-100);
                         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
                         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                     }

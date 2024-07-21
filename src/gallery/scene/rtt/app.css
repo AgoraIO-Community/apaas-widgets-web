@@ -341,7 +341,7 @@
   outline: none;
 }
 
-/* .ant-modal-content{
+.ant-modal-content{
   border-radius: 16px !important;
   overflow: hidden;
 }
@@ -356,7 +356,7 @@
 }
 .ant-modal-footer button{
   border-radius: 20px;
-} */
+}
 
 /* 历史记录样式 */
 .search-container{
