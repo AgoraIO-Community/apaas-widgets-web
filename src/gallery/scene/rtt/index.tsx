@@ -48,12 +48,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   defaultHeight = 50;
   async onInstall(controller: AgoraWidgetController) {
     await addResource();
-    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_subtitles_button_open'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES
-    });
-   
+    this.registerWidget(controller)
   }
   onPropertiesUpdate(properties: any,operator:IAgoraUserSessionInfo|null): void {
     // 获取下发数据
@@ -67,15 +62,12 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     console.log("数据初始化了",properties)
     this.setVisible(true);
     // this.widgetController.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_subtitles_button_open'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-    });
+    this.registerWidget(this.widgetController)
     this.widgetController.addBroadcastListener( {
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
         this.setToolVisible(true)
+        this.registerWidget(this.widgetController)
       }
     }
     );
@@ -121,11 +113,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   }
   @bound
   clsoe() {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_subtitles_button_open'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES, 
-    });
+    this.unRegisterWidget(this.widgetController)
     this.deleteWidget();
   }
   unload() {
@@ -137,11 +125,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
 
   onDestroy() {
     fcrRttManager.release()
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_subtitles_button_open'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-    });
+    this.unRegisterWidget(this.widgetController)
   }
 
   onUninstall(controller: AgoraWidgetController) {
@@ -149,4 +133,22 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       FcrRTTWidget._installationDisposer();
     }
   }
+
+    //注册视图widget
+    private registerWidget(controller: AgoraWidgetController){
+      controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+        id: this.widgetName,
+        name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+        iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+      });
+    }
+    //取消注册视图widget
+    private unRegisterWidget(controller: AgoraWidgetController){
+      controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, {
+        id: this.widgetName,
+        name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+        iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+      });
+    }
+  
 }

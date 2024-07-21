@@ -71,6 +71,22 @@ class FcrRttManager {
                 // setCurrentSourceLan(message)
             },
         })
+        widgetController.addBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.RttChangeToSubtitleOpenState,
+            onMessage() {
+                if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
+                    fcrRttManager.closeSubtitle()
+                }
+            },
+        })
+        widgetController.addBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.RttChangeToConversionOpenState,
+            onMessage() {
+                if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
+                    fcrRttManager.closeConversion()
+                }
+            },
+        })
     }
 
     /**
@@ -84,6 +100,22 @@ class FcrRttManager {
             messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
             onMessage(message) {
                 console.log("修改目标语言" + message)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.RttChangeToSubtitleOpenState,
+            onMessage() {
+                if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
+                    fcrRttManager.closeSubtitle()
+                }
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.RttChangeToConversionOpenState,
+            onMessage() {
+                if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
+                    fcrRttManager.closeConversion()
+                }
             },
         })
         this.widgetController = undefined;

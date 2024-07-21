@@ -113,6 +113,10 @@ export enum AgoraExtensionRoomEvent {
   RttCloseConversion = "RttCloseConversion",
   //显示字幕
   RttShowSubtitle = "RttShowSubtitle",
+  //修改字幕开启状态
+  RttChangeToSubtitleOpenState = "RttChangeToSubtitleOpenState",
+  //修改转写开启状态
+  RttChangeToConversionOpenState = "RttChangeToConversionOpenState",
   //字幕功能开启成功
   RttSubtitleOpenSuccess = "RttSubtitleOpenSuccess",
   //字幕功能关闭成功
