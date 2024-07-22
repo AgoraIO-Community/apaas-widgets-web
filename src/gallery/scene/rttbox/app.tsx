@@ -43,10 +43,11 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     const btn = (
       <div>
         <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#555B69', borderRadius: '10px', color: '#ffffff', marginRight: '10px' }} onClick={() => { notification.destroy() }}>
-          {transI18n('fcr_rtt_notification_view')}
+        {transI18n('fcr_rtt_notification_ignore')}
         </button>
         <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => { notification.destroy() }}>
-          {transI18n('fcr_rtt_notification_ignore')}
+        {transI18n('fcr_rtt_notification_view')}
+         
         </button>
       </div>
     );
@@ -222,11 +223,11 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
     }
   };
   return (
-    <div className="fcr-chatroom-dialog-wrapper">
+    // <div className="fcr-chatroom-dialog-wrapper">
       <div
         ref={rttContainerRef}
         style={{ width: widget.defaultRect.width, height: widget.defaultRect.height }}
-        className="fcr-chatroom-dialog-content">
+        className="fcr-chatroom-dialog-wrapper fcr-chatroom-dialog-content">
         <div className="fcr-chatroom-dialog-title">
           <div
             className="fcr-chatroom-dialog-title-close"
@@ -310,7 +311,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
           </div>
         </div>
       </div>
-    </div>
+    // </div>
 
     // </div>
   );

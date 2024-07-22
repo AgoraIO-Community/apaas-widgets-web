@@ -1,7 +1,9 @@
 .fcr-rtt-widget-container {
   @apply fcr-rounded-8;
   /* overflow-y: auto; */
-  min-width: 750px;
+  width: auto;
+  max-width: 750px;
+  min-width: 400px;
   min-height: 50px;
   display: flex;
   position: relative;
