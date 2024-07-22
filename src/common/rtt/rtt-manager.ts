@@ -111,6 +111,7 @@ class FcrRttManager {
         //清除缓存
         this.clearStore()
         //清除广播接收器
+        this.removeMessageListener()
         this.widgetController?.removeBroadcastListener({
             messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
             onMessage(message:string) {
@@ -570,6 +571,7 @@ class FcrRttManager {
      * 新增消息监听
      */
     private addMessageListener() {
+        this.removeMessageListener()
         this.classroomStore?.connectionStore.scene?.removeListener('stream-message-recieved', this.messageDataProcessing);
         this.classroomStore?.connectionStore.scene?.on('stream-message-recieved', this.messageDataProcessing);
         console.log("FcrRttAddMessageListener:", "新增消息接收监听")
