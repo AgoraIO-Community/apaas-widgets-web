@@ -33,6 +33,9 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
   const [isRunoutTime, setIsRunoutTime] = useState(true);
   const [countdown, setCountdown] = useState(""); // 10分钟倒计时，单位为秒
   const [countdownDef, setCountdownDef] = useState(600); // 10分钟倒计时，单位为秒
+  notification.config({
+    maxCount: 1
+  });
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
@@ -56,7 +59,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       description: <p style={{ color: '#ffffff', paddingLeft: '20px' }}>{message}</p>,
       btn,
       key,
-      duration: null,
+      duration: 5,
       placement: 'topLeft',
       top: 46,
       maxCount:1,
