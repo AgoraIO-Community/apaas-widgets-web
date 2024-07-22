@@ -598,4 +598,4 @@ class FcrRttManager {
 //@ts-ignore
 window.fcrRttManager = new FcrRttManager()
 //@ts-ignore
-export const fcrRttManager = window.fcrRttManager;
+export const fcrRttManager:FcrRttManager = window.fcrRttManager;
