@@ -125,6 +125,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
 
   onDestroy() {
     fcrRttManager.release()
+    this.clearBrocastListener()
     this.unRegisterWidget(this.widgetController)
   }
 
@@ -132,6 +133,24 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     if (FcrRTTWidget._installationDisposer) {
       FcrRTTWidget._installationDisposer();
     }
+  }
+
+  clearBrocastListener(){
+    //倒计时修改监听
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowSubtitle,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttHideSubtitle,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToOpening,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToListener,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttSubtitleOpenSuccess,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttContentChange,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowSetting,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttboxChanged,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ToolboxChanged,onMessage() {},})
   }
 
   //注册视图widget
