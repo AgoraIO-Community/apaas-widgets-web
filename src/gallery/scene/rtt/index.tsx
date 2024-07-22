@@ -155,7 +155,6 @@ export class FcrRTTWidget extends FcrUISceneWidget {
 
   //注册视图widget
   private registerWidget(controller: AgoraWidgetController) {
-    console.log("xxxxxxxxxxxxxxxx1111111111")
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
       name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
