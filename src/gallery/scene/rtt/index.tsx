@@ -58,7 +58,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   @bound
   onCreate(properties: any) {
     fcrRttManager.resetListener(this.widgetController)
-    fcrRttManager.resetDefaultInfo(properties,this.classroomStore,this.classroomConfig)
+    fcrRttManager.resetDefaultInfo(properties,this.classroomStore)
     console.log("数据初始化了",properties)
     this.setVisible(true);
     // this.widgetController.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);

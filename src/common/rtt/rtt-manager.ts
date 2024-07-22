@@ -32,7 +32,6 @@ class FcrRttManager {
      */
     private widgetController: AgoraWidgetController | undefined;
     private classroomStore: EduClassroomStore | undefined;
-    private classroomConfig: EduClassroomConfig | undefined;
 
     /**
      * 配置信息
@@ -50,9 +49,8 @@ class FcrRttManager {
      * 重置默认信息
      * @param properties 房间初始信息
      */
-    resetDefaultInfo(properties: any, classroomStore: EduClassroomStore, classroomConfig: EduClassroomConfig) {
+    resetDefaultInfo(properties: any, classroomStore: EduClassroomStore) {
         this.classroomStore = classroomStore;
-        this.classroomConfig = classroomConfig;
         this.resetData(properties)
         // console.log(getLanguage())
         // this.currentSourceLan = {}
@@ -522,6 +520,7 @@ class FcrRttManager {
         const {
             rteEngineConfig: { ignoreUrlRegionPrefix, region },
             appId,
+            sessionInfo:{roomUuid}
             //@ts-ignore
         } = window.EduClassroomConfig;
         const data = {
@@ -535,7 +534,7 @@ class FcrRttManager {
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
             }/edu/apps/${appId}`;
         return this.classroomStore?.api.fetch({
-            path: `/v2/rooms/${EduClassroomConfig.shared.sessionInfo.roomUuid}/widgets/rtt/states/${(config.isOpenTranscribe() || config.isOpenSubtitle()) ? 1 : 0}`,
+            path: `/v2/rooms/${roomUuid}/widgets/rtt/states/${(config.isOpenTranscribe() || config.isOpenSubtitle()) ? 1 : 0}`,
             method: 'PUT',
             data: {
                 ...data
@@ -560,7 +559,8 @@ class FcrRttManager {
      * 重置所有变量数据
      */
     private resetData(properties: never | null) {
-        this.rttConfigInfo = new FcrRttConfig(EduClassroomConfig.shared.sessionInfo.roomUuid, this.widgetController)
+        //@ts-ignore
+        this.rttConfigInfo = new FcrRttConfig(window.EduClassroomConfig.sessionInfo.roomUuid, this.widgetController)
         this.rttConfigInfo.initRoomeConfigInfo(properties, true)
         //做监听判断
         this.addMessageListener()
