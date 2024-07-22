@@ -319,6 +319,9 @@ class FcrRttManager {
         fcrRttManager.openSubtitleTimerList.push(id)
     }
 
+    //上一次配置信息
+    private lastPropInfo = ""
+
     /**
      * 房间属性变更监听
      */
@@ -326,7 +329,12 @@ class FcrRttManager {
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
             const localUser = this.classroomStore?.userStore.localUser
-            console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：" + JSON.stringify(config))
+            const currentInfo = JSON.stringify(config);
+            if(currentInfo === this.lastPropInfo || "" === currentInfo){
+                return
+            }
+            console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：" + currentInfo)
+            this.lastPropInfo = currentInfo
             //判断是否改变了转写状态
             if (Number(config["transcribe"])) {
                 const toOpen = 1 == Number(config["transcribe"])
@@ -587,4 +595,7 @@ class FcrRttManager {
     }
 
 }
-export const fcrRttManager = new FcrRttManager();
+//@ts-ignore
+window.fcrRttManager = new FcrRttManager()
+//@ts-ignore
+export const fcrRttManager = window.fcrRttManager;
