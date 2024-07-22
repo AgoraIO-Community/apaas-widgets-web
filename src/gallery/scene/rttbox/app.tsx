@@ -59,6 +59,7 @@ export const RttBoxComponet = forwardRef<WebviewInterface, { widget: FcrRttboxWi
       duration: null,
       placement: 'topLeft',
       top: 46,
+      maxCount:1,
       style: {
         background: 'rgba(47, 47, 47, 0.95)',
         color: '#ffffff',
