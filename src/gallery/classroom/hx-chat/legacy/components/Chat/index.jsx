@@ -24,6 +24,7 @@ const { TabPane } = Tabs;
 export const Chat = () => {
   const [tabKey, setTabKey] = useState(CHAT_TABS_KEYS.chat);
   const [roomUserList, setRoomUserList] = useState([]);
+  const [roomMemberCount, setRoomMemberCount] = useState(0);
   const {
     isLogin,
     announcement,
@@ -33,6 +34,7 @@ export const Chat = () => {
     roomUsers,
     roomUsersInfo,
     showMIniIcon,
+    memberCount,
     configUIVisible,
   } = useShallowEqualSelector((state) => {
     return {
@@ -42,6 +44,7 @@ export const Chat = () => {
       showAnnouncementNotice: _.get(state, 'showAnnouncementNotice'),
       roleType: _.get(state, 'propsData.roleType', ''),
       roomUsers: _.get(state, 'room.roomUsers', []),
+      memberCount: _.get(state, 'room.memberCount', 0),
       roomUsersInfo: _.get(state, 'room.roomUsersInfo', {}),
       showMIniIcon: _.get(state, 'isShowMiniIcon'),
       configUIVisible: _.get(state, 'configUIVisible'),
@@ -85,6 +88,9 @@ export const Chat = () => {
       setRoomUserList(concat(_speakerTeacher, _student));
     }
   }, [roomUsers, roomUsersInfo]);
+  useEffect(() => {
+    setRoomMemberCount(memberCount)
+  }, [memberCount]);
 
   const hideChatModal = () => {
     store.dispatch(isShowChat(false));
@@ -143,8 +149,8 @@ export const Chat = () => {
         {configUIVisible.memebers && isTeacher && (
           <TabPane
             tab={
-              roomUserList.length > 0
-                ? `${transI18n('chat.members')}(${roomUserList.length})`
+              memberCount > 0
+                ? `${transI18n('chat.members')}(${memberCount})`
                 : `${transI18n('chat.members')}`
             }
             key={CHAT_TABS_KEYS.user}>

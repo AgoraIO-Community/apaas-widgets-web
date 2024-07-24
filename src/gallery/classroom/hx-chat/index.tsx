@@ -4,7 +4,7 @@ import {
   chatPictureEnabled,
   AgoraCloudClassWidget,
 } from 'agora-common-libs';
-import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
+import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon,dispatchMemberCountChange } from './legacy';
 import type { AgoraWidgetController } from 'agora-edu-core';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
@@ -91,6 +91,14 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
         (value) => {
           dispatchShowChat(value);
           dispatchShowMiniIcon(!value);
+        },
+      ),
+    );
+    disposers.push(
+      reaction(
+        () => widget.classroomStore.userStore.userCount,
+        (value) => {
+          dispatchMemberCountChange(value);
         },
       ),
     );
