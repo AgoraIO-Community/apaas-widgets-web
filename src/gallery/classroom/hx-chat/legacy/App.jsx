@@ -30,7 +30,7 @@ const App = function (props) {
   } = props.pluginStore.globalContext;
 
   // get token config
-  const { agoraTokenData } = props;
+  const { agoraTokenData,searchKeyword,keyWordChangeHandle,userList } = props;
   const { apis, showChat, showRed, showAnnouncementNotice, configUIVisible } = useShallowEqualSelector((state) => {
     return {
       apis: state?.apis,
@@ -89,7 +89,10 @@ const App = function (props) {
             width: configUIVisible.isFullSize ? '100%' : '300px',
             height: configUIVisible.isFullSize ? '100%' : '530px',
           }}>
-          <Chat />
+          <Chat 
+              keyword={searchKeyword}
+              userList={userList}
+              keyWordChangeHandle={keyWordChangeHandle}/>
         </div>
       ) : (
         <div className="fcr-hx-chat">

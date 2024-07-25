@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,FC } from 'react';
 import { useStore } from 'react-redux';
 import { Tabs } from 'antd';
 import { MessageBox } from '../MessageBox';
@@ -21,7 +21,8 @@ import { useShallowEqualSelector } from '../../utils';
 const { TabPane } = Tabs;
 
 // 主页面，定义 tabs
-export const Chat = () => {
+// eslint-disable-next-line react/prop-types
+export const Chat = ({searchKeyword,keyWordChangeHandle,userList}) => {
   const [tabKey, setTabKey] = useState(CHAT_TABS_KEYS.chat);
   const [roomUserList, setRoomUserList] = useState([]);
   const [roomMemberCount, setRoomMemberCount] = useState(0);
@@ -85,12 +86,15 @@ export const Chat = () => {
             break;
         }
       });
-      setRoomUserList(concat(_speakerTeacher, _student));
+      // setRoomUserList(concat(_speakerTeacher, _student));
     }
   }, [roomUsers, roomUsersInfo]);
   useEffect(() => {
     setRoomMemberCount(memberCount)
   }, [memberCount]);
+  useEffect(() => {
+    setRoomUserList(userList);
+  }, [userList]);
 
   const hideChatModal = () => {
     store.dispatch(isShowChat(false));
@@ -149,12 +153,14 @@ export const Chat = () => {
         {configUIVisible.memebers && isTeacher && (
           <TabPane
             tab={
-              memberCount > 0
-                ? `${transI18n('chat.members')}(${memberCount})`
+              roomMemberCount > 0
+                ? `${transI18n('chat.members')}(${roomMemberCount})`
                 : `${transI18n('chat.members')}`
             }
             key={CHAT_TABS_KEYS.user}>
-            <UserList roomUserList={roomUserList} />
+            <UserList roomUserList={roomUserList}
+              keyword={searchKeyword}
+              onKeywordChange={keyWordChangeHandle}></UserList>
           </TabPane>
         )}
         {configUIVisible.announcement && (

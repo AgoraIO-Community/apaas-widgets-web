@@ -18,7 +18,7 @@ import { setCredential } from './api/base';
 
 let store = null;
 
-export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
+export const HXChatRoom = ({ pluginStore, agoraTokenData, theme,searchKeyword,keyWordChangeHandle,userList }) => {
   const chatStore = React.useMemo(() => (store = createStore()), []);
 
   const chatAPIs = React.useMemo(() => {
@@ -54,16 +54,21 @@ export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
       chatAPIs.chatRoomAPI.logoutChatroom();
       // chatStore.dispatch({ type: 'RESET_ACTION' });
     };
+    
   }, [chatStore, chatAPIs]);
 
   return (
     // <React.StrictMode>
     <Provider store={chatStore} apis={chatAPIs}>
       <ThemeProvider value={theme}>
-        <App pluginStore={pluginStore} agoraTokenData={agoraTokenData} />
+        <App pluginStore={pluginStore}
+          agoraTokenData={agoraTokenData}
+          searchKeyword={searchKeyword}
+          userList={userList}
+          keyWordChangeHandle={keyWordChangeHandle} />
       </ThemeProvider>
     </Provider>
-    // </React.StrictMode>
+  // </React.StrictMode>
   );
 };
 // 单人禁言
