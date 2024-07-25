@@ -22,7 +22,7 @@ const { TabPane } = Tabs;
 
 // 主页面，定义 tabs
 // eslint-disable-next-line react/prop-types
-export const Chat = ({searchKeyword,keyWordChangeHandle,userList}) => {
+export const Chat = ({searchKeyword,keyWordChangeHandle,userList,hasMoreUsers,fetchNextUsersList}) => {
   const [tabKey, setTabKey] = useState(CHAT_TABS_KEYS.chat);
   const [roomUserList, setRoomUserList] = useState([]);
   const [roomMemberCount, setRoomMemberCount] = useState(0);
@@ -91,6 +91,10 @@ export const Chat = ({searchKeyword,keyWordChangeHandle,userList}) => {
   }, [roomUsers, roomUsersInfo]);
   useEffect(() => {
     setRoomMemberCount(memberCount)
+    // eslint-disable-next-line react/prop-types
+    if(userList.length == 0){
+      fetchNextUsersList(null,true)
+    }
   }, [memberCount]);
   useEffect(() => {
     setRoomUserList(userList);
@@ -158,9 +162,12 @@ export const Chat = ({searchKeyword,keyWordChangeHandle,userList}) => {
                 : `${transI18n('chat.members')}`
             }
             key={CHAT_TABS_KEYS.user}>
-            <UserList roomUserList={roomUserList}
+            <UserList
+              roomUserList={roomUserList}
               keyword={searchKeyword}
-              onKeywordChange={keyWordChangeHandle}></UserList>
+              onKeywordChange={keyWordChangeHandle}
+              hasMoreUsers={hasMoreUsers}
+              fetchNextUsersList={fetchNextUsersList}></UserList>
           </TabPane>
         )}
         {configUIVisible.announcement && (

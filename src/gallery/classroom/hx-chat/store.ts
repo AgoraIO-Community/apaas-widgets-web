@@ -52,8 +52,6 @@ export class WidgetChatUIStore {
       }
       runInAction(() => (this.showChat = isShowChat));
     });
-    //初始化用户成员列表
-    this.resetUsersList()
   }
 
   @action.bound
@@ -118,6 +116,13 @@ export class WidgetChatUIStore {
     return [...this._usersList]
   }
   /**
+   * 是否有更多
+   */
+  @computed
+  get hasMoreUsers() {
+    return this._usersList.length % 10 == 0 && !(this._usersNextPageId == 0 || !this._usersNextPageId)
+  }
+  /**
    * 获取下一页的用户列表
    */
   @bound
@@ -125,10 +130,13 @@ export class WidgetChatUIStore {
   fetchNextUsersList(override?: Partial<FetchUserParam>, reset?: boolean) {
     if (reset || this._usersList.length == 0) {
       //如果是重置或者没有获取过列表那么要先获取老师的信息，然后再获取学生的信息
-      this._widget.classroomStore.userStore.fetchUserList({
+      this._widget.classroomStore.userStore.fetchUserList(this.searchKeyword ? {
         ...this.fetchUsersListParams,
         role: EduRoleTypeEnum.teacher,
         userName: this.searchKeyword,
+      } : {
+        ...this.fetchUsersListParams,
+        role: EduRoleTypeEnum.teacher,
       }).then(async (data: { nextId: string | number | undefined; list: []; }) => {
         //@ts-ignore
         const list = await this.getUserInfoList(data.list.map((item) => item.userProperties.widgets.easemobIM.userId))

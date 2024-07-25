@@ -141,7 +141,9 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
         }}
         userList={widgetStore.userList}
         searchKeyword={searchKeyword}
-        keyWordChangeHandle={(data:string)=>widgetStore.onKeyWordChange(data)} />
+        keyWordChangeHandle={(data:string)=>widgetStore.onKeyWordChange(data)}
+        hasMoreUsers={widgetStore.hasMoreUsers}
+        fetchNextUsersList={(data: Partial<FetchUserParam> | undefined)=>widgetStore.fetchNextUsersList(data)} />
     </div>
   );
 });

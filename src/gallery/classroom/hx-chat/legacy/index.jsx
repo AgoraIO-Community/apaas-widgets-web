@@ -18,7 +18,7 @@ import { setCredential } from './api/base';
 
 let store = null;
 
-export const HXChatRoom = ({ pluginStore, agoraTokenData, theme,searchKeyword,keyWordChangeHandle,userList }) => {
+export const HXChatRoom = ({ pluginStore, agoraTokenData, theme,searchKeyword,keyWordChangeHandle,userList,hasMoreUsers,fetchNextUsersList }) => {
   const chatStore = React.useMemo(() => (store = createStore()), []);
 
   const chatAPIs = React.useMemo(() => {
@@ -65,7 +65,9 @@ export const HXChatRoom = ({ pluginStore, agoraTokenData, theme,searchKeyword,ke
           agoraTokenData={agoraTokenData}
           searchKeyword={searchKeyword}
           userList={userList}
-          keyWordChangeHandle={keyWordChangeHandle} />
+          keyWordChangeHandle={keyWordChangeHandle}
+          hasMoreUsers={hasMoreUsers}
+          fetchNextUsersList={fetchNextUsersList} />
       </ThemeProvider>
     </Provider>
   // </React.StrictMode>

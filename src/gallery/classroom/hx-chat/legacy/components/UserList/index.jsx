@@ -1,33 +1,20 @@
-import { Tag, Tooltip } from 'antd';
-import { ROLE } from '../../contants';
+/* eslint-disable react/prop-types */
 import { transI18n } from 'agora-common-libs';
-import avatarUrl from '../../themes/img/avatar-big@2x.png';
-import muteNo from '../../themes/img/muteNo.png';
-import muteOff from '../../themes/img/muteOff.png';
 import './index.css';
 import { useShallowEqualSelector } from '../../utils';
 import { Search } from '../../../../../../components/input';
 import { SvgIconEnum, SvgImg } from '../../../../../../components/svg-img';
-import { Table } from '../../../../../../components/table';
+import { InfiniteScrollRosterTable } from '../../../../../../components/table-chat-user';
 
 // 成员页面
 // eslint-disable-next-line react/prop-types
-export const UserList = ({ roomUserList, onKeywordChange,keyword }) => {
-  const { apis, muteList } = useShallowEqualSelector((state) => {
+export const UserList = ({ roomUserList, onKeywordChange, keyword, hasMoreUsers, fetchNextUsersList }) => {
+  const { apis,muteList } = useShallowEqualSelector((state) => {
     return {
       apis: state.apis,
       muteList: state?.room.muteList,
     };
   });
-  // 禁言
-  const mute = (val, userId) => {
-    if (val) {
-      apis.muteAPI.removeUserMute(userId);
-    } else {
-      apis.muteAPI.setUserMute(userId);
-    }
-  };
-
   return (
     <div className="fcr-hx-user">
       <div>
@@ -39,7 +26,14 @@ export const UserList = ({ roomUserList, onKeywordChange,keyword }) => {
           placeholder={transI18n('scaffold.search')}
         />
       </div>
-      <Table className="roster-table">
+      <InfiniteScrollRosterTable
+        roomUserList={roomUserList}
+        apis={apis}
+        muteList={muteList}
+        hasMore={hasMoreUsers}
+        onFetch={fetchNextUsersList}
+      />
+      {/* <Table className="roster-table">
         {
           // eslint-disable-next-line react/prop-types
           roomUserList && roomUserList.length > 0 &&
@@ -88,7 +82,7 @@ export const UserList = ({ roomUserList, onKeywordChange,keyword }) => {
             );
           })
         }
-      </Table>
+      </Table> */}
     </div>
   );
 };
