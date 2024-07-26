@@ -4,12 +4,12 @@ import {
   chatPictureEnabled,
   AgoraCloudClassWidget,
 } from 'agora-common-libs';
-import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
-import type { AgoraWidgetController } from 'agora-edu-core';
+import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon,dispatchMemberCountChange } from './legacy';
+import type { AgoraWidgetController, FetchUserParam } from 'agora-edu-core';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
 import { observer } from 'mobx-react';
-import { useCallback, useEffect, useState } from 'react';
+import { SetStateAction, useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
 import { FcrChatRoomApp } from './fcr-chatroom';
@@ -17,6 +17,7 @@ import { FcrChatRoomApp } from './fcr-chatroom';
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;
   const [minimize, toggleChatMinimize] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState();
   const isFullScreen = false; // todo from uistore
 
   const { appId, host, sessionInfo, platform } = widget.classroomConfig;
@@ -94,6 +95,14 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
         },
       ),
     );
+    disposers.push(
+      reaction(
+        () => widget.classroomStore.userStore.userCount,
+        (value) => {
+          dispatchMemberCountChange(value);
+        },
+      ),
+    );
     return () => {
       widgetStore.removeOrientationchange();
       disposers.forEach((d) => d());
@@ -130,7 +139,11 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
           token: sessionInfo.token,
           getAgoraChatToken,
         }}
-      />
+        userList={widgetStore.userList}
+        searchKeyword={searchKeyword}
+        keyWordChangeHandle={(data:string)=>widgetStore.onKeyWordChange(data)}
+        hasMoreUsers={widgetStore.hasMoreUsers}
+        fetchNextUsersList={(data: Partial<FetchUserParam> | undefined)=>widgetStore.fetchNextUsersList(data)} />
     </div>
   );
 });

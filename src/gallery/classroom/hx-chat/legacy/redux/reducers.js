@@ -21,6 +21,7 @@ let defaultState = {
     roomUsersInfo: {}, // 成员属性
     allMute: false, // 全局禁言
     isUserMute: false, // 单人是否禁言
+    memberCount:0,//成员数量
   },
   messages: [], // 消息列表
   isTabKey: CHAT_TABS_KEYS.chat, // 当前选中的Tab
@@ -103,20 +104,11 @@ const reducer = (state = defaultState, action) => {
         },
       };
     case 'ROOM_USERS_COUNT':
-      let num;
-      if (data.type === 'add') {
-        num = data.userCount + 1;
-      } else {
-        num = data.userCount - 1;
-      }
       return {
         ...state,
         room: {
           ...state.room,
-          info: {
-            ...state.room.info,
-            affiliations_count: num,
-          },
+          memberCount: data,
         },
       };
     case 'ROOM_USERS_INFO':

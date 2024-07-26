@@ -3,7 +3,7 @@ import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'agora-common-libs';
 import createStore from './redux/store';
-import { setVisibleUI } from './redux/actions/roomAction';
+import { setVisibleUI,roomUserCount } from './redux/actions/roomAction';
 import { isShowChat, isShowMiniIcon, setAPIs } from './redux/actions/propsAction';
 import { messageAction } from './redux/actions/messageAction';
 import App from './App';
@@ -18,7 +18,7 @@ import { setCredential } from './api/base';
 
 let store = null;
 
-export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
+export const HXChatRoom = ({ pluginStore, agoraTokenData, theme,searchKeyword,keyWordChangeHandle,userList,hasMoreUsers,fetchNextUsersList }) => {
   const chatStore = React.useMemo(() => (store = createStore()), []);
 
   const chatAPIs = React.useMemo(() => {
@@ -54,16 +54,23 @@ export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
       chatAPIs.chatRoomAPI.logoutChatroom();
       // chatStore.dispatch({ type: 'RESET_ACTION' });
     };
+    
   }, [chatStore, chatAPIs]);
 
   return (
     // <React.StrictMode>
     <Provider store={chatStore} apis={chatAPIs}>
       <ThemeProvider value={theme}>
-        <App pluginStore={pluginStore} agoraTokenData={agoraTokenData} />
+        <App pluginStore={pluginStore}
+          agoraTokenData={agoraTokenData}
+          searchKeyword={searchKeyword}
+          userList={userList}
+          keyWordChangeHandle={keyWordChangeHandle}
+          hasMoreUsers={hasMoreUsers}
+          fetchNextUsersList={fetchNextUsersList} />
       </ThemeProvider>
     </Provider>
-    // </React.StrictMode>
+  // </React.StrictMode>
   );
 };
 // 单人禁言
@@ -93,6 +100,12 @@ export const dispatchShowChat = (data) => {
 };
 export const dispatchShowMiniIcon = (data) => {
   return store?.dispatch(isShowMiniIcon(data));
+};
+/**
+ * 成员数量改变
+ */
+export const dispatchMemberCountChange = (data) => {
+  return store?.dispatch(roomUserCount(data));
 };
 
 /**

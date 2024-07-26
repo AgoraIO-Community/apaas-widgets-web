@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect,FC } from 'react';
 import { useStore } from 'react-redux';
 import { Tabs } from 'antd';
 import { MessageBox } from '../MessageBox';
@@ -21,9 +21,11 @@ import { useShallowEqualSelector } from '../../utils';
 const { TabPane } = Tabs;
 
 // 主页面，定义 tabs
-export const Chat = () => {
+// eslint-disable-next-line react/prop-types
+export const Chat = ({searchKeyword,keyWordChangeHandle,userList,hasMoreUsers,fetchNextUsersList}) => {
   const [tabKey, setTabKey] = useState(CHAT_TABS_KEYS.chat);
   const [roomUserList, setRoomUserList] = useState([]);
+  const [roomMemberCount, setRoomMemberCount] = useState(0);
   const {
     isLogin,
     announcement,
@@ -33,6 +35,7 @@ export const Chat = () => {
     roomUsers,
     roomUsersInfo,
     showMIniIcon,
+    memberCount,
     configUIVisible,
   } = useShallowEqualSelector((state) => {
     return {
@@ -42,6 +45,7 @@ export const Chat = () => {
       showAnnouncementNotice: _.get(state, 'showAnnouncementNotice'),
       roleType: _.get(state, 'propsData.roleType', ''),
       roomUsers: _.get(state, 'room.roomUsers', []),
+      memberCount: _.get(state, 'room.memberCount', 0),
       roomUsersInfo: _.get(state, 'room.roomUsersInfo', {}),
       showMIniIcon: _.get(state, 'isShowMiniIcon'),
       configUIVisible: _.get(state, 'configUIVisible'),
@@ -82,9 +86,19 @@ export const Chat = () => {
             break;
         }
       });
-      setRoomUserList(concat(_speakerTeacher, _student));
+      // setRoomUserList(concat(_speakerTeacher, _student));
     }
   }, [roomUsers, roomUsersInfo]);
+  useEffect(() => {
+    setRoomMemberCount(memberCount)
+    // eslint-disable-next-line react/prop-types
+    if(userList.length == 0){
+      fetchNextUsersList(null,true)
+    }
+  }, [memberCount]);
+  useEffect(() => {
+    setRoomUserList(userList);
+  }, [userList]);
 
   const hideChatModal = () => {
     store.dispatch(isShowChat(false));
@@ -143,12 +157,17 @@ export const Chat = () => {
         {configUIVisible.memebers && isTeacher && (
           <TabPane
             tab={
-              roomUserList.length > 0
-                ? `${transI18n('chat.members')}(${roomUserList.length})`
+              roomMemberCount > 0
+                ? `${transI18n('chat.members')}(${roomMemberCount})`
                 : `${transI18n('chat.members')}`
             }
             key={CHAT_TABS_KEYS.user}>
-            <UserList roomUserList={roomUserList} />
+            <UserList
+              roomUserList={roomUserList}
+              keyword={searchKeyword}
+              onKeywordChange={keyWordChangeHandle}
+              hasMoreUsers={hasMoreUsers}
+              fetchNextUsersList={fetchNextUsersList}></UserList>
           </TabPane>
         )}
         {configUIVisible.announcement && (
