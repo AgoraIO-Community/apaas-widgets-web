@@ -74,7 +74,7 @@ const enUS = {
   fcr_chat_dialog_placeholder: 'Enter a name',
   fcr_H5_tips_arrive: 'joined',
   fcr_H5_tips_join: 'Failed to join the room',
-  fcr_H5_tips_chat_hidden: 'The chat room has been closed',
+  fcr_H5_tips_chat_hidden: 'The chat room has been hidden',
   fcr_H5_tips_chat_display: 'The chat room has been opened',
   fcr_H5_mute_user_msg: 'You have been muted by teacher',
   fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
