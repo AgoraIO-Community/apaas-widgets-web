@@ -19,8 +19,10 @@ export const FcrChatRoomH5Inputs = observer(
     showEmoji,
     onShowEmojiChanged,
     emojiContainer,
+    screenShareStream,
   }: {
     showEmoji: boolean;
+    screenShareStream: any;
     onShowEmojiChanged: (show: boolean) => void;
     emojiContainer: HTMLDivElement | null;
   }) => {
@@ -406,7 +408,7 @@ export const FcrChatRoomH5Inputs = observer(
                       <div
                         className={classNames(
                           'fcr-chatroom-mobile-inputs-application landscape',
-                          widgets.length === 0 && 'zero',
+                          screenShareStream ? widgets.length === 0 && 'zero' : 1,
                           isShowApplication && 'active',
                         )}
                         onClick={handleShowApplicatioon}>
@@ -416,7 +418,7 @@ export const FcrChatRoomH5Inputs = observer(
                           type={SvgIconEnum.APPLICATION}
                           size={30}></SvgImgMobile>
                         <span className="fcr-chatroom-mobile-inputs-application-count">
-                          {widgets.length > 99 ? '...' : widgets.length}
+                            {widgets.length > 99 ? '...' : widgets.length + (screenShareStream ? 1 : 0)}
                         </span>
                       </div>
                     </ToolTip>
@@ -652,7 +654,7 @@ export const FcrChatRoomH5Inputs = observer(
                   <div
                     className={classNames(
                       'fcr-chatroom-mobile-inputs-application landscape',
-                      widgets.length === 0 && 'zero',
+                      screenShareStream ? widgets.length === 0 && 'zero' : 1,
                       isShowApplication && 'active',
                     )}
                     onClick={handleShowApplicatioon}>
@@ -662,7 +664,7 @@ export const FcrChatRoomH5Inputs = observer(
                       type={SvgIconEnum.APPLICATION}
                       size={30}></SvgImgMobile>
                     <span className="fcr-chatroom-mobile-inputs-application-count">
-                      {widgets.length > 99 ? '...' : widgets.length}
+                    {widgets.length > 99 ? '...' : widgets.length + (screenShareStream ? 1 : 0)}
                     </span>
                   </div>
                 </ToolTip>

@@ -197,4 +197,5 @@ export enum SvgIconEnum {
   MESSAGE_OPENED_NEW = 'message-opened-new',
   MESSAGE_CLOSED_NEW = 'message-closed-new',
   FCR_BTN_LOADING = 'fcr_btn_loading',
+  APPLICATION_SCREEN_SHARE = 'application_screen_share',
 }

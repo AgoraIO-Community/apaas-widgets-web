@@ -55,6 +55,9 @@
   .fcr-chatroom-mobile-application-list-icon.bower{
     background-color: #585D8C;
   }
+  .fcr-chatroom-mobile-application-list-icon.screenShare{
+    background-color: #5768FF;
+  }
   .fcr-chatroom-mobile-application-list-val{
     flex: 1;
     text-align: center;
