@@ -74,7 +74,7 @@ const enUS = {
   fcr_chat_dialog_placeholder: 'Enter a name',
   fcr_H5_tips_arrive: 'joined',
   fcr_H5_tips_join: 'Failed to join the room',
-  fcr_H5_tips_chat_hidden: 'The chat room has been closed',
+  fcr_H5_tips_chat_hidden: 'The chat room has been hidden',
   fcr_H5_tips_chat_display: 'The chat room has been opened',
   fcr_H5_mute_user_msg: 'You have been muted by teacher',
   fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
@@ -83,6 +83,7 @@ const enUS = {
   fcr_teacher_use_collected_tip: 'The teaching materials used in the course will be collected here',
   fcr_participants_tips_lower_hand: 'Lower Hand',
   fcr_chat_options_no_one_room: 'The student and you are not in the same room, so it is impossible to operate.',
+  fcr_application_screen_share: 'Screen Share',
 };
 
 export default enUS;

@@ -6,6 +6,7 @@ import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up'
 import { transI18n, bound, Scheduler, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
+import { EduStream } from 'agora-edu-core';
 export enum MobileCallState {
   Initialize = 'initialize',
   Processing = 'processing',
@@ -99,6 +100,18 @@ export class RoomStore {
   get isBreakOutRoomIn() {
     return this._widget.classroomStore.groupStore.currentSubRoom !== undefined;
   }
+
+  /**
+    * 屏幕共享流
+    * @returns
+    */
+  @computed 
+  get screenShareStream(): EduStream | undefined {
+    const streamUuid = this._widget.classroomStore.roomStore.screenShareStreamUuid as string;
+    const stream = this._widget.classroomStore.streamStore.streamByStreamUuid.get(streamUuid);
+    return stream;
+  }
+
   getWidgets() {
     console.log('getWidgetsgetWidgetsgetWidgets')
     this._widget.broadcast(AgoraExtensionRoomEvent.ChangeRoom, true)

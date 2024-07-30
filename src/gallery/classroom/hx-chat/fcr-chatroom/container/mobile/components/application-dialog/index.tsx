@@ -4,9 +4,10 @@ import { useStore } from '../../../../hooks/useStore';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import './index.css'
 import { observer } from 'mobx-react';
+import { transI18n } from 'agora-common-libs';
 const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplication: (arg0: boolean) => void}) => {
     const {
-        roomStore: { isLandscape,  forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
+        roomStore: { isLandscape,  forceLandscape, z0Widgets, setCurrentWidget, currentWidget,screenShareStream },
     } = useStore();
     console.log('currentWidgetcurrentWidgetdialog', currentWidget)
     const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM')
@@ -23,6 +24,13 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
         e.stopPropagation()
         setCurrentWidget(widget)
     }
+    if (screenShareStream) {
+        widgets.push({
+            widgetId: "screenShare",
+            widgetName: "screenShare",
+            widgetTitle: transI18n('fcr_application_screen_share')
+        })
+    }
   return (
     <div className={classNames('fcr-chatroom-mobile-application', isLandscape && 'active')}>
         <div className='fcr-chatroom-mobile-application-split'></div>
@@ -32,7 +40,7 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
                     return (
                         <div key={item.widgetId} className='fcr-chatroom-mobile-application-list' onClick={(e) => handleSelectApplication(e, item)}>
                             <div className='fcr-chatroom-mobile-application-list-left'>
-                                <div className={classNames('fcr-chatroom-mobile-application-list-icon', item.widgetName === 'mediaPlayer' && 'video', item.widgetName === 'webView' && 'bower')}>
+                                <div className={classNames('fcr-chatroom-mobile-application-list-icon', item.widgetName === 'mediaPlayer' && 'video', item.widgetName === 'webView' && 'bower', item.widgetName === 'screenShare' && 'screenShare')}>
                                    {item.widgetName === 'netlessBoard' && <SvgImgMobile
                                         type={SvgIconEnum.APPLICATION_WHITEBOARD}
                                         size={30}
@@ -48,6 +56,11 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
                                         size={30}
                                         landscape={isLandscape}
                                         forceLandscape={forceLandscape}/>}
+                                     {item.widgetName === 'screenShare' && <SvgImgMobile
+                                        type={SvgIconEnum.APPLICATION_SCREEN_SHARE}
+                                        size={30}
+                                        landscape={isLandscape}
+                                        forceLandscape={forceLandscape}/>}
                                 </div>
                                 {(item.widgetName === 'netlessBoard' || item.widgetName === 'mediaPlayer') && <span className='fcr-chatroom-mobile-application-list-val'>{item.widgetName === 'netlessBoard' ? 'Whiteboard' : item.widgetName === 'mediaPlayer' ?  item.webviewTitle  : ''}</span>}
                                 {
@@ -56,6 +69,7 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
                                      <span className='fcr-chatroom-mobile-application-list-des'>{item?.displayName || ''}</span>
                                     </div>
                                 }
+                                {item.widgetName === 'screenShare' && <span className='fcr-chatroom-mobile-application-list-val'> {item?.widgetTitle || ''}</span>}
                             </div>
                             <div className='fcr-chatroom-mobile-application-list-right'>
                                {currentWidget && currentWidget.widgetId === item.widgetId ? <SvgImgMobile

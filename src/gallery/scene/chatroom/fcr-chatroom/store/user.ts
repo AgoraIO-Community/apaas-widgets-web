@@ -92,6 +92,7 @@ export class UserStore {
   @bound
   async updateAllUsers(users: AgoraIMUserInfo[]) {
     runInAction(() => {
+      this.userMap.clear()
       users.forEach((user) => {
         if (user.ext.role === 1 || user.ext.role === 2) {
           this.userMap.set(user.userId, user);
@@ -179,7 +180,11 @@ export class UserStore {
   }
   @bound
   private async _onUserJoined(userUuid: string) {
-    this.updateUsers([userUuid]);
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
+    }
+    // this.updateUsers([userUuid]);
   }
   @action.bound
   private async _onUserLeft(userUuid: string) {
