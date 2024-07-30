@@ -17,7 +17,7 @@ import { FcrChatRoomApp } from './fcr-chatroom';
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;
   const [minimize, toggleChatMinimize] = useState<boolean>(false);
-  const [searchKeyword, setSearchKeyword] = useState();
+  const [searchKeyword, setSearchKeyword] = useState<string>();
   const isFullScreen = false; // todo from uistore
 
   const { appId, host, sessionInfo, platform } = widget.classroomConfig;
@@ -141,7 +141,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
         }}
         userList={widgetStore.userList}
         searchKeyword={searchKeyword}
-        keyWordChangeHandle={(data:string)=>widgetStore.onKeyWordChange(data)}
+        keyWordChangeHandle={(data:string)=>{setSearchKeyword(data);widgetStore.onKeyWordChange(data)}}
         hasMoreUsers={widgetStore.hasMoreUsers}
         fetchNextUsersList={(data: Partial<FetchUserParam> | undefined)=>widgetStore.fetchNextUsersList(data)} />
     </div>

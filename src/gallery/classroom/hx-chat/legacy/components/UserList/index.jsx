@@ -20,7 +20,7 @@ export const UserList = ({ roomUserList, onKeywordChange, keyword, hasMoreUsers,
       <div>
         <Search
           value={keyword}
-          onSearch={onKeywordChange}
+          onSearch={(data)=>{keyword = data;onKeywordChange(data)}}
           prefix={<SvgImg type={SvgIconEnum.SEARCH} />}
           inputPrefixWidth={32}
           placeholder={transI18n('scaffold.search')}
@@ -29,6 +29,7 @@ export const UserList = ({ roomUserList, onKeywordChange, keyword, hasMoreUsers,
       <InfiniteScrollRosterTable
         roomUserList={roomUserList}
         apis={apis}
+        keyword={keyword}
         muteList={muteList}
         hasMore={hasMoreUsers}
         onFetch={fetchNextUsersList}
