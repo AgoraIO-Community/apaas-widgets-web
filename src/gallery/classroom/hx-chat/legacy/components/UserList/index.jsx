@@ -2,7 +2,7 @@
 import { transI18n } from 'agora-common-libs';
 import './index.css';
 import { useShallowEqualSelector } from '../../utils';
-import { Search } from '../../../../../../components/input';
+import { Search } from '../../../../../../components/input-search-chat';
 import { SvgIconEnum, SvgImg } from '../../../../../../components/svg-img';
 import { InfiniteScrollRosterTable } from '../../../../../../components/table-chat-user';
 
