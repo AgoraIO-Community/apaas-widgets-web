@@ -69,7 +69,6 @@ export class UserStore {
   @action.bound
   private async _onUserLeft(userUuid: string) {
     const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
-    debugger
     if (users) {
       this.updateAllUsers(users);
     }
