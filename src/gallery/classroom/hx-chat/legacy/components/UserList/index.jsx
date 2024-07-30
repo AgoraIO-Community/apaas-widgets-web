@@ -2,7 +2,7 @@
 import { transI18n } from 'agora-common-libs';
 import './index.css';
 import { useShallowEqualSelector } from '../../utils';
-import { Search } from '../../../../../../components/input';
+import { Search } from '../../../../../../components/input-search-chat';
 import { SvgIconEnum, SvgImg } from '../../../../../../components/svg-img';
 import { InfiniteScrollRosterTable } from '../../../../../../components/table-chat-user';
 
@@ -20,7 +20,7 @@ export const UserList = ({ roomUserList, onKeywordChange, keyword, hasMoreUsers,
       <div>
         <Search
           value={keyword}
-          onSearch={onKeywordChange}
+          onSearch={(data)=>{keyword = data;onKeywordChange(data)}}
           prefix={<SvgImg type={SvgIconEnum.SEARCH} />}
           inputPrefixWidth={32}
           placeholder={transI18n('scaffold.search')}
@@ -29,6 +29,7 @@ export const UserList = ({ roomUserList, onKeywordChange, keyword, hasMoreUsers,
       <InfiniteScrollRosterTable
         roomUserList={roomUserList}
         apis={apis}
+        keyword={keyword}
         muteList={muteList}
         hasMore={hasMoreUsers}
         onFetch={fetchNextUsersList}

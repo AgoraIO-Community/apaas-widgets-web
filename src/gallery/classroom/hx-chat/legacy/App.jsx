@@ -90,7 +90,7 @@ const App = function (props) {
             height: configUIVisible.isFullSize ? '100%' : '530px',
           }}>
           <Chat 
-              keyword={searchKeyword}
+              searchKeyword={searchKeyword}
               userList={userList}
               keyWordChangeHandle={keyWordChangeHandle}
               hasMoreUsers={hasMoreUsers}

@@ -17,7 +17,7 @@ import { FcrChatRoomApp } from './fcr-chatroom';
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;
   const [minimize, toggleChatMinimize] = useState<boolean>(false);
-  const [searchKeyword, setSearchKeyword] = useState();
+  const [searchKeyword, setSearchKeyword] = useState<string>();
   const isFullScreen = false; // todo from uistore
 
   const { appId, host, sessionInfo, platform } = widget.classroomConfig;
@@ -141,7 +141,7 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
         }}
         userList={widgetStore.userList}
         searchKeyword={searchKeyword}
-        keyWordChangeHandle={(data:string)=>widgetStore.onKeyWordChange(data)}
+        keyWordChangeHandle={(data:string)=>{setSearchKeyword(data);widgetStore.onKeyWordChange(data)}}
         hasMoreUsers={widgetStore.hasMoreUsers}
         fetchNextUsersList={(data: Partial<FetchUserParam> | undefined)=>widgetStore.fetchNextUsersList(data)} />
     </div>
@@ -154,6 +154,7 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
   private _dom?: HTMLElement;
   private _widgetStore = new WidgetChatUIStore(this);
   private _rendered = false;
+  private _timer:NodeJS.Timeout|null = null;//定时器请求数据
 
   onInstall(controller: AgoraWidgetController): void {}
 
@@ -215,6 +216,11 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
     this._easemobUserId = userProperties?.userId;
     this._imConfig = properties?.extra;
     this._renderApp();
+
+    this._timer = setInterval(()=>{
+      //每10s刷新一次列表
+      this.widgetStore.fetchNextUsersList({},true)
+    },10000)
   }
 
   onPropertiesUpdate(properties: any) {
@@ -227,7 +233,13 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
     this._renderApp();
   }
 
-  onDestroy(): void {}
+  onDestroy(): void {
+    //清除定时器
+    if(this._timer){
+      clearInterval(this._timer)
+      this._timer = null;
+    }
+  }
 
   private _renderApp() {
     const { platform } = this.classroomConfig;
@@ -281,4 +293,6 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
   }
 
   onUninstall(controller: AgoraWidgetController): void {}
+
+  
 }

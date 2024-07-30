@@ -1,6 +1,7 @@
 import React, { useState, useCallback } from 'react';
 import { Table } from '../table';
 import loadingSrc from '../table-chat-user/assets/loading.gif';
+import userChatListEmptySrc from '../table-chat-user/assets/user_chat_list_empty.svg';
 import { debounce } from 'lodash';
 import { useI18n } from 'agora-common-libs';
 import { Operation, Profile, SupportedFunction} from '.';
@@ -10,6 +11,7 @@ import muteNo from '../../gallery/classroom/hx-chat/legacy/themes/img/muteNo.png
 import muteOff from '../../gallery/classroom/hx-chat/legacy/themes/img/muteOff.png';
 import { Tag, Tooltip } from 'antd';
 import { useShallowEqualSelector } from '../../gallery/classroom/hx-chat/legacy/utils';
+import { SvgIconEnum, SvgImg } from '../svg-img';
 
 
 type RosterTableProps = {
@@ -22,6 +24,7 @@ type RosterTableProps = {
 
 type InfiniteScrollRosterTableProps = {
   hasMore: boolean;
+  keyword:string,
   onFetch: () => void;
 } & RosterTableProps;
 
@@ -65,6 +68,7 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
   apis,
   onFetch,
   hasMore = false,
+  keyword
 }) => {
   // 禁言
   const mute = (val: boolean, userId: never) => {
@@ -90,10 +94,34 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
       {transI18n('roster.no_more_data')}
     </p>
   );
-
+  
+  const HighlightText: React.FC<{ text: string }> = ({ text }) => {
+    const parts = text.split(new RegExp(`(${keyword})`, 'i'));
+    const highlightedParts = parts.map((part, index) => {
+      if (index % 2 === 1) {
+        return <span key={index} style={{ color: '#357BF6' }}>{part}</span>;
+      }
+      return part;
+    });
+    return <div>{highlightedParts}</div>;
+  };
   return (
-    <Table className="table-container" onScroll={onScroll}>
-      {
+    roomUserList.length == 0 ?
+      <div style={{
+        display: 'flex',
+        alignItems: 'center', // 垂直居中
+        justifyContent: 'center', // 水平居中
+        height: '80%', // 使用视口高度单位使容器占据整个视口的高度
+      }}>
+        <div>
+          <div style={{ display: 'flex', justifyContent: 'center' }}>
+            <img src={userChatListEmptySrc} style={{ width: 90, height: 65 }} />
+          </div>
+          <div style={{ fontSize: '12px', color: '#7B88A0',paddingTop:'15px',textAlign:"center" }}>{transI18n('fcr_chat_user_list_empty')}</div>
+        </div>
+      </div> :
+      <Table className="table-container" onScroll={onScroll}>
+        {
           // eslint-disable-next-line react/prop-types
           roomUserList && roomUserList.length > 0 &&
           // eslint-disable-next-line react/prop-types
@@ -106,7 +134,7 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
                 <div className="fcr-hx-user-info">
                   <img src={item?.avatarurl || avatarUrl} className="fcr-hx-user-avatar" />
                   <span className="fcr-hx-user-text" title={item?.nickname || item?.id}>
-                    {item?.nickname || item?.id}
+                  <HighlightText text={item?.nickname || item?.id} />
                   </span>
                   {isTeacher && (
                     <Tag className="fcr-hx-user-tag fcr-hx-teacher-tag">
@@ -141,8 +169,8 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
             );
           })
         }
-      {hasMore && loader}
-      {!hasMore && noMore}
-    </Table>
+        {hasMore && loader}
+        {!hasMore && noMore}
+      </Table>
   );
 };
