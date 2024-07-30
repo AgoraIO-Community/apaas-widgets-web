@@ -73,3 +73,7 @@
   padding-right: 0;
   margin: 0 15px;
 }
+.fcr-input-delete:hover {
+  transform: translateY(-24px);
+  filter: drop-shadow(#357BF6 0 24px);
+}

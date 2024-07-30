@@ -111,7 +111,7 @@ export const Input: FC<InputProps> = ({
           onChange={_onChange}
           {...restProps}
         />
-        <SvgImg onClick={()=>{clear()}} style={{ marginRight: '9px', display: value == null || '' === value ? 'none' : 'unset' }} colors={{ iconPrimary: '#7B88A0' }} type={SvgIconEnum.CLOSE} size={24}></SvgImg>
+        <SvgImg className='fcr-input-delete' onClick={()=>{clear()}} style={{ marginRight: '9px', display: value == null || '' === value ? 'none' : 'unset' }} colors={{ iconPrimary: '#7B88A0' }} type={SvgIconEnum.CLOSE} size={24}></SvgImg>
         {suffix ? <span className="fcr-input-chat-user-suffix">{suffix}</span> : ''}
       </span>
       {showErrMsg && errorMsg ? (
