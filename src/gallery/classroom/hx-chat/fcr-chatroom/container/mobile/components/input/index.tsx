@@ -197,9 +197,12 @@ export const FcrChatRoomH5Inputs = observer(
     }, []);
     const handleShowApplicatioon = (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
-      if (widgets.length === 0) {
-        addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
-        return;
+      const haveShare = isLandscape && screenShareStream;
+      if(!haveShare){
+        if (widgets.length === 0) {
+          addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
+          return;
+        }
       }
       setIsShowApplication(!isShowApplication);
     };
@@ -408,7 +411,7 @@ export const FcrChatRoomH5Inputs = observer(
                       <div
                         className={classNames(
                           'fcr-chatroom-mobile-inputs-application landscape',
-                          screenShareStream ? widgets.length === 0 && 'zero' : 1,
+                          screenShareStream && isLandscape ? widgets.length === 0 && 'zero' : 1,
                           isShowApplication && 'active',
                         )}
                         onClick={handleShowApplicatioon}>
@@ -418,7 +421,7 @@ export const FcrChatRoomH5Inputs = observer(
                           type={SvgIconEnum.APPLICATION}
                           size={30}></SvgImgMobile>
                         <span className="fcr-chatroom-mobile-inputs-application-count">
-                            {widgets.length > 99 ? '...' : widgets.length + (screenShareStream ? 1 : 0)}
+                            {widgets.length > 99 ? '...' : widgets.length + (screenShareStream && isLandscape ? 1 : 0)}
                         </span>
                       </div>
                     </ToolTip>
@@ -654,7 +657,7 @@ export const FcrChatRoomH5Inputs = observer(
                   <div
                     className={classNames(
                       'fcr-chatroom-mobile-inputs-application landscape',
-                      screenShareStream ? widgets.length === 0 && 'zero' : 1,
+                      screenShareStream && isLandscape ? widgets.length === 0 && 'zero' : 1,
                       isShowApplication && 'active',
                     )}
                     onClick={handleShowApplicatioon}>
@@ -664,7 +667,7 @@ export const FcrChatRoomH5Inputs = observer(
                       type={SvgIconEnum.APPLICATION}
                       size={30}></SvgImgMobile>
                     <span className="fcr-chatroom-mobile-inputs-application-count">
-                    {widgets.length > 99 ? '...' : widgets.length + (screenShareStream ? 1 : 0)}
+                    {widgets.length > 99 ? '...' : widgets.length + (screenShareStream && isLandscape ? 1 : 0)}
                     </span>
                   </div>
                 </ToolTip>
