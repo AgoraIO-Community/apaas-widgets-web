@@ -50,7 +50,7 @@
     "@netless/white-video-plugin": "1.2.23",
     "@netless/white-video-plugin2": "2.0.5",
     "@netless/window-manager": "0.4.57",
-    "agora-chat": "~1.2.0",
+    "agora-chat": "1.2.2-3",
     "antd-mobile": "5.28.0",
     "antd": "4.23.0",
     "mobx-react": "6.3.1",

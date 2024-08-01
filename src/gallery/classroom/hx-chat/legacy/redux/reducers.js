@@ -21,6 +21,7 @@ let defaultState = {
     roomUsersInfo: {}, // 成员属性
     allMute: false, // 全局禁言
     isUserMute: false, // 单人是否禁言
+    memberCount:0,//成员数量
   },
   messages: [], // 消息列表
   isTabKey: CHAT_TABS_KEYS.chat, // 当前选中的Tab
@@ -79,7 +80,7 @@ const reducer = (state = defaultState, action) => {
           info: data,
         },
       };
-    case 'ROOM_USERS':
+    case 'ROOM_USERS': {
       let ary = [];
       let userInfo = state.room.roomUsersInfo;
       if (action.option === 'addMember') {
@@ -102,21 +103,43 @@ const reducer = (state = defaultState, action) => {
           roomUsersInfo: userInfo,
         },
       };
-    case 'ROOM_USERS_COUNT':
-      let num;
-      if (data.type === 'add') {
-        num = data.userCount + 1;
-      } else {
-        num = data.userCount - 1;
-      }
+    }
+    case 'ROOM_USERS_BATCH': {
+      const { list } = data;
+
+      let ary = Array.from(state.room.roomUsers);
+
+      let userInfo = state.room.roomUsersInfo;
+
+      list.forEach(({ type, user }) => {
+        if (type === 'addMember') {
+          if (!ary.includes(user)) {
+            ary.unshift(user);
+          }
+        } else if (type === 'removeMember') {
+          remove(ary, (v) => {
+            return v == user;
+          });
+
+          userInfo = omit(userInfo, user);
+        }
+      });
+
       return {
         ...state,
         room: {
           ...state.room,
-          info: {
-            ...state.room.info,
-            affiliations_count: num,
-          },
+          roomUsers: ary,
+          roomUsersInfo: userInfo,
+        },
+      };
+    }
+    case 'ROOM_USERS_COUNT':
+      return {
+        ...state,
+        room: {
+          ...state.room,
+          memberCount: data,
         },
       };
     case 'ROOM_USERS_INFO':

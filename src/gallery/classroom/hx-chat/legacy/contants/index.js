@@ -63,4 +63,9 @@ export const LOCAL_RETAIN_HISTORY_COUNT = 1000;
  *  消息更新截流设置
  *  修改此参数可降低消息列表渲染频率
  */
-export const TEXT_MESSAGE_THROTTLE_TIME_MS = 100;
+export const TEXT_MESSAGE_THROTTLE_TIME_MS = 500;
+/**
+ *  成员列表更新截流设置
+ *  修改此参数可降低成员列表渲染频率
+ */
+export const MEMBER_LIST_THROTTLE_TIME_MS = 1000;

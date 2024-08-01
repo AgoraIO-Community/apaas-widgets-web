@@ -4,8 +4,14 @@ import {
   chatPictureEnabled,
   AgoraCloudClassWidget,
 } from 'agora-common-libs';
-import { HXChatRoom, dispatchVisibleUI, dispatchShowChat, dispatchShowMiniIcon } from './legacy';
-import type { AgoraWidgetController } from 'agora-edu-core';
+import {
+  HXChatRoom,
+  dispatchVisibleUI,
+  dispatchShowChat,
+  dispatchShowMiniIcon,
+  dispatchMemberCountChange,
+} from './legacy';
+import type { AgoraWidgetController, FetchUserParam } from 'agora-edu-core';
 import classNames from 'classnames';
 import { autorun, IReactionDisposer, reaction } from 'mobx';
 import { observer } from 'mobx-react';
@@ -13,10 +19,12 @@ import { useCallback, useEffect, useState } from 'react';
 import ReactDOM from 'react-dom';
 import { WidgetChatUIStore } from './store';
 import { FcrChatRoomApp } from './fcr-chatroom';
+import createStore from './legacy/redux/store';
 
 const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
   const widgetStore = widget.widgetStore as WidgetChatUIStore;
   const [minimize, toggleChatMinimize] = useState<boolean>(false);
+  const [searchKeyword, setSearchKeyword] = useState<string>();
   const isFullScreen = false; // todo from uistore
 
   const { appId, host, sessionInfo, platform } = widget.classroomConfig;
@@ -94,6 +102,14 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
         },
       ),
     );
+    disposers.push(
+      reaction(
+        () => widget.classroomStore.userStore.userCount,
+        (value) => {
+          dispatchMemberCountChange(value);
+        },
+      ),
+    );
     return () => {
       widgetStore.removeOrientationchange();
       disposers.forEach((d) => d());
@@ -130,6 +146,23 @@ const App = observer(({ widget }: { widget: AgoraHXChatWidget }) => {
           token: sessionInfo.token,
           getAgoraChatToken,
         }}
+        userList={widgetStore.userList}
+        searchKeyword={searchKeyword}
+        keyWordChangeHandle={(data: string) => {
+          setSearchKeyword(data);
+          widgetStore.onKeyWordChange(data);
+        }}
+        hasMoreUsers={widgetStore.hasMoreUsers}
+        fetchNextUsersList={(data: Partial<FetchUserParam> | undefined, reset: boolean) =>
+          widgetStore.fetchNextUsersList(data, reset)
+        }
+        startAutoFetch={() => {
+          widget.enableAutoFetch(true);
+        }}
+        stopAutoFetch={() => {
+          widget.enableAutoFetch(false);
+        }}
+        chatStore={widget.chatStore}
       />
     </div>
   );
@@ -141,8 +174,9 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
   private _dom?: HTMLElement;
   private _widgetStore = new WidgetChatUIStore(this);
   private _rendered = false;
+  private _timer: NodeJS.Timeout | null = null; //定时器请求数据
 
-  onInstall(controller: AgoraWidgetController): void {}
+  chatStore = createStore();
 
   get widgetName(): string {
     return 'easemobIM';
@@ -214,7 +248,9 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
     this._renderApp();
   }
 
-  onDestroy(): void {}
+  onDestroy(): void {
+    this.enableAutoFetch(false);
+  }
 
   private _renderApp() {
     const { platform } = this.classroomConfig;
@@ -266,6 +302,33 @@ export class AgoraHXChatWidget extends AgoraCloudClassWidget {
       this._dom = undefined;
     }
   }
+
+  enableAutoFetch(enabled: boolean) {
+    // if the local user is teacher
+    if (this.classroomConfig.sessionInfo.role === 1) {
+      if (enabled) {
+        console.log('enableAutoFetch: true');
+        //清除定时器
+        if (this._timer) {
+          clearInterval(this._timer);
+          this._timer = null;
+        }
+        this._timer = setInterval(() => {
+          //每10s刷新一次列表
+          this.widgetStore.fetchNextUsersList({}, true);
+        }, 10000);
+      } else {
+        console.log('enableAutoFetch: false');
+        //清除定时器
+        if (this._timer) {
+          clearInterval(this._timer);
+          this._timer = null;
+        }
+      }
+    }
+  }
+
+  onInstall(controller: AgoraWidgetController): void {}
 
   onUninstall(controller: AgoraWidgetController): void {}
 }

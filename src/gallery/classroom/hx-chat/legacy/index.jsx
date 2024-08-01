@@ -2,8 +2,7 @@
 import React, { useEffect } from 'react';
 import { Provider } from 'react-redux';
 import { ThemeProvider } from 'agora-common-libs';
-import createStore from './redux/store';
-import { setVisibleUI } from './redux/actions/roomAction';
+import { setVisibleUI, roomUserCount } from './redux/actions/roomAction';
 import { isShowChat, isShowMiniIcon, setAPIs } from './redux/actions/propsAction';
 import { messageAction } from './redux/actions/messageAction';
 import App from './App';
@@ -18,9 +17,20 @@ import { setCredential } from './api/base';
 
 let store = null;
 
-export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
-  const chatStore = React.useMemo(() => (store = createStore()), []);
-
+export const HXChatRoom = ({
+  pluginStore,
+  agoraTokenData,
+  theme,
+  chatStore,
+  searchKeyword,
+  keyWordChangeHandle,
+  userList,
+  hasMoreUsers,
+  fetchNextUsersList,
+  startAutoFetch,
+  stopAutoFetch,
+}) => {
+  store = chatStore;
   const chatAPIs = React.useMemo(() => {
     setCredential(agoraTokenData.userUuid, agoraTokenData.token);
     const loginAPI = new LoginAPI(chatStore);
@@ -60,7 +70,17 @@ export const HXChatRoom = ({ pluginStore, agoraTokenData, theme }) => {
     // <React.StrictMode>
     <Provider store={chatStore} apis={chatAPIs}>
       <ThemeProvider value={theme}>
-        <App pluginStore={pluginStore} agoraTokenData={agoraTokenData} />
+        <App
+          pluginStore={pluginStore}
+          agoraTokenData={agoraTokenData}
+          searchKeyword={searchKeyword}
+          userList={userList}
+          keyWordChangeHandle={keyWordChangeHandle}
+          hasMoreUsers={hasMoreUsers}
+          fetchNextUsersList={fetchNextUsersList}
+          startAutoFetch={startAutoFetch}
+          stopAutoFetch={stopAutoFetch}
+        />
       </ThemeProvider>
     </Provider>
     // </React.StrictMode>
@@ -93,6 +113,12 @@ export const dispatchShowChat = (data) => {
 };
 export const dispatchShowMiniIcon = (data) => {
   return store?.dispatch(isShowMiniIcon(data));
+};
+/**
+ * 成员数量改变
+ */
+export const dispatchMemberCountChange = (data) => {
+  return store?.dispatch(roomUserCount(data));
 };
 
 /**

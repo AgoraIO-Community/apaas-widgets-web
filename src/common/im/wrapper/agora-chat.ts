@@ -69,7 +69,8 @@ export class FcrChatRoom extends AgoraIMBase {
   }
 
   private _enableLog() {
-    websdk.logger.setLevel('DEBUG', true, 'agora-chat');
+    // websdk.logger.setLevel('INFO', true, 'agora-chat');
+    websdk.logger.disableAll();
     //@ts-ignore
     websdk.logger.onLog = (log: AgoraChatLog) => {
       switch (log.level) {

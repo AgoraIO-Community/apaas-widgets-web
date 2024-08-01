@@ -1,35 +1,55 @@
-import { Tag, Tooltip } from 'antd';
-import { ROLE } from '../../contants';
+/* eslint-disable react/prop-types */
 import { transI18n } from 'agora-common-libs';
-import avatarUrl from '../../themes/img/avatar-big@2x.png';
-import muteNo from '../../themes/img/muteNo.png';
-import muteOff from '../../themes/img/muteOff.png';
 import './index.css';
 import { useShallowEqualSelector } from '../../utils';
+import { Search } from '../../../../../../components/input-search-chat';
+import { SvgIconEnum, SvgImg } from '../../../../../../components/svg-img';
+import { InfiniteScrollRosterTable } from '../../../../../../components/table-chat-user';
 
 // 成员页面
 // eslint-disable-next-line react/prop-types
-export const UserList = ({ roomUserList }) => {
+export const UserList = ({
+  roomUserList,
+  onKeywordChange,
+  keyword,
+  hasMoreUsers,
+  fetchNextUsersList,
+  onScroll,
+}) => {
   const { apis, muteList } = useShallowEqualSelector((state) => {
     return {
       apis: state.apis,
       muteList: state?.room.muteList,
     };
   });
-  // 禁言
-  const mute = (val, userId) => {
-    if (val) {
-      apis.muteAPI.removeUserMute(userId);
-    } else {
-      apis.muteAPI.setUserMute(userId);
-    }
-  };
 
   return (
     <div className="fcr-hx-user">
-      {
-        // eslint-disable-next-line react/prop-types
-        roomUserList.length > 0 &&
+      <div>
+        <Search
+          value={keyword}
+          onSearch={(data) => {
+            keyword = data;
+            onKeywordChange(data);
+          }}
+          prefix={<SvgImg type={SvgIconEnum.SEARCH} />}
+          inputPrefixWidth={32}
+          placeholder={transI18n('fcr_chat_search')}
+        />
+      </div>
+      <InfiniteScrollRosterTable
+        roomUserList={roomUserList}
+        apis={apis}
+        keyword={keyword}
+        muteList={muteList}
+        hasMore={hasMoreUsers}
+        onFetch={fetchNextUsersList}
+        onScroll={onScroll}
+      />
+      {/* <Table className="roster-table">
+        {
+          // eslint-disable-next-line react/prop-types
+          roomUserList && roomUserList.length > 0 &&
           // eslint-disable-next-line react/prop-types
           roomUserList.map((item, key) => {
             const showMuteIcon = muteList && muteList.includes(item.id);
@@ -74,7 +94,8 @@ export const UserList = ({ roomUserList }) => {
               </div>
             );
           })
-      }
+        }
+      </Table> */}
     </div>
   );
 };
