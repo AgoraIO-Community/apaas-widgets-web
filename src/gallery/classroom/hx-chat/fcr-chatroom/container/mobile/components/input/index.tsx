@@ -206,10 +206,6 @@ export const FcrChatRoomH5Inputs = observer(
       }
       setIsShowApplication(!isShowApplication);
     };
-    //列表中是否新增分享
-    const widgetsNeedShare = isLandscape && screenShareStream;
-    //组件数量
-    const widgetsCount = widgets.length + (widgetsNeedShare ? 1 : 0)
     return (
       <>
         <div
@@ -415,7 +411,7 @@ export const FcrChatRoomH5Inputs = observer(
                       <div
                         className={classNames(
                           'fcr-chatroom-mobile-inputs-application landscape',
-                          widgetsNeedShare ? widgets.length === 0 && 'zero' : 1,
+                          isLandscape ? widgets.length === 0 && 'zero' : 1,
                           isShowApplication && 'active',
                         )}
                         onClick={handleShowApplicatioon}>
@@ -425,7 +421,7 @@ export const FcrChatRoomH5Inputs = observer(
                           type={SvgIconEnum.APPLICATION}
                           size={30}></SvgImgMobile>
                         <span className="fcr-chatroom-mobile-inputs-application-count">
-                            {widgetsCount > 99 ? '...' : widgetsCount}
+                            {widgets.length > 99 ? '...' : widgets.length}
                         </span>
                       </div>
                     </ToolTip>
@@ -661,7 +657,7 @@ export const FcrChatRoomH5Inputs = observer(
                   <div
                     className={classNames(
                       'fcr-chatroom-mobile-inputs-application landscape',
-                      screenShareStream && isLandscape ? widgets.length === 0 && 'zero' : 1,
+                      isLandscape ? widgets.length === 0 && 'zero' : 1,
                       isShowApplication && 'active',
                     )}
                     onClick={handleShowApplicatioon}>
@@ -671,7 +667,7 @@ export const FcrChatRoomH5Inputs = observer(
                       type={SvgIconEnum.APPLICATION}
                       size={30}></SvgImgMobile>
                     <span className="fcr-chatroom-mobile-inputs-application-count">
-                    {widgetsCount > 99 ? '...' : widgetsCount}
+                    {widgets.length > 99 ? '...' : widgets.length}
                     </span>
                   </div>
                 </ToolTip>
