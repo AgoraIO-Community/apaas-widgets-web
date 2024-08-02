@@ -671,7 +671,7 @@ export const FcrChatRoomH5Inputs = observer(
                       type={SvgIconEnum.APPLICATION}
                       size={30}></SvgImgMobile>
                     <span className="fcr-chatroom-mobile-inputs-application-count">
-                    {widgets.length > 99 ? '...' : widgets.length + (screenShareStream && isLandscape ? 1 : 0)}
+                    {widgetsCount > 99 ? '...' : widgetsCount}
                     </span>
                   </div>
                 </ToolTip>
