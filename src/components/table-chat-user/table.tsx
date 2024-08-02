@@ -136,7 +136,10 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
       </div>
     </div>
   ) : (
-    <Table className="table-container" onScroll={handleScroll}>
+    <Table
+      className="table-container"
+      onScroll={handleScroll}
+      style={{ height: '88%', flexGrow: 1 }}>
       {
         // eslint-disable-next-line react/prop-types
         roomUserList &&
@@ -147,19 +150,30 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
             const isTeacher = item?.ext && JSON.parse(item?.ext).role === ROLE.teacher.id;
             const isAssistant = item?.ext && JSON.parse(item?.ext).role === ROLE.assistant.id;
             return (
-              <div className="fcr-hx-user-list" key={key}>
-                <div className="fcr-hx-user-info">
-                  <img src={item?.avatarurl || avatarUrl} className="fcr-hx-user-avatar" />
-                  <span className="fcr-hx-user-text" title={item?.nickname || item?.id}>
+              <div className="fcr-hx-user-list" key={key} style={{ width: '100%' }}>
+                <div className="fcr-hx-user-info" style={{ width: '100%', display: 'flex' }}>
+                  <img
+                    src={item?.avatarurl || avatarUrl}
+                    className="fcr-hx-user-avatar"
+                    style={{ flexShrink: 0, marginLeft: '10px' }}
+                  />
+                  <span
+                    className="fcr-hx-user-text"
+                    title={item?.nickname || item?.id}
+                    style={{ flexGrow: 1 }}>
                     <HighlightText text={item?.nickname || item?.id} keyword={keyword} />
                   </span>
                   {isTeacher && (
-                    <Tag className="fcr-hx-user-tag fcr-hx-teacher-tag">
+                    <Tag
+                      className="fcr-hx-user-tag fcr-hx-teacher-tag"
+                      style={{ marginRight: 0, flexShrink: 0 }}>
                       <span className="fcr-hx-teacher-text">{transI18n('chat.teacher')}</span>
                     </Tag>
                   )}
                   {isAssistant && (
-                    <Tag className="fcr-hx-user-tag fcr-hx-teacher-tag">
+                    <Tag
+                      className="fcr-hx-user-tag fcr-hx-teacher-tag"
+                      style={{ marginRight: 0, flexShrink: 0 }}>
                       <span className="fcr-hx-teacher-text">{transI18n('chat.assistant')}</span>
                     </Tag>
                   )}

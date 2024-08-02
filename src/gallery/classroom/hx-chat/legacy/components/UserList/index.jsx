@@ -24,7 +24,7 @@ export const UserList = ({
   });
 
   return (
-    <div className="fcr-hx-user">
+    <div className="fcr-hx-user" style={{ display: 'flex', flexDirection: 'column' }}>
       <div>
         <Search
           value={keyword}

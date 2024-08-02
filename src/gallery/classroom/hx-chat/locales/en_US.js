@@ -67,7 +67,8 @@ const enUS = {
   fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
   fcr_H5_button_chat: 'Chat',
   fcr_chat_user_list_empty: 'This person was not found.',
-  fcr_chat_no_more_data: 'No more data',
+  fcr_chat_no_more_data:
+    'Only the first 200 records are displayed. To find a specific student, please use the search function',
   fcr_chat_search: 'Search',
 };
 
