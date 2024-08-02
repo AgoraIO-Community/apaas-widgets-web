@@ -75,7 +75,7 @@ const enUS = {
   fcr_H5_tips_arrive: 'joined',
   fcr_H5_tips_join: 'Failed to join the room',
   fcr_H5_tips_chat_hidden: 'The chat room has been hidden',
-  fcr_H5_tips_chat_display: 'The chat room has been opened',
+  fcr_H5_tips_chat_display: 'The chat room has been visible',
   fcr_H5_mute_user_msg: 'You have been muted by teacher',
   fcr_H5_unmute_user_msg: 'You have been unmuted by teacher',
   fcr_H5_button_chat: 'Chat',

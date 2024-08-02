@@ -137,8 +137,16 @@ export class RoomStore {
         const item = widgets[i];
         arr.unshift(item)
     }
+    const shareWidget = arr.filter((item: { widgetId: string; }) => item.widgetId === "screenShare");
+    if (this.screenShareStream && this.isLandscape && shareWidget.length == 0) {
+      arr.push({
+        widgetId: "screenShare",
+        widgetName: "screenShare",
+        widgetTitle: transI18n('fcr_application_screen_share')
+      })
+    }
     const allWidgets = arr.filter((v) => v.widgetName !== 'easemobIM');
-    if (!this.currentWidget) {
+    if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
       this.setCurrentWidget(allWidgets[0]);
     }
   }
@@ -146,10 +154,18 @@ export class RoomStore {
   get z0Widgets() {
     console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-      const arr: any = []
+    const arr: any = []
     for (let i = 0; i < widgets.length; i++) {
-        const item = widgets[i];
-        arr.unshift(item)
+      const item = widgets[i];
+      arr.unshift(item)
+    }
+    const shareWidget = arr.filter((item: { widgetId: string; }) => item.widgetId === "screenShare");
+    if (this.screenShareStream && this.isLandscape && shareWidget.length == 0) {
+      arr.push({
+        widgetId: "screenShare",
+        widgetName: "screenShare",
+        widgetTitle: transI18n('fcr_application_screen_share')
+      })
     }
     return arr
   }

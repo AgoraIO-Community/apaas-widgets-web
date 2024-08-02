@@ -24,17 +24,6 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
         e.stopPropagation()
         setCurrentWidget(widget)
     }
-    if (screenShareStream && isLandscape) {
-        const widget = {
-            widgetId: "screenShare",
-            widgetName: "screenShare",
-            widgetTitle: transI18n('fcr_application_screen_share')
-        } 
-        widgets.push(widget)
-        if(!currentWidget){
-            setCurrentWidget(widget)
-        }
-    }
   return (
     <div className={classNames('fcr-chatroom-mobile-application', isLandscape && 'active')}>
         <div className='fcr-chatroom-mobile-application-split'></div>
