@@ -25,16 +25,13 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
         setCurrentWidget(widget)
     }
     if (screenShareStream && isLandscape) {
-        const widget = {
+        widgets.push({
             widgetId: "screenShare",
             widgetName: "screenShare",
             widgetTitle: transI18n('fcr_application_screen_share')
-        } 
-        widgets.push(widget)
-        if(!currentWidget){
-            setCurrentWidget(widget)
-        }
+        } )
     }
+    const defaultShowShare = isLandscape && (!currentWidget || currentWidget.widgetId === "easemobIM");
   return (
     <div className={classNames('fcr-chatroom-mobile-application', isLandscape && 'active')}>
         <div className='fcr-chatroom-mobile-application-split'></div>
@@ -76,7 +73,7 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
                                 {item.widgetName === 'screenShare' && <span className='fcr-chatroom-mobile-application-list-val'> {item?.widgetTitle || ''}</span>}
                             </div>
                             <div className='fcr-chatroom-mobile-application-list-right'>
-                               {currentWidget && currentWidget.widgetId === item.widgetId ? <SvgImgMobile
+                               {currentWidget && currentWidget.widgetId === item.widgetId || defaultShowShare && item.widgetName === 'screenShare' ? <SvgImgMobile
                                     type={SvgIconEnum.CHAT_SELECT}
                                     size={20}
                                     landscape={isLandscape}
