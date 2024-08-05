@@ -177,6 +177,11 @@ export class RoomStore {
   }
   @action.bound
   _handleGetDefaultWidget(widget: any) {
+    //判断是否移除
+    const shareWidget = this._widgetInstanceList.filter((item) => item.widgetName === "screenShare");
+    if (!this.screenShareStream && shareWidget.length > 0) {
+      this._widgetInstanceList = this._widgetInstanceList.filter((item) => item.widgetName !== "screenShare")
+    }
     if (widget) {
       console.log('_handleGetDefaultWidget_handleGetDefaultWidget', widget)
       this.setCurrentWidget(widget);
