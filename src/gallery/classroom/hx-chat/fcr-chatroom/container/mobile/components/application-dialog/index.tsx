@@ -62,7 +62,7 @@ const ApplicationDialog = observer(({ setIsShowApplication }: {setIsShowApplicat
                                      <span className='fcr-chatroom-mobile-application-list-des'>{item?.displayName || ''}</span>
                                     </div>
                                 }
-                                {item.widgetName === 'screenShare' && <span className='fcr-chatroom-mobile-application-list-val'> {item?.widgetTitle || ''}</span>}
+                                {item.widgetName === 'screenShare' && <span className='fcr-chatroom-mobile-application-list-val'>{transI18n('fcr_application_screen_share')}</span>}
                             </div>
                             <div className='fcr-chatroom-mobile-application-list-right'>
                                {currentWidget && currentWidget.widgetId === item.widgetId ? <SvgImgMobile

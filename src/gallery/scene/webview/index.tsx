@@ -17,7 +17,7 @@ export class FcrWebviewWidget extends FcrUISceneWidget {
   }
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [1, 3].includes(role) || this._privilege;
+    return [1, 3].includes(role);
   }
   get displayName(): string {
     return this.webviewTitle;
