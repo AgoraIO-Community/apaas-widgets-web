@@ -138,7 +138,7 @@ export class RoomStore {
         arr.unshift(item)
     }
     const shareWidget = arr.filter((item: { widgetId: string; }) => item.widgetId === "screenShare");
-    if (this.screenShareStream && this.isLandscape && shareWidget.length == 0) {
+    if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
       arr.push({
         widgetId: "screenShare",
         widgetName: "screenShare",
@@ -160,7 +160,7 @@ export class RoomStore {
       arr.unshift(item)
     }
     const shareWidget = arr.filter((item: { widgetId: string; }) => item.widgetId === "screenShare");
-    if (this.screenShareStream && this.isLandscape && shareWidget.length == 0) {
+    if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
       arr.push({
         widgetId: "screenShare",
         widgetName: "screenShare",
