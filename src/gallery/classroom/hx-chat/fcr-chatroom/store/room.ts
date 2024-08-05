@@ -131,24 +131,7 @@ export class RoomStore {
       this._widget.classroomStore.widgetStore.widgetController
     );
     this._widgetInstanceList = Object.values(widgetInstances);
-    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-    const arr: any = []
-    for (let i = 0; i < widgets.length; i++) {
-        const item = widgets[i];
-        arr.unshift(item)
-    }
-    const shareWidget = arr.filter((item: { widgetId: string; }) => item.widgetId === "screenShare");
-    if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
-      arr.push({
-        widgetId: "screenShare",
-        widgetName: "screenShare",
-        widgetTitle: transI18n('fcr_application_screen_share')
-      })
-    }
-    const allWidgets = arr.filter((v) => v.widgetName !== 'easemobIM');
-    if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
-      this.setCurrentWidget(allWidgets[0]);
-    }
+    this.resetDefaultCurrentWidget()
   }
   @computed
   get z0Widgets() {
@@ -159,16 +142,34 @@ export class RoomStore {
       const item = widgets[i];
       arr.unshift(item)
     }
-    const shareWidget = arr.filter((item: { widgetId: string; }) => item.widgetId === "screenShare");
-    if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
-      arr.push({
-        widgetId: "screenShare",
-        widgetName: "screenShare",
-        widgetTitle: transI18n('fcr_application_screen_share')
-      })
-    }
     return arr
   }
+
+  /**
+   * 重置默认当前的weidget，如果未设置
+   */
+  private resetDefaultCurrentWidget(){
+    const shareWidget = this._widgetInstanceList.filter((item) => item.widgetName === "screenShare");
+    if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
+      this._widgetInstanceList.push(new ScreenShareWidget(this._widget.widgetController,this._widget.classroomStore))
+    }
+    if(!this.isLandscape && shareWidget.length > 0){
+      this._widgetInstanceList = this._widgetInstanceList.filter((item) => item.widgetName !== "screenShare")
+    }
+    if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
+      const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+      console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
+
+      const arr: any = []
+      for (let i = 0; i < widgets.length; i++) {
+          const item = widgets[i];
+          arr.unshift(item)
+      }
+      const allWidgets = arr.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
+      this.setCurrentWidget(allWidgets[0]);
+    }
+  }
+
   @action.bound
   setCurrentWidget(widget: any) {
     this.currentWidget = widget;
@@ -377,6 +378,8 @@ export class RoomStore {
   }) {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
+
+    this.resetDefaultCurrentWidget()
   }
   @bound
   quitForceLandscape() {
@@ -457,4 +460,14 @@ export class RoomStore {
   destroy() {
     this._removeEventListeners();
   }
+}
+
+class ScreenShareWidget extends AgoraWidgetBase{
+  get widgetName(): string {
+    return "screenShare";
+  }
+  get widgetId(): string {
+    return "screenShare";
+  }
+
 }
