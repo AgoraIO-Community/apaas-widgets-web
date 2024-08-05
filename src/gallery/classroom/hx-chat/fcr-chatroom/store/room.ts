@@ -52,7 +52,13 @@ export class RoomStore {
     this._initializeThumbsCount();
     this._disposers.push(reaction(
       () => this.screenShareStream,
-      () => { this.resetDefaultCurrentWidget() }
+      () => {
+        this.resetDefaultCurrentWidget();
+        const shareWidget = this._widgetInstanceList.find((item) => item.widgetName === "screenShare");
+        if (shareWidget) {
+          this.setCurrentWidget(shareWidget)
+        }
+      }
     ))
   }
   isHost =
