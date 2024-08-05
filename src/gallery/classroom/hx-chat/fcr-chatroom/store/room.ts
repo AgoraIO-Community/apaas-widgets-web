@@ -1,5 +1,5 @@
 import { AgoraHXChatWidget } from '../..';
-import { computed, observable, action, runInAction } from 'mobx';
+import { computed, observable, action, runInAction ,reaction} from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
 import dayjs from 'dayjs';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
@@ -16,6 +16,7 @@ export enum MobileCallState {
   DeviceOffCall = 'deviceOffCall',
 }
 export class RoomStore {
+  private _disposers:(() => void)[] = []
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
   @observable mobileCallState: MobileCallState = MobileCallState.Initialize;
   @observable messageVisible = false;
@@ -49,6 +50,10 @@ export class RoomStore {
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._initializeThumbsCount();
+    this._disposers.push(reaction(
+      () => this.screenShareStream,
+      () => { this.resetDefaultCurrentWidget() }
+    ))
   }
   isHost =
     this._widget.classroomConfig.sessionInfo.role === 1 ||
@@ -148,12 +153,13 @@ export class RoomStore {
   /**
    * 重置默认当前的weidget，如果未设置
    */
+  @bound
   private resetDefaultCurrentWidget(){
     const shareWidget = this._widgetInstanceList.filter((item) => item.widgetName === "screenShare");
     if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
       this._widgetInstanceList.push(new ScreenShareWidget(this._widget.widgetController,this._widget.classroomStore))
     }
-    if(!this.isLandscape && shareWidget.length > 0){
+    if(!this.isLandscape && shareWidget.length > 0 || !this.screenShareStream){
       this._widgetInstanceList = this._widgetInstanceList.filter((item) => item.widgetName !== "screenShare")
     }
     if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
@@ -177,11 +183,6 @@ export class RoomStore {
   }
   @action.bound
   _handleGetDefaultWidget(widget: any) {
-    //判断是否移除
-    const shareWidget = this._widgetInstanceList.filter((item) => item.widgetName === "screenShare");
-    if (!this.screenShareStream && shareWidget.length > 0) {
-      this._widgetInstanceList = this._widgetInstanceList.filter((item) => item.widgetName !== "screenShare")
-    }
     if (widget) {
       console.log('_handleGetDefaultWidget_handleGetDefaultWidget', widget)
       this.setCurrentWidget(widget);
@@ -464,6 +465,7 @@ export class RoomStore {
 
   destroy() {
     this._removeEventListeners();
+    this._disposers.forEach((fn) => fn());
   }
 }
 
