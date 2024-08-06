@@ -56,7 +56,10 @@ export class RoomStore {
         this.resetDefaultCurrentWidget();
         const shareWidget = this._widgetInstanceList.find((item) => item.widgetName === "screenShare");
         if (shareWidget) {
-          this.setCurrentWidget(shareWidget)
+          //两秒后设置，解决时序问题
+          setTimeout(() => {
+            this.setCurrentWidget(shareWidget)
+          }, 2000);
         }
       }
     ))
