@@ -71,13 +71,13 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       }
     }
     );
-    // this.widgetController.addBroadcastListener( {
-    //   messageType: AgoraExtensionRoomEvent.RttboxChanged,
-    //   onMessage: () => {
-    //     // this.setRttVisible(true)
-    //   }
-    // }
-    // );
+    this.widgetController.addBroadcastListener( {
+      messageType: AgoraExtensionRoomEvent.RttboxChanged,
+      onMessage: () => {
+        // this.setRttVisible(true)
+      }
+    }
+    );
   }
   @bound
   setVisible(visible: boolean) {
@@ -148,7 +148,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttContentChange,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowSetting,onMessage() {},})
-    // this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttboxChanged,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttboxChanged,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ToolboxChanged,onMessage() {},})
   }

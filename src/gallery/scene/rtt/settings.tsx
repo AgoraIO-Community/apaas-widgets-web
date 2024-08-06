@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import  { runInAction } from 'mobx';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
@@ -68,43 +67,6 @@ export const RttSettings = ({
     setIsModalOpen(false)
     setIsShowSetting(false)
   }
-  //源语言调整(预选)
-  const sourceLanSelectPre = (lan: FcrRttLanguageData) => {
-    setPreSourceLan(lan);
-    hideAllModule();
-    setIsModalOpen(true);
-  }
-  //源语言调整(确认)
-  const sourceLanSelectConfirm = (lan: FcrRttLanguageData) => {
-    fcrRttManager.setCurrentSourceLan(lan.value, true);
-    hideAllModule();
-    setSourceLan(lan)
-  }
-  //翻译语言设置调整
-  const targetLanSelect = (lan: FcrRttLanguageData) => {
-    fcrRttManager.setCurrentTargetLan(lan.value, true);
-    setTargetLan(lan);
-  }
-  //双语显示调整
-  const showDoubleLanSwitch = (show: boolean) => {
-    fcrRttManager.setShowDoubleLan(show, true);
-    setShowBilingual(show);
-  }
-  //文本大小改变
-  const textSizeChange = (val: number | null) => {
-    val = val || 14
-    fcrRttManager.setCurrentTextSize(val, true);
-    setHorizontalValue(val)
-  }
-  //重置
-  const resetAllConfig = () => {
-    setShowBilingual(false);
-    setHorizontalValue(14)
-    hideAllModule();
-    setSourceLan(fcrRttManager.sourceLanguageList[0])
-    setTargetLan(fcrRttManager.targetLanguageList[0])
-    fcrRttManager.resetAllConfig()
-  }
 
   return (
     <div>
@@ -116,7 +78,7 @@ export const RttSettings = ({
             <RttSettingsSelect
               items={fcrRttManager.sourceLanguageList}
               currentLan={sourceLan}
-              onSelectLang={sourceLanSelectPre}
+              onSelectLang={(lan: FcrRttLanguageData) => { setPreSourceLan(lan); hideAllModule();setIsModalOpen(true);  }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
@@ -127,13 +89,13 @@ export const RttSettings = ({
             <RttSettingsSelect
               items={fcrRttManager.targetLanguageList}
               currentLan={targetLan}
-              onSelectLang={targetLanSelect}
+              onSelectLang={(lan: FcrRttLanguageData) => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
               colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>
           </div>
-          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { showDoubleLanSwitch(!showBilingual); }}>
+          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual); }}>
             <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
             {showBilingual && <SvgImg
               type={SvgIconEnum.FCR_CHOOSEIT}
@@ -148,11 +110,11 @@ export const RttSettings = ({
               max="30"
               step="1"
               value={horizontalValue}
-              onChange={(e) => { textSizeChange(Number(e.target.value)) }}
+              onChange={(e) => { fcrRttManager.setCurrentTextSize(Number(e.target.value), true); setHorizontalValue(Number(e.target.value)) }}
             />
           </div>
         </div>
-        <button className="restore-button" onClick={resetAllConfig}>
+        <button className="restore-button" onClick={() => { fcrRttManager.setCurrentTextSize(14, true); setHorizontalValue(14) }}>
           {transI18n('fcr_device_option_reset_font_size')}
         </button>
         {showToConversionSetting && <button className="real-time-button" onClick={() => { fcrRttManager.showConversion(); hideAllModule() }}>
@@ -162,7 +124,7 @@ export const RttSettings = ({
           {transI18n('fcr_device_option_view_rtt_open_subtitle')}
         </button>}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_source')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { sourceLanSelectConfirm(preSourceLan) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(preSourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
     </div>

@@ -135,9 +135,6 @@ export class FcrRttConfig {
     }
 
     setSourceLan(lan: FcrRttLanguageData, needNotify: boolean, needSaveLocal: boolean) {
-        if(lan.value === this.currentSourceLan.value){
-            return
-        }
         console.log("FcrRttConfigChange:", "修改目标源语言->" + lan.value)
         this.currentSourceLan = lan
         if (needSaveLocal) {
@@ -151,9 +148,6 @@ export class FcrRttConfig {
         return this.currentSourceLan
     }
     setTargetLan(lan: FcrRttLanguageData, needNotify: boolean, needSaveLocal: boolean) {
-        if(lan.value === this.currentTargetLan.value){
-            return
-        }
         console.log("FcrRttConfigChange:", "修改目标翻译语言->" + lan.value)
         this.currentTargetLan = lan
         if (needSaveLocal) {
@@ -167,25 +161,19 @@ export class FcrRttConfig {
         return this.currentTargetLan
     }
     setShowDoubleLan(show: boolean, needNotify: boolean, needSaveLocal: boolean) {
-        if(show === this.showDoubleLan){
-            return
-        }
         console.log("FcrRttConfigChange:", "修改是否双语显示->" + show)
         this.showDoubleLan = show
         if (needSaveLocal) {
             localStorage.setItem(`${this.roomUuid}_showDoubleLan`, show + "")
         }
         if (needNotify) {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.ChangeRttShowDoubleLan, show)
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.ChangeRttShowDoubleLan, this)
         }
     }
     isShowDoubleLan() {
         return this.showDoubleLan;
     }
     setTextSize(size: number, needNotify: boolean, needSaveLocal: boolean) {
-        if(size === this.textSize){
-            return
-        }
         console.log("FcrRttConfigChange:", "修改目标文本大小显示->" + size)
         this.textSize = size
         if (needSaveLocal) {
