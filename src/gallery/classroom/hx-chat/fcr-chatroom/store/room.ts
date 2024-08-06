@@ -1,5 +1,5 @@
 import { AgoraHXChatWidget } from '../..';
-import { computed, observable, action, runInAction ,reaction} from 'mobx';
+import { computed, observable, action, runInAction, reaction } from 'mobx';
 import { AgoraIMBase, AgoraIMEvents } from '../../../../../common/im/wrapper/typs';
 import dayjs from 'dayjs';
 import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up';
@@ -16,7 +16,7 @@ export enum MobileCallState {
   DeviceOffCall = 'deviceOffCall',
 }
 export class RoomStore {
-  private _disposers:(() => void)[] = []
+  private _disposers: (() => void)[] = [];
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
   @observable mobileCallState: MobileCallState = MobileCallState.Initialize;
   @observable messageVisible = false;
@@ -50,16 +50,21 @@ export class RoomStore {
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
     this._initializeThumbsCount();
-    this._disposers.push(reaction(
-      () => this.screenShareStream,
-      () => {
-        this.resetDefaultCurrentWidget();
-        const shareWidget = this._widgetInstanceList.find((item) => item.widgetName === "screenShare");
-        if (shareWidget) {
-          this.setCurrentWidget(shareWidget)
-        }
-      }
-    ))
+    this._disposers.push(
+      reaction(
+        () => this.screenShareStream,
+        () => {
+          this.resetDefaultCurrentWidget();
+          const shareWidget = this._widgetInstanceList.find(
+            (item) => item.widgetName === 'screenShare',
+          );
+          if (shareWidget) {
+            this.setCurrentWidget(shareWidget);
+          }
+        },
+      ),
+    );
+    this.getWidgets();
   }
   isHost =
     this._widget.classroomConfig.sessionInfo.role === 1 ||
@@ -113,10 +118,10 @@ export class RoomStore {
   }
 
   /**
-    * 屏幕共享流
-    * @returns
-    */
-  @computed 
+   * 屏幕共享流
+   * @returns
+   */
+  @computed
   get screenShareStream(): EduStream | undefined {
     const streamUuid = this._widget.classroomStore.roomStore.screenShareStreamUuid as string;
     const stream = this._widget.classroomStore.streamStore.streamByStreamUuid.get(streamUuid);
@@ -124,60 +129,67 @@ export class RoomStore {
   }
 
   getWidgets() {
-    console.log('getWidgetsgetWidgetsgetWidgets')
-    this._widget.broadcast(AgoraExtensionRoomEvent.ChangeRoom, true)
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.GetApplications,
-      onMessage: this._handleGetWidgets,
-    });
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.DefaultCurrentApplication,
-      onMessage: this._handleGetDefaultWidget,
-    });
+    console.log('getWidgetsgetWidgetsgetWidgets');
+    this._widget.broadcast(AgoraExtensionRoomEvent.ChangeRoom, true);
   }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
     console.log(
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
-      this._widget.classroomStore.widgetStore.widgetController
+      this._widget.classroomStore.widgetStore.widgetController,
     );
     this._widgetInstanceList = Object.values(widgetInstances);
-    this.resetDefaultCurrentWidget()
+    this.resetDefaultCurrentWidget();
   }
   @computed
   get z0Widgets() {
     console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-    const arr: any = []
+    const arr: any = [];
     for (let i = 0; i < widgets.length; i++) {
       const item = widgets[i];
-      arr.unshift(item)
+      arr.unshift(item);
     }
-    return arr
+    return arr;
   }
 
   /**
    * 重置默认当前的weidget，如果未设置
    */
-  @bound
-  private resetDefaultCurrentWidget(){
-    const shareWidget = this._widgetInstanceList.filter((item) => item.widgetName === "screenShare");
-    if (this.screenShareStream && this.isLandscape && shareWidget.length === 0) {
-      this._widgetInstanceList.push(new ScreenShareWidget(this._widget.widgetController,this._widget.classroomStore))
+  @action.bound
+  private resetDefaultCurrentWidget() {
+    if (this.screenShareStream && this.isLandscape) {
+      const hasScreenShare = this._widgetInstanceList.some(
+        (item) => item.widgetName === 'screenShare',
+      );
+      if (!hasScreenShare) {
+        this._widgetInstanceList.push(
+          new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore),
+        );
+      }
+      this.setCurrentWidget(
+        this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
+      );
     }
-    if(!this.isLandscape && shareWidget.length > 0 || !this.screenShareStream){
-      this._widgetInstanceList = this._widgetInstanceList.filter((item) => item.widgetName !== "screenShare")
+    if (!this.isLandscape || !this.screenShareStream) {
+      this._widgetInstanceList = this._widgetInstanceList.filter(
+        (item) => item.widgetName !== 'screenShare',
+      );
+      if (this.currentWidget?.widgetName === 'screenShare') {
+        this.setCurrentWidget(undefined);
+      }
     }
+
     if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
       const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
       console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
 
-      const arr: any = []
+      const arr: any = [];
       for (let i = 0; i < widgets.length; i++) {
-          const item = widgets[i];
-          arr.unshift(item)
+        const item = widgets[i];
+        arr.unshift(item);
       }
-      const allWidgets = arr.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
+      const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
       this.setCurrentWidget(allWidgets[0]);
     }
   }
@@ -190,7 +202,7 @@ export class RoomStore {
   @action.bound
   _handleGetDefaultWidget(widget: any) {
     if (widget) {
-      console.log('_handleGetDefaultWidget_handleGetDefaultWidget', widget)
+      console.log('_handleGetDefaultWidget_handleGetDefaultWidget', widget);
       this.setCurrentWidget(widget);
       this.currentWidget = widget;
     }
@@ -202,6 +214,7 @@ export class RoomStore {
       messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
       onMessage: this._handlePollMinimizeStateChanged,
     });
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.GetApplications,
       onMessage: this._handleGetWidgets,
@@ -374,7 +387,7 @@ export class RoomStore {
 
   async getChatRoomDetails() {
     const { mute, affiliations } = await this._fcrChatRoom.getChatRoomDetails();
-    
+
     runInAction(() => {
       this.allMuted = mute;
     });
@@ -391,7 +404,7 @@ export class RoomStore {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
 
-    this.resetDefaultCurrentWidget()
+    this.resetDefaultCurrentWidget();
   }
   @bound
   quitForceLandscape() {
@@ -475,12 +488,11 @@ export class RoomStore {
   }
 }
 
-class ScreenShareWidget extends AgoraWidgetBase{
+class ScreenShareWidget extends AgoraWidgetBase {
   get widgetName(): string {
-    return "screenShare";
+    return 'screenShare';
   }
   get widgetId(): string {
-    return "screenShare";
+    return 'screenShare';
   }
-
 }
