@@ -5,10 +5,8 @@ import { FcrUISceneWidget, bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { addResource } from './i18n/config';
-import { PopoverWithTooltip } from '@components/popover';
-import { message, Popover } from 'antd';
+import { Popover } from 'antd';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager'
-import { IAgoraUserData } from 'agora-rte-sdk/lib/core/processor/type';
 import { IAgoraUserSessionInfo } from 'agora-edu-core/lib/stores/domain/common/user/struct';
 import { observable,runInAction } from 'mobx';
 import { ToastApi } from '@components/toast';
@@ -234,6 +232,9 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       onMessage: () => {
         runInAction(() => {
           this.visibleView = false
+          this.starting = false
+          this.listening = false
+          this.noOnespeakig = true
         })
       },
     })
@@ -326,7 +327,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
      //字幕按钮点击监听
      this.addBroadcastListener({
        messageType: AgoraExtensionRoomEvent.RttboxChanged,
-       onMessage: (data: { visible: boolean }) => {
+       onMessage: () => {
          if (!fcrRttManager.getConfigInfo().isOpenSubtitle()) {
            fcrRttManager.showSubtitle()
          } else {
@@ -369,12 +370,24 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   getRttSettingView(showToConversionSetting: boolean, showToSubtitleSetting: boolean) {
     return <RttSettings widget={this} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></RttSettings>
   }
-  getRttSettingPopView(buttonView:ReactNode,showToConversionSetting: boolean, showToSubtitleSetting: boolean) {
+  getRttSettingPopView(buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean) {
+    const targetClassName = 'fcr-rtt-setting-' + Math.random()
     return <Popover
-    onVisibleChange={(value) =>{runInAction(()=>{this.popoverVisible = value})}}
-    content={this.getRttSettingView(showToConversionSetting,showToSubtitleSetting)}
-    trigger="click">
-    {buttonView}
-  </Popover>
+      //@ts-ignore
+      rootClassName="xxxxxxxxxxx"
+      defaultVisible={this.popoverVisible}
+      onVisibleChange={(value) => {
+        runInAction(() => { this.popoverVisible = value })
+        //强行隐藏
+        const target = document.getElementsByClassName(targetClassName)
+        if(target.length > 0){
+          //@ts-ignore
+          target[0].style.display = value ? 'block' : 'none'
+        }
+      }}
+      content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting)}</div>}
+      trigger="click">
+      {buttonView}
+    </Popover>
   }
 }

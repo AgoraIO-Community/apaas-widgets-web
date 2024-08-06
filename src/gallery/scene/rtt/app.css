@@ -367,3 +367,7 @@
 
 
 
+.ant-popover-placement-top{
+  width: 185px;
+  z-index: 2001;
+}
