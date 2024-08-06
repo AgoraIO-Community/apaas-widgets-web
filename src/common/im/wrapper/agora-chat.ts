@@ -25,7 +25,7 @@ type AgoraChatLog = {
 };
 @Log.attach({ proxyMethods: true })
 export class FcrChatRoom extends AgoraIMBase {
-  private _logger = new Logger('agora-chat', { console: true, database: true });
+  private _logger = new Logger();
   private _conn?: AgoraChat.Connection;
   userInfo: AgoraIMUserInfo;
   ext: { roomUuid: string };

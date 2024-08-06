@@ -147,7 +147,7 @@ export class WidgetChatUIStore {
     if (reset) {
       const list = [] as any[];
 
-      let nextId = undefined;
+      let nextId: number|string | undefined = undefined;
 
       try {
         this._isFetchingList = true;

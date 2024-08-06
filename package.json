@@ -1,7 +1,7 @@
 {
   "name": "agora-plugin-gallery",
   "version": "2.9.41",
-  "description": "> TODO: description",
+  "description": "Widget set for Agora Flexible Classroom",
   "author": "agora.io",
   "directories": {
     "lib": "lib",
