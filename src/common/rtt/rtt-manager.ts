@@ -61,6 +61,7 @@ class FcrRttManager {
      */
     resetListener(widgetController: AgoraWidgetController) {
         this.widgetController = widgetController;
+        this.removeBroadCaseListener()
         //新增修改声源语言监听
         widgetController.addBroadcastListener({
             messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
@@ -112,46 +113,7 @@ class FcrRttManager {
         this.clearStore()
         //清除广播接收器
         this.removeMessageListener()
-        this.widgetController?.removeBroadcastListener({
-            messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
-            onMessage(message:string) {
-                fcrRttManager.setCurrentSourceLan(message,true)
-            },
-        })
-        this.widgetController?.removeBroadcastListener({
-            messageType: AgoraExtensionRoomEvent.ChangeRttTargetLan,
-            onMessage(message:string) {
-                fcrRttManager.setCurrentTargetLan(message,true)
-            },
-        })
-        this.widgetController?.removeBroadcastListener({
-            messageType: AgoraExtensionRoomEvent.ChangeRttTextSize,
-            onMessage(message:number) {
-                fcrRttManager.setCurrentTextSize(message,true)
-            },
-        })
-        this.widgetController?.removeBroadcastListener({
-            messageType: AgoraExtensionRoomEvent.ChangeRttShowDoubleLan,
-            onMessage(message:boolean) {
-                fcrRttManager.setShowDoubleLan(message,true)
-            },
-        })
-        this.widgetController?.removeBroadcastListener({
-            messageType: AgoraExtensionRoomEvent.RttChangeToSubtitleOpenState,
-            onMessage() {
-                if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
-                    fcrRttManager.closeSubtitle()
-                }
-            },
-        })
-        this.widgetController?.removeBroadcastListener({
-            messageType: AgoraExtensionRoomEvent.RttChangeToConversionOpenState,
-            onMessage() {
-                if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
-                    fcrRttManager.closeConversion()
-                }
-            },
-        })
+        this.removeBroadCaseListener()
         this.widgetController = undefined;
     }
 
@@ -164,9 +126,11 @@ class FcrRttManager {
         const findData: FcrRttLanguageData | undefined = this.sourceLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
-            config.setSourceLan(findData, false,false)
-            this.sendRequest(config)?.then(() => {
+            this.rttConfigInfo.setSourceLan(findData, false,false)
+            this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setSourceLan(findData, notify,true)
+            })?.catch(()=>{
+                this.rttConfigInfo.setSourceLan(config.getSourceLan(), false,false)
             })
         }
     }
@@ -180,9 +144,11 @@ class FcrRttManager {
         const findData = this.targetLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
-            config.setTargetLan(findData, false,false)
-            this.sendRequest(config)?.then(() => {
+            this.rttConfigInfo.setTargetLan(findData, false,false)
+            this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setTargetLan(findData, notify,true)
+            })?.catch(()=>{
+                this.rttConfigInfo.setTargetLan(config.getTargetLan(), false,false)
             })
         }
     }
@@ -448,10 +414,10 @@ class FcrRttManager {
             }, 3000)
             this.openSubtitleTimerList.push(id)
         } else {
+            this.rttConfigInfo.setOpenSubtitle(true, false)
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToOpening)
             const config: FcrRttConfig = this.rttConfigInfo.copy()
-            config.setOpenSubtitle(true, false)
-            this.sendRequest(config)?.then(() => {
+            this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setOpenSubtitle(true, true)
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
                 //开启消息监听
@@ -470,6 +436,8 @@ class FcrRttManager {
 
                 }, 2000)
                 this.openSubtitleTimerList.push(id)
+            })?.catch(()=>{
+                this.rttConfigInfo.setOpenSubtitle(config.isOpenSubtitle(), false)
             })
         }
     }
@@ -478,10 +446,12 @@ class FcrRttManager {
      */
     closeSubtitle() {
         const config: FcrRttConfig = this.rttConfigInfo.copy()
-        config.setOpenSubtitle(false, false)
-        this.sendRequest(config)?.then(() => {
-            config.setOpenSubtitle(false, true)
+        this.rttConfigInfo.setOpenSubtitle(false, false)
+        this.sendRequest(this.rttConfigInfo)?.then(() => {
+            this.rttConfigInfo.setOpenSubtitle(false, true)
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
+        })?.catch(() => {
+            this.rttConfigInfo.setOpenSubtitle(config.isOpenSubtitle(), false)
         })
     }
 
@@ -495,10 +465,12 @@ class FcrRttManager {
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
         } else {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
-            config.setOpenTranscribe(true, false)
-            this.sendRequest(config)?.then(() => {
+            this.rttConfigInfo.setOpenTranscribe(true, false)
+            this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setOpenTranscribe(true, true)
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
+            })?.catch(() => {
+                this.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
             })
         }
     }
@@ -508,10 +480,12 @@ class FcrRttManager {
     closeConversion() {
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = this.rttConfigInfo.copy()
-        config.setOpenTranscribe(false, false)
-        this.sendRequest(config)?.then(() => {
+        this.rttConfigInfo.setOpenTranscribe(false, false)
+        this.sendRequest(this.rttConfigInfo)?.then(() => {
             this.rttConfigInfo.setOpenTranscribe(false, true)
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
+        })?.catch(() => {
+            this.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
         })
     }
 
@@ -592,6 +566,48 @@ class FcrRttManager {
             this.classroomStore?.connectionStore.scene?.removeListener('stream-message-recieved', this.messageDataProcessing);
             console.log("FcrRttAddMessageListener:", "移除消息接收监听")
         }
+    }
+    private removeBroadCaseListener(){
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttSourceLan,
+            onMessage(message:string) {
+                fcrRttManager.setCurrentSourceLan(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttTargetLan,
+            onMessage(message:string) {
+                fcrRttManager.setCurrentTargetLan(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttTextSize,
+            onMessage(message:number) {
+                fcrRttManager.setCurrentTextSize(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.ChangeRttShowDoubleLan,
+            onMessage(message:boolean) {
+                fcrRttManager.setShowDoubleLan(message,true)
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.RttChangeToSubtitleOpenState,
+            onMessage() {
+                if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
+                    fcrRttManager.closeSubtitle()
+                }
+            },
+        })
+        this.widgetController?.removeBroadcastListener({
+            messageType: AgoraExtensionRoomEvent.RttChangeToConversionOpenState,
+            onMessage() {
+                if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
+                    fcrRttManager.closeConversion()
+                }
+            },
+        })
     }
 
 }
