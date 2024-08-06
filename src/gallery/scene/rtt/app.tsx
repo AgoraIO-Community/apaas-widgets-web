@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { FcrRTTWidget } from '.';
 import loadingPng from './loading.png';
@@ -28,6 +28,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
   const [countdown, setCountdown] = useState(""); // 10分钟倒计时，单位为秒
   const [countdownDef, setCountdownDef] = useState(600); // 10分钟倒计时，单位为秒
   const rttContainerRef = useRef<HTMLDivElement>(null);
+  const rttWidgetActionRef = useRef<HTMLDivElement>(null);
   const [rttList, setRttList] = useState<FcrRttItem[]>([]);
   const [starting, setStarting] = useState(false);
   const [listening, setListening] = useState(false);
@@ -146,17 +147,17 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
         }
       },
     })
-    //字幕按钮点击监听
-    widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttboxChanged,
-      onMessage: (data: { visible: boolean }) => {
-        if (data.visible) {
-          fcrRttManager.showSubtitle()
-        } else {
-          fcrRttManager.closeSubtitle()
-        }
-      },
-    });
+    // //字幕按钮点击监听
+    // widget.addBroadcastListener({
+    //   messageType: AgoraExtensionRoomEvent.RttboxChanged,
+    //   onMessage: (data: { visible: boolean }) => {
+    //     if (data.visible) {
+    //       fcrRttManager.showSubtitle()
+    //     } else {
+    //       fcrRttManager.closeSubtitle()
+    //     }
+    //   },
+    // });
     //实时转写按钮点击监听
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttBoxshow,
@@ -238,6 +239,34 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
 
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
+
+
+  //操作按钮部分，防止被重复刷新导致一直闪烁
+  const rttWidgetActionWidgets = useMemo(() => {
+    return  <div className="fcr-rtt-widget-actions" ref={rttWidgetActionRef}>
+    <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
+      <PopoverWithTooltip
+        popoverProps={{
+          onVisibleChange: setPopoverVisible,
+          content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
+          placement: 'top',
+          overlayInnerStyle: { width: 175 },
+        }}
+        toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
+        <div className="fcr-rtt-widget-action">
+          <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
+        </div>
+      </PopoverWithTooltip>
+    </ToolTip>
+    <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
+      <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
+        <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
+      </div>
+    </ToolTip>
+  </div>
+  }, [rttWidgetActionRef]);
+
+
   return (
     <div style={{ display: visible ? 'block' : 'none', paddingBottom: '14px' }}
       ref={rttContainerRef}>
@@ -264,27 +293,7 @@ export const RttComponet = forwardRef<WebviewInterface, { widget: FcrRTTWidget }
       })}
         onMouseEnter={() => setMouseHover(true)}
         onMouseLeave={() => setMouseHover(false)}>
-        <div className="fcr-rtt-widget-actions">
-          <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
-            <PopoverWithTooltip
-              popoverProps={{
-                onVisibleChange: setPopoverVisible,
-                content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
-                placement: 'top',
-                overlayInnerStyle: { width: 175 },
-              }}
-              toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
-              <div className="fcr-rtt-widget-action">
-                <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
-              </div>
-            </PopoverWithTooltip>
-          </ToolTip>
-          <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
-            <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
-              <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
-            </div>
-          </ToolTip>
-        </div>
+        {rttWidgetActionWidgets}
         <div>
           {/* 开启中 */}
           {starting && !isRunoutTime && (

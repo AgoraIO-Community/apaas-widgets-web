@@ -81,8 +81,8 @@ export enum AgoraExtensionRoomEvent {
   ToolboxChanged = 'toolbox-changed',
     // 实时转写显示
   RttBoxshow = 'rttbox-show',
-  // rtt盒子可见性变化
-    RttboxChanged = 'rttbox-changed',
+  // // rtt盒子可见性变化
+  //   RttboxChanged = 'rttbox-changed',
   // 布局变化
   LayoutChanged = 'layout-changed',
   // webview/streamMedia 插件刷新
@@ -113,10 +113,12 @@ export enum AgoraExtensionRoomEvent {
   RttCloseConversion = "RttCloseConversion",
   //显示字幕
   RttShowSubtitle = "RttShowSubtitle",
-  //修改字幕开启状态
-  RttChangeToSubtitleOpenState = "RttChangeToSubtitleOpenState",
-  //修改转写开启状态
-  RttChangeToConversionOpenState = "RttChangeToConversionOpenState",
+
+  //切换字幕开启状态-开启关闭处理
+  RttChangeToSubtitleState = "RttChangeToSubtitleState",
+  //奇幻转写开启状态-开启关闭处理
+  RttChangeToConversionState = "RttChangeToConversionState",
+
   //字幕功能开启成功
   RttSubtitleOpenSuccess = "RttSubtitleOpenSuccess",
   //字幕功能关闭成功
@@ -133,7 +135,7 @@ export enum AgoraExtensionRoomEvent {
   RttContentChange = "RttContentChange",
   //接收到内容信息变更
   RttListChange = "RttListChange",
-  // 监听转写状态是否更改
+  //监听转写状态是否更改
   ReceiveTranscribeOpen = "receiveTranscribeOpen",
   //状态改变到正在开启
   RttStateToOpening = "RttStateToOpening",
