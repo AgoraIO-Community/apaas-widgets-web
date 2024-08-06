@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, useEffect, useRef, useState } from 'react';
+import React, { forwardRef, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { FcrRTTWidget } from '.';
 import loadingPng from './loading.png';
@@ -24,6 +24,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   const [mouseHover, setMouseHover] = useState(false);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const rttContainerRef = useRef<HTMLDivElement>(null);
+  const rttOptionsWidgetRef = useRef<HTMLDivElement>(null);
   const scrollToBottom = () => {
     if (rttContainerRef.current) {
       rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
@@ -70,6 +71,34 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
 
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
+
+
+  //操作按钮区域
+  const rttOptionsWidget = useMemo(() => {
+    return <div className="fcr-rtt-widget-actions">
+      <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
+        <PopoverWithTooltip
+          popoverProps={{
+            onVisibleChange: setPopoverVisible,
+            content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
+            placement: 'top',
+            overlayInnerStyle: { width: 175 },
+          }}
+          toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
+          <div className="fcr-rtt-widget-action">
+            <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
+          </div>
+        </PopoverWithTooltip>
+      </ToolTip>
+      <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
+        <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
+          <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
+        </div>
+      </ToolTip>
+    </div>
+  }, [rttOptionsWidgetRef]);
+
+
   return (
     <div style={{ display: widget.visibleView ? 'block' : 'none', paddingBottom: '14px' }}
       ref={rttContainerRef}>
@@ -96,27 +125,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
       })}
         onMouseEnter={() => setMouseHover(true)}
         onMouseLeave={() => setMouseHover(false)}>
-        <div className="fcr-rtt-widget-actions">
-          <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
-            <PopoverWithTooltip
-              popoverProps={{
-                onVisibleChange: setPopoverVisible,
-                content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
-                placement: 'top',
-                overlayInnerStyle: { width: 175 },
-              }}
-              toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
-              <div className="fcr-rtt-widget-action">
-                <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
-              </div>
-            </PopoverWithTooltip>
-          </ToolTip>
-          <ToolTip content={transI18n('fcr_subtitles_button_subtitles_close')}>
-            <div onClick={() => fcrRttManager.closeSubtitle()} className="fcr-rtt-widget-action fcr-rtt-widget-close">
-              <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
-            </div>
-          </ToolTip>
-        </div>
+        {rttOptionsWidget}
         <div>
           {/* 开启中 */}
           {widget.starting && !widget.isRunoutTime && (

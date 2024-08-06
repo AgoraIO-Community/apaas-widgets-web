@@ -36,5 +36,6 @@ export default {
    fcr_dialog_rtt_toast_conversion_state_close:'',
    fcr_modal_okText:'',
    fcr_modal_cancelText:'',
-   fcr_already_close_subtitles:''
+   fcr_already_close_subtitles:'',
+  fcr_dialog_rtt_text_change_source_language: '',
 };
