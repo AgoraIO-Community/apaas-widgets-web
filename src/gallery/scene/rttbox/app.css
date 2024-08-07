@@ -66,7 +66,7 @@
   @apply hover:fcr-bg-red-6;
 }
 .fcr-rtt-widget-translate {
-  @apply fcr-text-yellow;
+  color: #fff;
 }
 .fcr-rtt-widget-translate,
 .fcr-rtt-widget-transcribe {
@@ -79,6 +79,7 @@
 .fcr-rtt-widget-transcribe {
   margin-bottom: 6px;
   margin-top: 2px;
+  color: rgba(255, 255, 255, 0.7);
 }
 .fcr-rtt-widget-settings-title {
   @apply fcr-text-2;
@@ -343,7 +344,9 @@
 
 .fcr-rtt-widget-text {
   display: flex;
-  margin-bottom: 10px;
+  margin-bottom: 10px !important;
+  margin-top: 5px !important;
+  padding: 0 6px !important;
 }
 
 .fcr-rtt-widget-name {

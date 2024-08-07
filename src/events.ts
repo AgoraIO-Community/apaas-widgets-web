@@ -196,10 +196,6 @@ export enum AgoraExtensionWidgetEvent {
   UnregisterCabinetTool = 'unregister-cabinet-tool',
   // 请求授权用户列表
   RequestGrantedList = 'request-granted-list',
-  // 
-  RttOptionsChanged = 'rtt-options-changed',
-  // 
-  RequestRttOptions = 'request-rtt-options',
   //请求当前横竖屏状态
   RequestOrientationStates = 'request-orientation',
   //取消强制横屏

@@ -1,6 +1,8 @@
 export default {
   fcr_subtitles_button_open: '字幕',
   fcr_subtitles_button_close: '关闭字幕',
+  fcr_conversion_button_open: '转写',
+  fcr_conversion_button_close: '关闭转写',
   fcr_subtitles_text_listening: '正在聆听',
   fcr_subtitles_text_no_one_speaking: '',
   fcr_subtitles_button_subtitles_setting: '字幕设置',

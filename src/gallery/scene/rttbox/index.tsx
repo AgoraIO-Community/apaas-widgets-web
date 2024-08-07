@@ -5,7 +5,9 @@ import { FcrUISceneWidget, bound, transI18n } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { SvgIconEnum } from '@components/svg-img';
 import { addResource } from './i18n/config';
-import { message } from 'antd';
+import { fcrRttManager } from '../../../common/rtt/rtt-manager'
+import { observable,runInAction } from 'mobx';
+import { FcrRttItem } from 'src/common/rtt/rtt-item';
 
 export class FcrRttboxWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -56,11 +58,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   }
   async onInstall(controller: AgoraWidgetController) {
     await addResource();
-    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_rtt_button_open'),
-      iconType: SvgIconEnum.FCR_V2_RTT,
-    });
+    this.registerWidget(controller)
   }
   onPropertiesUpdate(properties: any): void {
     // 获取下发数据
@@ -74,11 +72,14 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   @bound
   onCreate(properties: any) {
     this.setVisible(true);
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_subtitles_button_close'),
-      iconType: SvgIconEnum.FCR_V2_RTT,
-    });
+    this.registerWidget(this.widgetController)
+    this.widgetController.addBroadcastListener( {
+      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+      onMessage: () => {
+        this.registerWidget(this.widgetController)
+      }
+    })
+    this.addRttListener()
   }
   @bound
   setVisible(visible: boolean) {
@@ -116,11 +117,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
 
   onDestroy() {
     this.clearBrocastListener()
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_rtt_button_open'),
-      iconType: SvgIconEnum.FCR_V2_RTT,
-    });
+    this.unRegisterWidget(this.widgetController)
   }
 
   onUninstall(controller: AgoraWidgetController) {
@@ -129,13 +126,13 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     }
   }
   clearBrocastListener(){
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttOptionsChanged,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttHideSubtitle,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToOpening,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToListener,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttSubtitleOpenSuccess,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttListChange,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttConversionCloseSuccess,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowConversion,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttContentChange,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,onMessage() {},})
@@ -143,6 +140,106 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttboxChanged,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ToolboxChanged,onMessage() {},})
+  }
+
+
+  //注册视图widget
+  private registerWidget(controller: AgoraWidgetController) {
+    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+      id: this.widgetName,
+      name: !fcrRttManager.getConfigInfo().isOpenTranscribe() ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
+      iconType: SvgIconEnum.FCR_V2_RTT,
+    });
+  }
+  //取消注册视图widget
+  private unRegisterWidget(controller: AgoraWidgetController) {
+    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, {
+      id: this.widgetName,
+      name: !fcrRttManager.getConfigInfo().isOpenTranscribe() ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
+      iconType: SvgIconEnum.FCR_V2_RTT,
+    });
+  }
+  // 10分钟倒计时，单位为秒
+  @observable
+  countdown = ""
+  // 10分钟倒计时，单位为秒
+  @observable
+  countdownDef = 600
+  @observable
+  isRunoutTime = true
+  @observable
+  rttList: FcrRttItem[] = [];
+  @observable
+  showTranslate = fcrRttManager.getConfigInfo().isOpenTranscribe();
+  @observable
+  goToScrollToBottom = 0;//通过随机数更新
+  @observable
+  openNotification:string|null = null;//通知显示处理
+
+
+  private addRttListener() {
+    //转写列表改变
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttShowConversion,
+      onMessage: () => {
+        runInAction(() => {
+          this.showTranslate = true;
+        })
+      }
+    })
+    //转写列表改变
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttListChange,
+      onMessage: () => {
+        runInAction(() => {
+          this.rttList = ([...fcrRttManager.getRttList()]);
+          this.showTranslate = (fcrRttManager.getConfigInfo().isOpenTranscribe());
+          this.goToScrollToBottom = Math.random();
+        })
+      }
+    })
+    //转写列表改变
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,
+      onMessage: (data: string) => {
+        runInAction(() => {
+          this.showTranslate = true
+          this.openNotification = data
+          this.setMinimize(false, { ...this.minimizedProperties });
+        })
+      }
+    })
+    //倒计时修改监听
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
+      onMessage: (message: { reduce: number, sum: number, reduceTimeStr: string }) => {
+        runInAction(() => {
+          this.countdownDef = (message.sum)
+          this.countdown = (message.reduceTimeStr)
+          this.isRunoutTime = (message.reduce <= 0)
+        })
+      },
+    })
+    //默认启动下倒计时，用来初始化相关变量
+    this.countdownDef = (fcrRttManager.getConfigInfo().experienceDefTime)
+    this.countdown = (fcrRttManager.getConfigInfo().formatReduceTime())
+    this.isRunoutTime = (fcrRttManager.getConfigInfo().experienceReduceTime <= 0)
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,
+      onMessage: () => {
+        runInAction(() => {
+          this.showTranslate = true
+        })
+      },
+    })
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttConversionCloseSuccess,
+      onMessage: () => {
+        runInAction(() => {
+          this.showTranslate = false
+        })
+      },
+    })
   }
 
 }

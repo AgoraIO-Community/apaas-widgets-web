@@ -85,6 +85,7 @@ export class FcrRttConfig {
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
             }
             if (this.openTranscribe && notify) {
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             }
             const lanConfig = config["languages"]

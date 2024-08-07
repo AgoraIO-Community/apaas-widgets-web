@@ -313,61 +313,50 @@ export class FcrRTTWidget extends FcrUISceneWidget {
           this.listening = (false)
           this.noOnespeakig = (false)
         });
-
-      },
-    })
-    //设置弹窗显示处理
-    this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttShowSetting,
-      onMessage: (message: { targetClsName: string, buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean }) => {
-        const element = document.getElementsByClassName(message.targetClsName)
-        if (element) {
-          ReactDOM.render(this.getRttSettingPopView(message.buttonView, message.showToConversionSetting, message.showToSubtitleSetting), element[0])
-        }
-      },
-    })
-    //字幕按钮点击监听
-    this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttboxChanged,
-      onMessage: () => {
-        if (!fcrRttManager.getConfigInfo().isOpenSubtitle()) {
-          fcrRttManager.showSubtitle()
-        } else {
-          fcrRttManager.closeSubtitle()
-        }
-      },
-    });
-    //实时转写按钮点击监听
-    this.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttBoxshow, onMessage: () => { } })
-    this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttBoxshow,
-      onMessage: () => {
-        const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
-        fcrRttManager.showConversion()
-        setTimeout(() => {
-          if (rttSettingBtn) {
-            const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
-            ReactDOM.render(this.getRttSettingPopView(view, false, true), rttSettingBtn)
-          }
-        }, 3000)
-      },
-    });
-    //工具箱按钮点击监听
-    this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
-      onMessage: () => {
-        const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
-        const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
-        const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
-        const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
-        if (portalTargetElement1) {
-          ReactDOM.render(this.getRttSettingPopView(view, true, false), portalTargetElement1)
-        }
-        if (portalTargetElement2) {
-          ReactDOM.render(this.getRttSettingPopView(view, false, true), portalTargetElement2)
-        }
-      },
-    });
+        
+       },
+     })
+     //设置弹窗显示处理
+     this.addBroadcastListener({
+       messageType: AgoraExtensionRoomEvent.RttShowSetting,
+       onMessage:(message: { targetClsName: string, buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean })=> {
+         const element = document.getElementsByClassName(message.targetClsName)
+         if (element) {
+           ReactDOM.render(this.getRttSettingPopView(message.buttonView,message.showToConversionSetting,message.showToSubtitleSetting), element[0])
+         }
+       },
+     })
+     //实时转写按钮点击监听
+     this.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage: () => {}})
+     this.addBroadcastListener({
+       messageType: AgoraExtensionRoomEvent.RttBoxshow,
+       onMessage: () => {
+         const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
+         fcrRttManager.showConversion()
+         setTimeout(() => {
+           if (rttSettingBtn) {
+             const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
+             ReactDOM.render(this.getRttSettingPopView(view,false,true), rttSettingBtn)
+           }
+         }, 3000)
+       },
+     });
+     //工具箱按钮点击监听
+     this.addBroadcastListener({
+       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+       onMessage: () => {
+         const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
+         const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
+         const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
+         const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
+         if (portalTargetElement1) {
+          ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement1)
+         }
+         if (portalTargetElement2) {
+          ReactDOM.render(this.getRttSettingPopView(view,false,true), portalTargetElement2)
+         }
+       },
+     });
   }
   getRttSettingView(showToConversionSetting: boolean, showToSubtitleSetting: boolean) {
     return <RttSettings widget={this} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></RttSettings>

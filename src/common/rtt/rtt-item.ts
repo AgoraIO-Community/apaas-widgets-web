@@ -11,4 +11,5 @@ export interface FcrRttItem {
     time: number;
     isFinal: boolean;
     confidence: number;
+    currentTargetLan:string;
 }

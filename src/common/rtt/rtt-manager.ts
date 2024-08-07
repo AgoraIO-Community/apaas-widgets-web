@@ -92,6 +92,8 @@ class FcrRttManager {
             onMessage() {
                 if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
                     fcrRttManager.closeSubtitle()
+                }else{
+                    fcrRttManager.showSubtitle()
                 }
             },
         })
@@ -100,6 +102,8 @@ class FcrRttManager {
             onMessage() {
                 if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
                     fcrRttManager.closeConversion()
+                }else{
+                    fcrRttManager.showConversion()
                 }
             },
         })
@@ -348,6 +352,7 @@ class FcrRttManager {
                         time: 0,
                         isFinal: true,
                         confidence: 0,
+                        currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
                     },
                 ]).slice(-100);
                 ToastApi.open({
@@ -373,6 +378,7 @@ class FcrRttManager {
                             time: 0,
                             isFinal: true,
                             confidence: 0,
+                            currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
                         },
                     ])
                         .slice(-100);
@@ -406,6 +412,7 @@ class FcrRttManager {
                                     time: 0,
                                     isFinal: true,
                                     confidence: 0,
+                                    currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
                                 },
                             ]).slice(-100);
                             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
@@ -629,6 +636,8 @@ class FcrRttManager {
             onMessage() {
                 if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
                     fcrRttManager.closeSubtitle()
+                }else{
+                    fcrRttManager.showSubtitle()
                 }
             },
         })
@@ -637,6 +646,8 @@ class FcrRttManager {
             onMessage() {
                 if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
                     fcrRttManager.closeConversion()
+                }else{
+                    fcrRttManager.showConversion()
                 }
             },
         })
