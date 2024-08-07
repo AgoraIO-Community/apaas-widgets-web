@@ -141,6 +141,26 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ToolboxChanged,onMessage() {},})
   }
+  //根据搜索条件获取结果列表
+  getSearchResultList(searchQuery:string){
+    return this.rttList.filter(item => item.text.includes(searchQuery) || this.getTransText(item).includes(searchQuery));
+  }
+  //获取匹配到的数量信息
+  getSearctMatchCount(list: FcrRttItem[], searchQuery: string) {
+    return list.map((item) => {
+      const regex = new RegExp(`(${searchQuery})`, 'gi');
+      let match = item.text.match(regex);
+      let count = match ? match.length : 0;
+      match = this.getTransText(item).match(regex);
+      count = match ? match.length : 0;
+      return count;
+    })
+  }
+  //获取翻译文本
+  getTransText(item: FcrRttItem) {
+    const text = item.trans?.find(transItem => transItem.culture === item.currentTargetLan && "" !== item.currentTargetLan)?.text
+    return text ? text : ""
+  }
 
 
   //注册视图widget

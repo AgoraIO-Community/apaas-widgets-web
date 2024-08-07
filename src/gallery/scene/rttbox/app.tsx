@@ -87,37 +87,20 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
   //是否设置了翻译语言
   const enableTargetLan = configInfo.getTargetLan() && "" !== configInfo.getTargetLan().value
   //筛选结果列表
-  const filteredRttList = widget.rttList.filter(item => item.text.includes(searchQuery) || (item.trans && item.trans.some(transItem => transItem.text.includes(searchQuery))));
+  const filteredRttList = widget.getSearchResultList(searchQuery);
   //没条数据查找到的数量
-  const fillterdCountList = filteredRttList.map((item) => { const match = item.text.match(new RegExp(`(${searchQuery})`, 'gi')); return match ? match.length : 0; })
+  const fillterdCountList = widget.getSearctMatchCount(filteredRttList, searchQuery)
+  let count = 0;
+  fillterdCountList.forEach(element => { count += element; });
+  setTotalResults(count);
+
   useEffect(() => {
     if (searchQuery == '') {
       setTotalResults(0);
       setCurrentIndex(0)
       return
     }
-    const a = countMatches(filteredRttList, searchQuery)
-    setTotalResults(a);
   }, [filteredRttList]);
-
-  //数量匹配
-  const countMatches = (list: FcrRttItem[], query: string) => {
-    return list.reduce((count: number, item: FcrRttItem) => {
-      let itemCount = 0;
-      if (item.text.includes(query)) {
-        itemCount += (item.text.match(new RegExp(query, 'gi')) || []).length;
-      }
-      if (item.trans) {
-        item.trans.forEach((transItem: { text: string; }) => {
-          if (transItem.text.includes(query)) {
-            itemCount += (transItem.text.match(new RegExp(query, 'gi')) || []).length;
-          }
-        });
-      }
-
-      return count + itemCount;
-    }, 0);
-  };
 
   //高亮匹配
   const renderHighlightedText = (text: string, currIndex: number) => {
@@ -145,7 +128,6 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
 
   //获取显示的文本
   const getShowText = (item: FcrRttItem, index: number, showSource: boolean, showTarget: boolean) => {
-    debugger
     //是否显示源语言
     if (showSource) {
       return renderHighlightedText(item.text, index)
