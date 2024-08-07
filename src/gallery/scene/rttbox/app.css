@@ -155,7 +155,8 @@
   left: 0;
   /* margin-top: -50px; */
   /* width: 100%+30px; */
-  min-width: 750px;
+  min-width: 400px;
+  max-width: 750px;
   padding: 8px 20px;
   /* height: 33px;
   line-height: 33px; */
@@ -175,6 +176,11 @@
   margin-bottom: 5px;
   border-radius: 3px;
 }
+
+.fcr-limited-box-timeline{
+  overflow: hidden;
+}
+
 .fcr-rtt-widget-language-modal{
   /* @apply fcr-rounded-8; */
   position: absolute;

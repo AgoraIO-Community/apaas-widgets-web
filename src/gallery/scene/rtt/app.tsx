@@ -67,11 +67,13 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   //语言显示
   const leve2Text = configInfo.isShowDoubleLan() && configInfo.getTargetLan() && configInfo.getTargetLan().value !== configInfo.getSourceLan().value ? translateText : null;
   const leve1Text = !configInfo.isShowDoubleLan() && leve2Text !== null && leve2Text !== undefined ? leve2Text : sourceText
-  
+
 
   const translating = !translateText && showTranslateOnly;
   const lastItemAvalible = lastItem && lastItemName;
 
+  //字幕box当前宽度
+  const limitBoxWidth = document.getElementsByClassName('fcr-limited-box')?.length > 0 ? document.getElementsByClassName('fcr-limited-box')[0]?.getBoundingClientRect()?.width : 0;
 
   //操作按钮区域
   const rttOptionsWidget = useMemo(() => {
@@ -98,21 +100,20 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
     </div>
   }, [rttOptionsWidgetRef]);
 
-
   return (
     <div style={{ display: widget.visibleView ? 'block' : 'none', paddingBottom: '14px' }}
       ref={rttContainerRef}>
       <div>
         {widget.isRunoutTime && <div className="fcr-limited-box">
           <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-          {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
+          {transI18n(limitBoxWidth < 460 ? 'fcr_dialog_rtt_subtitles_dialog_time_limit_end_ellipsis' : 'fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
             reason1: widget.countdownDef / 60,
           })}
         </div>}
         {!widget.isRunoutTime &&
           <div className="fcr-limited-box">
             <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-            {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
+            {transI18n(limitBoxWidth < 460 ? 'fcr_dialog_rtt_subtitles_dialog_time_limit_reduce_ellipsis' : 'fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
               reason1: widget.countdownDef / 60,
               reason2: widget.countdown,
             })}

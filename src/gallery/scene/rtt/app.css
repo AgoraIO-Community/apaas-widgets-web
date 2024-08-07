@@ -147,7 +147,8 @@
   position: unset !important;
   top: 0 !important;
   left: 0;
-  min-width: 750px;
+  min-width: 400px;
+  max-width: 750px;
   padding: 6px 15px 6px 6px !important;
   background-color: rgba(66, 98, 255, 0.6) !important;
   border-radius: 8px;
@@ -189,7 +190,8 @@
   background-color: rgba(0, 0, 0, 0.6);
   border-radius: 8px;
   border-width: 0.5px;
-  min-width: 750px;
+  min-width: 400px;
+  max-width: 750px;
   border-width: 2px;
   border-style: solid;
   position: relative;
