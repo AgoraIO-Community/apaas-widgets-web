@@ -151,6 +151,8 @@ export enum AgoraExtensionRoomEvent {
   RttSourceLanChangeFinish = "RttSourceLanChangeFinish",
   //翻译语言修改完成
   RttTargetLanChangeFinish = "RttTargetLanChangeFinish",
+  //双语显示修改完成
+  RttShowDoubleLanChangeFinish = "RttShowDoubleLanChangeFinish",
   ChangeRttlanguage = "ChangeRttlanguage",
 }
 

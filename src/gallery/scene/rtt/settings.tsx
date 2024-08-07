@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { runInAction } from 'mobx';
 import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
@@ -20,7 +21,7 @@ export const RttSettings = ({
 }) => {
   const [sourceLan, setSourceLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getSourceLan());
   const [targetLan, setTargetLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getTargetLan());
-  const [showBilingual, setShowBilingual] = useState(true);
+  const [showBilingual, setShowBilingual] = useState(fcrRttManager.getConfigInfo().isShowDoubleLan());
   const [horizontalValue, setHorizontalValue] = useState(fcrRttManager.getConfigInfo().getTextSize());
   const [isShowSetting, setIsShowSetting] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);//控制二次确认源语言弹层显示
@@ -78,7 +79,7 @@ export const RttSettings = ({
             <RttSettingsSelect
               items={fcrRttManager.sourceLanguageList}
               currentLan={sourceLan}
-              onSelectLang={(lan: FcrRttLanguageData) => { setPreSourceLan(lan); hideAllModule();setIsModalOpen(true);  }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); hideAllModule(); setIsModalOpen(true); }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
@@ -89,13 +90,13 @@ export const RttSettings = ({
             <RttSettingsSelect
               items={fcrRttManager.targetLanguageList}
               currentLan={targetLan}
-              onSelectLang={(lan: FcrRttLanguageData) => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
               colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>
           </div>
-          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual); }}>
+          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { runInAction(() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual); }) }}>
             <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
             {showBilingual && <SvgImg
               type={SvgIconEnum.FCR_CHOOSEIT}
@@ -110,21 +111,21 @@ export const RttSettings = ({
               max="30"
               step="1"
               value={horizontalValue}
-              onChange={(e) => { fcrRttManager.setCurrentTextSize(Number(e.target.value), true); setHorizontalValue(Number(e.target.value)) }}
+              onChange={(e) => { runInAction(() => { fcrRttManager.setCurrentTextSize(Number(e.target.value), true); setHorizontalValue(Number(e.target.value)); }) }}
             />
           </div>
         </div>
-        <button className="restore-button" onClick={() => { fcrRttManager.setCurrentTextSize(14, true); setHorizontalValue(14) }}>
+        <button className="restore-button" onClick={() => { runInAction(() => { fcrRttManager.resetAllConfig(); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_reset_font_size')}
         </button>
-        {showToConversionSetting && <button className="real-time-button" onClick={() => { fcrRttManager.showConversion(); hideAllModule() }}>
+        {showToConversionSetting && <button className="real-time-button" onClick={() => { runInAction(() => { fcrRttManager.showConversion(); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_view_rtt_open_conversion')}
         </button>}
-        {showToSubtitleSetting && <button className="real-time-button" onClick={() => { fcrRttManager.showSubtitle(); hideAllModule() }}>
+        {showToSubtitleSetting && <button className="real-time-button" onClick={() => { runInAction(() => { fcrRttManager.showSubtitle(); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_view_rtt_open_subtitle')}
         </button>}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { runInAction(() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan); }) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(preSourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
     </div>

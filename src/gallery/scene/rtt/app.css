@@ -247,6 +247,7 @@
   font-size: 13px;
   font-weight: 400;
   color: white !important;
+  min-height: 32px;
 }
 .settings-option-textSize {
   display: flex;

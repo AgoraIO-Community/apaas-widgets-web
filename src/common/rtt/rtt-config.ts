@@ -167,7 +167,7 @@ export class FcrRttConfig {
             localStorage.setItem(`${this.roomUuid}_showDoubleLan`, show + "")
         }
         if (needNotify) {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.ChangeRttShowDoubleLan, this)
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowDoubleLanChangeFinish,  { config: this, value: show })
         }
     }
     isShowDoubleLan() {

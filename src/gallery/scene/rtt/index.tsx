@@ -198,8 +198,6 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   @observable
   noOnespeakig = (false);
   @observable
-  target = ('');
-  @observable
   showTranslate = (false);
   @observable
   rttVisible = (true);
@@ -309,7 +307,6 @@ export class FcrRTTWidget extends FcrUISceneWidget {
         runInAction(() => {
           this.rttList = ([...fcrRttManager.getRttList()]);
           this.showTranslate = (fcrRttManager.getConfigInfo().isOpenTranscribe());
-          this.target = (fcrRttManager.getConfigInfo().getTargetLan().value);
           this.rttVisible = (true)
           this.visibleView = (true)
           this.starting = (false)
