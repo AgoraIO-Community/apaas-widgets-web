@@ -14,10 +14,12 @@ export const RttSettings = ({
   widget,
   showToSubtitleSetting,
   showToConversionSetting,
+  targetClassName,
 }: {
   widget: FcrRTTWidget;
   showToSubtitleSetting: boolean;//是否显示打开字幕设置
   showToConversionSetting: boolean;//是否显示打开转写设置
+  targetClassName: string;//目标弹窗的className
 }) => {
   const [sourceLan, setSourceLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getSourceLan());
   const [targetLan, setTargetLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getTargetLan());
@@ -26,6 +28,7 @@ export const RttSettings = ({
   const [isShowSetting, setIsShowSetting] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);//控制二次确认源语言弹层显示
   const [preSourceLan, setPreSourceLan] = useState<FcrRttLanguageData>(new FcrRttLanguageData("", ""));//要修改的目标源语言
+  const [showSelectType, setShowSelectType] = useState<string>();//设置显示的子选项
 
   //初始化处理
   useEffect(() => {
@@ -78,7 +81,10 @@ export const RttSettings = ({
             <span>{transI18n('fcr_subtitles_label_original_audio')}:</span>
             <RttSettingsSelect
               items={fcrRttManager.sourceLanguageList}
+              targetClassName={targetClassName}
               currentLan={sourceLan}
+              isOpen={'sourceLan' == showSelectType}
+              openSelect={()=>{setShowSelectType('sourceLan' == showSelectType ? "" :'sourceLan')}}
               onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); hideAllModule(); setIsModalOpen(true); }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
@@ -89,7 +95,10 @@ export const RttSettings = ({
             <span>{transI18n('fcr_subtitles_label_translate_audio')}:</span>
             <RttSettingsSelect
               items={fcrRttManager.targetLanguageList}
+              targetClassName={targetClassName}
               currentLan={targetLan}
+              isOpen={'targetLan' == showSelectType}
+              openSelect={()=>{setShowSelectType('targetLan' == showSelectType ? "" :'targetLan')}}
               onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
@@ -136,26 +145,41 @@ const RttSettingsSelect = ({
   items,
   currentLan,
   onSelectLang,
+  targetClassName,
+  isOpen,
+  openSelect
 }: {
   items: FcrRttLanguageData[],
   currentLan: FcrRttLanguageData,
   onSelectLang: (item: FcrRttLanguageData) => void;
+  targetClassName: string;
+  isOpen: boolean;
+  openSelect: () => void;
 }) => {
-  const [isOpen, setIsOpen] = useState(false);//控制选择框的显示
+  const [showRight, setShowRight] = useState(false);//控制选择框的显示
+
+  //开启选择
+  const openSelectClick = () => {
+    if (!isOpen) {
+      setShowRight(document.body.getBoundingClientRect().right - document.getElementsByClassName(targetClassName)[0].getBoundingClientRect().right < 100)
+    }
+    openSelect()
+  }
+
   return (
     <div className="select-container">
-      <div className="select-value" onClick={() => setIsOpen(!isOpen)}>
+      <div className="select-value" onClick={() => openSelectClick()}>
         {transI18n(currentLan.text) || transI18n('fcr_device_option_choose_lang')}
       </div>
       {isOpen && (
-        <div className="select-options">
+        <div className="select-options" style={{ left: showRight ? 'unset' : '140%', right: showRight ? '200%' : 'unset' }}>
           {items.map((item => {
             return <div
               key={item.value}
               className={classnames('select-option')}
               onClick={() => {
                 onSelectLang(item)
-                setIsOpen(false);
+                openSelect()
               }}>
               {transI18n(item.text) || transI18n('fcr_device_option_choose_lang')}
               {item.value === currentLan.value && <SvgImg
