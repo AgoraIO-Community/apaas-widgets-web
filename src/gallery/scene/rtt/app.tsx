@@ -47,31 +47,32 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   const SettingView: React.FC<SettingViewProps> = ({ showToConversionSetting, showToSubtitleSetting }) => {
     return <RttSettings widget={widget} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></RttSettings>
   }
+  
+  const active = mouseHover || popoverVisible;
 
-  const enableTranslate = !!widget.target;
-  const showTranslateOnly = enableTranslate && !widget.showTranslate;
-  const lastItem = showTranslateOnly ? widget.rttList.findLast((item) => {
+  //配置信息
+  const configInfo = fcrRttManager.getConfigInfo();
+  //是否设置了翻译语言
+  const enableTargetLan = configInfo.getTargetLan() && "" !== configInfo.getTargetLan().value
+  //是否开启了双语
+  const enableShowDoubleLan = configInfo.isShowDoubleLan()
+  //最后一条消息
+  const lastItem = enableTargetLan ? widget.rttList.findLast((item) => {
     return !!item.trans?.find((item) => {
-      return item.culture === widget.target;
+      return item.culture === configInfo.getTargetLan().value  && "" !== configInfo.getTargetLan().value;
     });
   }) : widget.rttList[widget.rttList.length - 1];
+  //最后一条姓名信息
   const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(String(lastItem?.uid),)?.fromUser.userName;
-  const active = mouseHover || popoverVisible;
   //声源语言
   const sourceText = lastItem?.text;
   //翻译语言
   const translateText = lastItem?.trans?.find((item) => {
-    return item.culture === widget.target;
+    return item.culture === configInfo.getTargetLan().value  && "" !== configInfo.getTargetLan().value;
   })?.text;
-  const configInfo = fcrRttManager.getConfigInfo();
   //语言显示
-  const leve2Text = configInfo.isShowDoubleLan() && configInfo.getTargetLan() && configInfo.getTargetLan().value !== configInfo.getSourceLan().value ? translateText : null;
-  const leve1Text = !configInfo.isShowDoubleLan() && leve2Text !== null && leve2Text !== undefined ? leve2Text : sourceText
-  
-
-  const translating = !translateText && showTranslateOnly;
-  const lastItemAvalible = lastItem && lastItemName;
-
+  const leve2Text = enableShowDoubleLan && enableTargetLan ? translateText : null
+  const leve1Text = !enableShowDoubleLan && enableTargetLan ? translateText : sourceText;
 
   //操作按钮区域
   const rttOptionsWidget = useMemo(() => {
@@ -100,7 +101,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
 
 
   return (
-    <div style={{ display: widget.visibleView ? 'block' : 'none', paddingBottom: '14px' }}
+    <div style={{ display: widget.visibleView && (widget.starting || widget.listening || widget.noOnespeakig || widget.isRunoutTime || leve1Text || leve2Text) ? 'block' : 'none', paddingBottom: '14px' }}
       ref={rttContainerRef}>
       <div>
         {widget.isRunoutTime && <div className="fcr-limited-box">
@@ -147,16 +148,16 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
             </div>
           )}
           {/* 没有人正在说话 */}
-          {widget.noOnespeakig && !widget.starting && !translating && !widget.isRunoutTime && (
+          {widget.noOnespeakig && !widget.starting && !(leve1Text || leve2Text) && !widget.isRunoutTime && (
             <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
               {transI18n('fcr_subtitles_text_no_one_speaking')}
             </div>
           )}
         </div>
 
-        {lastItemAvalible && !widget.listening && !widget.starting && !widget.noOnespeakig && !widget.isRunoutTime && (
+        {(leve1Text || leve2Text) && !widget.listening && !widget.starting && !widget.noOnespeakig && !widget.isRunoutTime && (
           <div className="fcr-rtt-widget-text">
-            <Avatar textSize={14} size={30} nickName={lastItemName}></Avatar>
+            <Avatar textSize={14} size={30} nickName={lastItemName ? lastItemName : ""}></Avatar>
             <div>
               <div className="fcr-rtt-widget-name">{lastItemName}:</div>
               <div className="fcr-rtt-widget-transcribe" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>

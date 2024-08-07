@@ -239,30 +239,6 @@
   padding-right: 9px;
 }
 
-.settings-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  padding-left: 9px;
-  padding-right: 9px;
-  font-size: 13px;
-  /* height: 32px; */
-}
-.settings-option:hover {
-  border-radius: 5px;
-  background-color:#4262FF;
-}
-.settings-option {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 10px;
-  padding-left: 9px;
-  padding-right: 9px;
-  /* height: 32px; */
-}
-
 .restore-button, .real-time-button {
   display: block;
   width: 100%;
@@ -320,21 +296,6 @@
   /* background: #666; */
 }
 
-.settings-option span {
-  flex-grow: 1;
-  white-space: nowrap;
-  font-size: 12px;
-}
-
-.settings-option input[type="checkbox"] {
-  margin-left: 10px;
-}
-
-.settings-option input[type="range"] {
-  flex-grow: 1;
-  margin-left: 5px;
-  width: 60%;
-}
 /* 历史记录样式 */
 .search-container {
   display: flex;

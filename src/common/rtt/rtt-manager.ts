@@ -168,6 +168,28 @@ class FcrRttManager {
         this.rttConfigInfo.setShowDoubleLan(showDouble, notify, true)
     }
 
+    //重置所有配置信息
+    resetAllConfig() {
+        const config: FcrRttConfig = this.rttConfigInfo.copy()
+        this.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], false, false)
+        this.rttConfigInfo.setTargetLan(this.targetLanguageList[0], false, false)
+        this.rttConfigInfo.setShowDoubleLan(false, false, false)
+        this.rttConfigInfo.setTextSize(14, false, false)
+
+        this.sendRequest(this.rttConfigInfo)?.then(() => {
+            this.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], true, true)
+            this.rttConfigInfo.setTargetLan(this.targetLanguageList[0], true, true)
+            this.rttConfigInfo.setShowDoubleLan(false, true, true)
+            this.rttConfigInfo.setTextSize(14, true, true)
+            this.localIsChangeSourceLan = true;
+        })?.catch(() => {
+            this.rttConfigInfo.setSourceLan(config.getSourceLan(), false, false)
+            this.rttConfigInfo.setTargetLan(config.getTargetLan(), false, false)
+            this.rttConfigInfo.setShowDoubleLan(config.isShowDoubleLan(), false, false)
+            this.rttConfigInfo.setTextSize(config.getTextSize(), false, false)
+        })
+    }
+
     /**
      * 开启字幕定时列表
      */
@@ -189,7 +211,7 @@ class FcrRttManager {
      */
     private messageDataProcessing(uid: string, data: Uint8Array) {
         //当前仅教师显示，因为web端学生角色没有入口
-        if(EduRoleTypeEnum.teacher !== this.classroomStore?.userStore.localUser?.userRole){
+        if(EduRoleTypeEnum.teacher !== fcrRttManager.classroomStore?.userStore.localUser?.userRole){
             return
         }
         //清除字幕定时器
@@ -220,7 +242,6 @@ class FcrRttManager {
                         confidence = word.confidence;
                         isFinal = word.isFinal;
                     });
-                    console.log('transcribe: ' + lastItemIndexByUid + textStr);
 
                     if (!lastItemByUid || lastItemByUid.isFinal) {
                         fcrRttManager.rttList = fcrRttManager.rttList.concat([
@@ -274,6 +295,7 @@ class FcrRttManager {
         }
         if (fcrRttManager.rttList.length > 0) {
             const last = fcrRttManager.rttList[fcrRttManager.rttList.length - 1]
+            console.log('最后一条翻译转写信息:', last);
             if (fcrRttManager.rttConfigInfo.isOpenSubtitle()) {
                 fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
             }
@@ -445,6 +467,7 @@ class FcrRttManager {
                 }, 2000)
                 this.openSubtitleTimerList.push(id)
             })?.catch(()=>{
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
                 this.rttConfigInfo.setOpenSubtitle(config.isOpenSubtitle(), false)
             })
         }
