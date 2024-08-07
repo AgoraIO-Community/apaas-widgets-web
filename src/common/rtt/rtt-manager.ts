@@ -129,6 +129,7 @@ class FcrRttManager {
             this.rttConfigInfo.setSourceLan(findData, false,false)
             this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setSourceLan(findData, notify,true)
+                this.localIsChangeSourceLan = true;
             })?.catch(()=>{
                 this.rttConfigInfo.setSourceLan(config.getSourceLan(), false,false)
             })
@@ -291,8 +292,8 @@ class FcrRttManager {
 
     //上一次配置信息
     private lastPropInfo = ""
-    //是否是首次初始化widget房间信息,因为未返回实际的修改字段，所以需要做首次获取的更新处理，因为首次开启关闭会触发这个更新，但是实际上声源不一定会有修改
-    private firstInitWidgetProperties = true;
+    //本地师傅修改了声源语言,因为未返回实际的修改字段，所以需要做首次获取的更新处理，因为首次开启关闭会触发这个更新，但是实际上声源不一定会有修改
+    private localIsChangeSourceLan = false;
 
     /**
      * 房间属性变更监听
@@ -358,45 +359,42 @@ class FcrRttManager {
             }
 
             //判断是否修改了声源语言
-            if(!this.firstInitWidgetProperties){
-                if(1 == Number(config["subtitle"]) || 1== Number(config["transcribe"])){
-                    const sourceLan = config["languages"]["source"]
-                    if (sourceLan && operator) {
-                        if (this.rttConfigInfo.getSourceLan().value !== sourceLan || operator.userUuid == localUser?.userUuid) {
-                            const findData = this.sourceLanguageList.find(item => item.value === sourceLan);
-                            if (findData) {
-                                const languageText = transI18n(findData.text)
-                                const useText = `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}${languageText}`
-                                if(fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()){
-                                    ToastApi.open({
-                                        toastProps: {
-                                            type: 'normal',
-                                            content: useText,
-                                        },
-                                    });
-                                }
-                                this.rttList = this.rttList.concat([
-                                    {
-                                        uuid: uuidV4(),
-                                        culture: '',
-                                        text: useText ,
-                                        uid: '',
-                                        time: 0,
-                                        isFinal: true,
-                                        confidence: 0,
+            if (1 == Number(config["subtitle"]) || 1 == Number(config["transcribe"])) {
+                const sourceLan = config["languages"]["source"]
+                if (sourceLan && operator) {
+                    if (this.rttConfigInfo.getSourceLan().value !== sourceLan || (operator.userUuid == localUser?.userUuid && this.localIsChangeSourceLan)) {
+                        this.localIsChangeSourceLan = false;
+                        const findData = this.sourceLanguageList.find(item => item.value === sourceLan);
+                        if (findData) {
+                            const languageText = transI18n(findData.text)
+                            if (fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()) {
+                                ToastApi.open({
+                                    toastProps: {
+                                        type: 'normal',
+                                        content: `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}<span style="color: #4262FF;">${languageText}</span>`,
                                     },
-                                ]).slice(-100);
-                                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
-                                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                                });
                             }
-        
+                            this.rttList = this.rttList.concat([
+                                {
+                                    uuid: uuidV4(),
+                                    culture: '',
+                                    text: `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}${languageText}`,
+                                    uid: '',
+                                    time: 0,
+                                    isFinal: true,
+                                    confidence: 0,
+                                },
+                            ]).slice(-100);
+                            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
+                            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                         }
+
                     }
                 }
             }
             this.rttConfigInfo.initRoomeConfigInfo(properties, false)
         }
-        this.firstInitWidgetProperties = false;
     }
 
     /**
@@ -414,9 +412,6 @@ class FcrRttManager {
      * 显示字幕
      */
     showSubtitle() {
-        if(!this.rttConfigInfo.isOpenTranscribe()){
-            this.firstInitWidgetProperties = true
-        }
         //消息实际处理
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowSubtitle)
         if (this.rttConfigInfo.isOpenSubtitle()) {
@@ -472,9 +467,6 @@ class FcrRttManager {
      * 显示转写
      */
     showConversion() {
-        if(!this.rttConfigInfo.isOpenSubtitle()){
-            this.firstInitWidgetProperties = true
-        }
         //消息实际处理
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
         if (this.rttConfigInfo.isOpenTranscribe()) {
