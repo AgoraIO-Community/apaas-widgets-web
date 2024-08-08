@@ -90,9 +90,6 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
   const filteredRttList = widget.getSearchResultList(searchQuery);
   //没条数据查找到的数量
   const fillterdCountList = widget.getSearctMatchCount(filteredRttList, searchQuery)
-  let count = 0;
-  fillterdCountList.forEach(element => { count += element; });
-  setTotalResults(count);
 
   useEffect(() => {
     if (searchQuery == '') {
@@ -100,6 +97,9 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
       setCurrentIndex(0)
       return
     }
+    let count = 0;
+    fillterdCountList.forEach(element => { count += element; });
+    setTotalResults(count);
   }, [filteredRttList]);
 
   //高亮匹配
@@ -151,90 +151,90 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
   };
   return (
     // <div className="fcr-chatroom-dialog-wrapper">
-    <div
-      ref={rttContainerRef}
-      style={{ width: widget.defaultRect.width, height: widget.defaultRect.height }}
-      className="fcr-chatroom-dialog-wrapper fcr-chatroom-dialog-content">
-      <div className="fcr-chatroom-dialog-title">
-        <div
-          className="fcr-chatroom-dialog-title-close"
-          onClick={() => widget.clsoe()}>
-          <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
+      <div
+        ref={rttContainerRef}
+        style={{ width: widget.defaultRect.width, height: widget.defaultRect.height }}
+        className="fcr-chatroom-dialog-wrapper fcr-chatroom-dialog-content">
+        <div className="fcr-chatroom-dialog-title">
+          <div
+            className="fcr-chatroom-dialog-title-close"
+            onClick={() => widget.clsoe()}>
+            <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
+          </div>
+          <span className='fcr-chatroom-dialog-title-text' fcr-chatroom-dialog-title>字幕</span>
         </div>
-        <span className='fcr-chatroom-dialog-title-text' fcr-chatroom-dialog-title>字幕</span>
-      </div>
-      <div className="fcr-chatroom-dialog-tab-inner">
-        <div className="fcr-chatroom-member-list-search fcr-rttbox-list-search">
-          <Input
-            shape="rounded"
-            size="medium"
-            allowClear={false}
-            value={searchQuery}
-            onChange={setSearchQuery}
-            iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
-            placeholder={transI18n('fcr_chat_label_search')}
-          />
-          {searchQuery && <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
-            <div className='fcr-input-icon-clear' onClick={() => { setSearchQuery("") }}>
-              <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16} />
-            </div>
-            <span style={{ color: '#fff' }}>{`${Math.min(currentIndex + 1, totalResults)} / ${totalResults}`}</span>
-            <div className="fcrr-drop-arrow-button-box">
-
-              <div className="fcr-drop-arrow" onClick={() => handleArrowClick('up')}>
-                <SvgImg colors={{ iconPrimary: currentIndex == 0 ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
+        <div className="fcr-chatroom-dialog-tab-inner">
+          <div className="fcr-chatroom-member-list-search fcr-rttbox-list-search">
+            <Input
+              shape="rounded"
+              size="medium"
+              allowClear={false}
+              value={searchQuery}
+              onChange={setSearchQuery}
+              iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
+              placeholder={transI18n('fcr_chat_label_search')}
+            />
+            {searchQuery && <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
+              <div className='fcr-input-icon-clear' onClick={() => { setSearchQuery("") }}>
+                <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16} />
               </div>
-              <div className="fcr-drop-arrow" onClick={() => handleArrowClick('down')}>
-                <SvgImg colors={{ iconPrimary: currentIndex >= (totalResults - 1) ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
-              </div>
+              <span style={{ color: '#fff' }}>{`${Math.min(currentIndex + 1, totalResults)} / ${totalResults}`}</span>
+              <div className="fcrr-drop-arrow-button-box">
 
-            </div>
-          </div>}
-        </div>
-        {widget.isRunoutTime && <div className="fcr-limited-time-experience">
-          <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-          {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
+                <div className="fcr-drop-arrow" onClick={() => handleArrowClick('up')}>
+                  <SvgImg colors={{ iconPrimary: currentIndex == 0 ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', top: 0 }} type={SvgIconEnum.FCR_DROPUP4} onClick={() => handleArrowClick('up')}></SvgImg>
+                </div>
+                <div className="fcr-drop-arrow" onClick={() => handleArrowClick('down')}>
+                  <SvgImg colors={{ iconPrimary: currentIndex >= (totalResults - 1) ? 'rgba(255,255,255,0.5)' : '#ffffff' }} style={{ position: 'absolute', bottom: 0 }} type={SvgIconEnum.FCR_DROPDOWN4}></SvgImg>
+                </div>
+
+              </div>
+            </div>}
+          </div>
+          {widget.isRunoutTime && <div className="fcr-limited-time-experience">
+            <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+            {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
             reason1: widget.countdownDef / 60,
-          })}
-        </div>}
-        {!widget.isRunoutTime && <div className="fcr-limited-time-experience">
-          <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
-          {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
+            })}
+          </div>}
+          {!widget.isRunoutTime && <div className="fcr-limited-time-experience">
+            <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
+            {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_reduce', {
             reason1: widget.countdownDef / 60,
             reason2: widget.countdown,
-          })}
-        </div>}
-        {!widget.isRunoutTime && <div className="rtt-list" style={{ paddingBottom: '30px' }}>
-          {filteredRttList.map((item, index) => {
-            const userInfo = widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid));
-            return <div key={index}>
-              {item.uid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-                <Avatar textSize={14} size={30} nickName={userInfo ? userInfo.fromUser.userName : ""}></Avatar>
-                <div>
+            })}
+          </div>}
+          {!widget.isRunoutTime && <div className="rtt-list" style={{ paddingBottom: '30px' }}>
+            {filteredRttList.map((item, index) => {
+              const userInfo = widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid));
+              return <div key={index}>
+                {item.uid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+                  <Avatar textSize={14} size={30} nickName={userInfo ? userInfo.fromUser.userName : ""}></Avatar>
                   <div>
-                    <div style={{ fontSize: '12PX', display: 'inline-block' }} className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}</div>
-                    <div style={{ fontSize: '12PX', display: 'inline-block', color: '#BBBBBB', paddingLeft: '7px' }} >{formatMillisecondsToDateTime(item.time)}</div>
-                  </div>
+                    <div>
+                      <div style={{ fontSize: '12PX', display: 'inline-block' }} className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}</div>
+                      <div style={{ fontSize: '12PX', display: 'inline-block', color: '#BBBBBB', paddingLeft: '7px' }} >{formatMillisecondsToDateTime(item.time)}</div>
+                    </div>
                   <div className="fcr-rtt-widget-translate">{getShowText(item, index, true, false)}</div>
-                  <div className="fcr-rtt-widget-transcribe">
+                    <div className="fcr-rtt-widget-transcribe">
                     {getShowText(item, index, false, true)}
+                    </div>
                   </div>
-                </div>
-              </div>}
+                </div>}
               {!item.uid && <div style={{ textAlign: 'center' }}>
                 <div className="open-language">{getShowText(item, index, true, false)}</div>
-              </div>}
-            </div>
-          })}
+            </div>}
+              </div>
+            })}
 
-        </div>}
-        <div className="footer">
-          {widget.showTranslate && <button className="stop-button" style={{ backgroundColor: 'rgba(0,0,0,0)', border: '1px solid' }} onClick={() => fcrRttManager.closeConversion()}>{transI18n('fcr_rtt_stop_transcription')}</button>}
-          {!widget.showTranslate && <button className="stop-button" onClick={() => { fcrRttManager.showConversion() }}>{transI18n('fcr_rtt_start_transcription')}</button>}
-          <div className='fcr_rtt_settings_show'></div>
+          </div>}
+          <div className="footer">
+            {widget.showTranslate && <button className="stop-button" style={{ backgroundColor: 'rgba(0,0,0,0)', border: '1px solid' }} onClick={() => fcrRttManager.closeConversion()}>{transI18n('fcr_rtt_stop_transcription')}</button>}
+            {!widget.showTranslate && <button className="stop-button" onClick={() => { fcrRttManager.showConversion() }}>{transI18n('fcr_rtt_start_transcription')}</button>}
+            <div className='fcr_rtt_settings_show'></div>
+          </div>
         </div>
       </div>
-    </div>
   );
 });
 
