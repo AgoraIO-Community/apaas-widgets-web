@@ -103,6 +103,28 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
     setTotalResults(count);
   }, [filteredRttList]);
 
+  useEffect(() => {
+    if (currentIndex == undefined || currentIndex < -1) return;
+    const currentEle = document.getElementsByClassName('highlighted-current');
+    const textWrapEle = document.getElementsByClassName('rtt-list');
+
+    if (textContainerRef.current) {
+      if (currentEle?.length > 0) {
+        const currentTop = currentEle[0]?.getBoundingClientRect()?.top;
+        const boxTop = textWrapEle?.length > 0 ? textWrapEle[0]?.getBoundingClientRect()?.top : 0;
+        const boxHeight = textWrapEle?.length > 0 ? textWrapEle[0]?.getBoundingClientRect()?.height : 0;
+        const scrollTop = Math.abs(currentTop - boxTop);
+
+        textContainerRef.current.scrollTop = currentTop > (boxTop + boxHeight)
+          ? (textContainerRef.current.scrollTop + scrollTop - 30)
+          : currentTop > boxTop
+            ? textContainerRef.current.scrollTop
+            : (textContainerRef.current.scrollTop - scrollTop - 30);
+      }
+    }
+  }, [currentIndex])
+
+
   //高亮匹配
   const renderHighlightedText = (text: string, currIndex: number) => {
     const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
@@ -144,39 +166,10 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
   }
 
   const handleArrowClick = (direction: string) => {
-    const currentEle = document.getElementsByClassName('highlighted-current');
-    const textWrapEle = document.getElementsByClassName('rtt-list');
     if (direction === 'up' && currentIndex >= 1) {
       setCurrentIndex(currentIndex - 1);
-      console.log('当前index', currentIndex);
-
     } else if (direction === 'down' && currentIndex < totalResults) {
       setCurrentIndex(currentIndex + 1);
-    }
-    if (textContainerRef.current) {
-      // debugger
-      if (currentEle?.length > 0) {
-        const currentTop = currentEle[0]?.getBoundingClientRect()?.top;
-        const boxTop = textWrapEle?.length > 0 ? textWrapEle[0]?.getBoundingClientRect()?.top : 0;
-        const boxHeight = textWrapEle?.length > 0 ? textWrapEle[0]?.getBoundingClientRect()?.height : 0;
-
-        const scrollTop = Math.abs(currentTop - boxTop);
-        console.log('scrollTop', scrollTop, currentTop, boxTop);
-
-        textContainerRef.current.scrollTop = currentTop > boxTop
-          ? currentTop > (boxTop + boxHeight)
-            ? (textContainerRef.current.scrollTop + scrollTop + 30)
-            : textContainerRef.current.scrollTop
-          : (textContainerRef.current.scrollTop - scrollTop - 30);
-
-        console.log(' textContainerRef.current.scrollTop', textContainerRef.current.scrollTop,
-          currentTop > boxTop
-            ? currentTop > (boxTop + boxHeight)
-              ? (textContainerRef.current.scrollTop + scrollTop + 30)
-              : textContainerRef.current.scrollTop
-            : (textContainerRef.current.scrollTop - scrollTop - 30)
-        );
-      }
     }
   };
   return (

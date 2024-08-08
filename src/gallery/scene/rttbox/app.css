@@ -339,7 +339,8 @@
   padding: 10px;
   padding-bottom: 30px;
   overflow-y: auto;
-  max-height: calc(100vh - 300px); /* Adjust based on the desired maximum height */
+  /* max-height: calc(100vh - 300px); Adjust based on the desired maximum height */
+  max-height: 400px;
 }
 
 .fcr-rtt-widget-text {
