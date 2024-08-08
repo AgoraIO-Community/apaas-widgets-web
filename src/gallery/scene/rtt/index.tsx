@@ -370,7 +370,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
         const target = document.getElementsByClassName(targetClassName)
         if (target.length > 0) {
           //@ts-ignore
-          target[0].style.display === value ? 'block' : 'none'
+          target[0].style.display = value ? 'block' : 'none'
         }
       }}
       content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting,targetClassName)}</div>}
