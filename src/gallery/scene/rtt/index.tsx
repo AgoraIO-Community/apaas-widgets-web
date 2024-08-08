@@ -331,7 +331,6 @@ export class FcrRTTWidget extends FcrUISceneWidget {
        messageType: AgoraExtensionRoomEvent.RttBoxshow,
        onMessage: () => {
          const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
-         fcrRttManager.showConversion()
          setTimeout(() => {
            if (rttSettingBtn) {
              const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
@@ -349,10 +348,10 @@ export class FcrRTTWidget extends FcrUISceneWidget {
          const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
          const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
          if (portalTargetElement1) {
-          ReactDOM.render(this.getRttSettingPopView(view,false,true), portalTargetElement1)
+          ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement1)
          }
          if (portalTargetElement2) {
-          ReactDOM.render(this.getRttSettingPopView(view,false,true), portalTargetElement2)
+          ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement2)
          }
        },
      });
