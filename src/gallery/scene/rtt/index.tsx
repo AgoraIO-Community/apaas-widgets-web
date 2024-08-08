@@ -43,10 +43,9 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       width: this.defaultWidth,
       height: this.defaultHeight,
       x: clientRect.width / 2 - this.defaultWidth / 2,
-      y: clientRect.height - 100 - this.defaultHeight,
+      y: clientRect.height - 125 - this.defaultHeight,
     };
   }
-
   defaultWidth = 750;
   defaultHeight = 50;
 

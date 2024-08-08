@@ -156,7 +156,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
       return renderHighlightedText(item.text, index)
     }
     //是否显示翻译语言
-    if (showTarget && configInfo.getSourceLan().value !== configInfo.getTargetLan().value) {
+    if (showTarget ) {
       const text = item.trans?.find(transItem => transItem.culture === item.currentTargetLan && "" !== item.currentTargetLan)?.text
       if (text) {
         return renderHighlightedText(text, index)

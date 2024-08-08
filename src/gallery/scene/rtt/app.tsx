@@ -15,6 +15,7 @@ import ReactDOM from 'react-dom';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { FcrRttItem } from '../../../common/rtt/rtt-item';
 import { ToastApi } from '@components/toast';
+import { translate } from 'src/gallery/classroom/hx-chat/fcr-chatroom/container/mobile/components/image-viewer/utils/matrix';
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -22,6 +23,8 @@ export type WebviewInterface = {
 
 export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   const [mouseHover, setMouseHover] = useState(false);
+  const [translateY, setTranslateY] = useState(0);
+  const [viewLastHeight, setViewLastHeight] = useState(0);
   const [popoverVisible, setPopoverVisible] = useState(false);
   const rttContainerRef = useRef<HTMLDivElement>(null);
   const rttOptionsWidgetRef = useRef<HTMLDivElement>(null);
@@ -103,9 +106,20 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
     </div>
   }, [rttOptionsWidgetRef]);
 
+  useEffect(() => {
+    const rectInfo = rttContainerRef.current?.getBoundingClientRect()
+    if (rectInfo && rttContainerRef.current && rectInfo.width && rectInfo.height) {
+      setTranslateY(viewLastHeight == 0 ? 0 : translateY + (viewLastHeight - rectInfo.height))
+      setViewLastHeight(rectInfo.height)
+    }
+  }, [rttContainerRef.current?.getBoundingClientRect().height]);
+
+
   return (
-    <div style={{ display: widget.visibleView && (widget.starting || widget.listening || widget.noOnespeakig || widget.isRunoutTime || leve1Text || leve2Text) ? 'block' : 'none', paddingBottom: '14px' }}
-      ref={rttContainerRef}>
+    <div style={{
+      display: widget.visibleView && (widget.starting || widget.listening || widget.noOnespeakig || widget.isRunoutTime || leve1Text || leve2Text) ? 'block' : 'none', 
+      transform: `translate(0, ${translateY}px)`,
+    }} ref={rttContainerRef}>
       <div>
         {widget.isRunoutTime && <div className="fcr-limited-box">
           <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
@@ -159,9 +173,9 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
         </div>
 
         {(leve1Text || leve2Text) && !widget.listening && !widget.starting && !widget.noOnespeakig && !widget.isRunoutTime && (
-          <div className="fcr-rtt-widget-text">
+          <div className="fcr-rtt-subtitle-widget-text">
             <Avatar textSize={14} size={30} nickName={lastItemName ? lastItemName : ""}></Avatar>
-            <div>
+            <div style={{paddingLeft:10}}>
               <div className="fcr-rtt-widget-name">{lastItemName}:</div>
               <div className="fcr-rtt-widget-transcribe" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
                 {leve1Text}
