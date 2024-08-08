@@ -71,19 +71,21 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
     return item.culture === configInfo.getTargetLan().value  && "" !== configInfo.getTargetLan().value;
   })?.text;
   //语言显示
-  const leve2Text = enableShowDoubleLan && enableTargetLan ? translateText : null
+  const leve2Text = enableShowDoubleLan && enableTargetLan && configInfo.getSourceLan().value !== configInfo.getTargetLan().value ? translateText : null
   const leve1Text = !enableShowDoubleLan && enableTargetLan ? translateText : sourceText;
  //字幕box当前宽度
  const limitBoxWidth = document.getElementsByClassName('fcr-limited-box')?.length > 0 ? document.getElementsByClassName('fcr-limited-box')[0]?.getBoundingClientRect()?.width : 0;
  
   //操作按钮区域
   const rttOptionsWidget = useMemo(() => {
-    return <div className="fcr-rtt-widget-actions">
+    const targetPopClassRoom = "fcr-rtt-widget-actions-" + Math.random()
+    return <div className={`${targetPopClassRoom} fcr-rtt-widget-actions`}>
       <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
-        <PopoverWithTooltip
+        <PopoverWithTooltip 
           popoverProps={{
             onVisibleChange: setPopoverVisible,
-            content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
+            content: (widget.getRttSettingView(true,false,targetPopClassRoom)),
+            // content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
             placement: 'top',
             overlayInnerStyle: { width: 175 },
           }}
