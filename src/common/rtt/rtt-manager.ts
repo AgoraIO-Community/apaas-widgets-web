@@ -131,9 +131,9 @@ class FcrRttManager {
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             this.rttConfigInfo.setSourceLan(findData, false,false)
+            this.localIsChangeSourceLan = true;
             this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setSourceLan(findData, notify,true)
-                this.localIsChangeSourceLan = true;
             })?.catch(()=>{
                 this.rttConfigInfo.setSourceLan(config.getSourceLan(), false,false)
             })
@@ -150,6 +150,7 @@ class FcrRttManager {
         if (findData) {
             const config: FcrRttConfig = this.rttConfigInfo.copy()
             this.rttConfigInfo.setTargetLan(findData, false,false)
+            this.localIsChangeTarget = findData.value !== config.getSourceLan().value && "" !== findData.value
             this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setTargetLan(findData, notify,true)
             })?.catch(()=>{
@@ -257,6 +258,7 @@ class FcrRttManager {
                                 time: textstream.time,
                                 isFinal: isFinal,
                                 confidence: confidence,
+                                currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
                             },
                         ])
                             .slice(-100);
@@ -318,8 +320,12 @@ class FcrRttManager {
 
     //上一次配置信息
     private lastPropInfo = ""
-    //本地师傅修改了声源语言,因为未返回实际的修改字段，所以需要做首次获取的更新处理，因为首次开启关闭会触发这个更新，但是实际上声源不一定会有修改
+    //本地是否修改了声源语言,因为未返回实际的修改字段，所以需要做首次获取的更新处理，因为首次开启关闭会触发这个更新，但是实际上声源不一定会有修改
     private localIsChangeSourceLan = false;
+    //本地是否修改了转写状态，原因同上
+    private localIsChangeTranscribeState = false;
+    //本地是否修改了翻译状态，原因同上
+    private localIsChangeTarget = false;
 
     /**
      * 房间属性变更监听
@@ -328,48 +334,53 @@ class FcrRttManager {
         if (properties && Object.keys(properties).length > 0 ) {
             const config = properties["extra"]
             console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：" , config)
-            const localUser = this.classroomStore?.userStore.localUser
+            const localUser = fcrRttManager.classroomStore?.userStore.localUser
             const currentInfo = JSON.stringify(config);
-            if(currentInfo === this.lastPropInfo || "" === currentInfo){
+            if(currentInfo === fcrRttManager.lastPropInfo || "" === currentInfo){
                 return
             }
-            this.lastPropInfo = currentInfo
+            fcrRttManager.lastPropInfo = currentInfo
             //判断是否改变了转写状态
-            if (Number(config["transcribe"])) {
-                const toOpen = 1 == Number(config["transcribe"])
-                const textContent = `${this.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
-                const toastContent = `${this.formatRoleName(operator, localUser)}${transI18n(
-                    localUser?.userUuid == operator?.userUuid ?
-                        (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open_me_show' : 'fcr_dialog_rtt_toast_conversion_state_close_me_show') :
-                        (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open' : 'fcr_dialog_rtt_toast_conversion_state_close')
-                )}`
-                this.rttList = this.rttList.concat([
-                    {
-                        uuid: uuidV4(),
-                        culture: '',
-                        text: textContent,
-                        uid: '',
-                        time: 0,
-                        isFinal: true,
-                        confidence: 0,
-                        currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
-                    },
-                ]).slice(-100);
-                ToastApi.open({
-                    toastProps: {
-                        type: 'normal',
-                        content: toastContent,
-                    },
-                });
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
-                // 监听是否开启实时转写
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen, textContent)
+            const transcribeState = Number(config["transcribe"])
+            if (transcribeState && operator) {
+                const toOpen = 1 == transcribeState
+                if (fcrRttManager.rttConfigInfo.isOpenTranscribe() !== toOpen || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTranscribeState)) {
+                    fcrRttManager.localIsChangeTranscribeState = false;
+                    const textContent = `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
+                    const toastContent = `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n(
+                        localUser?.userUuid == operator?.userUuid ?
+                            (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open_me_show' : 'fcr_dialog_rtt_toast_conversion_state_close_me_show') :
+                            (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open' : 'fcr_dialog_rtt_toast_conversion_state_close')
+                    )}`
+                    fcrRttManager.rttList = fcrRttManager.rttList.concat([
+                        {
+                            uuid: uuidV4(),
+                            culture: '',
+                            text: textContent,
+                            uid: '',
+                            time: 0,
+                            isFinal: true,
+                            confidence: 0,
+                            currentTargetLan: fcrRttManager.getConfigInfo().getTargetLan().value
+                        },
+                    ]).slice(-100);
+                    ToastApi.open({
+                        toastProps: {
+                            type: 'normal',
+                            content: toastContent,
+                        },
+                    });
+                    fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                    // 监听是否开启实时转写
+                    fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen, textContent)
+                }
             }
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any
-            if (targetLan && targetLan.length > 0) {
-                if (this.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0]) {
-                    this.rttList = this.rttList.concat([
+            if (targetLan && targetLan.length > 0 && operator) {
+                if (fcrRttManager.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0] || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTarget)) {
+                    fcrRttManager.localIsChangeTarget = false;
+                    fcrRttManager.rttList = fcrRttManager.rttList.concat([
                         {
                             uuid: uuidV4(),
                             culture: '',
@@ -380,49 +391,46 @@ class FcrRttManager {
                             confidence: 0,
                             currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
                         },
-                    ])
-                        .slice(-100);
-                    this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                    ]).slice(-100);
+                    fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                 }
             }
 
             //判断是否修改了声源语言
-            if (1 == Number(config["subtitle"]) || 1 == Number(config["transcribe"])) {
-                const sourceLan = config["languages"]["source"]
-                if (sourceLan && operator) {
-                    if (this.rttConfigInfo.getSourceLan().value !== sourceLan || (operator.userUuid == localUser?.userUuid && this.localIsChangeSourceLan)) {
-                        this.localIsChangeSourceLan = false;
-                        const findData = this.sourceLanguageList.find(item => item.value === sourceLan);
-                        if (findData) {
-                            const languageText = transI18n(findData.text)
-                            if (fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()) {
-                                ToastApi.open({
-                                    toastProps: {
-                                        type: 'normal',
-                                        content: `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}<span style="color: #4262FF;">${languageText}</span>`,
-                                    },
-                                });
-                            }
-                            this.rttList = this.rttList.concat([
-                                {
-                                    uuid: uuidV4(),
-                                    culture: '',
-                                    text: `${this.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}${languageText}`,
-                                    uid: '',
-                                    time: 0,
-                                    isFinal: true,
-                                    confidence: 0,
-                                    currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
+            const sourceLan = config["languages"]["source"]
+            if (sourceLan && operator) {
+                if (fcrRttManager.rttConfigInfo.getSourceLan().value !== sourceLan || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeSourceLan)) {
+                    fcrRttManager.localIsChangeSourceLan = false;
+                    const findData = fcrRttManager.sourceLanguageList.find(item => item.value === sourceLan);
+                    if (findData) {
+                        const languageText = transI18n(findData.text)
+                        if (fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()) {
+                            ToastApi.open({
+                                toastProps: {
+                                    type: 'normal',
+                                    content: `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}<span style="color: #4262FF;">${languageText}</span>`,
                                 },
-                            ]).slice(-100);
-                            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
-                            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                            });
                         }
-
+                        fcrRttManager.rttList = fcrRttManager.rttList.concat([
+                            {
+                                uuid: uuidV4(),
+                                culture: '',
+                                text: `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}${languageText}`,
+                                uid: '',
+                                time: 0,
+                                isFinal: true,
+                                confidence: 0,
+                                currentTargetLan: fcrRttManager.getConfigInfo().getTargetLan().value
+                            },
+                        ]).slice(-100);
+                        fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
+                        fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                     }
+
                 }
             }
-            this.rttConfigInfo.initRoomeConfigInfo(properties, false)
+            fcrRttManager.rttConfigInfo.initRoomeConfigInfo(properties, false)
         }
     }
 
@@ -504,6 +512,7 @@ class FcrRttManager {
         } else {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             this.rttConfigInfo.setOpenTranscribe(true, false)
+            this.localIsChangeTranscribeState = true;
             this.sendRequest(this.rttConfigInfo)?.then(() => {
                 this.rttConfigInfo.setOpenTranscribe(true, true)
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
@@ -520,6 +529,7 @@ class FcrRttManager {
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = this.rttConfigInfo.copy()
         this.rttConfigInfo.setOpenTranscribe(false, false)
+        this.localIsChangeTranscribeState = true;
         this.sendRequest(this.rttConfigInfo)?.then(() => {
             this.rttConfigInfo.setOpenTranscribe(false, true)
             this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)

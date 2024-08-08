@@ -365,14 +365,13 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     const targetClassName = 'fcr-rtt-setting-' + Math.random()
     return <div style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
       <Popover
-      defaultVisible={this.popoverVisible}
       onVisibleChange={(value) => {
         runInAction(() => { this.popoverVisible = value })
         //强行隐藏
         const target = document.getElementsByClassName(targetClassName)
         if (target.length > 0) {
           //@ts-ignore
-          target[0].style.display = value ? 'block' : 'none'
+          target[0].style.display === value ? 'block' : 'none'
         }
       }}
       content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting,targetClassName)}</div>}
