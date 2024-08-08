@@ -117,7 +117,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
 
   return (
     <div style={{
-      display: widget.visibleView && (widget.starting || widget.listening || widget.noOnespeakig || widget.isRunoutTime || leve1Text || leve2Text) ? 'block' : 'none', 
+      display: widget.visibleView && (widget.starting || widget.listening || widget.noOnespeakig || widget.isRunoutTime || leve1Text && lastItemName || leve2Text) ? 'block' : 'none', 
       transform: `translate(0, ${translateY}px)`,
     }} ref={rttContainerRef}>
       <div>
