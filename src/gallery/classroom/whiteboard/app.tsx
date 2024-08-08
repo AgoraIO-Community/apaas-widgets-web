@@ -29,11 +29,11 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
     }, 100);
 
     const targetElement = document.querySelector('.streams-swiper-vert');
-    let resizeObserver: any = null;
+    let resizeObserver: ResizeObserver | null = null;
 
     if (targetElement) {
       resizeObserver = new ResizeObserver((entries) => {
-        for (let entry of entries) {
+        for (const entry of entries) {
           const slideWidth = entry.contentRect.width;
           _setToolbarDockPosition(slideWidth);
         }
@@ -51,7 +51,7 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
       onMessage: _resetToolPosition,
     });
     return () => {
-      resizeObserver.unobserve(targetElement);
+      targetElement && resizeObserver?.unobserve(targetElement);
 
       widget.widgetController.removeBroadcastListener({
         messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,

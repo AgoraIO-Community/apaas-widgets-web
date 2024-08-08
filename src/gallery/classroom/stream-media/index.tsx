@@ -30,7 +30,8 @@ export class FcrStreamMediaPlayerWidget extends FcrUISceneWidget {
   @computed
   get hasPrivilege() {
     const { role } = this.classroomConfig.sessionInfo;
-    return [1, 3].includes(role) || this._privilege;
+    return [1, 3].includes(role);
+    // return [1, 3].includes(role) || this._privilege;
   }
   get displayName() {
     return this.webviewTitle;

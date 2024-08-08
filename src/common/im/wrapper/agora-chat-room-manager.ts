@@ -6,7 +6,8 @@ import { convertHXMessage } from './utils';
 import dayjs from 'dayjs';
 import { FcrChatRoomItem } from './agora-chat-room-item';
 import { AgoraIM } from '.';
-import { join } from 'lodash';
+import { runInAction } from 'mobx';
+
 type AgoraChatLog = {
   level: Lowercase<AgoraChat.DefaultLevel>;
   logs: [string, unknown];
@@ -258,11 +259,11 @@ export class FcrChatRoomManager {
             break;
           case 'memberAbsence':
             await this.listenerUserLeft(msg.from,msg.id)
-            this.emitEventsInfo(AgoraIMEvents.UserLeft, msg.from, msg.id);
+            this.emitEventsInfo(AgoraIMEvents.UserLeft, null, msg.id);
             this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, msg.id);
               //非主房间要通知下主房间，因为主房间包含所有
             if(this._defaultChatRoomeId !== msg.id){
-              this.emitEventsInfo(AgoraIMEvents.UserJoined, msg.from, this._defaultChatRoomeId);
+              this.emitEventsInfo(AgoraIMEvents.UserJoined, null, this._defaultChatRoomeId);
               this.emitEventsInfo(AgoraIMEvents.UserListUpdated, msg.from, this._defaultChatRoomeId);
             }
             break;
@@ -334,25 +335,27 @@ export class FcrChatRoomManager {
    * @param value 值
    */
   private emitEventsInfo(events: AgoraIMEvents, data?: any, toChatRoomId?: string | null) {
-    if (toChatRoomId != null) {
-      this._chatRoomItemMap.forEach((value, key) => {
-        if (toChatRoomId === key) {
+    runInAction(()=>{
+      if (toChatRoomId != null) {
+        this._chatRoomItemMap.forEach((value, key) => {
+          if (toChatRoomId === key) {
+            if (data != null) {
+              value.emit(events, data);
+            } else {
+              value.emit(events);
+            }
+          }
+        });
+      } else {
+        this._chatRoomItemMap.forEach((value) => {
           if (data != null) {
             value.emit(events, data);
           } else {
             value.emit(events);
           }
-        }
-      });
-    } else {
-      this._chatRoomItemMap.forEach((value) => {
-        if (data != null) {
-          value.emit(events, data);
-        } else {
-          value.emit(events);
-        }
-      });
-    }
+        });
+      }
+    })
   }
   destory() {
     this._chatRoomItemMap.forEach((value) => {
@@ -369,15 +372,15 @@ export class FcrChatRoomManager {
     const { data } = await this._classRoomConnection.getChatRoomDetails({
       chatRoomId: roomId,
     });
-    const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
-    const affiliations = res.affiliations;
-    const manager = this.createChat(roomId);
-    const list = await manager.getUserInfoList( affiliations
-      .filter((item) => !!item.member)
-      .map((item) => {
-        return item.member ? item.member : '';
-      }));
-    this._roomeUserMap.set(roomId,list);
+      const res = (data as unknown as AgoraIMChatRoomDetails[])[0];
+      const affiliations = res.affiliations;
+      const manager = this.createChat(roomId);
+      const list = await manager.getUserInfoList( affiliations
+        .filter((item) => !!item.member)
+        .map((item) => {
+          return item.member ? item.member : '';
+        }));
+      this._roomeUserMap.set(roomId,list);
   }
   /**
    * 监听到用户进入房间
@@ -385,10 +388,8 @@ export class FcrChatRoomManager {
   private async listenerUserJoin(userId:string,chatRoomId:string){
     const manager = this.createChat(this._defaultChatRoomeId);
     const userInfoList = await manager.getUserInfoList([userId]);
+    this.changeRoomUserList(this._defaultChatRoomeId,userInfoList,true,false)
     this.changeRoomUserList(chatRoomId,userInfoList,true,false)
-    if(chatRoomId !== this._defaultChatRoomeId){
-      this.changeRoomUserList(this._defaultChatRoomeId,userInfoList,true,false)
-    }
   }
   /**
    * 监听到用户离开房间
@@ -396,10 +397,8 @@ export class FcrChatRoomManager {
   private async listenerUserLeft(userId:string,chatRoomId:string){
     const manager = this.createChat(this._defaultChatRoomeId);
     const userInfoList = await manager.getUserInfoList([userId]);
+    this.changeRoomUserList(this._defaultChatRoomeId,userInfoList,false,true)
     this.changeRoomUserList(chatRoomId,userInfoList,false,true)
-    if(chatRoomId !== this._defaultChatRoomeId){
-      this.changeRoomUserList(this._defaultChatRoomeId,userInfoList,false,true)
-    }
   }
   /**
    * 修改指定房间的用户列表
@@ -418,8 +417,24 @@ export class FcrChatRoomManager {
       const idsToRemove = new Set(userList.map(item => item.userId));
       list = list.filter(item => !idsToRemove.has(item.userId));
     }
-    this._roomeUserMap.set(roomId,list)
+    this._roomeUserMap.set(roomId,this.removeDuplicatesByProperty(list))
   }
+  /**
+   * 移除重复的用户
+   */
+  private removeDuplicatesByProperty(arr:AgoraIMUserInfo[]) {
+    const seen = new Set();
+    return arr.filter(item => {
+      const key = item.userId;
+      if (seen.has(key)) {
+        return false; // 已经存在，跳过
+      } else {
+        seen.add(key);
+        return true; // 新的项，保留
+      }
+    });
+  }
+  
   /**
    * 获取所有用户列表
    */

@@ -198,6 +198,7 @@ export class UserStore {
   @bound
   async updateAllUsers(users: AgoraIMUserInfo[]) {
     runInAction(() => {
+      this.userMap.clear()
       users.forEach((user) => {
         if (user.ext.role === 1 || user.ext.role === 2) {
           this.userMap.set(user.userId, user);
@@ -207,19 +208,23 @@ export class UserStore {
   }
   @bound
   private async _onUserJoined(user: string) {
-    this.updateUsers([user]);
-    if (this.joinedUser) return;
-    const userInfoList = await this._fcrChatRoom.getUserInfoList([user]);
-    const joinedUser = userInfoList[0];
-    if (joinedUser.ext.role !== 2) return;
-    runInAction(() => {
-      if (joinedUser) this.joinedUser = joinedUser;
-    });
-    Scheduler.shared.addDelayTask(() => {
-      runInAction(() => {
-        this.joinedUser = undefined;
-      });
-    }, this.userCarouselAnimDelay + 500);
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
+    }
+    // this.updateUsers([user]);
+    // if (this.joinedUser) return;
+    // const userInfoList = await this._fcrChatRoom.getUserInfoList([user]);
+    // const joinedUser = userInfoList[0];
+    // if (joinedUser.ext.role !== 2) return;
+    // runInAction(() => {
+    //   if (joinedUser) this.joinedUser = joinedUser;
+    // });
+    // Scheduler.shared.addDelayTask(() => {
+    //   runInAction(() => {
+    //     this.joinedUser = undefined;
+    //   });
+    // }, this.userCarouselAnimDelay + 500);
   }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];

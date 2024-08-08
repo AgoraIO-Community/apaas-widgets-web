@@ -16,7 +16,7 @@ export const FcrChatRoomH5 = observer(() => {
   const [showEmoji, setShowEmoji] = useState(false);
 
   const {
-    roomStore: { orientation, forceLandscape },
+    roomStore: { orientation, forceLandscape,screenShareStream },
   } = useStore();
   const isLandscape = orientation === OrientationEnum.landscape || forceLandscape;
   return (
@@ -53,6 +53,7 @@ export const FcrChatRoomH5 = observer(() => {
               <FcrChatRoomH5Inputs
                 emojiContainer={ document.querySelector('.fcr-chatroom-mobile-landscape-input-container') as HTMLDivElement}
                 showEmoji={showEmoji}
+                screenShareStream={screenShareStream}
                 onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
               <PollMobile />
             </div>,
@@ -71,6 +72,7 @@ export const FcrChatRoomH5 = observer(() => {
             <FcrChatRoomH5Inputs
               emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
               showEmoji={showEmoji}
+              screenShareStream={screenShareStream}
               onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
           </div>
         )}

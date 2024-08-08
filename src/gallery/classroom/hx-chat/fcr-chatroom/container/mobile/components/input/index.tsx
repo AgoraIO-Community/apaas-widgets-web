@@ -19,8 +19,10 @@ export const FcrChatRoomH5Inputs = observer(
     showEmoji,
     onShowEmojiChanged,
     emojiContainer,
+    screenShareStream,
   }: {
     showEmoji: boolean;
+    screenShareStream: any;
     onShowEmojiChanged: (show: boolean) => void;
     emojiContainer: HTMLDivElement | null;
   }) => {
@@ -195,9 +197,12 @@ export const FcrChatRoomH5Inputs = observer(
     }, []);
     const handleShowApplicatioon = (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
-      if (widgets.length === 0) {
-        addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
-        return;
+      const haveShare = isLandscape && screenShareStream;
+      if(!haveShare){
+        if (widgets.length === 0) {
+          addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
+          return;
+        }
       }
       setIsShowApplication(!isShowApplication);
     };
@@ -406,7 +411,7 @@ export const FcrChatRoomH5Inputs = observer(
                       <div
                         className={classNames(
                           'fcr-chatroom-mobile-inputs-application landscape',
-                          widgets.length === 0 && 'zero',
+                          isLandscape ? widgets.length === 0 && 'zero' : 1,
                           isShowApplication && 'active',
                         )}
                         onClick={handleShowApplicatioon}>
@@ -416,7 +421,7 @@ export const FcrChatRoomH5Inputs = observer(
                           type={SvgIconEnum.APPLICATION}
                           size={30}></SvgImgMobile>
                         <span className="fcr-chatroom-mobile-inputs-application-count">
-                          {widgets.length > 99 ? '...' : widgets.length}
+                            {widgets.length > 99 ? '...' : widgets.length}
                         </span>
                       </div>
                     </ToolTip>
@@ -652,7 +657,7 @@ export const FcrChatRoomH5Inputs = observer(
                   <div
                     className={classNames(
                       'fcr-chatroom-mobile-inputs-application landscape',
-                      widgets.length === 0 && 'zero',
+                      isLandscape ? widgets.length === 0 && 'zero' : 1,
                       isShowApplication && 'active',
                     )}
                     onClick={handleShowApplicatioon}>
@@ -662,7 +667,7 @@ export const FcrChatRoomH5Inputs = observer(
                       type={SvgIconEnum.APPLICATION}
                       size={30}></SvgImgMobile>
                     <span className="fcr-chatroom-mobile-inputs-application-count">
-                      {widgets.length > 99 ? '...' : widgets.length}
+                    {widgets.length > 99 ? '...' : widgets.length}
                     </span>
                   </div>
                 </ToolTip>

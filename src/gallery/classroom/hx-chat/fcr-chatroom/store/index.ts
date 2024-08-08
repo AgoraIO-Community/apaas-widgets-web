@@ -42,7 +42,7 @@ export class FcrChatRoomStore {
     this._addListeners();
     this._init();
     this.roomId = roomId;
-    console.log('roomIdroomIdroomId', roomId)
+    console.log('roomIdroomIdroomId', roomId);
   }
   private _addListeners() {
     this.fcrChatRoom.on(
@@ -72,22 +72,12 @@ export class FcrChatRoomStore {
       Logger.error('[FcrChatRoom] connection disConnected');
     }
     if (connectionState === AgoraIMConnectionState.Connected) {
-      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList()
-      if(users){
-        this.userStore.updateAllUsers(users)
+      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList();
+      if (users) {
+        this.userStore.updateAllUsers(users);
       }
-      // this.roomStore.getChatRoomDetails().then((details) => {
-      //   const { affiliations } = details;
-      //   this.userStore.updateUsers(
-      //     affiliations
-      //       .filter((item) => !!item.member)
-      //       .map((item) => {
-      //         return item.member!;
-      //       }),
-      //   );
-      // });
+
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
-      this.roomStore.getWidgets()
       this.messageStore.getHistoryMessageList();
       this.messageStore.getAnnouncement();
     }
@@ -130,10 +120,12 @@ export class FcrChatRoomStore {
       //@ts-ignore
       return this._widget.shareUIStore.addSingletonToast(transI18n('chat.join_room_fail'), 'error');
     }
-    if (AgoraIM.getConnectState(this.fcrChatRoom.getRoomId()) === AgoraIMConnectionState.Connected) {
-      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList()
-      if(users){
-        this.userStore.updateAllUsers(users)
+    if (
+      AgoraIM.getConnectState(this.fcrChatRoom.getRoomId()) === AgoraIMConnectionState.Connected
+    ) {
+      const users = AgoraIM.getRoomManager(this.fcrChatRoom.getRoomId())?.getAllUserList();
+      if (users) {
+        this.userStore.updateAllUsers(users);
       }
       // this.roomStore.getChatRoomDetails().then((details) => {
       //   const { affiliations } = details;
@@ -146,7 +138,7 @@ export class FcrChatRoomStore {
       //   );
       // });
       if (this.roomStore.isHost) this.userStore.getMutedUserList();
-      this.roomStore.getWidgets()
+      this.roomStore.getWidgets();
       this.messageStore.getHistoryMessageList();
       this.messageStore.getAnnouncement();
     }
