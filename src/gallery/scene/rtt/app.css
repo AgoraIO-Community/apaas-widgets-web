@@ -55,9 +55,7 @@
 .fcr-rtt-widget-close {
   @apply hover:fcr-bg-red-6;
 }
-.fcr-rtt-widget-translate {
-  @apply fcr-text-yellow;
-}
+
 .fcr-rtt-widget-translate,
 .fcr-rtt-widget-transcribe {
   /* line-height: 18px; */
@@ -69,6 +67,9 @@
   display: flex;
   overflow: hidden;
   align-items: flex-end;
+}
+.fcr-rtt-widget-translate {
+  @apply fcr-text-yellow;
 }
 .fcr-rtt-widget-transcribe {
   margin-bottom: 6px;
