@@ -214,7 +214,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
       messageType: AgoraExtensionRoomEvent.RttListChange,
       onMessage: () => {
         runInAction(() => {
-          this.rttList = ([...fcrRttManager.getRttList()]);
+          this.rttList = ([...fcrRttManager.getShowRttList()]);
           this.showTranslate = (fcrRttManager.getConfigInfo().isOpenTranscribe());
           this.goToScrollToBottom = Math.random();
         })

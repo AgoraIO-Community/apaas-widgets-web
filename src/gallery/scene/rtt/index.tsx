@@ -189,7 +189,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   @observable
   visibleView = false
   @observable
-  rttList: FcrRttItem[] = [];
+  lastRecord: FcrRttItem|null = null
   @observable
   starting = (false);
   @observable
@@ -304,7 +304,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       messageType: AgoraExtensionRoomEvent.RttContentChange,
       onMessage: () => {
         runInAction(() => {
-          this.rttList = ([...fcrRttManager.getRttList()]);
+          this.lastRecord = fcrRttManager.getLastRecord();
           this.showTranslate = (fcrRttManager.getConfigInfo().isOpenTranscribe());
           this.rttVisible = (true)
           this.visibleView = (true)

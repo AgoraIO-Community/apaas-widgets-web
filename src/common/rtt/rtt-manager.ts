@@ -206,13 +206,21 @@ class FcrRttManager {
     /**
      * 翻译转写列表数据
      */
-    private rttList: FcrRttItem[] = []
+    private allRecordList: FcrRttItem[] = []
+    private showRecordList: FcrRttItem[] = []
+    private lastRecord: FcrRttItem|null = null
 
     /**
      * 获取rtt数据列表
      */
-    getRttList() {
-        return this.rttList
+    getShowRttList() {
+        return fcrRttManager.showRecordList
+    }
+    /**
+     * 获取rtt数据列表
+     */
+    getLastRecord() {
+        return fcrRttManager.lastRecord
     }
 
     /**
@@ -234,8 +242,8 @@ class FcrRttManager {
         if (pb) {
             //@ts-ignore
             const textstream = pb.decode(data);
-            const lastItemByUid = fcrRttManager.rttList.findLast((item) => item.uid === textstream.uid);
-            const lastItemIndexByUid = fcrRttManager.rttList.findLastIndex(
+            const lastItemByUid = fcrRttManager.allRecordList.findLast((item) => item.uid === textstream.uid);
+            const lastItemIndexByUid = fcrRttManager.allRecordList.findLastIndex(
                 (item) => item.uid === textstream.uid,
             );
             console.log("FcrRttReceiveMessage:", "接收到转写翻译信息->" , textstream)
@@ -253,7 +261,7 @@ class FcrRttManager {
                     });
 
                     if (!lastItemByUid || lastItemByUid.isFinal) {
-                        fcrRttManager.rttList = fcrRttManager.rttList.concat([
+                        fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
                             {
                                 uuid: uuidV4(),
                                 culture: textstream.culture,
@@ -268,9 +276,8 @@ class FcrRttManager {
                         ])
                             .slice(-100);
                     } else {
-                        fcrRttManager.rttList[lastItemIndexByUid] = {
+                        fcrRttManager.allRecordList[lastItemIndexByUid] = {
                             ...lastItemByUid,
-                            uuid: uuidV4(),
                             text: textStr,
                             time: textstream.time,
                             isFinal: isFinal,
@@ -295,17 +302,25 @@ class FcrRttManager {
                         });
                     });
                     if (lastItemByUid) {
-                        fcrRttManager.rttList[lastItemIndexByUid] = {
+                        fcrRttManager.allRecordList[lastItemIndexByUid] = {
                             ...lastItemByUid,
-                            uuid: uuidV4(),
                             trans,
                         };
                     }
                     break;
             }
         }
-        if (fcrRttManager.rttList.length > 0) {
-            const last = fcrRttManager.rttList[fcrRttManager.rttList.length - 1]
+        fcrRttManager.lastRecord = fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1]
+        if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
+            const showItem = fcrRttManager.showRecordList.length >= 0 ? fcrRttManager.showRecordList[fcrRttManager.showRecordList.length - 1] : null
+            if (showItem?.uuid != null && showItem.uuid == fcrRttManager.lastRecord.uuid) {
+                fcrRttManager.showRecordList[fcrRttManager.showRecordList.length - 1] = fcrRttManager.lastRecord
+            } else {
+                fcrRttManager.showRecordList.push(fcrRttManager.lastRecord)
+            }
+        }
+        if (fcrRttManager.allRecordList.length > 0) {
+            const last = fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1]
             console.log('最后一条翻译转写信息:', last);
             if (fcrRttManager.rttConfigInfo.isOpenSubtitle()) {
                 fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
@@ -357,7 +372,7 @@ class FcrRttManager {
                             (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open_me_show' : 'fcr_dialog_rtt_toast_conversion_state_close_me_show') :
                             (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open' : 'fcr_dialog_rtt_toast_conversion_state_close')
                     )}`
-                    fcrRttManager.rttList = fcrRttManager.rttList.concat([
+                    fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
                         {
                             uuid: uuidV4(),
                             culture: '',
@@ -370,6 +385,7 @@ class FcrRttManager {
                             currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                         },
                     ]).slice(-100);
+                    fcrRttManager.showRecordList.push(fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1])
                     ToastApi.open({
                         toastProps: {
                             type: 'normal',
@@ -387,7 +403,7 @@ class FcrRttManager {
             if (targetLan && targetLan.length > 0 && operator && operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTarget) {
                 if (fcrRttManager.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0]) {
                     fcrRttManager.localIsChangeTarget = false;
-                    fcrRttManager.rttList = fcrRttManager.rttList.concat([
+                    fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
                         {
                             uuid: uuidV4(),
                             culture: '',
@@ -400,6 +416,7 @@ class FcrRttManager {
                             currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                         },
                     ]).slice(-100);
+                    fcrRttManager.showRecordList.push(fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1])
                     fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                 }
             }
@@ -421,7 +438,7 @@ class FcrRttManager {
                                 },
                             });
                         }
-                        fcrRttManager.rttList = fcrRttManager.rttList.concat([
+                        fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
                             {
                                 uuid: uuidV4(),
                                 culture: '',
@@ -434,6 +451,7 @@ class FcrRttManager {
                                 currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                             },
                         ]).slice(-100);
+                        fcrRttManager.showRecordList.push(fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1])
                         fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
                         fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                     }
@@ -524,7 +542,6 @@ class FcrRttManager {
             this.localIsChangeTranscribeState = true;
             this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
                 fcrRttManager.rttConfigInfo.setOpenTranscribe(true, true)
-                fcrRttManager.rttList = []
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             })?.catch(() => {
                 fcrRttManager.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
@@ -535,7 +552,6 @@ class FcrRttManager {
      * 关闭转写
      */
     closeConversion() {
-        fcrRttManager.rttList = []
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
         fcrRttManager.rttConfigInfo.setOpenTranscribe(false, false)

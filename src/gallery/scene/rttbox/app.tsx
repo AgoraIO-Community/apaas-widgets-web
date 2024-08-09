@@ -1,5 +1,6 @@
 import { forwardRef, useEffect, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
+import { runInAction } from 'mobx';
 import { FcrRttboxWidget } from '.';
 import './app.css';
 import { Avatar } from '@components/avatar';
@@ -20,15 +21,16 @@ export type WebviewInterface = {
 export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget }) => {
   const [searchQuery, setSearchQuery] = useState('');
   const [totalResults, setTotalResults] = useState(0);
-  const rttContainerRef = useRef<HTMLDivElement>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const textContainerRef = useRef<HTMLDivElement>(null);
 
   //滑动到底部处理
   useEffect(() => {
-    if (rttContainerRef.current) {
-      rttContainerRef.current.scrollTop = rttContainerRef.current.scrollHeight;
-    }
+    runInAction(() => {
+      if (textContainerRef.current) {
+        textContainerRef.current.scrollTop = textContainerRef.current.scrollHeight;
+      }
+    })
   }, [widget.goToScrollToBottom])
 
   //通知信息处理
@@ -172,7 +174,6 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
   return (
     // <div className="fcr-chatroom-dialog-wrapper">
     <div
-      ref={rttContainerRef}
       style={{ width: widget.defaultRect.width, height: widget.defaultRect.height }}
       className="fcr-chatroom-dialog-wrapper fcr-chatroom-dialog-content">
       <div className="fcr-chatroom-dialog-title">
@@ -224,30 +225,31 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
             reason2: widget.countdown,
           })}
         </div>}
-        {!widget.isRunoutTime && <div ref={textContainerRef} className="rtt-list" style={{ paddingBottom: '30px' }}>
-          {filteredRttList.map((item, index) => {
-            const userInfo = widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid));
-            return <div key={index}>
-              {item.uid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
-                <Avatar textSize={14} size={30} nickName={userInfo ? userInfo.fromUser.userName : ""}></Avatar>
-                <div>
+        <div >
+          {!widget.isRunoutTime && <div ref={textContainerRef} className="rtt-list" style={{ paddingBottom: '30px' }} >
+            {filteredRttList.map((item, index) => {
+              const userInfo = widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid));
+              return <div key={index}>
+                {item.uid && <div key={item.uuid} className="fcr-rtt-widget-text" style={{ backgroundColor: 'rgba(0,0,0,0)' }}>
+                  <Avatar textSize={14} size={30} nickName={userInfo ? userInfo.fromUser.userName : ""}></Avatar>
                   <div>
-                    <div style={{ fontSize: '12PX', display: 'inline-block' }} className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}</div>
-                    <div style={{ fontSize: '12PX', display: 'inline-block', color: '#BBBBBB', paddingLeft: '7px' }} >{formatMillisecondsToDateTime(item.time)}</div>
+                    <div>
+                      <div style={{ fontSize: '12PX', display: 'inline-block' }} className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}</div>
+                      <div style={{ fontSize: '12PX', display: 'inline-block', color: '#BBBBBB', paddingLeft: '7px' }} >{formatMillisecondsToDateTime(item.time)}</div>
+                    </div>
+                    <div className="fcr-rtt-widget-translate">{getShowText(item, index, true, false)}</div>
+                    <div className="fcr-rtt-widget-transcribe">
+                      {getShowText(item, index, false, true)}
+                    </div>
                   </div>
-                  <div className="fcr-rtt-widget-translate">{getShowText(item, index, true, false)}</div>
-                  <div className="fcr-rtt-widget-transcribe">
-                    {getShowText(item, index, false, true)}
-                  </div>
-                </div>
-              </div>}
-              {!item.uid && <div style={{ textAlign: 'center' }}>
-                <div className="open-language">{getShowText(item, index, true, false)}</div>
-              </div>}
-            </div>
-          })}
-
-        </div>}
+                </div>}
+                {!item.uid && <div style={{ textAlign: 'center' }}>
+                  <div className="open-language">{getShowText(item, index, true, false)}</div>
+                </div>}
+              </div>
+            })}
+          </div>}
+        </div>
         <div className="footer">
           {widget.showTranslate && <button className="stop-button" style={{ backgroundColor: 'rgba(0,0,0,0)', border: '1px solid' }} onClick={() => fcrRttManager.closeConversion()}>{transI18n('fcr_rtt_stop_transcription')}</button>}
           {!widget.showTranslate && <button className="stop-button" onClick={() => { fcrRttManager.showConversion() }}>{transI18n('fcr_rtt_start_transcription')}</button>}

@@ -28,26 +28,20 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
     }
   };
 
-  useEffect(scrollToBottom, [widget.rttList]);
+  useEffect(scrollToBottom, [widget.lastRecord]);
 
   useEffect(() => {
     widget.setVisible(true)
-  }, [widget.rttVisible, widget.rttList, widget.starting, widget.visibleView]);
+  }, [widget.rttVisible, widget.starting, widget.visibleView]);
 
   const active = mouseHover || popoverVisible;
 
   //配置信息
   const configInfo = fcrRttManager.getConfigInfo();
-  //是否设置了翻译语言
-  const enableTargetLan = configInfo.getTargetLan() && "" !== configInfo.getTargetLan().value
   //最后一条消息
-  const lastItem = enableTargetLan ? widget.rttList.findLast((item) => {
-    return !!item.trans?.find((item) => {
-      return item.culture === configInfo.getTargetLan().value  && "" !== configInfo.getTargetLan().value;
-    });
-  }) : widget.rttList[widget.rttList.length - 1];
+  const lastItem = widget.lastRecord ;
   //获取显示的文本信息
-  const showTextList = fcrRttManager.getShowText(lastItem,configInfo.isShowDoubleLan(),configInfo.getSourceLan().value,configInfo.getTargetLan() && configInfo.getTargetLan().value)
+  const showTextList = lastItem ? fcrRttManager.getShowText(lastItem,configInfo.isShowDoubleLan(),configInfo.getSourceLan().value,configInfo.getTargetLan() && configInfo.getTargetLan().value) :[null,null]
   //最后一条姓名信息
   const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(String(lastItem?.uid),)?.fromUser.userName;
   const leve2Text = showTextList[1]
