@@ -374,6 +374,7 @@ class FcrRttManager {
                             content: toastContent,
                         },
                     });
+                    fcrRttManager.rttConfigInfo.setOpenTranscribe(toOpen,true)
                     fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
                     // 监听是否开启实时转写
                     fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen, textContent)
@@ -381,8 +382,8 @@ class FcrRttManager {
             }
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any
-            if (targetLan && targetLan.length > 0 && operator) {
-                if (fcrRttManager.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0] || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTarget)) {
+            if (targetLan && targetLan.length > 0 && operator && operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTarget) {
+                if (fcrRttManager.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0]) {
                     fcrRttManager.localIsChangeTarget = false;
                     fcrRttManager.rttList = fcrRttManager.rttList.concat([
                         {
@@ -407,6 +408,7 @@ class FcrRttManager {
                     fcrRttManager.localIsChangeSourceLan = false;
                     const findData = fcrRttManager.sourceLanguageList.find(item => item.value === sourceLan);
                     if (findData) {
+                        fcrRttManager.rttConfigInfo.setSourceLan(findData,true,true)
                         const languageText = transI18n(findData.text)
                         if (fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()) {
                             ToastApi.open({
@@ -434,7 +436,6 @@ class FcrRttManager {
 
                 }
             }
-            fcrRttManager.rttConfigInfo.initRoomeConfigInfo(properties, false)
         }
     }
 

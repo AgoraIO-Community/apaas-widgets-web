@@ -79,15 +79,6 @@ export class FcrRttConfig {
     initRoomeConfigInfo(properties: any | null, notify: boolean) {
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
-            this.setOpenSubtitle(Number(config["subtitle"]) == 1 ? true : false, true)
-            this.setOpenTranscribe(Number(config["transcribe"]) == 1 ? true : false, true)
-            if (this.openSubtitle && notify) {
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
-            }
-            if (this.openTranscribe && notify) {
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
-            }
             const lanConfig = config["languages"]
             if (lanConfig) {
                 //源语言
@@ -95,16 +86,7 @@ export class FcrRttConfig {
                 if (sourceLan) {
                     const findData = fcrRttManager.sourceLanguageList.find(item => item.value === String(sourceLan));
                     if (findData) {
-                        this.currentSourceLan = findData
-                    }
-                }
-                //目标语言
-                let targetLan = Object.keys(lanConfig).indexOf("target") >= 0 ? lanConfig["target"] as any : null
-                if (targetLan && targetLan.length > 0) {
-                    targetLan = targetLan[0]
-                    const findData = fcrRttManager.targetLanguageList.find(item => item.value === String(targetLan));
-                    if (findData) {
-                        this.currentTargetLan = findData
+                        this.setSourceLan(findData,notify,true)
                     }
                 }
             }
