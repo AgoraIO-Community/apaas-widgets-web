@@ -40,17 +40,6 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
     widget.setVisible(true)
   }, [widget.rttVisible, widget.rttList, widget.starting, widget.visibleView]);
 
-  //设置视图配置信息
-  interface SettingViewProps {
-    buttonView: ReactNode | null;
-    showToConversionSetting: boolean;
-    showToSubtitleSetting: boolean;
-  }
-  //设置视图
-  const SettingView: React.FC<SettingViewProps> = ({ showToConversionSetting, showToSubtitleSetting }) => {
-    return <RttSettings widget={widget} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting}></RttSettings>
-  }
-  
   const active = mouseHover || popoverVisible;
 
   //配置信息
@@ -76,9 +65,10 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   //语言显示
   const leve2Text = enableShowDoubleLan && enableTargetLan && configInfo.getSourceLan().value !== configInfo.getTargetLan().value ? translateText : null
   const leve1Text = !enableShowDoubleLan && enableTargetLan ? translateText : sourceText;
- //字幕box当前宽度
- const limitBoxWidth = document.getElementsByClassName('fcr-limited-box')?.length > 0 ? document.getElementsByClassName('fcr-limited-box')[0]?.getBoundingClientRect()?.width : 0;
- 
+  //字幕box当前宽度
+  let limitBoxWidth = rttContainerRef.current?.getBoundingClientRect().width;
+  limitBoxWidth = limitBoxWidth && limitBoxWidth > 0 ? limitBoxWidth : 750
+
   //操作按钮区域
   const rttOptionsWidget = useMemo(() => {
     const targetPopClassRoom = "fcr-rtt-widget-actions-" + Math.random()
