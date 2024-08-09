@@ -139,29 +139,31 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowSetting,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttboxChanged,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ToolboxChanged,onMessage() {},})
+    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.ToolboxChanged, onMessage() { }, })
   }
   //根据搜索条件获取结果列表
-  getSearchResultList(searchQuery:string){
-    return this.rttList.filter(item => item.text.includes(searchQuery) || this.getTransText(item).includes(searchQuery));
+  getSearchResultList(searchQuery: string) {
+    if (!searchQuery || searchQuery.length === 0) {
+      return this.rttList;
+    }
+    return this.rttList.filter(item => {
+      const showTextList = fcrRttManager.getShowText(item, item.currentShowDoubleLan, item.culture, item.currentTargetLan)
+      showTextList[0] && showTextList[0].includes(searchQuery) || showTextList[1] && showTextList[1].includes(searchQuery)
+    });
   }
   //获取匹配到的数量信息
   getSearctMatchCount(list: FcrRttItem[], searchQuery: string) {
     return list.map((item) => {
+      //获取显示的文本信息
+      const showTextList = fcrRttManager.getShowText(item, item.currentShowDoubleLan, item.culture, item.currentTargetLan)
       const regex = new RegExp(`(${searchQuery})`, 'gi');
-      let match = item.text.match(regex);
+      let match = showTextList[0] && showTextList[0].match(regex);
       let count = match ? match.length : 0;
-      match = this.getTransText(item).match(regex);
+      match = showTextList[1] && showTextList[1].match(regex);
       count += match ? match.length : 0;
       return count;
     })
   }
-  //获取翻译文本
-  getTransText(item: FcrRttItem) {
-    const text = item.trans?.find(transItem => transItem.culture === item.currentTargetLan && "" !== item.currentTargetLan )?.text
-    return text && item.culture !== item.currentTargetLan ? text : ""
-  }
-
 
   //注册视图widget
   private registerWidget(controller: AgoraWidgetController) {

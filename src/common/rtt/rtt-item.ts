@@ -12,4 +12,5 @@ export interface FcrRttItem {
     isFinal: boolean;
     confidence: number;
     currentTargetLan:string;
+    currentShowDoubleLan:boolean;
 }

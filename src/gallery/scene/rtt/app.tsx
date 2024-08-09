@@ -1,4 +1,4 @@
-import React, { forwardRef, ReactNode, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { observer } from 'mobx-react';
 import { FcrRTTWidget } from '.';
 import loadingPng from './loading.png';
@@ -7,15 +7,9 @@ import { Avatar } from '@components/avatar';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { ToolTip } from '@components/tooltip';
 import classnames from 'classnames';
-import { Popover, PopoverWithTooltip } from '@components/popover';
-import { RttSettings } from './settings';
-import { AgoraExtensionRoomEvent } from '../../../events';
+import { PopoverWithTooltip } from '@components/popover';
 import { transI18n } from 'agora-common-libs';
-import ReactDOM from 'react-dom';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
-import { FcrRttItem } from '../../../common/rtt/rtt-item';
-import { ToastApi } from '@components/toast';
-import { translate } from 'src/gallery/classroom/hx-chat/fcr-chatroom/container/mobile/components/image-viewer/utils/matrix';
 
 export type WebviewInterface = {
   refresh: () => void;
@@ -46,25 +40,18 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   const configInfo = fcrRttManager.getConfigInfo();
   //是否设置了翻译语言
   const enableTargetLan = configInfo.getTargetLan() && "" !== configInfo.getTargetLan().value
-  //是否开启了双语
-  const enableShowDoubleLan = configInfo.isShowDoubleLan()
   //最后一条消息
   const lastItem = enableTargetLan ? widget.rttList.findLast((item) => {
     return !!item.trans?.find((item) => {
       return item.culture === configInfo.getTargetLan().value  && "" !== configInfo.getTargetLan().value;
     });
   }) : widget.rttList[widget.rttList.length - 1];
+  //获取显示的文本信息
+  const showTextList = fcrRttManager.getShowText(lastItem,configInfo.isShowDoubleLan(),configInfo.getSourceLan().value,configInfo.getTargetLan() && configInfo.getTargetLan().value)
   //最后一条姓名信息
   const lastItemName = widget.classroomStore.streamStore.streamByStreamUuid.get(String(lastItem?.uid),)?.fromUser.userName;
-  //声源语言
-  const sourceText = lastItem?.text;
-  //翻译语言
-  const translateText = lastItem?.trans?.find((item) => {
-    return item.culture === configInfo.getTargetLan().value  && "" !== configInfo.getTargetLan().value;
-  })?.text;
-  //语言显示
-  const leve2Text = enableShowDoubleLan && enableTargetLan && configInfo.getSourceLan().value !== configInfo.getTargetLan().value ? translateText : null
-  const leve1Text = !enableShowDoubleLan && enableTargetLan ? translateText : sourceText;
+  const leve2Text = showTextList[1]
+  const leve1Text = showTextList[0]
   //字幕box当前宽度
   let limitBoxWidth = rttContainerRef.current?.getBoundingClientRect().width;
   limitBoxWidth = limitBoxWidth && limitBoxWidth > 0 ? limitBoxWidth : 750

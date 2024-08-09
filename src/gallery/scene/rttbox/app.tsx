@@ -83,10 +83,6 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
     return `${year}-${month}-${day} ${hours}:${minutes}`;
   };
 
-  //配置信息
-  const configInfo = fcrRttManager.getConfigInfo();
-  //是否设置了翻译语言
-  const enableTargetLan = configInfo.getTargetLan() && "" !== configInfo.getTargetLan().value
   //筛选结果列表
   const filteredRttList = widget.getSearchResultList(searchQuery);
   //没条数据查找到的数量
@@ -127,6 +123,9 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
 
   //高亮匹配
   const renderHighlightedText = (text: string, currIndex: number) => {
+    if (!text || text.length === 0) {
+      return ""
+    }
     const parts = text.split(new RegExp(`(${searchQuery})`, 'gi'));
     //获取前面所有查到的数据
     let lastSum = 0;
@@ -151,16 +150,14 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
 
   //获取显示的文本
   const getShowText = (item: FcrRttItem, index: number, showSource: boolean, showTarget: boolean) => {
+    const showTextList = fcrRttManager.getShowText(item, item.currentShowDoubleLan, item.culture, item.currentTargetLan)
     //是否显示源语言
     if (showSource) {
-      return renderHighlightedText(item.text, index)
+      return renderHighlightedText(showTextList[0] ? showTextList[0] : "", index)
     }
     //是否显示翻译语言
-    if (showTarget ) {
-      const text = item.trans?.find(transItem => transItem.culture === item.currentTargetLan && "" !== item.currentTargetLan)?.text
-      if (text) {
-        return renderHighlightedText(text, index)
-      }
+    if (showTarget) {
+      return renderHighlightedText(showTextList[1] ? showTextList[1] : "", index)
     }
     return null
   }

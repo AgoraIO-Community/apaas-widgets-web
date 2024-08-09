@@ -262,7 +262,8 @@ class FcrRttManager {
                                 time: textstream.time,
                                 isFinal: isFinal,
                                 confidence: confidence,
-                                currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
+                                currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value,
+                                currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                             },
                         ])
                             .slice(-100);
@@ -346,7 +347,7 @@ class FcrRttManager {
             fcrRttManager.lastPropInfo = currentInfo
             //判断是否改变了转写状态
             const transcribeState = Number(config["transcribe"])
-            if (transcribeState && operator) {
+            if (transcribeState != null && operator) {
                 const toOpen = 1 == transcribeState
                 if (fcrRttManager.rttConfigInfo.isOpenTranscribe() !== toOpen || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTranscribeState)) {
                     fcrRttManager.localIsChangeTranscribeState = false;
@@ -365,7 +366,8 @@ class FcrRttManager {
                             time: 0,
                             isFinal: true,
                             confidence: 0,
-                            currentTargetLan: fcrRttManager.getConfigInfo().getTargetLan().value
+                            currentTargetLan: fcrRttManager.getConfigInfo().getTargetLan().value,
+                            currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                         },
                     ]).slice(-100);
                     ToastApi.open({
@@ -394,7 +396,8 @@ class FcrRttManager {
                             time: 0,
                             isFinal: true,
                             confidence: 0,
-                            currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value
+                            currentTargetLan:fcrRttManager.getConfigInfo().getTargetLan().value,
+                            currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                         },
                     ]).slice(-100);
                     fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
@@ -427,7 +430,8 @@ class FcrRttManager {
                                 time: 0,
                                 isFinal: true,
                                 confidence: 0,
-                                currentTargetLan: fcrRttManager.getConfigInfo().getTargetLan().value
+                                currentTargetLan: fcrRttManager.getConfigInfo().getTargetLan().value,
+                                currentShowDoubleLan:fcrRttManager.getConfigInfo().isShowDoubleLan()
                             },
                         ]).slice(-100);
                         fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
@@ -542,6 +546,32 @@ class FcrRttManager {
         })?.catch(() => {
             fcrRttManager.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
         })
+    }
+
+    /**
+     * 获取显示的源文本信息
+     * @param current 当前item元素
+     * @param enableShowDoubleLan 是否显示双语
+     * @param sourceLanValue 源语言类型
+     * @param targetLanValue 翻译语言类型
+     * @returns
+     */
+    getShowText(current: FcrRttItem | undefined, enableShowDoubleLan: boolean, sourceLanValue: string, targetLanValue: string) {
+        if (!current) {
+            return [null, null]
+        }
+        //是否设置了翻译语言
+        const enableTargetLan = targetLanValue && "" !== targetLanValue
+        //声源语言
+        const sourceText = current?.text;
+        //翻译语言
+        const translateText = current?.trans?.find((item) => {
+            return item.culture === targetLanValue && "" !== targetLanValue;
+        })?.text;
+        //语言显示
+        const leve2Text = enableShowDoubleLan && enableTargetLan && sourceLanValue !== targetLanValue ? translateText : null
+        const leve1Text = !enableShowDoubleLan && enableTargetLan ? translateText : sourceText;
+        return [leve1Text,leve2Text];
     }
 
     //是否正在发起请求
