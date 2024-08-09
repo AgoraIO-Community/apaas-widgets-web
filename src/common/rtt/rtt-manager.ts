@@ -564,6 +564,14 @@ class FcrRttManager {
         })
     }
 
+    //体验时间结束
+    experienceFinish(){
+        fcrRttManager.rttConfigInfo.setOpenTranscribe(false, true)
+        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
+        fcrRttManager.rttConfigInfo.setOpenSubtitle(false, true)
+        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
+    }
+
     /**
      * 获取显示的源文本信息
      * @param current 当前item元素
