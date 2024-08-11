@@ -41,7 +41,7 @@ export class FcrRttConfig {
     /**
      * 默认体验时间,单位-秒
      */
-    readonly experienceDefTime = 10
+    readonly experienceDefTime = 600
     /**
      * 剩余体验时间
      */
