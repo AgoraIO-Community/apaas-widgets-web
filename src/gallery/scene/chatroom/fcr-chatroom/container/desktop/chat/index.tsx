@@ -471,6 +471,15 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
     return () => document.removeEventListener('click', toggleAction);
   }, [actionVisible]);
 
+  //替换内容中的超链接
+  const replaceContentToLink = (text: string | null):string => {
+    const urlRegex = /((https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g;
+    return text ? text.replace(urlRegex, (match, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    }) : '';
+  }
+
+
   return (
     <div
       className={classnames(
@@ -579,7 +588,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
                 <div
                   key={textMessage.id}
                   className="fcr-chat-message-list-item-content"
-                  dangerouslySetInnerHTML={{ __html: textMessage.msg }}></div>
+                  dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
               );
             case AgoraIMMessageType.Image:
               const imageMessage = message as AgoraIMImageMessage;

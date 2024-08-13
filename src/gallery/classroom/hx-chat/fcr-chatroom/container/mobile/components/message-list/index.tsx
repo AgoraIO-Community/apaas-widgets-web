@@ -221,6 +221,15 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
   });
   const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
   const textMessage = message as AgoraIMTextMessage;
+
+  //替换内容中的超链接
+  const replaceContentToLink = (text: string | null):string => {
+    const urlRegex = /((https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g;
+    return text ? text.replace(urlRegex, (match, url) => {
+      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
+    }) : "";
+  }
+
   return (
     <div
       key={textMessage.id}
@@ -265,7 +274,8 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
           <span className='fcr-text-split'>:</span>
         </span>
       )}
-      {textMessage.msg}
+      <div key={textMessage.id}
+        dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
     </div>
   );
 });
