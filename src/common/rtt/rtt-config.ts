@@ -18,6 +18,8 @@ export class FcrRttConfig {
      * 当前翻译语言
      */
     private currentTargetLan: FcrRttLanguageData = fcrRttManager.targetLanguageList[0]
+    //当前所有用户所有端的翻译语言
+    private currentTargetLanList:FcrRttLanguageData[] = []
     /**
      * 是否显示双语
      */
@@ -64,6 +66,7 @@ export class FcrRttConfig {
         const config = new FcrRttConfig(this.roomUuid, this.widgetController)
         config.currentSourceLan = this.currentSourceLan;
         config.currentTargetLan = this.currentTargetLan;
+        config.currentTargetLanList = this.currentTargetLanList;
         config.showDoubleLan = this.showDoubleLan;
         config.textSize = this.textSize;
         config.openTranscribe = this.openTranscribe;
@@ -89,6 +92,7 @@ export class FcrRttConfig {
                         this.setSourceLan(findData,notify,true)
                     }
                 }
+                this.currentTargetLanList = Object.keys(lanConfig).indexOf("target") >= 0 ? lanConfig["target"] : []
             }
             //剩余体验时间
             this.experienceReduceTime = Math.max(this.experienceDefTime - (config["duration"] ? Number(config["duration"]) : 0), 0)
@@ -133,6 +137,7 @@ export class FcrRttConfig {
     setTargetLan(lan: FcrRttLanguageData, needNotify: boolean, needSaveLocal: boolean) {
         console.log("FcrRttConfigChange:", "修改目标翻译语言->" + lan.value)
         this.currentTargetLan = lan
+        this.currentTargetLanList.push(lan)
         if (needSaveLocal) {
             localStorage.setItem(`${this.roomUuid}_targetLan`, lan.value)
         }
@@ -142,6 +147,12 @@ export class FcrRttConfig {
     }
     getTargetLan() {
         return this.currentTargetLan
+    }
+    setTargetLanList(lan: FcrRttLanguageData[]) {
+        this.currentTargetLanList = lan
+    }
+    getTargetLanList() {
+        return this.currentTargetLanList
     }
     setShowDoubleLan(show: boolean, needNotify: boolean, needSaveLocal: boolean) {
         console.log("FcrRttConfigChange:", "修改是否双语显示->" + show)

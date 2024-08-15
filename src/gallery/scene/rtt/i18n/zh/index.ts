@@ -26,7 +26,7 @@ export default {
   fcr_subtitles_option_original_audio_chinese_english: '中文、英文',
   fcr_device_option_subtitles:'字幕',
   fcr_device_option_font_size:'字号大小',
-  fcr_device_option_reset_font_size:'恢复默认设置',
+  fcr_device_option_reset_font_size:'恢复默认字号',
   fcr_device_option_view_rtt_open_subtitle: '打开字幕...',
   fcr_device_option_view_rtt_open_conversion:'查看实时转写...',
   fcr_device_option_change_sourc:'修改声源语言',

@@ -179,24 +179,26 @@ class FcrRttManager {
 
     //重置所有配置信息
     resetAllConfig() {
-        const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
-        fcrRttManager.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], false, false)
-        fcrRttManager.rttConfigInfo.setTargetLan(this.targetLanguageList[0], false, false)
-        fcrRttManager.rttConfigInfo.setShowDoubleLan(false, false, false)
-        fcrRttManager.rttConfigInfo.setTextSize(14, false, false)
+        fcrRttManager.rttConfigInfo.setTextSize(14, true, true)
 
-        this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
-            fcrRttManager.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], true, true)
-            fcrRttManager.rttConfigInfo.setTargetLan(this.targetLanguageList[0], true, true)
-            fcrRttManager.rttConfigInfo.setShowDoubleLan(false, true, true)
-            fcrRttManager.rttConfigInfo.setTextSize(14, true, true)
-            this.localIsChangeSourceLan = true;
-        })?.catch(() => {
-            fcrRttManager.rttConfigInfo.setSourceLan(config.getSourceLan(), false, false)
-            fcrRttManager.rttConfigInfo.setTargetLan(config.getTargetLan(), false, false)
-            fcrRttManager.rttConfigInfo.setShowDoubleLan(config.isShowDoubleLan(), false, false)
-            fcrRttManager.rttConfigInfo.setTextSize(config.getTextSize(), false, false)
-        })
+        // const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
+        // fcrRttManager.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], false, false)
+        // fcrRttManager.rttConfigInfo.setTargetLan(this.targetLanguageList[0], false, false)
+        // fcrRttManager.rttConfigInfo.setShowDoubleLan(false, false, false)
+        // fcrRttManager.rttConfigInfo.setTextSize(14, false, false)
+        // 
+        // this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
+        //     fcrRttManager.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], true, true)
+        //     fcrRttManager.rttConfigInfo.setTargetLan(this.targetLanguageList[0], true, true)
+        //     fcrRttManager.rttConfigInfo.setShowDoubleLan(false, true, true)
+        //     fcrRttManager.rttConfigInfo.setTextSize(14, true, true)
+        //     this.localIsChangeSourceLan = true;
+        // })?.catch(() => {
+        //     fcrRttManager.rttConfigInfo.setSourceLan(config.getSourceLan(), false, false)
+        //     fcrRttManager.rttConfigInfo.setTargetLan(config.getTargetLan(), false, false)
+        //     fcrRttManager.rttConfigInfo.setShowDoubleLan(config.isShowDoubleLan(), false, false)
+        //     fcrRttManager.rttConfigInfo.setTextSize(config.getTextSize(), false, false)
+        // })
     }
 
     /**
@@ -401,6 +403,7 @@ class FcrRttManager {
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any
             if (targetLan && targetLan.length > 0 && operator && operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTarget) {
+                fcrRttManager.rttConfigInfo.setTargetLanList(targetLan)
                 if (fcrRttManager.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0]) {
                     fcrRttManager.localIsChangeTarget = false;
                     fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
@@ -618,7 +621,7 @@ class FcrRttManager {
         const data = {
             languages: {
                 source: config.getSourceLan().value,
-                target: "" === config.getTargetLan().value ? [] : [config.getTargetLan().value],
+                target: (config.isOpenTranscribe() || config.isOpenSubtitle())? config.getTargetLanList().filter((item, index) => config.getTargetLanList().indexOf(item) === index): [],
             },
             transcribe: config.isOpenTranscribe() ? 1 : 0,
             subtitle: config.isOpenSubtitle() ? 1 : 0

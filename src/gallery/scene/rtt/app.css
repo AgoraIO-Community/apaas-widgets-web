@@ -375,3 +375,10 @@
   width: 185px;
   z-index: 2001;
 }
+.ant-popover-inner-content{
+  padding: 0;
+}
+.ant-popover-inner{
+
+  border-radius: 100px;
+}
