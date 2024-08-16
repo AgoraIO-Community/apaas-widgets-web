@@ -60,6 +60,7 @@ export class FcrRttConfig {
         if (textSize) {
             this.textSize = Number(textSize)
         }
+        this.currentSourceLan = this.getDefaultLanguage()
     }
 
     copy() {
@@ -209,6 +210,23 @@ export class FcrRttConfig {
         const minutes = Math.floor(this.experienceReduceTime / 60);
         const secs = Math.floor(this.experienceReduceTime % 60);
         return `${minutes < 10 ? '0' : ''}${minutes}:${secs < 10 ? '0' : ''}${secs}`;
+    }
+
+    //获取当前的默认语言
+    private getDefaultLanguage(): FcrRttLanguageData {
+        let localLan = localStorage.getItem("language");
+        debugger
+        let defLan: FcrRttLanguageData | undefined = fcrRttManager.sourceLanguageList[0]
+        if ('zh' === localLan) {
+            defLan = fcrRttManager.sourceLanguageList.find(item => item.value === "zh-CN")
+        } else if ('en' === localLan) {
+            defLan = fcrRttManager.sourceLanguageList.find(item => item.value === "en-US")
+        }
+        if (!defLan) {
+            localLan = navigator.language;
+            defLan = fcrRttManager.sourceLanguageList.find(item => item.value === localLan)
+        }
+        return defLan || fcrRttManager.sourceLanguageList[0]
     }
 }
 /**
