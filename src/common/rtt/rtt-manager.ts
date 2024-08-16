@@ -289,7 +289,7 @@ class FcrRttManager {
                     break;
                 case 'translate':
                     console.log('Translation: ' + JSON.stringify(textstream));
-                    const trans: { culture: string; text: string }[] = [];
+                    const trans: { culture: string; text: string }[] = lastItemByUid ? lastItemByUid.trans ? lastItemByUid.trans : [] : [];
                     //@ts-ignore
                     textstream.trans.forEach((transItem) => {
                         let transTextStr = '';
@@ -298,10 +298,15 @@ class FcrRttManager {
                             console.log('Translation: ' + lastItemIndexByUid + text);
                             transTextStr += text;
                         });
-                        trans.push({
-                            culture: transItem.lang,
-                            text: transTextStr,
-                        });
+                        const find = trans.find(item=>item.culture === fcrRttManager.rttConfigInfo.getTargetLan().value)
+                        if(find){
+                            find.text = transTextStr
+                        }else{
+                            trans.push({
+                                culture: transItem.lang,
+                                text: transTextStr,
+                            });
+                        }
                     });
                     if (lastItemByUid) {
                         fcrRttManager.allRecordList[lastItemIndexByUid] = {
@@ -433,14 +438,12 @@ class FcrRttManager {
                     if (findData) {
                         fcrRttManager.rttConfigInfo.setSourceLan(findData,true,true)
                         const languageText = transI18n(findData.text)
-                        if (fcrRttManager.getConfigInfo().isOpenSubtitle() || fcrRttManager.getConfigInfo().isOpenTranscribe()) {
-                            ToastApi.open({
-                                toastProps: {
-                                    type: 'normal',
-                                    content: `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}<span style="color: #4262FF;">${languageText}</span>`,
-                                },
-                            });
-                        }
+                        ToastApi.open({
+                            toastProps: {
+                                type: 'normal',
+                                content: `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}<span style="color: #4262FF;">${languageText}</span>`,
+                            },
+                        });
                         fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
                             {
                                 uuid: uuidV4(),
@@ -460,6 +463,13 @@ class FcrRttManager {
                     }
 
                 }
+            }
+
+            //是否开启字幕
+            const subtitleState = Number(config["subtitle"])
+            if(0 == subtitleState && fcrRttManager.rttConfigInfo.isOpenSubtitle()){
+                //重新发起字幕开启
+                this.sendRequest(fcrRttManager.rttConfigInfo)
             }
         }
     }
@@ -621,7 +631,7 @@ class FcrRttManager {
         const data = {
             languages: {
                 source: config.getSourceLan().value,
-                target: (config.isOpenTranscribe() || config.isOpenSubtitle())? config.getTargetLanList().filter((item, index) => config.getTargetLanList().indexOf(item) === index): [],
+                target: config.getTargetLanList().filter((item, index) => config.getTargetLanList().indexOf(item) === index && "" !== item.value).map(item => item.value),
             },
             transcribe: config.isOpenTranscribe() ? 1 : 0,
             subtitle: config.isOpenSubtitle() ? 1 : 0
@@ -657,6 +667,7 @@ class FcrRttManager {
         //@ts-ignore
         fcrRttManager.rttConfigInfo = new FcrRttConfig(window.EduClassroomConfig.sessionInfo.roomUuid, this.widgetController)
         fcrRttManager.rttConfigInfo.initRoomeConfigInfo(properties, true)
+
         //做监听判断
         this.addMessageListener()
     }

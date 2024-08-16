@@ -45,9 +45,8 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
           <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#555B69', borderRadius: '10px', color: '#ffffff', marginRight: '10px' }} onClick={() => { notification.destroy() }}>
             {transI18n('fcr_rtt_notification_ignore')}
           </button>
-          <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => { notification.destroy() }}>
+          <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => { notification.destroy();fcrRttManager.showConversion()  }}>
             {transI18n('fcr_rtt_notification_view')}
-
           </button>
         </div>
       );
@@ -167,7 +166,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
   const handleArrowClick = (direction: string) => {
     if (direction === 'up' && currentIndex >= 1) {
       setCurrentIndex(currentIndex - 1);
-    } else if (direction === 'down' && currentIndex < totalResults) {
+    } else if (direction === 'down' && currentIndex < totalResults - 1) {
       setCurrentIndex(currentIndex + 1);
     }
   };
@@ -237,8 +236,8 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
                       <div style={{ fontSize: '12PX', display: 'inline-block' }} className="fcr-rtt-widget-name">{widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid))?.fromUser.userName}</div>
                       <div style={{ fontSize: '12PX', display: 'inline-block', color: '#BBBBBB', paddingLeft: '7px' }} >{formatMillisecondsToDateTime(item.time)}</div>
                     </div>
-                    <div className="fcr-rtt-widget-translate">{getShowText(item, index, true, false)}</div>
-                    <div className="fcr-rtt-widget-transcribe">
+                    <div className="fcr-rtt-widget-translate" style={{color:'#FFFFFF'}}>{getShowText(item, index, true, false)}</div>
+                    <div className="fcr-rtt-widget-transcribe" style={{color:'rgba(255, 255, 255, 0.7)'}}>
                       {getShowText(item, index, false, true)}
                     </div>
                   </div>

@@ -148,12 +148,15 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     }
     return this.rttList.filter(item => {
       const showTextList = fcrRttManager.getShowText(item, item.currentShowDoubleLan, item.culture, item.currentTargetLan)
-      showTextList[0] && showTextList[0].includes(searchQuery) || showTextList[1] && showTextList[1].includes(searchQuery)
+      return (showTextList[0] && showTextList[0].includes(searchQuery) || showTextList[1] && showTextList[1].includes(searchQuery)) && '' !== item.uid
     });
   }
   //获取匹配到的数量信息
   getSearctMatchCount(list: FcrRttItem[], searchQuery: string) {
     return list.map((item) => {
+      if ('' === item.uid) {
+        return 0
+      }
       //获取显示的文本信息
       const showTextList = fcrRttManager.getShowText(item, item.currentShowDoubleLan, item.culture, item.currentTargetLan)
       const regex = new RegExp(`(${searchQuery})`, 'gi');

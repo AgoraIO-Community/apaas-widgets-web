@@ -50,6 +50,7 @@ export class FcrRttConfig {
     experienceReduceTime = this.experienceDefTime
 
     constructor(roomUuid: string, controller: AgoraWidgetController | undefined) {
+        this.currentSourceLan = this.getDefaultLanguage()
         this.roomUuid = roomUuid;
         this.widgetController = controller
         const show = localStorage.getItem(`${this.roomUuid}_showDoubleLan`)
@@ -60,7 +61,6 @@ export class FcrRttConfig {
         if (textSize) {
             this.textSize = Number(textSize)
         }
-        this.currentSourceLan = this.getDefaultLanguage()
     }
 
     copy() {
@@ -93,7 +93,8 @@ export class FcrRttConfig {
                         this.setSourceLan(findData,notify,true)
                     }
                 }
-                this.currentTargetLanList = Object.keys(lanConfig).indexOf("target") >= 0 ? lanConfig["target"] : []
+                const targetLanValueList = Object.keys(lanConfig).indexOf("target") >= 0 ? lanConfig["target"] : []
+                this.currentTargetLanList = fcrRttManager.targetLanguageList.filter(item=>targetLanValueList.indexOf(item.value) >= 0)
             }
             //剩余体验时间
             this.experienceReduceTime = Math.max(this.experienceDefTime - (config["duration"] ? Number(config["duration"]) : 0), 0)
@@ -215,11 +216,10 @@ export class FcrRttConfig {
     //获取当前的默认语言
     private getDefaultLanguage(): FcrRttLanguageData {
         let localLan = localStorage.getItem("language");
-        debugger
         let defLan: FcrRttLanguageData | undefined = fcrRttManager.sourceLanguageList[0]
-        if ('zh' === localLan) {
+        if ("\"zh\"" === localLan) {
             defLan = fcrRttManager.sourceLanguageList.find(item => item.value === "zh-CN")
-        } else if ('en' === localLan) {
+        } else if ("\"en\"" === localLan) {
             defLan = fcrRttManager.sourceLanguageList.find(item => item.value === "en-US")
         }
         if (!defLan) {
