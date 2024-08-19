@@ -229,8 +229,8 @@ class FcrRttManager {
      * 消息数据处理,所有的this都要使用fcrRttManager，因为没有做变量化
      */
     private messageDataProcessing(uid: string, data: Uint8Array) {
-        //当前仅教师显示，因为web端学生角色没有入口
-        if(EduRoleTypeEnum.teacher !== fcrRttManager.classroomStore?.userStore.localUser?.userRole){
+        //当前仅教师显示，因为web端学生角色没有入口，分组内也不必要记录处理数据
+        if(EduRoleTypeEnum.teacher !== fcrRttManager.classroomStore?.userStore.localUser?.userRole || fcrRttManager.isInSubRoom()){
             return
         }
         //清除字幕定时器
@@ -583,6 +583,11 @@ class FcrRttManager {
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
         fcrRttManager.rttConfigInfo.setOpenSubtitle(false, true)
         this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
+    }
+
+    //当前用户是否是在分组中
+    isInSubRoom(){
+        return !!fcrRttManager.classroomStore?.groupStore.currentSubRoom
     }
 
     /**

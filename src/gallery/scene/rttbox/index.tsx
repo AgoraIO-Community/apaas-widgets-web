@@ -63,7 +63,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   onPropertiesUpdate(properties: any): void {
     // 获取下发数据
     console.log("更新数据了",properties)
-    
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.ChangeRttlanguage, {
       widgetId: this.widgetId,
       message: properties,
@@ -71,13 +70,23 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   }
   @bound
   onCreate(properties: any) {
-    this.setVisible(true);
-    this.registerWidget(this.widgetController)
-    this.widgetController.addBroadcastListener( {
+    if (fcrRttManager.isInSubRoom()) {
+      this.setVisible(false);
+      this.unRegisterWidget(this.widgetController)
+    } else {
+      this.setVisible(true);
+      this.registerWidget(this.widgetController)
+    }
+    this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
-        this.registerWidget(this.widgetController)
-      }
+        if (fcrRttManager.isInSubRoom()) {
+          this.setVisible(false);
+          this.unRegisterWidget(this.widgetController)
+        } else {
+          this.setVisible(true);
+          this.registerWidget(this.widgetController)
+        }        }
     })
     this.addRttListener()
   }
@@ -105,7 +114,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   }
   @bound
   clsoe() {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, this.widgetId);
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, "rttbox");
     this.deleteWidget();
   }
   unload() {
@@ -178,11 +187,8 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   }
   //取消注册视图widget
   private unRegisterWidget(controller: AgoraWidgetController) {
-    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, {
-      id: this.widgetName,
-      name: !fcrRttManager.getConfigInfo().isOpenTranscribe() ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
-      iconType: SvgIconEnum.FCR_V2_RTT,
-    });
+    debugger
+    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool,this.widgetId);
   }
   // 10分钟倒计时，单位为秒
   @observable

@@ -67,16 +67,25 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     fcrRttManager.resetListener(this.widgetController)
     fcrRttManager.resetDefaultInfo(properties, this.classroomStore)
     console.log("数据初始化了", properties)
-    this.setVisible(true);
-    // this.widgetController.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
-    this.registerWidget(this.widgetController)
+    if (fcrRttManager.isInSubRoom()) {
+      this.setVisible(false);
+      this.unRegisterWidget(this.widgetController)
+    } else {
+      this.setVisible(true)
+      this.registerWidget(this.widgetController)
+    }
     this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
-        this.setToolVisible(true)
-        this.registerWidget(this.widgetController)
+        if (fcrRttManager.isInSubRoom()) {
+          this.setVisible(false);
+          this.unRegisterWidget(this.widgetController)
+        } else {
+          this.setVisible(true);
+          this.registerWidget(this.widgetController)
+        }
+        }
       }
-    }
     );
     this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
@@ -163,19 +172,15 @@ export class FcrRTTWidget extends FcrUISceneWidget {
 
   //注册视图widget
   private registerWidget(controller: AgoraWidgetController) {
-    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-    });
+      controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+        id: this.widgetName,
+        name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+        iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+      });
   }
   //取消注册视图widget
   private unRegisterWidget(controller: AgoraWidgetController) {
-    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, {
-      id: this.widgetName,
-      name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
-      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-    });
+    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
   }
   // 10分钟倒计时，单位为秒
   @observable
