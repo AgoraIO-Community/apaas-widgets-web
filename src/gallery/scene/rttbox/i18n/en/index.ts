@@ -1,9 +1,10 @@
 export default {
+  fcr_rtt_button_open:'Live transcription',
   fcr_subtitles_button_open: 'Enable subtitles',
   fcr_subtitles_button_close: 'Disable subtitles',
   fcr_subtitles_text_listening: 'Listening',
   fcr_subtitles_text_no_one_speaking: 'No one is currently speaking',
-  fcr_subtitles_button_subtitles_setting: 'Subtitles Settings',
+  fcr_subtitles_button_subtitles_setting: 'Translation setting',
   fcr_subtitles_button_subtitles_history: 'Subtitles History',
   fcr_subtitles_button_subtitles_close: 'Close',
   fcr_subtitles_text_machine_results_for_reference: 'Machine results,for reference',
@@ -15,13 +16,13 @@ export default {
   fcr_subtitles_option_translation_display_chinese: 'Chinese',
   fcr_subtitles_option_translation_display_english: 'English',
   fcr_subtitles_option_translation_display_bilingual: 'Bilingual Mode',
-  fcr_subtitles_text_turn_on: 'Turn Subtitles On',
+  fcr_subtitles_text_turn_on: 'Turning on subtitles',
   fcr_subtitles_option_original_audio_chinese_english: 'Chinese & English',
-  fcr_rtt_search_placeholder:'',
-  fcr_rtt_settings:'',
-  fcr_rtt_start_transcription:'',
-  fcr_rtt_stop_transcription:'',
-  fcr_rtt_notification_view:'view',
-  fcr_rtt_notification_ignore:'ignore',
-  fcr_rtt_tips_title:''
+  fcr_rtt_search_placeholder:'Search',
+  fcr_rtt_settings:'Settings',
+  fcr_rtt_start_transcription:'Transcribe',
+  fcr_rtt_stop_transcription:'End Transcript',
+  fcr_rtt_notification_view:'View',
+  fcr_rtt_notification_ignore:'Ignore',
+  fcr_rtt_tips_title:'Transcribing'
 };
