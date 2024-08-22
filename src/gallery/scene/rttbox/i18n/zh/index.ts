@@ -12,7 +12,6 @@ export default {
   fcr_subtitles_option_original_audio_chinese: '中文',
   fcr_subtitles_option_original_audio_english: '英文',
   fcr_subtitles_label_translation_display: '翻译显示为',
-  fcr_subtitles_option_translation_display_not_translate: '不翻译',
   fcr_subtitles_option_translation_display_chinese: '中文',
   fcr_subtitles_option_translation_display_english: '英文',
   fcr_subtitles_option_translation_display_bilingual: '同时显示双语',
