@@ -181,7 +181,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
           onClick={() => widget.clsoe()}>
           <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
         </div>
-        <span className='fcr-chatroom-dialog-title-text' fcr-chatroom-dialog-title>字幕</span>
+        <span className='fcr-chatroom-dialog-title-text' fcr-chatroom-dialog-title>{transI18n('fcr_rtt_button_open')}</span>
       </div>
       <div className="fcr-chatroom-dialog-tab-inner">
         <div className="fcr-chatroom-member-list-search fcr-rttbox-list-search">
