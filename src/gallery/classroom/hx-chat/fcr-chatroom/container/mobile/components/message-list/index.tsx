@@ -18,7 +18,7 @@ import { useStore } from '../../../../hooks/useStore';
 import './index.css';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
-import { splitTextAndUrls, urlRegex } from 'src/utils/split-url';
+import { splitTextAndUrls, urlRegex } from '../../../../../../../../utils/split-url';
 export const MessageList = observer(() => {
   const {
     messageStore: {
