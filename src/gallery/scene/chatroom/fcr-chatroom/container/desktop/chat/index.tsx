@@ -31,6 +31,7 @@ import { getNameColor } from '@components/avatar/helper';
 import { Input } from '@components/input';
 import { AgoraIMUserInfo, AgoraIMUserInfoExt } from '../../../../../../../common/im/wrapper/typs';
 import { emojis } from '../../../utils/emoji';
+import { splitTextAndUrls, urlRegex } from '../../../../../../../utils/split-url';
 
 export const FcrChatContainer = observer(() => {
   const {
@@ -576,10 +577,18 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
             case AgoraIMMessageType.Text:
               const textMessage = message as AgoraIMTextMessage;
               return (
-                <div
-                  key={textMessage.id}
-                  className="fcr-chat-message-list-item-content"
-                  dangerouslySetInnerHTML={{ __html: textMessage.msg }}></div>
+                <div key={textMessage.id} className="fcr-chat-message-list-item-content">
+                  {splitTextAndUrls(textMessage.msg).map((text) => {
+                    const isUrl = urlRegex.test(text);
+                    return isUrl ? (
+                      <a href={text} target="_blank" rel="noopener noreferrer">
+                        {text}
+                      </a>
+                    ) : (
+                      text
+                    );
+                  })}
+                </div>
               );
             case AgoraIMMessageType.Image:
               const imageMessage = message as AgoraIMImageMessage;
@@ -631,9 +640,7 @@ const AnnounceMent = observer(() => {
       )}
 
       <div className="fcr-chat-announcement-title">{transI18n('fcr_chat_label_announcement')}</div>
-      <div
-        className="fcr-chat-announcement-content"
-        dangerouslySetInnerHTML={{ __html: announcement }}></div>
+      <div className="fcr-chat-announcement-content">{announcement}</div>
       <div className="fcr-chat-announcement-action">
         {isHost ? (
           <>
@@ -679,7 +686,13 @@ const AnnounceMent = observer(() => {
 
 const PrivateChat = observer(() => {
   const {
-    userStore: { isBreakOutRoomEnabled,isBreakOutRoomDisable,isBreakOutRoomIn,privateUser, setSearchKey },
+    userStore: {
+      isBreakOutRoomEnabled,
+      isBreakOutRoomDisable,
+      isBreakOutRoomIn,
+      privateUser,
+      setSearchKey,
+    },
   } = useStore();
   const transI18n = useI18n();
   const [popoverVisible, setPopoverVisible] = useState(false);
@@ -702,7 +715,17 @@ const PrivateChat = observer(() => {
           className={classnames('fcr-private-base-icon fcr-private-name', {
             'fcr-private-name-active': !!privateUser,
           })}>
-          <span>{privateUser ? privateUser.nickName : transI18n(isBreakOutRoomEnabled && isBreakOutRoomIn ? 'fcr_chat_option_my_group' : isBreakOutRoomEnabled && !isBreakOutRoomIn ? 'fcr_chat_option_main_room' : 'fcr_chat_option_all')}</span>
+          <span>
+            {privateUser
+              ? privateUser.nickName
+              : transI18n(
+                  isBreakOutRoomEnabled && isBreakOutRoomIn
+                    ? 'fcr_chat_option_my_group'
+                    : isBreakOutRoomEnabled && !isBreakOutRoomIn
+                    ? 'fcr_chat_option_main_room'
+                    : 'fcr_chat_option_all',
+                )}
+          </span>
 
           <SvgImg type={SvgIconEnum.FCR_DROPDOWN} size={16} />
         </span>
@@ -761,7 +784,7 @@ const SearchInput = observer(() => {
 
 const AllUserItem = observer(() => {
   const {
-    userStore: { isBreakOutRoomEnabled,isBreakOutRoomDisable,isBreakOutRoomIn,setPrivateUser },
+    userStore: { isBreakOutRoomEnabled, isBreakOutRoomDisable, isBreakOutRoomIn, setPrivateUser },
   } = useStore();
   const transI18n = useI18n();
   return (
@@ -775,7 +798,15 @@ const AllUserItem = observer(() => {
             <SvgImg type={SvgIconEnum.FCR_PEOPLE} size={24} />
           </span>
         </div>
-        <div className="fcr-chatroom-member-list-item-name">{transI18n(isBreakOutRoomEnabled && isBreakOutRoomIn ? 'fcr_chat_option_my_group' : isBreakOutRoomEnabled && !isBreakOutRoomIn ? 'fcr_chat_option_main_room' : 'fcr_chat_option_all')}</div>
+        <div className="fcr-chatroom-member-list-item-name">
+          {transI18n(
+            isBreakOutRoomEnabled && isBreakOutRoomIn
+              ? 'fcr_chat_option_my_group'
+              : isBreakOutRoomEnabled && !isBreakOutRoomIn
+              ? 'fcr_chat_option_main_room'
+              : 'fcr_chat_option_all',
+          )}
+        </div>
       </div>
     </div>
   );
