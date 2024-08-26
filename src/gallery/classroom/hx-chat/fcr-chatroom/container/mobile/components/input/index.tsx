@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import { AgoraExtensionWidgetEvent } from '../../../../../../../../events';
 import { MobileCallState } from '../../../../store/room';
 import { ToolTip } from '../tooltip';
+import MoreDialog from '../more-dialog';
 import PrivateDialog from '../private-dialog';
 import ApplicationDialog from '../application-dialog';
 
@@ -29,6 +30,7 @@ export const FcrChatRoomH5Inputs = observer(
     const [inputFocus, setInputFocus] = useState(false);
     const [text, setText] = useState('');
     const [isShowStudents, setIsShowStudents] = useState(false);
+    const [isShowMore,setIsShowMore] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
     const transI18n = useI18n();
@@ -169,7 +171,9 @@ export const FcrChatRoomH5Inputs = observer(
       setIsShowStudents(!isShowStudents);
       setSearchKey('');
     };
-
+    const handleShowMoreDialog=()=>{
+      setIsShowMore(!isShowMore);
+    }
     const [isHidePrivate, setIsHidePrivate] = useState(false);
     useEffect(() => {
       let resizeObserver: ResizeObserver | undefined = undefined;
@@ -248,7 +252,8 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{transI18n('chat.participants', { num: 3 })}</span>
               </div>
-              <div className='fcr-application-panel-item'>
+              {/* Chat */}
+              <div className='fcr-application-panel-item' onClick={handleShowMoreDialog}>
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
                   landscape={isLandscape}
@@ -505,6 +510,7 @@ export const FcrChatRoomH5Inputs = observer(
         </div>
         {/* {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />} */}
         {isShowStudents && <PrivateDialog setIsShowStudents={setIsShowStudents} />}
+        {isShowMore && <MoreDialog setIsShowMore = {setIsShowMore}/>}
         {showEmoji && emojiContainer && (
           <EmojiContainer
             onOuterClick={() => onShowEmojiChanged(false)}
