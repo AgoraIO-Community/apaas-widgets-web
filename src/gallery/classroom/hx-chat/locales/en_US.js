@@ -13,6 +13,7 @@ const enUS = {
     participants: '{num} Participants',
     question_and_answer: 'Q&A',
     members: 'Members',
+    more:'More',
     announcement: 'Notice',
     announcement_content: 'Content cannot exceed 500',
     all_mute: 'All Mute',

@@ -75,6 +75,7 @@ export enum SvgIconEnum {
   M_MICPHONE_OFF = 'm-micphone-off',
   M_SWITCH_CAMERA = 'm-switch-camera',
   MAX = 'max',
+  MORE_NEW = 'more-new',
   MAXIMIZE = 'maximize',
   MENU_FOLD = 'menu-fold',
   MENU_UNFOLD = 'menu-unfold',

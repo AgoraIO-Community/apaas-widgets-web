@@ -248,6 +248,15 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{transI18n('chat.participants', { num: 3 })}</span>
               </div>
+              <div className='fcr-application-panel-item'>
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.MORE_NEW}
+                  size={30}
+                />
+                <span>{transI18n('chat.more')}</span>
+              </div>
             </div>
           )}
 
