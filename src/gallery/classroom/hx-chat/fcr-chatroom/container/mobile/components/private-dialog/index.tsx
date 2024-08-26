@@ -49,7 +49,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: {setIsShowStudents: (arg0
       }
 
   return (
-    <div className='fcr-chatroom-mobile-inputs-chat-dialog' onClick={handleCloseDialog}>
+    <div className='fcr-chatroom-mobile-inputs-chat-dialog'>
         <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main')} style={isLandscape ? { height: !height ? 'auto' : `${height}px`} : undefined} onClick={(e) =>  e.stopPropagation() }>
           <div className='fcr-chatroom-mobile-inputs-chat-dialog-split'></div>
             <div className='fcr-chatroom-mobile-inputs-chat-dialog-title'>
