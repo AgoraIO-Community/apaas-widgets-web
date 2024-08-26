@@ -90,5 +90,12 @@ const im_CN = {
   fcr_participants_tips_lower_hand: '手放下',
   fcr_chat_options_no_one_room: '该学生和您不在一个房间，无法操作',
   fcr_application_screen_share: '屏幕共享',
+  fcr_more_tip_title:'文件',
+  fcr_more_options_whiteboard:'白板',
+  fcr_more_options_youtube:'Youtube',
+  fcr_more_options_tutor_scream:'Tutor‘s Scream',
+  fcr_more_options_page_notice:'网页提醒框',
+  fcr_more_tip_second_title:'Apps',
+  fcr_more_options_poll:'Poll'
 };
 export default im_CN;

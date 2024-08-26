@@ -1,0 +1,110 @@
+.fcr-chatroom-mobile-inputs-more-modal{
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0,0,0,.35);
+    z-index: 99;
+  }
+  .fcr-chatroom-mobile-inputs-more-modal-main{
+    position: absolute;
+    bottom: 100px;
+    right: 20px;
+    background-color: #000000;
+    border-radius: 10px 10px 0 0;
+    max-height: 588px;
+    width: 234px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    padding-bottom: env(safe-area-inset-bottom);
+    overflow: hidden;
+  }
+  .fcr-chatroom-mobile-inputs-more-modal-main.active {
+    max-height: 80%;
+  }
+  .fcr-chatroom-mobile-inputs-more-modal-split{
+    position: absolute;
+    top: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 32px;
+    height: 4px;
+    border-radius: 10px;
+    background: #BBB;
+  }
+  .fcr-chatroom-mobile-inputs-more-modal-close{
+    position: absolute;
+    left: 13px;
+    top: 13px;
+    width: 24px;
+    height: 24px;
+    border-radius: 24px;
+    background: rgba(53, 54, 56, .95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .fcr-chatroom-mobile-inputs-more-modal-title{
+    margin-top: 4px;
+    padding: 13px;
+    text-align: center;
+    color: #fff;
+    text-align: center;
+    font-family: "Helvetica Neue";
+    font-size: 15px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 15px;
+  }
+  .fcr-chatroom-mobile-modal-item-container{
+    border-radius: 6px;
+    background: #383D3E;
+    width: 214px;
+    height: 44px;
+    padding-right: 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+    overflow: hidden;
+  }
+  .fcr-chatroom-mobile-modal-item-container-icon{
+    width: 54px;
+    height: 42px;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  .item1{
+    background-color: #D2DB0E;
+  }
+  .item2{
+    background-color: #FF0000;
+  }
+  .item3{
+    background-color: #84BD00;
+  }
+  .item4{
+    background-color: #12B2A6;
+  }
+  .item5{
+    background-color: #9E0071;
+  }
+  .fcr-chatroom-mobile-modal-item-tip{
+    flex: 1;
+    text-align: center;
+    font-size: 14px;
+    color: #FEFEFE;
+  }
+  .frc-chatroom-modal-second-title{
+    margin-top:5px;
+    margin-bottom:5px;
+    width: 100%;
+    color: #FEFEFE;
+    font-size: 10px;
+    line-height: 15px;
+    text-align: center;
+  }
