@@ -253,7 +253,7 @@ export const FcrChatRoomH5Inputs = observer(
                 <span>{transI18n('chat.participants', { num: 3 })}</span>
               </div>
               {/* Chat */}
-              <div className='fcr-application-panel-item' onClick={handleShowMoreDialog}>
+              <div className='fcr-application-panel-item' onClick={handleShowApplicatioon}>
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
                   landscape={isLandscape}
@@ -508,9 +508,9 @@ export const FcrChatRoomH5Inputs = observer(
             </div>
           )}
         </div>
-        {/* {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />} */}
+        {isShowApplication && <ApplicationDialog setIsShowApplication={ setIsShowApplication} />}
         {isShowStudents && <PrivateDialog setIsShowStudents={setIsShowStudents} />}
-        {isShowMore && <MoreDialog setIsShowMore = {setIsShowMore}/>}
+        {/* {isShowMore && <MoreDialog setIsShowMore = {setIsShowMore}/>} */}
         {showEmoji && emojiContainer && (
           <EmojiContainer
             onOuterClick={() => onShowEmojiChanged(false)}
