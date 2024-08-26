@@ -13,6 +13,7 @@ const im_CN = {
     lower:'放下',
     participants:'{num} 参会者',
     question_and_answer: '问答',
+    more:'更多',
     members: '成员',
     announcement: '公告',
     announcement_content: '公告内容不能超过500',
