@@ -46,6 +46,10 @@ export class PluginStore {
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
+      onMessage: this._pollMinimizeStateChanged,
+    });
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
   }
 
@@ -86,13 +90,16 @@ export class PluginStore {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
   }
+  @action.bound
+  private _pollMinimizeStateChanged(params: boolean) {
+    this.minimize = params
+  }
   @bound
   handleQueryPollMinimizeState() {
     this._widget.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, this.minimize);
   }
   @action.bound
   setMinimize(minimize: boolean) {
-    this.minimize = minimize;
     this._widget.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, minimize);
   }
 
@@ -218,6 +225,10 @@ export class PluginStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionWidgetEvent.QueryPollMinimizeState,
       onMessage: this.handleQueryPollMinimizeState,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
+      onMessage: this._pollMinimizeStateChanged,
     });
   }
 
