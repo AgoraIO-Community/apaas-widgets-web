@@ -52,4 +52,5 @@
 }
 .fcr-poll-mobile-widget {
   pointer-events: all;
+  display: none;
 }

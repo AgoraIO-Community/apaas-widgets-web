@@ -33,6 +33,7 @@ export const FcrChatRoomH5Inputs = observer(
     const [isShowMore,setIsShowMore] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
+    const [widgetCount, setWidgetCount] =useState(0);
     const transI18n = useI18n();
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -70,6 +71,7 @@ export const FcrChatRoomH5Inputs = observer(
       },
     } = useStore();
     const widgets = z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
+    
     const getCallIcon = () => {
       switch (mobileCallState) {
         case MobileCallState.Initialize:
@@ -120,6 +122,13 @@ export const FcrChatRoomH5Inputs = observer(
         }
       };
     }, [collectVisible]);
+    useEffect(()=>{
+      if(z0Widgets.length > 0){
+        setWidgetCount(z0Widgets.length)
+      }else{
+        setWidgetCount(0)
+      }
+    },[z0Widgets.length])
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
       if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
@@ -203,7 +212,7 @@ export const FcrChatRoomH5Inputs = observer(
       e.stopPropagation();
       const haveShare = isLandscape && screenShareStream;
       if (!haveShare) {
-        if (widgets.length === 0) {
+        if (widgetCount === 0) {
           addToast(transI18n('fcr_teacher_no_use_textbooks'), 'warning');
           return;
         }
@@ -252,16 +261,23 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{transI18n('chat.participants', { num: 3 })}</span>
               </div>
-              {/* Chat */}
-              <div className='fcr-application-panel-item' onClick={handleShowApplicatioon}>
-                <SvgImgMobile
+              { widgetCount>0 && <div className='fcr-application-panel-item' onClick={handleShowApplicatioon}>
+                {/* <SvgImgMobile
                   forceLandscape={forceLandscape}
                   landscape={isLandscape}
                   type={SvgIconEnum.MORE_NEW}
                   size={30}
-                />
+                /> */}
+                <SvgImgMobile
+                      forceLandscape={forceLandscape}
+                      landscape={isLandscape}
+                      type={SvgIconEnum.APPLICATION}
+                      size={30}></SvgImgMobile>
+                    <span className="fcr-chatroom-mobile-inputs-application-count">
+                      {widgetCount> 99 ? '...' : widgetCount}
+                    </span>
                 <span>{transI18n('chat.more')}</span>
-              </div>
+              </div>}
             </div>
           )}
 

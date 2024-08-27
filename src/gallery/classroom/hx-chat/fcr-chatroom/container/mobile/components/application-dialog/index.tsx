@@ -161,6 +161,7 @@ const ApplicationDialog = observer(
                 </div>
             </div> */}
         </div>
+
         <div className="frc-chatroom-modal-first-title">
               {transI18n('fcr_more_tip_second_title')}
         </div>
@@ -175,6 +176,7 @@ const ApplicationDialog = observer(
           </div>
           <span className='fcr-chatroom-mobile-application-list-val'>{transI18n('fcr_more_options_poll')}</span>
         </div>
+
       </div>
     );
   },

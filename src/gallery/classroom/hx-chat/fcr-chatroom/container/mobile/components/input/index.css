@@ -9,6 +9,7 @@
 }
 
 .fcr-application-panel-wrapped>.fcr-application-panel-item {
+  position: relative;
   flex:1;
   text-align: center;
 }
@@ -539,8 +540,8 @@
 
 .fcr-chatroom-mobile-inputs-application-count {
   position: absolute;
-  bottom: 5px;
-  right: 8px;
+  bottom: 22px;
+  right: 30px;
   color: #fff;
   font-weight: 700;
   font-size: 12px;
