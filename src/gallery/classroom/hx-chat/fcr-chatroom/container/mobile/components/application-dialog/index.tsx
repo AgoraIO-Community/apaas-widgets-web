@@ -5,13 +5,16 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/sv
 import './index.css';
 import { observer } from 'mobx-react';
 import { transI18n } from 'agora-common-libs';
+import { AgoraExtensionWidgetEvent } from '../../../../../../../../../src/events';
 const ApplicationDialog = observer(
   ({ setIsShowApplication }: { setIsShowApplication: (arg0: boolean) => void }) => {
     const {
+      broadcastWidgetMessage,
       roomStore: { isLandscape, forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
     console.log('currentWidgetcurrentWidgetdialog', currentWidget);
-    const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
+    const widgets = z0Widgets;
+    // const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
 
     const handleClose = () => {
       setIsShowApplication(false);
@@ -23,9 +26,15 @@ const ApplicationDialog = observer(
       e.stopPropagation();
       setCurrentWidget(widget);
     };
+
+    const showMinimize =(e: { stopPropagation: () => void })=>{
+      e.stopPropagation();
+      broadcastWidgetMessage(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, false);
+    }
     return (
       <div className={classNames('fcr-chatroom-mobile-application', isLandscape && 'active')}>
         <div className="fcr-chatroom-mobile-application-split"></div>
+        <div className="frc-chatroom-modal-first-title">{transI18n('fcr_more_tip_title')}</div>
         <div className="fcr-chatroom-mobile-application-lists">
           {widgets.map((item: any) => {
             return (
@@ -37,13 +46,14 @@ const ApplicationDialog = observer(
                   <div
                     className={classNames(
                       'fcr-chatroom-mobile-application-list-icon',
+                      item.widgetName === 'netlessBoard' && 'whiteboard',
                       item.widgetName === 'mediaPlayer' && 'video',
                       item.widgetName === 'webView' && 'bower',
-                      item.widgetName === 'screenShare' && 'screenShare',
+                      item.widgetName === 'easemobIM' && 'easemobIM',
                     )}>
                     {item.widgetName === 'netlessBoard' && (
                       <SvgImgMobile
-                        type={SvgIconEnum.APPLICATION_WHITEBOARD}
+                        type={SvgIconEnum.MOBILE_WHITEBOARDEDIT}
                         size={30}
                         landscape={isLandscape}
                         forceLandscape={forceLandscape}
@@ -51,7 +61,7 @@ const ApplicationDialog = observer(
                     )}
                     {item.widgetName === 'mediaPlayer' && (
                       <SvgImgMobile
-                        type={SvgIconEnum.APPLICATION_VIDEO}
+                        type={SvgIconEnum.RECORDING_PLAY}
                         size={30}
                         landscape={isLandscape}
                         forceLandscape={forceLandscape}
@@ -59,15 +69,15 @@ const ApplicationDialog = observer(
                     )}
                     {item.widgetName === 'webView' && (
                       <SvgImgMobile
-                        type={SvgIconEnum.APPLICATION_BOWER}
+                        type={SvgIconEnum.INTERNET}
                         size={30}
                         landscape={isLandscape}
                         forceLandscape={forceLandscape}
                       />
                     )}
-                    {item.widgetName === 'screenShare' && (
+                    {item.widgetName === 'easemobIM' && (
                       <SvgImgMobile
-                        type={SvgIconEnum.APPLICATION_SCREEN_SHARE}
+                        type={SvgIconEnum.MOBILE_SHARESCREEN}
                         size={30}
                         landscape={isLandscape}
                         forceLandscape={forceLandscape}
@@ -91,7 +101,7 @@ const ApplicationDialog = observer(
                       </span>
                     </div>
                   )}
-                  {item.widgetName === 'screenShare' && (
+                  {item.widgetName === 'easemobIM' && (
                     <span className="fcr-chatroom-mobile-application-list-val">
                       {transI18n('fcr_application_screen_share')}
                     </span>
@@ -150,6 +160,20 @@ const ApplicationDialog = observer(
                     <span className='fcr-chatroom-mobile-application-list-unselect'></span>
                 </div>
             </div> */}
+        </div>
+        <div className="frc-chatroom-modal-first-title">
+              {transI18n('fcr_more_tip_second_title')}
+        </div>
+        <div className='fcr-chatroom-mobile-application-list' onClick={(e) => showMinimize(e)}>
+          <div className='fcr-chatroom-mobile-application-list-icon poll'>
+            <SvgImgMobile
+                forceLandscape={forceLandscape}
+                landscape={isLandscape}
+                type={SvgIconEnum.MOBILE_VOTE}
+                size={30}
+                />
+          </div>
+          <span className='fcr-chatroom-mobile-application-list-val'>{transI18n('fcr_more_options_poll')}</span>
         </div>
       </div>
     );

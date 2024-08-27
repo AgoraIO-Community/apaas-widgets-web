@@ -9,7 +9,7 @@
     background: rgba(47, 47, 47, 0.95);
     box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.25);
     padding: 11px;
-    max-height: 215px;
+    max-height: 326px;
     overflow-y: auto;
     z-index: 99;
   }
@@ -18,14 +18,18 @@
     right: 20px;
   }
   .fcr-chatroom-mobile-application-list{
+    border-radius: 6px;
+    background: #383D3E;
     width: 214px;
+    height: 44px;
+    padding: 1px;
+    /* padding-right: 20px; */
     display: flex;
     align-items: center;
     justify-content: space-between;
-    border-radius: 6px;
-    background: rgba(0, 0, 0, 0.40);
-    padding: 1px;
-    margin-bottom: 5px;
+    margin-bottom: 10px;
+    overflow: hidden;
+
   }
   .fcr-chatroom-mobile-application-list:last-child{
     margin-bottom: 0;
@@ -43,27 +47,37 @@
     width: 54px;
     height: 42px;
     border-radius: 5px;
-    background: #63BF9E;
+    background: #84BD00;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-right: 6px;
   }
+  .fcr-chatroom-mobile-application-list-icon.whiteboard{
+    background-color: #D2DB0E;
+  }
   .fcr-chatroom-mobile-application-list-icon.video{
-    background-color: #f00;
+    background-color: #FF0000;
   }
   .fcr-chatroom-mobile-application-list-icon.bower{
-    background-color: #585D8C;
+    background-color: #12B2A6;
   }
   .fcr-chatroom-mobile-application-list-icon.screenShare{
     background-color: #5768FF;
   }
+  .fcr-chatroom-mobile-application-list-icon.poll{
+    background-color: #9E0071;
+  }
+
   .fcr-chatroom-mobile-application-list-val{
     flex: 1;
     text-align: center;
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+    font-size: 14px;
+    color: #FEFEFE;
+    font-weight: 700;
   }
   .fcr-chatroom-mobile-application-list-content{
     flex: 1;
@@ -102,6 +116,16 @@
     width: 12px;
     height: 12px;
     border-radius: 12px;
-    border: 1px solid #bbb;
+    border: 1px solid #F5F5F5;
     
+  }
+  .frc-chatroom-modal-first-title{
+    margin-top:5px;
+    margin-bottom:5px;
+    width: 100%;
+    color: #FEFEFE;
+    font-size: 10px;
+    line-height: 15px;
+    font-weight: 400;
+    text-align: center;
   }
