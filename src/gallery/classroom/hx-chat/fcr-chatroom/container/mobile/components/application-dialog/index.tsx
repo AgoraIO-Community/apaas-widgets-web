@@ -9,6 +9,7 @@ import { AgoraExtensionWidgetEvent } from '../../../../../../../../../src/events
 const ApplicationDialog = observer(
   ({ setIsShowApplication }: { setIsShowApplication: (arg0: boolean) => void }) => {
     const {
+      isShowPoll,
       broadcastWidgetMessage,
       roomStore: { isLandscape, forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
@@ -162,10 +163,10 @@ const ApplicationDialog = observer(
             </div> */}
         </div>
 
-        <div className="frc-chatroom-modal-first-title">
+       {isShowPoll&&<div className="frc-chatroom-modal-first-title">
               {transI18n('fcr_more_tip_second_title')}
-        </div>
-        <div className='fcr-chatroom-mobile-application-list' onClick={(e) => showMinimize(e)}>
+        </div>}
+        {isShowPoll&&<div className='fcr-chatroom-mobile-application-list' onClick={(e) => showMinimize(e)}>
           <div className='fcr-chatroom-mobile-application-list-icon poll'>
             <SvgImgMobile
                 forceLandscape={forceLandscape}
@@ -175,8 +176,7 @@ const ApplicationDialog = observer(
                 />
           </div>
           <span className='fcr-chatroom-mobile-application-list-val'>{transI18n('fcr_more_options_poll')}</span>
-        </div>
-
+        </div>}
       </div>
     );
   },

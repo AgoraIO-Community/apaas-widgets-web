@@ -41,6 +41,7 @@ export const FcrChatRoomH5Inputs = observer(
     const {
       roomId,
       broadcastWidgetMessage,
+      isShowPoll,
       messageStore: { sendTextMessage, sendImageMessage },
       roomStore: {
         pollMinimizeState,
@@ -124,11 +125,11 @@ export const FcrChatRoomH5Inputs = observer(
     }, [collectVisible]);
     useEffect(()=>{
       if(z0Widgets.length > 0){
-        setWidgetCount(z0Widgets.length)
+        setWidgetCount(isShowPoll?z0Widgets.length+1:z0Widgets.length)
       }else{
-        setWidgetCount(0)
+        setWidgetCount(isShowPoll?1:0)
       }
-    },[z0Widgets.length])
+    },[z0Widgets.length,isShowPoll])
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
       if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
@@ -517,7 +518,7 @@ export const FcrChatRoomH5Inputs = observer(
                       size={30}></SvgImgMobile>
                     <span className="fcr-chatroom-mobile-inputs-application-count">
                       {widgets.length > 99 ? '...' : widgets.length}
-                    </span>
+                    </span> 
                   </div>
                 </ToolTip>
               </div>

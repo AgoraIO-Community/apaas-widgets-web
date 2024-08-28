@@ -4,6 +4,7 @@ import {
   AgoraIMConnectionState,
   AgoraIMEvents,
 } from '../../../../../common/im/wrapper/typs';
+import {  action,observable } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
@@ -11,7 +12,7 @@ import { RoomStore } from './room';
 import { retryAttempt } from 'agora-common-libs';
 import to from 'await-to-js';
 import { transI18n, bound, Logger } from 'agora-common-libs';
-import { AgoraExtensionRoomEvent } from '../../../../../events';
+import {  AgoraExtensionWidgetEvent } from '../../../../../events';
 
 export class FcrChatRoomStore {
   fcrChatRoom: AgoraIMBase;
@@ -19,6 +20,7 @@ export class FcrChatRoomStore {
   userStore: UserStore;
   roomStore: RoomStore;
   roomId: string;
+  @observable isShowPoll = false;
   constructor(private _widget: AgoraHXChatWidget, appKey: string, roomId: string) {
     const easemobUserId = this._widget.easemobUserId || '';
     const { userName, role, userUuid } = this._widget.classroomConfig.sessionInfo;
@@ -51,6 +53,10 @@ export class FcrChatRoomStore {
     );
 
     this.fcrChatRoom.on(AgoraIMEvents.ErrorOccurred, this._handleFcrChatRoomErrorOccurred);
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollActiveStateChanged,
+      onMessage: this._handlePollWidgetActiveStateChanged,
+    });
   }
   private _removeListeners() {
     this.fcrChatRoom.off(
@@ -61,6 +67,19 @@ export class FcrChatRoomStore {
       AgoraIMEvents.ErrorOccurred,
       this._handleFcrChatRoomConnectionStateChanged,
     );
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollActiveStateChanged,
+      onMessage: this._handlePollWidgetActiveStateChanged,
+    });
+  }
+  @action.bound
+  private _handlePollWidgetActiveStateChanged(active: boolean) {
+    if (active) {
+      this.isShowPoll = true;
+    } else {
+      this.isShowPoll = false;
+    }
+
   }
   @bound
   private _handleFcrChatRoomErrorOccurred(error: unknown) {
