@@ -14,9 +14,8 @@ const ApplicationDialog = observer(
       roomStore: { isLandscape, forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
     console.log('currentWidgetcurrentWidgetdialog', currentWidget);
-    const widgets = z0Widgets;
-    // const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
-
+    // const widgets = z0Widgets;
+    const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
     const handleClose = () => {
       setIsShowApplication(false);
     };
@@ -35,7 +34,7 @@ const ApplicationDialog = observer(
     return (
       <div className={classNames('fcr-chatroom-mobile-application', isLandscape && 'active')}>
         <div className="fcr-chatroom-mobile-application-split"></div>
-        <div className="frc-chatroom-modal-first-title">{transI18n('fcr_more_tip_title')}</div>
+        {widgets.length>0 && <div className="frc-chatroom-modal-first-title">{transI18n('fcr_more_tip_title')}</div>}
         <div className="fcr-chatroom-mobile-application-lists">
           {widgets.map((item: any) => {
             return (
@@ -50,7 +49,7 @@ const ApplicationDialog = observer(
                       item.widgetName === 'netlessBoard' && 'whiteboard',
                       item.widgetName === 'mediaPlayer' && 'video',
                       item.widgetName === 'webView' && 'bower',
-                      item.widgetName === 'easemobIM' && 'easemobIM',
+                      item.widgetName === 'screenShare',
                     )}>
                     {item.widgetName === 'netlessBoard' && (
                       <SvgImgMobile
@@ -76,7 +75,7 @@ const ApplicationDialog = observer(
                         forceLandscape={forceLandscape}
                       />
                     )}
-                    {item.widgetName === 'easemobIM' && (
+                    {item.widgetName === 'screenShare' && (
                       <SvgImgMobile
                         type={SvgIconEnum.MOBILE_SHARESCREEN}
                         size={30}
@@ -102,7 +101,7 @@ const ApplicationDialog = observer(
                       </span>
                     </div>
                   )}
-                  {item.widgetName === 'easemobIM' && (
+                  {item.widgetName === 'screenShare' && (
                     <span className="fcr-chatroom-mobile-application-list-val">
                       {transI18n('fcr_application_screen_share')}
                     </span>

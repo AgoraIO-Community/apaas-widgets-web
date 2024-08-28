@@ -124,12 +124,14 @@ export const FcrChatRoomH5Inputs = observer(
       };
     }, [collectVisible]);
     useEffect(()=>{
-      if(z0Widgets.length > 0){
-        setWidgetCount(isShowPoll?z0Widgets.length+1:z0Widgets.length)
-      }else{
-        setWidgetCount(isShowPoll?1:0)
-      }
-    },[z0Widgets.length,isShowPoll])
+      const count = widgets.length > 0?widgets.length:0;
+        if(isShowPoll){
+          setWidgetCount(count+1)
+        }else{
+          setWidgetCount(count)
+        }
+    },[widgets.length,isShowPoll])
+
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
       if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
@@ -281,7 +283,7 @@ export const FcrChatRoomH5Inputs = observer(
               </div>}
             </div>
           )}
-
+          {/* 横屏 */}
           {isLandscape && (
             <div className="fcr-chatroom-mobile-inputs-mobile-content">
               <div

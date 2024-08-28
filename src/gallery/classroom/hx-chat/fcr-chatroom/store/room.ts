@@ -158,7 +158,7 @@ export class RoomStore {
    */
   @action.bound
   private resetDefaultCurrentWidget() {
-    if (this.screenShareStream && this.isLandscape) {
+    if (this.screenShareStream) {
       const hasScreenShare = this._widgetInstanceList.some(
         (item) => item.widgetName === 'screenShare',
       );
@@ -171,7 +171,7 @@ export class RoomStore {
         this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
       );
     }
-    if (!this.isLandscape || !this.screenShareStream) {
+    if (!this.screenShareStream) {
       this._widgetInstanceList = this._widgetInstanceList.filter(
         (item) => item.widgetName !== 'screenShare',
       );
