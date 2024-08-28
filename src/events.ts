@@ -63,6 +63,8 @@ export enum AgoraExtensionRoomEvent {
   OpenStreamMediaPlayer = 'open-stream-media-player',
   // 返回授权用户列表
   ResponseGrantedList = 'response-granted-list',
+  // 
+  RttOptionsChanged = 'rtt-options-changed',
   // 横竖屏切换
   OrientationStatesChanged = 'orientation-changed',
   // 移动端大班课横屏清屏状态变化
@@ -75,6 +77,12 @@ export enum AgoraExtensionRoomEvent {
   SetMinimize = 'set-minimize',
   //设置插件可见性
   VisibleChanged = 'visible-changed',
+  // 工具盒子可见性变化
+  ToolboxChanged = 'toolbox-changed',
+    // 实时转写显示
+  RttBoxshow = 'rttbox-show',
+  // rtt盒子可见性变化
+    RttboxChanged = 'rttbox-changed',
   // 布局变化
   LayoutChanged = 'layout-changed',
   // webview/streamMedia 插件刷新
@@ -87,6 +95,65 @@ export enum AgoraExtensionRoomEvent {
   SetFullscreen = 'set-fullscreen',
   //mobile连麦状态变更
   MobileCallStateChanged = 'mobile-call-state-changed',
+  //修改声源语言
+  ChangeRttSourceLan = "ChangeRttSourceLan",
+  //修改翻译语言
+  ChangeRttTargetLan = "changeRttTargetLan",
+  //修改Rtt文本大小
+  ChangeRttTextSize = "changeRttTextSize",
+  //修改Rtt双语显示
+  ChangeRttShowDoubleLan = "changeRttShowDoubleLan",
+  //显示设置弹窗
+  RttShowSetting = "RttShowSetting",
+  //隐藏设置弹窗
+  RttHideSetting = "RttHideSetting",
+  //显示转写弹窗
+  RttShowConversion = "RttShowConversion",
+  //关闭转写弹窗
+  RttCloseConversion = "RttCloseConversion",
+  //显示字幕
+  RttShowSubtitle = "RttShowSubtitle",
+  //修改字幕开启状态
+  RttChangeToSubtitleOpenState = "RttChangeToSubtitleOpenState",
+  //修改转写开启状态
+  RttChangeToConversionOpenState = "RttChangeToConversionOpenState",
+  //字幕功能开启成功
+  RttSubtitleOpenSuccess = "RttSubtitleOpenSuccess",
+  //字幕功能关闭成功
+  RttSubtitleCloseSuccess = "RttSubtitleCloseSuccess",
+  //转写功能开启成功
+  RttConversionOpenSuccess = "RttConversionOpenSuccess",
+  //转写功能关闭成功
+  RttConversionCloseSuccess = "RttConversionCloseSuccess",
+  //隐藏字幕
+  RttHideSubtitle = "RttHideSubtitle",
+  //关闭字幕
+  RttCloseSubtitle = "RttCloseSubtitle",
+  //接收到内容信息变更
+  RttContentChange = "RttContentChange",
+  //接收到内容信息变更
+  RttListChange = "RttListChange",
+  // 监听转写状态是否更改
+  ReceiveTranscribeOpen = "receiveTranscribeOpen",
+  //状态改变到正在开启
+  RttStateToOpening = "RttStateToOpening",
+  //状态改变到正在聆听
+  RttStateToListener = "RttStateToListener",
+  //状态改变到无人讲话
+  RttStateToNoSpeack = "RttStateToNoSpeack",
+  //状态接收到声源语言变更
+  RttStateReceiveSourceLanChange = "RttStateReceiveSourceLanChange",
+  //倒计时修改通知
+  RttReduceTimeChange = "RttReduceTimeChange",
+  //文本大小修改完成
+  RttTextSizeChagneFinish = "RttTextSizeChagneFinish",
+  //源语言修改完成
+  RttSourceLanChangeFinish = "RttSourceLanChangeFinish",
+  //翻译语言修改完成
+  RttTargetLanChangeFinish = "RttTargetLanChangeFinish",
+  //双语显示修改完成
+  RttShowDoubleLanChangeFinish = "RttShowDoubleLanChangeFinish",
+  ChangeRttlanguage = "ChangeRttlanguage",
 }
 
 /**
@@ -151,6 +218,8 @@ export enum AgoraExtensionWidgetEvent {
   WidgetDestroyed = 'widget-destroyed',
   //设置插件可见性
   SetVisible = 'set-visible',
+  // 切换声源语言
+  ChangeRttlanguage = "change-rttlanguage",
   //设置插件最小化
   SetMinimize = 'set-minimize',
   //设置插件全屏

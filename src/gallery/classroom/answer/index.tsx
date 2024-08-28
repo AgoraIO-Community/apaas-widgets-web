@@ -41,11 +41,11 @@ export class AgoraSelector extends AgoraEduToolWidget {
   async onInstall(controller: AgoraWidgetController) {
     await addResource();
     if (controller.classroomConfig.sessionInfo.roomType !== 2) {
-      controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-        id: this.widgetName,
-        name: transI18n('widget_selector.appName'),
-        iconType: 'answer',
-      });
+      // controller.broadcast(AgoraExtensionWidgetEvent., {
+      //   id: this.widgetName,
+      //   name: transI18n('widget_selector.appName'),
+      //   iconType: 'answer',
+      // });
     }
   }
 

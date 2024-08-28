@@ -1,5 +1,7 @@
 import { FcrChatroomWidget as FcrChatroom } from './gallery/scene/chatroom';
 import { FcrPollingWidget } from './gallery/scene/polling';
+import { FcrRTTWidget } from './gallery/scene/rtt';
+import {FcrRttboxWidget} from './gallery/scene/rttbox';
 import { FcrBoardWidget } from './gallery/scene/whiteboard';
 import { FcrWebviewWidget } from './gallery/scene/webview';
 import { FcrStreamMediaPlayerWidget } from './gallery/scene/stream-media';
@@ -9,6 +11,8 @@ export {
   FcrChatroom,
   FcrBoardWidget,
   FcrPollingWidget,
+  FcrRTTWidget,
+  FcrRttboxWidget,
   FcrWebviewWidget,
   FcrStreamMediaPlayerWidget,
   FcrCountdownWidget,
