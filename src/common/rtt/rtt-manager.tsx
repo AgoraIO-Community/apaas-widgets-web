@@ -442,7 +442,6 @@ class FcrRttManager {
                             toastProps: {
                                 type: 'normal',
                                 content: <div>{fcrRttManager.formatRoleName(operator, localUser)}{transI18n('fcr_dialog_rtt_text_change_source_language')}<span style={{ color: '#4262FF' }}>{languageText}</span></div>
-                                // content: ,
                             },
                         });
                         fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
