@@ -181,7 +181,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   private registerWidget(controller: AgoraWidgetController) {
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
-      name: !fcrRttManager.getConfigInfo().isOpenTranscribe() ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
+      name: !fcrRttManager.getConfigInfo()?.isOpenTranscribe() ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
       iconType: SvgIconEnum.FCR_V2_RTT,
     });
   }

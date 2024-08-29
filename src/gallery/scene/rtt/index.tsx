@@ -174,7 +174,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   private registerWidget(controller: AgoraWidgetController) {
       controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
         id: this.widgetName,
-        name: !fcrRttManager.getConfigInfo().isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+        name: !fcrRttManager.getConfigInfo()?.isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
         iconType: SvgIconEnum.FCR_V2_SUBTITIES,
       });
   }
