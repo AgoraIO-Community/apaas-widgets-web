@@ -9,6 +9,7 @@
   height: 100%;
   width: 100%;
   position: absolute;
+  background: var(--ui-02, #FEFEFE);
 }
 .board-widget-app img {
   max-width: initial;

@@ -57,7 +57,7 @@ export const ShapePickerItem: FC<{ offset?: number }> = observer(({ offset }) =>
   return (
     <div className={cls} onClick={handleShapeToolChange(clickShape)}>
       <SvgImg
-        colors={{ iconPrimary: isActive && currentColor ? currentColor : 'white' }}
+        colors={{ iconPrimary: isActive && currentColor ? currentColor : '#151515' }}
         type={icon}
         size={28}
       />

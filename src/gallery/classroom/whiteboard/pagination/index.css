@@ -21,7 +21,9 @@
 }
 
 .fcr-pagination-half-r .fcr-pagination__extra {
-  @apply fcr-bg-2  fcr-rounded-8;
+  @apply  fcr-rounded-8;
+  background: var(--background-light, #FFFFFF);
+  border: 0.5px solid var(--border-01, #DFE1E1);
   width: 40px;
   height: 40px;
   display: flex;
@@ -30,14 +32,15 @@
 }
 .fcr-pagination__expage,
 .fcr-pagination__exundo {
-  @apply fcr-bg-2  fcr-rounded-8;
+  @apply fcr-rounded-8;
+  background: var(--background-light, #FFFFFF);
+  border: 0.5px solid var(--border-01, #DFE1E1);
   width: 40px;
   display: flex;
   justify-content: center;
   align-items: center;
   flex-direction: column;
   margin-top: 16px;
-  color: #fff;
 }
 .fcr-pagination__exundo {
   bottom: 12px;
@@ -75,6 +78,7 @@
 .fcr-mobile-pagination .fcr-pagination__btn:hover:not(.fcr-pagination_btn--disabled) {
   cursor: pointer;
   color: var(--color-icon-2);
+  /* color: var(--icon-primary, #151515); */
 }
 
 .fcr-mobile-pagination .fcr-pagination__btn:active:not(.fcr-pagination_btn--disabled) {

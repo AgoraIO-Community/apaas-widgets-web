@@ -44,10 +44,11 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
     'fcr-board-toolbar-item-surrounding--active': isActive,
   });
 
+  
   return (
     <div className={cls} onClick={handlePenToolChange(clickShape)}>
       <SvgImg
-        colors={{ iconPrimary: isActive && currentColor ? currentColor : 'white' }}
+        colors={{iconPrimary: isActive && currentColor ? currentColor : 'white',iconSecondary:'#151515' }}
         type={icon}
         size={28}
       />
@@ -79,7 +80,7 @@ export const PenPickerPanel = observer(() => {
         };
         return (
           <div key={type} className={cls} onClick={handleClick}>
-            <SvgImg type={icon} size={28} />
+            <SvgImg type={icon} size={28}/>
           </div>
         );
       })}
