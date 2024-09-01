@@ -6,16 +6,29 @@
   flex: 1;
   display: flex;
   gap: 10px;
+  height: 100%;
+}
+
+
+.fcr-chatroom-mobile-inputs-landscape .fcr-application-panel-wrapped {
+  flex-direction: column;
+  /* justify-content: center;
+  align-items: center; */
 }
 
 .fcr-application-panel-wrapped>.fcr-application-panel-item {
   position: relative;
-  flex:1;
+  flex: 1;
   text-align: center;
 }
 
+.fcr-chatroom-mobile-inputs-landscape .fcr-application-panel-item {
+  /* flex: none; */
+  vertical-align: middle;
+}
+
 .fcr-application-panel-wrapped>.fcr-application-panel-item>svg {
-  margin: auto; 
+  margin: auto;
 }
 
 .fcr-application-panel-wrapped>.fcr-application-panel-item>span {
@@ -105,6 +118,7 @@
 .fcr-chatroom-mobile-room-info-emoji-open .fcr-chatroom-mobile-inputs:not(.fcr-chatroom-mobile-inputs-landscape) {
   position: absolute;
 }
+
 
 .fcr-chatroom-mobile-inputs-input {
   position: relative;
@@ -324,9 +338,10 @@
 
 .fcr-chatroom-mobile-landscape-input-container .fcr-chatroom-mobile-inputs {
   padding: 9px;
-  justify-content: flex-start;
-  margin-bottom: 4px;
-  height: 52px;
+  /* justify-content: flex-start; */
+  /* margin-bottom: 4px; */
+  /* height: 52px; */
+  height: 100%;
   align-items: center;
 }
 
@@ -379,12 +394,15 @@
   margin-left: 10px;
 }
 
-.fcr-chatroom-mobile-inputs-mobile-content {
-  flex: 1;
+.fcr-chatroom-mobile-inputs-mobile-content .fcr-application-panel-item{
   display: flex;
+  flex-direction: column;
+  justify-content: center;
   align-items: center;
-  justify-content: space-between;
-  overflow: hidden;
+}
+
+.fcr-chatroom-mobile-inputs-mobile-content .fcr-application-panel-item svg{
+  margin: 0;
 }
 
 .fcr-chatroom-mobile-inputs-mobile-left {
