@@ -93,7 +93,7 @@ export const ShapePickerPanel = observer(() => {
         };
         return (
           <div key={type} className={cls} onClick={handleClick}>
-            <SvgImg type={icon} size={28} />
+            <SvgImg type={icon} size={28}  colors={{iconPrimary:'#151515'}}/>
           </div>
         );
       })}
@@ -104,7 +104,7 @@ export const ShapePickerPanel = observer(() => {
       <ColorToolPickerItem key="ShapeColorPicker" />
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
       <div onClick={handleClose}>
-        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} size={16} />
+        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} size={16} colors={{iconPrimary:'#151515'}}/>
       </div>
     </div>
   );

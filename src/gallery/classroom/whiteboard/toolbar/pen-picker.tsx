@@ -80,7 +80,7 @@ export const PenPickerPanel = observer(() => {
         };
         return (
           <div key={type} className={cls} onClick={handleClick}>
-            <SvgImg type={icon} size={28}/>
+            <SvgImg type={icon} size={28} colors={{iconPrimary:'#151515'}}/>
           </div>
         );
       })}
@@ -92,7 +92,7 @@ export const PenPickerPanel = observer(() => {
       <ColorToolPickerItem origin="pen" key="PenColorPicker" />
       <div className="fcr-divider-vertical fcr-divider-mobile-line"></div>
       <div key="close" onClick={handleClose}>
-        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} size={16} />
+        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} size={16} colors={{iconPrimary:'#151515'}}/>
       </div>
     </div>
   );
@@ -133,7 +133,7 @@ const PenWeightsItem = observer(() => {
     <div className="fcr-board-toolbar-panel fcr-board-toolbar-panel--pen">
       {weights.map(({ value, lineIcon, icon }) => (
         <div key={value} onClick={() => handleClick(value)}>
-          <SvgImg type={currentVal === value ? lineIcon : icon} size={28} />
+          <SvgImg type={currentVal === value ? lineIcon : icon} size={28} colors={{iconPrimary:'#151515'}} />
         </div>
       ))}
     </div>
@@ -171,10 +171,10 @@ export const PenToolPickerItem = observer(({ origin }: any) => {
       popoverOffset={12}
       overlayInnerStyle={{
         width: 'fit-content',
-        background: 'rgba(41, 46, 51, 0.95)',
+        background: 'var(--fcr_mobile_ui_scene_color_popup_block1, #FFFFFFF2)',
         borderRadius: '6px',
         paddingTop: '2.5px',
-        border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
+        border: '0.5px solid var(--fcr_ui_scene_line1, #E3E7EF)',
       }}
       popoverContent={<PenWeightsItem key={origin} />}
       extensionMark={false}

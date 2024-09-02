@@ -564,3 +564,8 @@
   font-weight: 700;
   font-size: 12px;
 }
+
+.fcr-chatroom-mobile-inputs-mobile-content .fcr-chatroom-mobile-inputs-application-count{
+  bottom: 28px;
+  right: 18px;
+}

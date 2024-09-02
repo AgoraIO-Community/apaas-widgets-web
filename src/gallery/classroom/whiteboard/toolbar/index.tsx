@@ -140,7 +140,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
                 <div
                   className="fcr-board-toolbar-fold"
                   style={{
-                    top: (toolbarDockPosition.y || 12) + 'px',
+                    bottom: (toolbarDockPosition.y || 12) + 'px',
                   }}
                   onClick={() => handleFoldClick(false)}>
                   <div
@@ -149,7 +149,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
                     )}>
                     <SvgImg
                       type={SvgIconEnum.WHITEBOARDEDIT}
-                      colors={{ iconPrimary: 'white' }}
+                      colors={{ iconPrimary: '#151515' }}
                       size={32}></SvgImg>
                   </div>
                 </div>
@@ -269,7 +269,7 @@ export const ExpansionToolbarItem: FC<{
         visible: true,
       }}>
       <div className={cls} onClick={onClick}>
-        <SvgImg colors={{ iconPrimary: 'white' }} {...iconProps} type={icon} size={28} />
+        <SvgImg colors={{ iconPrimary: '#151515' }} {...iconProps} type={icon} size={28} />
         {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
       </div>
     </PopoverWithTooltip>

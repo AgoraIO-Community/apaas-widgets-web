@@ -94,15 +94,15 @@
   margin-top: 2.5px;
 }
 .fcr-board-toolbar__fixedbottom .fcr-tooltip-inner {
-  border: 0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5)) !important;
-  background: var(--fcr_mobile_ui_scene_color_popup_block1, rgba(41, 46, 51, 0.95)) !important;
-
+  background: var(--background-light, #FFFFFF) !important;
+  border: 0.5px solid var(--border-01, #DFE1E1) !important;
   border-bottom-left-radius: 0 !important;
   border-bottom-right-radius: 0 !important;
 }
 .fcr-mobile-board-expand {
   border-radius: var(--fcr_cornerradius_s, 8px);
-  background: var(--fcr_ui_scene_ramp_brand6, #4262ff);
+  background: var(--background-light, #FFFFFF);
+  box-shadow: 0px 0px 15px 0px #97979740;
   width: 40px;
   height: 40px;
   align-items: center;
@@ -110,8 +110,8 @@
 .fcr-board-toolbar-fold {
   pointer-events: auto;
   position: fixed;
-  top: 12px;
-  left: 16px;
+  bottom: 12px;
+  left: 120px;
   z-index: 9;
   transition: all 0.25s;
 }
