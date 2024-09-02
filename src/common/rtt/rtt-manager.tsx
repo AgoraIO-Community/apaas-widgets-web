@@ -1,6 +1,6 @@
 // import { getLanguage } from "agora-common-libs/*";
-import { AgoraWidgetController, EduClassroomConfig, EduClassroomStore, EduRoleTypeEnum, EduUserStruct } from "agora-edu-core";
-import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from "../../../src/events";
+import { AgoraWidgetController, EduClassroomStore, EduRoleTypeEnum, EduUserStruct } from "agora-edu-core";
+import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from "../../events";
 import { FcrRttConfig, FcrRttLanguageData } from "./rtt-config";
 import { FcrRttItem } from "./rtt-item";
 import protoRoot from './proto';
@@ -39,7 +39,7 @@ class FcrRttManager {
     private rttConfigInfo!: FcrRttConfig
 
     getConfigInfo() {
-        if (fcrRttManager.rttConfigInfo == null) {
+        if (fcrRttManager.rttConfigInfo === null) {
             this.resetData(null)
         }
         return fcrRttManager.rttConfigInfo
@@ -320,7 +320,7 @@ class FcrRttManager {
         fcrRttManager.lastRecord = fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1]
         if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
             const showItem = fcrRttManager.showRecordList.length >= 0 ? fcrRttManager.showRecordList[fcrRttManager.showRecordList.length - 1] : null
-            if (showItem?.uuid != null && showItem.uuid == fcrRttManager.lastRecord.uuid) {
+            if (showItem?.uuid != null && showItem.uuid === fcrRttManager.lastRecord.uuid) {
                 fcrRttManager.showRecordList[fcrRttManager.showRecordList.length - 1] = fcrRttManager.lastRecord
             } else {
                 fcrRttManager.showRecordList.push(fcrRttManager.lastRecord)
@@ -370,12 +370,12 @@ class FcrRttManager {
             //判断是否改变了转写状态
             const transcribeState = Number(config["transcribe"])
             if (transcribeState != null && operator) {
-                const toOpen = 1 == transcribeState
-                if (fcrRttManager.rttConfigInfo.isOpenTranscribe() !== toOpen || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTranscribeState)) {
+                const toOpen = 1 === transcribeState
+                if (fcrRttManager.rttConfigInfo.isOpenTranscribe() !== toOpen || (operator.userUuid === localUser?.userUuid && fcrRttManager.localIsChangeTranscribeState)) {
                     fcrRttManager.localIsChangeTranscribeState = false;
                     const textContent = `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n(toOpen ? 'fcr_dialog_rtt_text_conversion_state_open' : 'fcr_dialog_rtt_text_conversion_state_close')}`
                     const toastContent = `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n(
-                        localUser?.userUuid == operator?.userUuid ?
+                        localUser?.userUuid === operator?.userUuid ?
                             (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open_me_show' : 'fcr_dialog_rtt_toast_conversion_state_close_me_show') :
                             (toOpen ? 'fcr_dialog_rtt_toast_conversion_state_open' : 'fcr_dialog_rtt_toast_conversion_state_close')
                     )}`
@@ -407,7 +407,7 @@ class FcrRttManager {
             }
             //判断是否开启了翻译
             const targetLan = config["languages"]["target"] as any
-            if (targetLan && targetLan.length > 0 && operator && operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeTarget) {
+            if (targetLan && targetLan.length > 0 && operator && operator.userUuid === localUser?.userUuid && fcrRttManager.localIsChangeTarget) {
                 fcrRttManager.rttConfigInfo.setTargetLanList(targetLan)
                 if (fcrRttManager.rttConfigInfo.getTargetLan().value !== targetLan[0] && "" !== targetLan[0]) {
                     fcrRttManager.localIsChangeTarget = false;
@@ -432,7 +432,7 @@ class FcrRttManager {
             //判断是否修改了声源语言
             const sourceLan = config["languages"]["source"]
             if (sourceLan && operator) {
-                if (fcrRttManager.rttConfigInfo.getSourceLan().value !== sourceLan || (operator.userUuid == localUser?.userUuid && fcrRttManager.localIsChangeSourceLan)) {
+                if (fcrRttManager.rttConfigInfo.getSourceLan().value !== sourceLan || (operator.userUuid === localUser?.userUuid && fcrRttManager.localIsChangeSourceLan)) {
                     fcrRttManager.localIsChangeSourceLan = false;
                     const findData = fcrRttManager.sourceLanguageList.find(item => item.value === sourceLan);
                     if (findData) {
@@ -441,7 +441,7 @@ class FcrRttManager {
                         ToastApi.open({
                             toastProps: {
                                 type: 'normal',
-                                content: `${fcrRttManager.formatRoleName(operator, localUser)}${transI18n('fcr_dialog_rtt_text_change_source_language')}<span style="color: #4262FF;">${languageText}</span>`,
+                                content: <div>{fcrRttManager.formatRoleName(operator, localUser)}{transI18n('fcr_dialog_rtt_text_change_source_language')}<span style={{ color: '#4262FF' }}>{languageText}</span></div>
                             },
                         });
                         fcrRttManager.allRecordList = fcrRttManager.allRecordList.concat([
@@ -467,7 +467,7 @@ class FcrRttManager {
 
             //是否开启字幕
             const subtitleState = Number(config["subtitle"])
-            if(0 == subtitleState && fcrRttManager.rttConfigInfo.isOpenSubtitle()){
+            if(0 === subtitleState && fcrRttManager.rttConfigInfo.isOpenSubtitle()){
                 //重新发起字幕开启
                 this.sendRequest(fcrRttManager.rttConfigInfo)
             }
@@ -480,9 +480,9 @@ class FcrRttManager {
      * @param localUser 当前本地的用户信息
      */
     formatRoleName(optionsUser: any, localUser: EduUserStruct | undefined) {
-        return `${EduRoleTypeEnum.student == Number(optionsUser.role) ? transI18n('fcr_rtt_role_student') :
-            EduRoleTypeEnum.teacher == Number(optionsUser.role) ? transI18n('fcr_rtt_role_teacher') : ''
-            }(${optionsUser.userUuid == localUser?.userUuid ? transI18n('fcr_rtt_role_me') : optionsUser.userName})  `
+        return `${EduRoleTypeEnum.student === Number(optionsUser.role) ? transI18n('fcr_rtt_role_student') :
+            EduRoleTypeEnum.teacher === Number(optionsUser.role) ? transI18n('fcr_rtt_role_teacher') : ''
+            }(${optionsUser.userUuid === localUser?.userUuid ? transI18n('fcr_rtt_role_me') : optionsUser.userName})  `
     }
 
     /**
