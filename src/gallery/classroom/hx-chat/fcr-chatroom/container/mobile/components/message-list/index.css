@@ -83,7 +83,8 @@
   overflow: hidden;
   text-overflow: ellipsis;
 }
-.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-chat-message-list-item-time{
+
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-chat-message-list-item-time {
   text-wrap: nowrap;
 }
 
@@ -179,13 +180,13 @@
   margin-bottom: 7px;
   display: flex;
   align-items: center;
+  justify-content: flex-end;
   gap: 9px;
 
   font-family: Verdana;
   font-size: 10px;
   font-weight: 700;
   line-height: 10px;
-  text-align: left;
   color: var(--inverse-text-primary, #FEFEFE);
 }
 
@@ -309,6 +310,12 @@
   position: relative;
   pointer-events: all;
   margin-left: 20px;
+}
+
+.fcr-chatroom-mobile-message-item-name-content .fcr-chat-private-tag  {
+  text-wrap: nowrap;
+  display: inline-flex;
+  gap: 4px;
 }
 
 .fcr-chat-private-tag .fcr-text-send-to {
