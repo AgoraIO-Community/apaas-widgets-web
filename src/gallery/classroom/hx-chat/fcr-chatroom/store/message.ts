@@ -26,6 +26,7 @@ export class MessageStore {
   @observable announcement = '';
   @observable showAnnouncement = false;
   @observable historyMessageLoaded = false;
+  @observable isFullScreen = false;
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
   }
@@ -131,6 +132,12 @@ export class MessageStore {
   setShowAnnouncement(show: boolean) {
     this.showAnnouncement = show;
   }
+
+  @action.bound
+  setIsFullScreen(value: boolean) {
+    this.isFullScreen = value;
+  }
+  
   @action.bound
   setIsBottom(isBottom: boolean) {
     if (isBottom) {

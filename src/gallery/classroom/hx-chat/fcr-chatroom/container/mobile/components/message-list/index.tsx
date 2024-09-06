@@ -105,9 +105,9 @@ export const MessageList = observer(() => {
       <div
         style={{
           // visibility: (landscapeToolBarVisible && messageVisible) || !isLandscape ? 'visible' : 'hidden',
-          WebkitMask: isLandscape
-            ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
-            : '',
+          // WebkitMask: isLandscape
+          //   ? '-webkit-gradient(linear,left 30,left top,from(#000),to(transparent))'
+          //   : '',
           pointerEvents:
             messageList.length > 0 ? (isAndroid && forceLandscape ? 'none' : 'all') : 'none',
         }}
@@ -209,7 +209,7 @@ const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
 
   const transI18n = useI18n();
   return (
-    <div className='fcr-chatroom-mobile-message-item-wrapped'>
+    <div className='fcr-chatroom-mobile-message-item-wrapped fcr-chatroom-mobile-message-announcement-wrapped'>
       <div
         key={announcement}
         className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-announcement`}>
@@ -274,7 +274,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                 type={SvgIconEnum.TEACHER_ICON}
                 size={16}
               />}
-              <span style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : isSelfMessage ? 'var(--inverse-text-primary, #FEFEFE)' : getNameColor(textMessage.ext?.nickName || '') }}>
+              <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : isSelfMessage ? 'var(--inverse-text-primary, #FEFEFE)' : getNameColor(textMessage.ext?.nickName || '') }}>
                 {`${textMessage.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`}
               </span>
               {textMessage?.ts && (
@@ -293,7 +293,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
               <span className="fcr-chat-private-tag fcr-chat-private-tag-right">
                 <span >{transI18n('fcr_chat_label_i')}</span>
                 <span className='fcr-text-send-to'>{transI18n('fcr_chat_label_i_said_to')}</span>
-                <span >{`${textMessage.ext?.receiverList?.[0].nickName}${isToTeacher ? '(Turtor)' : ''}`}</span>
+                <span className='fcr-chatroom-mobile-message-item-nickname' >{`${textMessage.ext?.receiverList?.[0].nickName}${isToTeacher ? '(Turtor)' : ''}`}</span>
                 <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
               </span>
               {textMessage?.ts && (
@@ -317,7 +317,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                   size={16}
                 />}
                 <span className="fcr-chat-private-tag">
-                  <span style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(textMessage.ext?.nickName || '') }} >{`${message.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`} </span>
+                  <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(textMessage.ext?.nickName || '') }} >{`${message.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`} </span>
                   <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
                 </span>
                 {textMessage?.ts && (
@@ -389,7 +389,7 @@ const ImageMessage = observer(
                   type={SvgIconEnum.TEACHER_ICON}
                   size={16}
                 />}
-                <span style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : isSelfMessage ? 'var(--inverse-text-primary, #FEFEFE)' : getNameColor(imageMessage.ext?.nickName || '') }}>{`${imageMessage.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`}</span>
+                <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : isSelfMessage ? 'var(--inverse-text-primary, #FEFEFE)' : getNameColor(imageMessage.ext?.nickName || '') }}>{`${imageMessage.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`}</span>
                 {imageMessage?.ts && (
                   <div className="fcr-chat-message-list-item-time">
                     {dayjs(imageMessage.ts).format(isSelfMessage ? 'MM-DD hh:mm A' : 'YYYY-MM-DD hh:mm A')}
@@ -412,7 +412,7 @@ const ImageMessage = observer(
                   <span className="fcr-chat-private-tag">
                     <span >{transI18n('fcr_chat_label_i')}</span>
                     <div className='fcr-text-send-to' style={{ display: 'inline-block' }}>{transI18n('fcr_chat_label_i_said_to')}</div>
-                    <span >{`${imageMessage.ext?.receiverList?.[0].nickName}${isToTeacher ? '(Turtor)' : ''}`}</span>
+                    <span className='fcr-chatroom-mobile-message-item-nickname'>{`${imageMessage.ext?.receiverList?.[0].nickName}${isToTeacher ? '(Turtor)' : ''}`}</span>
                     <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
                   </span>
                   {imageMessage?.ts && (
@@ -443,7 +443,7 @@ const ImageMessage = observer(
                     size={16}
                   />}
                   <span className="fcr-chat-private-tag">
-                    <span style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(imageMessage.ext?.nickName || '') }}>{`${imageMessage.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`} </span>
+                    <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(imageMessage.ext?.nickName || '') }}>{`${imageMessage.ext?.nickName}${isTeacherMessage ? '(Turtor)' : ''}`} </span>
                     <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
                   </span>
                   {imageMessage?.ts && (

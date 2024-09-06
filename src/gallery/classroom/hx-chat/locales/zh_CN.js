@@ -18,7 +18,7 @@ const im_CN = {
     announcement: '公告',
     announcement_content: '公告内容不能超过500',
     all_mute: '全体禁言',
-    all_muted: '全体禁言中',
+    all_muted: '老师禁言中',
     muted_all: 'Turtor 开启了聊天室禁言',
     unmuted_all: 'Turtor 取消了聊天室禁言',
     mute: '禁言',

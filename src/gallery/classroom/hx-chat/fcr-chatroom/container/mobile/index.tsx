@@ -19,6 +19,7 @@ export const FcrChatRoomH5 = observer(() => {
     roomStore: { orientation, forceLandscape,screenShareStream },
   } = useStore();
   const isLandscape = orientation === OrientationEnum.landscape || forceLandscape;
+
   return (
     <RoomInfoContainer
       ref={containerRef}

@@ -123,7 +123,7 @@ export const TextArea = forwardRef<{ dom: HTMLTextAreaElement | null }, TextArea
         }
       }
     };
-    useEffect(handleSize, [value]);
+    // useEffect(handleSize, [value]);
 
     const handleChange = (e: ChangeEvent<HTMLTextAreaElement>) => {
       if (isNumber(maxCount) && e.target.value.length > maxCount && !overflowIsInput) {
@@ -135,6 +135,15 @@ export const TextArea = forwardRef<{ dom: HTMLTextAreaElement | null }, TextArea
       }
       else if (isNumber(maxCount) && e.target.value.length <= maxCount && overflowIsInput) {
         setOverflowText(false);
+      }
+
+      if (autoSize) {
+        const { minHeight = 36 } = autoSizeParams;
+
+        if (inputRef?.current) {
+          inputRef.current.style.height = minHeight + 'px';
+          inputRef.current.style.height = inputRef.current.scrollHeight + 'px';
+        }
       }
       onChange(e.target.value);
     };

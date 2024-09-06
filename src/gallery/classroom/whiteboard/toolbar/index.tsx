@@ -85,7 +85,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     const element: any = document.querySelector(
       '.whiteboard-mobile-container .netless-whiteboard-wrapper',
     );
-    const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
+    // const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
     const inputDom: any = document.querySelector('.landscape-bottom-tools');
     const pptDom: any = document.querySelector('.netless-app-slide-wb-view');
 
@@ -99,18 +99,18 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
       pptDom ? pptDom.style.setProperty('pointer-events', 'auto', 'important') : '';
       inputDom ? (inputDom.style.bottom = '-100px') : '';
     }
-    if (!chatDom) return;
-    const height = chatDom.style.height;
-    if (!fixedBottomBarVisible && foldToolBar) {
-      chatDom.style.height = height;
-    } else {
-      chatDom.style.height = '0';
-    }
-    return () => {
-      if (chatDom) {
-        chatDom.style.height = '256px';
-      }
-    };
+    // if (!chatDom) return;
+    // const height = chatDom.style.height;
+    // if (!fixedBottomBarVisible && foldToolBar) {
+    //   chatDom.style.height = height;
+    // } else {
+    //   chatDom.style.height = '0';
+    // }
+    // return () => {
+    //   if (chatDom) {
+    //     chatDom.style.height = '256px';
+    //   }
+    // };
   }, [fixedBottomBarVisible, foldToolBar]);
 
   const handleFoldClick = (bool: boolean) => {

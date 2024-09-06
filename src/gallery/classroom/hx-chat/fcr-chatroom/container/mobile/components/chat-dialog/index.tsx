@@ -6,6 +6,7 @@ import { useI18n } from 'agora-common-libs';
 import { Avatar } from '@components/avatar';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+
 import { TextArea } from '../../../../../../../../components/textarea';
 import classnames from 'classnames';
 import PrivateDialog from '../private-dialog';
@@ -25,7 +26,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
       allMuted,
       quitForceLandscape,
     },
-    messageStore: { sendTextMessage, sendImageMessage },
+    messageStore: { sendTextMessage, sendImageMessage, isFullScreen, setIsFullScreen },
     fcrChatRoom,
     userStore: {
       userList,
@@ -35,7 +36,8 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
       setSearchKey,
       privateUser,
       setPrivateUser,
-      chatGroup
+      chatGroup,
+      getTeacherName
     },
   } = useStore();
   const transI18n = useI18n();
@@ -48,6 +50,8 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
   const textAreaRef = useRef<{ dom: HTMLTextAreaElement | null }>({
     dom: null,
   });
+
+  const textRef = useRef(null);
   const isMuted = allMuted || userMuted;
   const [text, setText] = useState('');
 
@@ -68,6 +72,11 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
   const handleCloseDialog = () => {
     setIsShowChat(false)
   }
+
+  const handleFullScreenDialog = () => {
+    setIsFullScreen(!isFullScreen);
+  }
+
   const handleSetPrivate = (user: any) => {
     setPrivateUser(user)
   }
@@ -96,6 +105,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
     }
     sendTextMessage(text, privateUser ? [privateUser] : undefined);
     setText('');
+    setShowCount(false);
     // textAreaRef.current.dom?.blur();
   };
 
@@ -142,20 +152,31 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
 
   const handleChangeTextarea = (e: string) => {
     setText(e);
+    const newHeight = textAreaRef.current.dom?.scrollHeight;
+    if (newHeight && ((+newHeight / 19.5) >= 3)) {
+      setShowCount(true);
+    } else {
+      setShowCount(false);
+    }
   }
 
   return (
-    <div className='fcr-chatroom-mobile-inputs-chat-dialog'>
-      <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main')} style={isLandscape ? { height: !height ? 'auto' : `${height}px` } : undefined} onClick={(e) => e.stopPropagation()}>
+    <div className='fcr-chatroom-mobile-inputs-chat-dialog' style={isFullScreen ? { height: '100vh', top: 0 } : isLandscape ? { height: 'calc(100vh - 52px)', top: '52px' } : { height: 'calc(100vh - 48px - 8px)', top: '48px' }}>
+      <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main', { 'fcr-chatroom-mobile-inputs-chat-dialog-main-landscape': isLandscape })} style={(isFullScreen || isLandscape) ? { top: 0, height: isFullScreen ? '100%' : 'inset' } : { top: '8px' }} onClick={(e) => e.stopPropagation()}>
         <div className='fcr-chatroom-mobile-inputs-chat-dialog-title'>
           {transI18n('chat.chat')}
-          <div className='fcr-chatroom-mobile-inputs-chat-dialog-full-screen' onClick={handleCloseDialog}>
-            <SvgImgMobile
+          <div className='fcr-chatroom-mobile-inputs-chat-dialog-full-screen' onClick={handleFullScreenDialog}>
+            {isFullScreen ? <SvgImgMobile
+              forceLandscape={forceLandscape}
+              landscape={isLandscape}
+              type={SvgIconEnum.CHAT_FULL_SCREEN_CLOSE}
+              size={16}
+            /> : <SvgImgMobile
               forceLandscape={forceLandscape}
               landscape={isLandscape}
               type={SvgIconEnum.CHAT_FULL_SCREEN}
-              size={15.6}
-            />
+              size={16}
+            />}
           </div>
           <div className='fcr-chatroom-mobile-inputs-chat-dialog-close' onClick={handleCloseDialog}>
             <SvgImgMobile
@@ -168,34 +189,42 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
         </div>
         <MessageList></MessageList>
         <div className='fcr-chatroom-mobile-inputs-chat-search'>
+          {isMuted && (
+            <div className={`fcr-chatroom-mobile-inputs-chat-search-muted-wrapped${isMuted ? '-muted' : ''}`}>
+              <div className="fcr-chatroom-mobile-inputs-input-muted">
+                <SvgImgMobile
+                  forceLandscape={forceLandscape}
+                  landscape={isLandscape}
+                  type={SvgIconEnum.MUTE_NEW}
+                  size={30}></SvgImgMobile>
+                {allMuted ? (
+                  <p>{transI18n('chat.all_muted')}...</p>
+                ) : (
+                  <p>{transI18n('chat.single_muted')}...</p>
+                )}
+              </div>
+            </div>
+          )}
+
           <div className='fcr-chatroom-mobile-inputs-person-list'>
             <span className="fcr-chatroom-mobile-inputs-private-label">
               {transI18n('chat.send_to')}：
             </span>
             <div className="fcr-chatroom-mobile-inputs-private-select" onClick={handleShowPrivate} >
               <span className="fcr-chatroom-mobile-inputs-private-select-val">
-                {privateUser?.userId ? privateUser.nickName :
+                {privateUser?.userId ? `${privateUser?.ext?.role == 1 ? `${getTeacherName()}(Turtor)` : privateUser.nickName}` :
                   isBreakOutRoomEnabled && isBreakOutRoomIn && chatGroup ? transI18n('chat.chat_option_my_group') :
                     isBreakOutRoomEnabled && !isBreakOutRoomIn ? transI18n('chat.chat_option_main_room') : transI18n('chat.chat_option_all')}
               </span>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
                 landscape={isLandscape}
-                type={SvgIconEnum.PRIVATE_SELECT}
+                type={SvgIconEnum.PRIVATE_SELECT_NEW}
                 size={16}></SvgImgMobile>
             </div>
             {privateUser && (
               <div className="fcr-chatroom-mobile-inputs-private-icon">
-                <div className="fcr-chatroom-mobile-inputs-private-icon-svg">
-                  <SvgImgMobile
-                    forceLandscape={forceLandscape}
-                    landscape={isLandscape}
-                    type={SvgIconEnum.PRIVATE}
-                    size={16}></SvgImgMobile>
-                </div>
-                <span className="fcr-chatroom-mobile-inputs-private-icon-val">
-                  {transI18n('chat.private')}
-                </span>
+                {transI18n('chat.private')}
               </div>
             )}
             <input
@@ -207,35 +236,35 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
             />
           </div>
 
-          <div className='fcr-chatroom-mobile-inputs-chat-search-input-wrapped'>
-            {isMuted && (
-              <div className="fcr-chatroom-mobile-inputs-input-muted">
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.MUTE}
-                  size={30}></SvgImgMobile>
-                {allMuted ? (
-                  <p>{transI18n('chat.all_muted')}...</p>
-                ) : (
-                  <p>{transI18n('chat.single_muted')}...</p>
-                )}
-              </div>
-            )}
+          <div className={`fcr-chatroom-mobile-inputs-chat-search-input-wrapped fcr-chatroom-mobile-inputs-chat-search-input-wrapped${isMuted ? '-muted' : ''}`}>
 
             <div
               className={classnames('fcr-chat-input', {
                 'fcr-chat-input-focus': inputFocus,
                 'fcr-chat-input-focus-text': !!text
               })}>
-              {text && <SvgImgMobile
-                className={classnames('fcr-chat-input-send', {
-                  'fcr-chat-input-send-disabled': !text,
-                })}
-                forceLandscape={forceLandscape}
-                landscape={isLandscape}
-                type={SvgIconEnum.CHAT_SEND}
-              />}
+              {text ?
+                text?.length <= 200 ?
+                  <SvgImgMobile
+                    className={classnames('fcr-chat-input-send', {
+                      'fcr-chat-input-send-disabled': !text,
+                    })}
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.CHAT_SEND}
+                    size={25}
+                    onClick={send}
+                  /> :
+                  <SvgImgMobile
+                    className={classnames('fcr-chat-input-send', {
+                      'fcr-chat-input-send-disabled': !text,
+                    })}
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.CHAT_SEND_PARDON}
+                    size={25}
+                  />
+                : null}
               <TextArea
                 ref={textAreaRef}
                 onKeyDown={handleKeyDown}
@@ -245,8 +274,8 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
                 showCount={showCount}
                 // onFocusChange={setInputFocus}
                 resizable={false}
-                placeholder={transI18n('fcr_chat_box_dialog_placeholder')}
-                value={text}
+                placeholder={isMuted ? '' : transI18n('fcr_chat_box_dialog_placeholder')}
+                value={isMuted ? '' : text}
                 onChange={handleChangeTextarea}></TextArea>
             </div>
             {!text && <div

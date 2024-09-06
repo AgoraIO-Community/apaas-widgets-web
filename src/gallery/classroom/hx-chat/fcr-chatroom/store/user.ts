@@ -37,6 +37,12 @@ export class UserStore {
     this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
   }
+
+  @bound
+  getTeacherName() {
+    return this._widget.classroomStore.userStore.mainRoomDataStore.teacherList.values().next()?.value?.userName;
+  }
+
   @computed
   get userList() {
     return iterateMap(this.userMap, {

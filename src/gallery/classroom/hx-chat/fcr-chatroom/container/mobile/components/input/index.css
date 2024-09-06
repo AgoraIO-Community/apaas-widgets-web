@@ -314,25 +314,44 @@
   border-radius: 50px;
 }
 
+.fcr-chatroom-mobile-inputs-chat-search-muted-wrapped-muted {
+  z-index: 999;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  
+  /* height: 40px; */
+  /* position: absolute; */
+}
+
 .fcr-chatroom-mobile-inputs-input-muted,
 .fcr-chatroom-mobile-inputs-input-quit-landscape {
   position: absolute;
-  width: 100%;
+  /* width: calc(100% - 40px); */
   height: 100%;
-  top: 0;
-  left: 0;
+  /* top: 0; */
+  left: 50%;
+  transform: translateX(-50%);
+
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding-left: 15px;
   z-index: 1;
 }
 
+
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-chat-search-input-wrapped-muted.fcr-chatroom-mobile-inputs-chat-search-input-wrapped{
+  background: var(--color-monochrome-20, #E0E0E0);
+  border: 0.5px solid var(--fcr_ui_scene_line1, #E3E7EF)
+}
+
 .fcr-chatroom-mobile-inputs-input-muted>p {
+  font-family: Helvetica Neue;
+  font-size: 13px;
   font-weight: 400;
-  font-size: 14px;
-  line-height: 100%;
-  color: rgba(255, 255, 255, 0.8);
+  line-height: 13px;
+  text-align: left;
+  color: var(--text-tertiary, #505759);
   margin: 0;
 }
 
@@ -394,14 +413,14 @@
   margin-left: 10px;
 }
 
-.fcr-chatroom-mobile-inputs-mobile-content .fcr-application-panel-item{
+.fcr-chatroom-mobile-inputs-mobile-content .fcr-application-panel-item {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
 }
 
-.fcr-chatroom-mobile-inputs-mobile-content .fcr-application-panel-item svg{
+.fcr-chatroom-mobile-inputs-mobile-content .fcr-application-panel-item svg {
   margin: 0;
 }
 
@@ -491,10 +510,12 @@
 /* .fcr-chatroom-mobile-inputs-input-wrap .fcr-chatroom-mobile-inputs-input-main.private{
   padding-left: 44px;
 } */
-.fcr-chatroom-mobile-inputs-private-icon.private {
+.fcr-chatroom-mobile-inputs-private-icon {
   display: flex;
   align-items: center;
-  margin-left: 12px;
+  margin-left: 8px;
+  text-align: center;
+  justify-content: center;
 }
 
 .fcr-chatroom-mobile-inputs-mobile-left .fcr-chatroom-mobile-inputs-input-force-landscape {
@@ -565,7 +586,7 @@
   font-size: 12px;
 }
 
-.fcr-chatroom-mobile-inputs-mobile-content .fcr-chatroom-mobile-inputs-application-count{
+.fcr-chatroom-mobile-inputs-mobile-content .fcr-chatroom-mobile-inputs-application-count {
   bottom: 28px;
   right: 18px;
 }

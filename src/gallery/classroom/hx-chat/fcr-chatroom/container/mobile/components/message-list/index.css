@@ -76,14 +76,26 @@
   overflow: hidden;
 }
 
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-chatroom-mobile-message-item-nickname {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-chat-message-list-item-time{
+  text-wrap: nowrap;
+}
+
 .fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-avatar {
   margin-right: 13px;
 }
 
 
-.fcr-chatroom-mobile-message-item-wrapped :not(.fcr-chatroom-mobile-message-item-self){
+.fcr-chatroom-mobile-message-item-wrapped :not(.fcr-chatroom-mobile-message-item-self) {
   /* margin-left: 49px; */
 }
+
 .fcr-chatroom-mobile-message-item:last-child {
   margin-bottom: 0;
 }
@@ -115,7 +127,7 @@
   height: 30px;
   color: var(--inverse-text-primary, #FEFEFE);
   background: var(--ui-04, #505759);
-  padding: 7px 16px;
+  padding: 7px 14px;
   border-radius: 50px;
 
   text-align: center;
@@ -159,7 +171,7 @@
   margin-left: auto;
 }
 
-.fcr-chatroom-mobile-message-item.fcr-chatroom-mobile-message-item-isHidden{
+.fcr-chatroom-mobile-message-item.fcr-chatroom-mobile-message-item-isHidden {
   margin-left: 49px;
 }
 
@@ -223,6 +235,10 @@
   margin: auto;
 }
 
+.fcr-chatroom-mobile-message-announcement-wrapped {
+  margin: 10px 0 20px 0;
+}
+
 .fcr-chatroom-mobile-message-announcement {
   background: var(--ui-04, #505759);
   /* position: relative; */
@@ -231,7 +247,7 @@
 
   width: 326px;
   max-height: 70px;
-  border-radius: var(--fcrcornerradiusl);
+  border-radius: 16px;
   white-space: pre-wrap;
   padding: 0 13px 0 0;
   overflow: hidden;
@@ -319,7 +335,7 @@
 }
 
 .fcr-text-yellow {
-  color: #D4A80A;
+  color: var(--inverse-icon-secondary, #FAFAFA);
   font-family: Verdana;
   font-size: 10px;
   font-weight: 700;

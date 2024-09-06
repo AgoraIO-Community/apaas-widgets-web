@@ -17,7 +17,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
       isBreakOutRoomIn
     },
     fcrChatRoom,
-    userStore: { searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser, chatGroup, setChatGroup },
+    userStore: { getTeacherName, searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser, chatGroup, setChatGroup },
   } = useStore();
   const transI18n = useI18n();
   const [height, setHeight] = useState(0);
@@ -167,7 +167,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
                     />
                   </div> */}
                   <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val'>
-                    {txts[0]}
+                    {user?.ext?.role == 1 ? `${getTeacherName()}(Turtor)` : txts[0]}
                     <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-search'>{txts[1]}</span>
                     {txts[2]}
                   </span>
