@@ -202,7 +202,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
             value={searchQuery}
             onChange={setSearchQuery}
             iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
-            placeholder={transI18n('fcr_chat_label_search')}
+            placeholder={transI18n('fcr_dialog_rtt_search')}
           />
           {searchQuery && <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
             <div className='fcr-input-icon-clear' onClick={() => { setSearchQuery("") }}>
