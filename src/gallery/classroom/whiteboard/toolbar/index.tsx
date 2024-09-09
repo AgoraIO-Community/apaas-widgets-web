@@ -140,7 +140,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
                 <div
                   className="fcr-board-toolbar-fold"
                   style={{
-                    bottom: (toolbarDockPosition.y || 12) + 'px',
+                    bottom: 12 + 'px',
                   }}
                   onClick={() => handleFoldClick(false)}>
                   <div
@@ -156,7 +156,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
               ) : (
                 <div className="fcr-board-toolbar-main">
                   <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
-                    <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30}  colors={{iconPrimary: '#151515' }}/>
+                    <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} colors={{ iconPrimary: '#151515' }} />
                     <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
                   </div>
                   <ul className="fcr-board-toolbar-list">
@@ -216,7 +216,7 @@ export const ToolbarItem: FC<{
 
   return (
     <div className={cls} onClick={isDisabled ? undefined : onClick}>
-      <SvgImg type={icon} size={28}  colors={{iconPrimary:'#151515',iconSecondary:'#373C42'}}/>
+      <SvgImg type={icon} size={28} colors={{ iconPrimary: '#151515', iconSecondary: '#373C42' }} />
       {texttip && <text>{texttip}</text>}
     </div>
   );
@@ -254,24 +254,24 @@ export const ExpansionToolbarItem: FC<{
   iconProps,
   texttip,
 }) => {
-  const cls = classNames('', {
-    'fcr-board-toolbar-item-surrounding--active': isActive,
-  });
-  return (
-    <PopoverWithTooltip
-      toolTipProps={tooltip ? { placement: tooltipPlacement, content: tooltip } : undefined}
-      popoverProps={{
-        overlayOffset: popoverOffset,
-        placement: popoverPlacement,
-        content: popoverContent,
-        overlayClassName: popoverOverlayClassName,
-        overlayInnerStyle,
-        visible: true,
-      }}>
-      <div className={cls} onClick={onClick}>
-        <SvgImg colors={{ iconPrimary: '#151515' }} {...iconProps} type={icon} size={28} />
-        {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
-      </div>
-    </PopoverWithTooltip>
-  );
-};
+    const cls = classNames('', {
+      'fcr-board-toolbar-item-surrounding--active': isActive,
+    });
+    return (
+      <PopoverWithTooltip
+        toolTipProps={tooltip ? { placement: tooltipPlacement, content: tooltip } : undefined}
+        popoverProps={{
+          overlayOffset: popoverOffset,
+          placement: popoverPlacement,
+          content: popoverContent,
+          overlayClassName: popoverOverlayClassName,
+          overlayInnerStyle,
+          visible: true,
+        }}>
+        <div className={cls} onClick={onClick}>
+          <SvgImg colors={{ iconPrimary: '#151515' }} {...iconProps} type={icon} size={28} />
+          {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
+        </div>
+      </PopoverWithTooltip>
+    );
+  };
