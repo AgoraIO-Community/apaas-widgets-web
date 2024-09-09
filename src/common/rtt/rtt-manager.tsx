@@ -180,25 +180,6 @@ class FcrRttManager {
     //重置所有配置信息
     resetAllConfig() {
         fcrRttManager.rttConfigInfo.setTextSize(14, true, true)
-
-        // const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
-        // fcrRttManager.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], false, false)
-        // fcrRttManager.rttConfigInfo.setTargetLan(this.targetLanguageList[0], false, false)
-        // fcrRttManager.rttConfigInfo.setShowDoubleLan(false, false, false)
-        // fcrRttManager.rttConfigInfo.setTextSize(14, false, false)
-        // 
-        // this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
-        //     fcrRttManager.rttConfigInfo.setSourceLan(this.sourceLanguageList[0], true, true)
-        //     fcrRttManager.rttConfigInfo.setTargetLan(this.targetLanguageList[0], true, true)
-        //     fcrRttManager.rttConfigInfo.setShowDoubleLan(false, true, true)
-        //     fcrRttManager.rttConfigInfo.setTextSize(14, true, true)
-        //     this.localIsChangeSourceLan = true;
-        // })?.catch(() => {
-        //     fcrRttManager.rttConfigInfo.setSourceLan(config.getSourceLan(), false, false)
-        //     fcrRttManager.rttConfigInfo.setTargetLan(config.getTargetLan(), false, false)
-        //     fcrRttManager.rttConfigInfo.setShowDoubleLan(config.isShowDoubleLan(), false, false)
-        //     fcrRttManager.rttConfigInfo.setTextSize(config.getTextSize(), false, false)
-        // })
     }
 
     /**
@@ -485,44 +466,66 @@ class FcrRttManager {
             }(${optionsUser.userUuid === localUser?.userUuid ? transI18n('fcr_rtt_role_me') : optionsUser.userName})  `
     }
 
+    //发送广播通知
+    private sendBroadcat(event: AgoraExtensionRoomEvent) {
+        this.widgetController?.broadcast(event)
+        switch (event) {
+            case AgoraExtensionRoomEvent.RttSubtitleOpenSuccess:
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.WidgetActiveStateChange, { state: true, widgetId: "rtt" })
+                break
+            case AgoraExtensionRoomEvent.RttSubtitleCloseSuccess:
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.WidgetActiveStateChange, { state: false, widgetId: "rtt" })
+                break
+            case AgoraExtensionRoomEvent.RttConversionOpenSuccess:
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.WidgetActiveStateChange, { state: true, widgetId: "rttbox" })
+                break
+            case AgoraExtensionRoomEvent.RttConversionCloseSuccess:
+                this.widgetController?.broadcast(AgoraExtensionRoomEvent.WidgetActiveStateChange, { state: false, widgetId: "rttbox" })
+                break
+            default:
+                break
+        }
+    }
+
+
     /**
      * 显示字幕
      */
     showSubtitle() {
         //消息实际处理
-        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowSubtitle)
+        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttShowSubtitle)
         if (fcrRttManager.rttConfigInfo.isOpenSubtitle()) {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
+            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
             //消息传递后开启三秒无回调隐藏字幕
             const id = setTimeout(() => {
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
             }, 3000)
             this.openSubtitleTimerList.push(id)
         } else {
             fcrRttManager.rttConfigInfo.setOpenSubtitle(true, false)
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToOpening)
+            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttStateToOpening)
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
                 fcrRttManager.rttConfigInfo.setOpenSubtitle(true, true)
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
                 //开启消息监听
                 this.addMessageListener()
                 //字幕开启成功，发送文本修改
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToListener)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttStateToListener)
                 //两秒后显示当前没有人说话
                 const id = setTimeout(() => {
-                    this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateToNoSpeack)
+                    fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttStateToNoSpeack)
 
                     //消息传递后开启三秒无回调隐藏字幕
                     const id = setTimeout(() => {
-                        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
+                        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
                     }, 3000)
                     this.openSubtitleTimerList.push(id)
 
                 }, 2000)
                 this.openSubtitleTimerList.push(id)
             })?.catch(()=>{
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
                 fcrRttManager.rttConfigInfo.setOpenSubtitle(config.isOpenSubtitle(), false)
             })
         }
@@ -535,7 +538,7 @@ class FcrRttManager {
         fcrRttManager.rttConfigInfo.setOpenSubtitle(false, false)
         this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
             fcrRttManager.rttConfigInfo.setOpenSubtitle(false, true)
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
+            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
         })?.catch(() => {
             fcrRttManager.rttConfigInfo.setOpenSubtitle(config.isOpenSubtitle(), false)
         })
@@ -546,16 +549,16 @@ class FcrRttManager {
      */
     showConversion() {
         //消息实际处理
-        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttShowConversion)
+        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttShowConversion)
         if (fcrRttManager.rttConfigInfo.isOpenTranscribe()) {
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
+            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
         } else {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             fcrRttManager.rttConfigInfo.setOpenTranscribe(true, false)
             this.localIsChangeTranscribeState = true;
             this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
                 fcrRttManager.rttConfigInfo.setOpenTranscribe(true, true)
-                this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             })?.catch(() => {
                 fcrRttManager.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
             })
@@ -565,13 +568,13 @@ class FcrRttManager {
      * 关闭转写
      */
     closeConversion() {
-        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseConversion)
+        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
         fcrRttManager.rttConfigInfo.setOpenTranscribe(false, false)
         this.localIsChangeTranscribeState = true;
         this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
             fcrRttManager.rttConfigInfo.setOpenTranscribe(false, true)
-            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
+            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
         })?.catch(() => {
             fcrRttManager.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
         })
@@ -580,9 +583,9 @@ class FcrRttManager {
     //体验时间结束
     experienceFinish(){
         fcrRttManager.rttConfigInfo.setOpenTranscribe(false, true)
-        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
+        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
         fcrRttManager.rttConfigInfo.setOpenSubtitle(false, true)
-        this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttCloseSubtitle)
+        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttSubtitleCloseSuccess)
     }
 
     //当前用户是否是在分组中

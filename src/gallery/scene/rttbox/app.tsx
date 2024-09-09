@@ -170,6 +170,16 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
       setCurrentIndex(currentIndex + 1);
     }
   };
+
+  const handlerClose = ()=>{
+    if(fcrRttManager.getConfigInfo().isOpenTranscribe()){
+      widget.setMinimize(true, widget.minimizedProperties);
+    }else{
+      widget.clsoe()
+      widget.setVisible(false)
+    }
+  }
+
   return (
     // <div className="fcr-chatroom-dialog-wrapper">
     <div
@@ -178,7 +188,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
       <div className="fcr-chatroom-dialog-title">
         <div
           className="fcr-chatroom-dialog-title-close"
-          onClick={() => widget.clsoe()}>
+          onClick={handlerClose}>
           <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
         </div>
         <span className='fcr-chatroom-dialog-title-text' fcr-chatroom-dialog-title>{transI18n('fcr_rtt_button_open')}</span>

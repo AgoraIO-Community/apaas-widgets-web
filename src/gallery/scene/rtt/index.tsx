@@ -161,7 +161,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttStateToListener, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSubtitleOpenSuccess, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack, onMessage() { }, })
-    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttCloseSubtitle, onMessage() { }, })
+    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSubtitleCloseSuccess, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttContentChange, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttShowSetting, onMessage() { }, })
@@ -290,7 +290,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     })
     //字幕关闭
     this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
+      messageType: AgoraExtensionRoomEvent.RttSubtitleCloseSuccess,
       onMessage: () => {
         this.registerWidget(this.widgetController)
         runInAction(() => {

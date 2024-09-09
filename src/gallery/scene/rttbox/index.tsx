@@ -45,7 +45,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   defaultWidth = 320;
   defaultHeight = 600;
   get minimizedProperties() {
-    
     return {
       minimized:true,
       minimizedTooltip: transI18n('fcr_rtt_tips_title'),
@@ -53,8 +52,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
       minimizedKey: this.widgetId,
       minimizedCollapsed: false
     };
-    
-   
   }
   async onInstall(controller: AgoraWidgetController) {
     await addResource();
@@ -71,20 +68,16 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   @bound
   onCreate(properties: any) {
     if (fcrRttManager.isInSubRoom()) {
-      this.setVisible(false);
       this.unRegisterWidget(this.widgetController)
     } else {
-      this.setVisible(true);
       this.registerWidget(this.widgetController)
     }
     this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
         if (fcrRttManager.isInSubRoom()) {
-          this.setVisible(false);
           this.unRegisterWidget(this.widgetController)
         } else {
-          this.setVisible(true);
           this.registerWidget(this.widgetController)
         }        }
     })
@@ -142,7 +135,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttConversionCloseSuccess,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowConversion,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,onMessage() {},})
+    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttSubtitleCloseSuccess,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttContentChange,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowSetting,onMessage() {},})
@@ -187,7 +180,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   }
   //取消注册视图widget
   private unRegisterWidget(controller: AgoraWidgetController) {
-    debugger
     controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool,this.widgetId);
   }
   // 10分钟倒计时，单位为秒

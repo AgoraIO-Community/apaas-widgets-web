@@ -127,8 +127,6 @@ export enum AgoraExtensionRoomEvent {
   RttConversionCloseSuccess = "RttConversionCloseSuccess",
   //隐藏字幕
   RttHideSubtitle = "RttHideSubtitle",
-  //关闭字幕
-  RttCloseSubtitle = "RttCloseSubtitle",
   //接收到内容信息变更
   RttContentChange = "RttContentChange",
   //接收到内容信息变更
@@ -154,6 +152,8 @@ export enum AgoraExtensionRoomEvent {
   //双语显示修改完成
   RttShowDoubleLanChangeFinish = "RttShowDoubleLanChangeFinish",
   ChangeRttlanguage = "ChangeRttlanguage",
+  //widget启用状态改变处理
+  WidgetActiveStateChange = 'WidgetActiveStateChange',
 }
 
 /**
