@@ -134,7 +134,8 @@ export const RttSettings = ({
           {transI18n('fcr_device_option_view_rtt_open_subtitle')}
         </button>}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { runInAction(() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan); }) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} zIndex={9999}
+        okText={transI18n('fcr_modal_okText')} onOk={() => { runInAction(() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan); }) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(preSourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
     </div>

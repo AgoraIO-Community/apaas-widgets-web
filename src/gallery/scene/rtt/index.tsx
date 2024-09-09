@@ -29,7 +29,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     return [1, 3].includes(role) || this._privilege;
   }
   get dragHandleClassName(): string {
-    return 'fcr-rtt-widget-container';
+    return 'fcr-rtt-subtitle-drag-handle';
   }
   get draggable(): boolean {
     return true;
@@ -43,11 +43,11 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       width: this.defaultWidth,
       height: this.defaultHeight,
       x: clientRect.width / 2 - this.defaultWidth / 2,
-      y: clientRect.height - 125 - this.defaultHeight,
+      y: clientRect.height - 70 - this.defaultHeight,
     };
   }
   defaultWidth = 750;
-  defaultHeight = 50;
+  defaultHeight = 88;
 
   get minWidth() {
     return 400;
@@ -126,6 +126,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
 
   render(dom: HTMLElement) {
     this._dom = dom;
+    dom.classList.add('fcr-h-full');
     ReactDOM.render(<App widget={this} />, dom);
   }
   @bound

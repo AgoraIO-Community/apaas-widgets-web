@@ -1,3 +1,45 @@
+.fcr-rtt-subtitle-drag-handle{
+  width: 100%;
+  height: 100%;
+  min-width: 400px;
+  min-height: 87px;
+  display: flex;
+  flex-direction: column;
+}
+.fcr-rtt-subtitle-experience-container{
+  width: 100%;
+  padding: 6px 15px 6px 6px !important;
+  background-color: rgba(66, 98, 255, 0.6) !important;
+  border-radius: 8px;
+  color: #fff;
+  font-size: 13px !important;
+  margin-bottom: 4px;
+}
+.fcr-rtt-subtitle-experience-container .title{
+  display: inline-block;
+  background: linear-gradient(90deg, rgba(66, 98, 255, 1), rgba(102, 31, 218, 1));
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 21px;
+  line-height: 21px;
+  margin-right: 15px;
+  border-radius: 3px;
+}
+.fcr-rtt-subtitle-content-container{
+  width: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  border-radius: 8px;
+  border-width: 2px;
+  border-style: solid;
+  min-height: 50;
+  flex-grow: 1;
+  position: relative;
+}
+
+
+
+
+
 .fcr-rtt-widget-container {
   @apply fcr-rounded-8;
   /* overflow-y: auto; */
@@ -197,6 +239,7 @@
   border-style: solid;
   position: relative;
   margin-bottom: 15px;
+  height: 100%;
 }
 .fcr-rtt-box{
   width: 100%;
