@@ -36,7 +36,6 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
       setSearchKey,
       privateUser,
       setPrivateUser,
-      chatGroup,
       getTeacherName
     },
   } = useStore();
@@ -98,7 +97,6 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
 
   const send = () => {
     // sendTextMessage(text);
-
     const isPrivateInRoom = userList.find((v) => v.userId === privateUser?.userId);
     if (!isPrivateInRoom && privateUser?.userId) {
       addToast(transI18n('fcr_private_leave_room', { reason: privateUser?.nickName }), 'warning');
@@ -132,23 +130,6 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
     setIsShowPrivate(!isShowPrivate);
     setSearchKey('');
   }
-
-  useEffect(() => {
-    const handleResize = () => {
-      const newHeight = textAreaRef.current.dom?.scrollHeight;
-      if (newHeight && ((+newHeight / 19.5) >= 3)) {
-        setShowCount(true);
-      } else {
-        setShowCount(false);
-      }
-    };
-
-    textAreaRef.current.dom && textAreaRef.current.dom.addEventListener('resize', handleResize);
-
-    return () => {
-      textAreaRef.current.dom && textAreaRef.current.dom.removeEventListener('resize', handleResize);
-    };
-  }, []);
 
   const handleChangeTextarea = (e: string) => {
     setText(e);
@@ -205,16 +186,21 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
               </div>
             </div>
           )}
-
           <div className='fcr-chatroom-mobile-inputs-person-list'>
             <span className="fcr-chatroom-mobile-inputs-private-label">
               {transI18n('chat.send_to')}：
             </span>
             <div className="fcr-chatroom-mobile-inputs-private-select" onClick={handleShowPrivate} >
               <span className="fcr-chatroom-mobile-inputs-private-select-val">
-                {privateUser?.userId ? `${privateUser?.ext?.role == 1 ? `${getTeacherName()}(Turtor)` : privateUser.nickName}` :
-                  isBreakOutRoomEnabled && isBreakOutRoomIn && chatGroup ? transI18n('chat.chat_option_my_group') :
-                    isBreakOutRoomEnabled && !isBreakOutRoomIn ? transI18n('chat.chat_option_main_room') : transI18n('chat.chat_option_all')}
+                {privateUser?.userId
+                  // ? `${privateUser?.ext?.role == 1 ? `${getTeacherName()}(Turtor)` : privateUser.nickName}`
+                  ? privateUser?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Turtor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{privateUser.nickName}</span>
+                  : isBreakOutRoomEnabled
+                    ? isBreakOutRoomIn
+                      ? transI18n('chat.chat_option_my_group')
+                      : transI18n('chat.chat_option_main_room')
+                    : transI18n('chat.chat_option_all')
+                }
               </span>
               <SvgImgMobile
                 forceLandscape={forceLandscape}

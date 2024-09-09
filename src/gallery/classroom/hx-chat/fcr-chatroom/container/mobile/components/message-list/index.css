@@ -77,15 +77,24 @@
 }
 
 .fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-chatroom-mobile-message-item-nickname {
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  display: inline-flex;
+}
+
+.fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis{
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-chat-message-list-item-time {
   text-wrap: nowrap;
+  flex-shrink: 0;
 }
 
 .fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item .fcr-avatar {
@@ -160,6 +169,13 @@
   color: var(--text-primary, #151515);
   border-radius: 12px 0 12px 12px;
   width: fit-content;
+}
+
+.fcr-chatroom-mobile-message-item-list .fcr-chatroom-mobile-message-item-name-content{
+  /* flex-grow: 0; */
+  flex: 1;
+  overflow: hidden;
+  /* max-width: 100%; */
 }
 
 .fcr-chatroom-mobile-message-item-name-content .fcr-chatroom-mobile-message-content-image {
@@ -312,13 +328,20 @@
   margin-left: 20px;
 }
 
-.fcr-chatroom-mobile-message-item-name-content .fcr-chat-private-tag  {
+.fcr-chatroom-mobile-message-item-name-content .fcr-chat-private-tag {
   text-wrap: nowrap;
   display: inline-flex;
   gap: 4px;
+
+  flex: 1;
+
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fcr-chat-private-tag .fcr-text-send-to {
+  flex-shrink: 0;
   font-family: Inter;
   font-size: 10px;
   font-weight: 400;

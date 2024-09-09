@@ -130,10 +130,7 @@ export class UserStore {
   }
   @observable
   private _privateUser?: AgoraIMUserInfo;
-
-  @observable
-  chatGroup: boolean = false;
-
+ 
   @computed
   get privateUser() {
     return this._privateUser;
@@ -143,12 +140,7 @@ export class UserStore {
     this._fcrChatRoom.setPrivateUser(user);
     this._privateUser = user;
   }
-
-  @action.bound
-  setChatGroup(value: boolean) {
-    this.chatGroup = value;
-  }
-
+ 
   @action.bound
   private _handlePrivateChat(message: { widgetId: string; userId: string }) {
     if (message.widgetId === this._widget.widgetId) {

@@ -6,7 +6,7 @@ import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up'
 import { transI18n, bound, Scheduler, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
-import { EduStream } from 'agora-edu-core';
+import { EduClassroomConfig, EduStream } from 'agora-edu-core';
 export enum MobileCallState {
   Initialize = 'initialize',
   Processing = 'processing',
@@ -83,6 +83,13 @@ export class RoomStore {
     });
     this._thumbsUpCountCache = thumbsUpCount;
   }
+
+  @bound
+  getRoomName() {
+    const { groupDetails, currentSubRoom } = this._widget.classroomStore.groupStore;
+    return currentSubRoom ? groupDetails.get(currentSubRoom)?.groupName : ''
+  }
+
   @action.bound
   addToast(message: string, type: 'error' | 'warning' | 'success' | undefined) {
     return this._widget.ui.addToast(message, type);

@@ -59,20 +59,6 @@
   margin-right: 4px;
 }
 
-.fcr-chatroom-mobile-inputs-private-select-val {
-  color: #4262FF;
-  font-feature-settings: 'clig' off, 'liga' off;
-  font-family: Inter;
-  font-size: 14px;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 14px;
-  max-width: 100px;
-  overflow: hidden;
-  white-space: nowrap;
-  text-overflow: ellipsis;
-}
-
 .fcr-chatroom-mobile-inputs-private-icon {
   display: flex;
   align-items: center;

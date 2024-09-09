@@ -17,7 +17,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
       isBreakOutRoomIn
     },
     fcrChatRoom,
-    userStore: { getTeacherName, searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser, chatGroup, setChatGroup },
+    userStore: { getTeacherName, searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser },
   } = useStore();
   const transI18n = useI18n();
   const [height, setHeight] = useState(0);
@@ -26,7 +26,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
     // return searchUserList.filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
     //只能私聊老师
     return searchUserList.filter((user) => user?.ext?.role == 1)
-  }, [searchUserList, fcrChatRoom.userInfo?.userId])
+  }, [searchUserList])
 
   useEffect(() => {
     const innerHeight = window.innerHeight;
@@ -47,21 +47,14 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
     setPrivateUser(user)
     setIsShowStudents(false)
   }
-  const handleSelectAll = () => {
-    setChatGroup(false);
-    setPrivateUser(undefined)
-    setIsShowStudents(false)
-  }
 
   const handleSelectGroup = () => {
-    setChatGroup(true);
     setPrivateUser(undefined)
     setIsShowStudents(false)
   }
 
   console.log('searchKey', JSON.stringify(searchKey));
   console.log('searchKey searchUserLists', JSON.stringify(searchUserLists));
-  console.log('chatgroup', chatGroup);
 
 
   return (
@@ -95,7 +88,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
               <span>{transI18n('fcr_chat_no_data')}</span>
             </div>
           )}
-          {!searchKey && !!searchUserList.length && <div className='fcr-chatroom-private-dialog-chat-input-chat-list' onClick={handleSelectAll}>
+          {!searchKey && !!searchUserList.length && !isBreakOutRoomEnabled && <div className='fcr-chatroom-private-dialog-chat-input-chat-list' onClick={handleSelectGroup}>
             <div className='fcr-chatroom-private-dialog-chat-input-chat-list-name'>
               <div className='fcr-chatroom-private-dialog-chat-input-chat-list-all'>
                 <SvgImgMobile
@@ -110,7 +103,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
               </span>
             </div>
 
-            {(!privateUser?.userId && !chatGroup) ? <div className='fcr-chatroom-private-dialog-chat-input-chat-list-select'>
+            {(!privateUser?.userId && !isBreakOutRoomEnabled) ? <div className='fcr-chatroom-private-dialog-chat-input-chat-list-select'>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
                 landscape={isLandscape}
@@ -133,7 +126,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
                 {isBreakOutRoomEnabled && isBreakOutRoomIn ? transI18n('chat.chat_option_my_group') : transI18n('chat.chat_option_main_room')}
               </span>
             </div>
-            {(!privateUser?.userId && chatGroup) ? <div className='fcr-chatroom-private-dialog-chat-input-chat-list-select'>
+            {(!privateUser?.userId) ? <div className='fcr-chatroom-private-dialog-chat-input-chat-list-select'>
               <SvgImgMobile
                 forceLandscape={forceLandscape}
                 landscape={isLandscape}
@@ -157,17 +150,17 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
             return (
               <div key={user.userId} className='fcr-chatroom-private-dialog-chat-input-chat-list' onClick={() => handleSetPrivate(user)}>
                 <div className='fcr-chatroom-private-dialog-chat-input-chat-list-name'>
-                  <Avatar size={36} borderRadius='8px' textSize={12} nickName={user.nickName} style={{ background: 'var(--head-4, #D2DB0E)' }}></Avatar>
+                  {/* <Avatar size={36} borderRadius='8px' textSize={12} nickName={user.nickName} style={{ background: 'var(--head-4, #D2DB0E)' }}></Avatar> */}
 
-                  {/* <div className='fcr-chatroom-private-dialog-chat-input-chat-list-turtor'>
+                  <div className='fcr-chatroom-private-dialog-chat-input-chat-list-turtor'>
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
                       landscape={isLandscape}
                       type={SvgIconEnum.TURTOR}
                     />
-                  </div> */}
+                  </div>
                   <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val'>
-                    {user?.ext?.role == 1 ? `${getTeacherName()}(Turtor)` : txts[0]}
+                    {user?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Turtor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{txts[0]}</span>}
                     <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-search'>{txts[1]}</span>
                     {txts[2]}
                   </span>

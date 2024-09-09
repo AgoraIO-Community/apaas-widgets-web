@@ -138,6 +138,8 @@
 .fcr-chatroom-private-dialog-chat-input-chat-list-group  {
   width: 36px;
   height: 36px;
+
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -153,10 +155,15 @@
   display: flex;
   align-items: center;
   font-family: Montserrat;
+
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fcr-chatroom-private-dialog-chat-input-chat-list-name .fcr-chatroom-private-dialog-chat-input-chat-list-turtor {
-  background: var(--head-4, #D2DB0E);
+  background: var(--head-4, #D2DB0E); 
 }
 
 .fcr-chatroom-private-dialog-chat-input-chat-list-name-search {
@@ -172,11 +179,19 @@
   text-align: left;
   color: var(--inverse-text-primary, #FEFEFE);
 
-  display: -webkit-box;
-  -webkit-box-orient: vertical;
-  -webkit-line-clamp: 1;
+  flex: 1;
   overflow: hidden;
   text-overflow: ellipsis;
+  white-space: nowrap;
+  display: inline-flex;
+}
+
+.fcr-chatroom-private-dialog-chat-input-chat-list-name-val .fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis{
+  max-width: fit-content;
+  
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fcr-chatroom-private-dialog-chat-input-chat-list-select-empty {

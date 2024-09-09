@@ -151,6 +151,19 @@
   line-height: 14px;
   text-align: left;
   color: var(--inverse-text-primary, #FEFEFE);
+
+  flex: 1;
+  overflow: hidden;
+  white-space: nowrap;
+  display: inline-flex;
+}
+
+.fcr-chatroom-mobile-inputs-private-select-val .fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis{
+  max-width: fit-content;
+  
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .fcr-chatroom-mobile-inputs-private-icon {
