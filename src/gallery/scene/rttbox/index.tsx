@@ -13,6 +13,10 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
   private _dom?: HTMLElement;
   private _privilege = false;
+  private _minimized = false;
+  onMinimizedChanged(minimized: boolean): void {
+      this._minimized = minimized;
+  }
   get zContainer(): 0 | 10 {
     return 10;
   }
@@ -174,7 +178,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   private registerWidget(controller: AgoraWidgetController) {
     controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
       id: this.widgetName,
-      name: !fcrRttManager.getConfigInfo()?.isOpenTranscribe() ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
+      name: (!fcrRttManager.getConfigInfo()?.isOpenTranscribe() || this._minimized) ? transI18n('fcr_conversion_button_open') : transI18n('fcr_conversion_button_close'),
       iconType: SvgIconEnum.FCR_V2_RTT,
     });
   }

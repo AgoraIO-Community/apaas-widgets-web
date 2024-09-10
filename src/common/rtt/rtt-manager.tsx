@@ -102,10 +102,6 @@ class FcrRttManager {
             onMessage() {
                 if (fcrRttManager.getConfigInfo().isOpenTranscribe()) {
                     fcrRttManager.closeConversion()
-                    widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
-                        widgetId: "rttbox",
-                        visible: false,
-                      });
                 }else{
                     fcrRttManager.showConversion()
                 }
@@ -467,8 +463,8 @@ class FcrRttManager {
     }
 
     //发送广播通知
-    private sendBroadcat(event: AgoraExtensionRoomEvent) {
-        this.widgetController?.broadcast(event)
+    private sendBroadcat(event: AgoraExtensionRoomEvent, message?: unknown) {
+        this.widgetController?.broadcast(event,message)
         switch (event) {
             case AgoraExtensionRoomEvent.RttSubtitleOpenSuccess:
                 this.widgetController?.broadcast(AgoraExtensionRoomEvent.WidgetActiveStateChange, { state: true, widgetId: "rtt" })
@@ -502,9 +498,9 @@ class FcrRttManager {
             }, 3000)
             this.openSubtitleTimerList.push(id)
         } else {
+            const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             fcrRttManager.rttConfigInfo.setOpenSubtitle(true, false)
             fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttStateToOpening)
-            const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
                 fcrRttManager.rttConfigInfo.setOpenSubtitle(true, true)
                 fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
@@ -515,7 +511,6 @@ class FcrRttManager {
                 //两秒后显示当前没有人说话
                 const id = setTimeout(() => {
                     fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttStateToNoSpeack)
-
                     //消息传递后开启三秒无回调隐藏字幕
                     const id = setTimeout(() => {
                         fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
@@ -524,8 +519,17 @@ class FcrRttManager {
 
                 }, 2000)
                 this.openSubtitleTimerList.push(id)
-            })?.catch(()=>{
-                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
+            })?.catch((data) => {
+                if (data.codeList && data.codeList.length > 0 && "100004" === data.codeList[0]) {
+                    fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttReduceTimeChange, { reduce: 0, sum: fcrRttManager.rttConfigInfo.experienceDefTime, reduceTimeStr: fcrRttManager.rttConfigInfo.formatReduceTime() })
+                    //消息传递后开启三秒无回调隐藏字幕
+                    const id = setTimeout(() => {
+                        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
+                    }, 3000)
+                    this.openSubtitleTimerList.push(id)
+                } else {
+                    fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
+                }
                 fcrRttManager.rttConfigInfo.setOpenSubtitle(config.isOpenSubtitle(), false)
             })
         }
@@ -560,6 +564,7 @@ class FcrRttManager {
                 fcrRttManager.rttConfigInfo.setOpenTranscribe(true, true)
                 fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
             })?.catch(() => {
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
                 fcrRttManager.rttConfigInfo.setOpenTranscribe(config.isOpenTranscribe(), false)
             })
         }

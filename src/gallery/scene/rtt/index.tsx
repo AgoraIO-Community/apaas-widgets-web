@@ -68,20 +68,16 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     fcrRttManager.resetDefaultInfo(properties, this.classroomStore)
     console.log("数据初始化了", properties)
     if (fcrRttManager.isInSubRoom()) {
-      this.setVisible(false);
       this.unRegisterWidget(this.widgetController)
     } else {
-      this.setVisible(true)
       this.registerWidget(this.widgetController)
     }
     this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
         if (fcrRttManager.isInSubRoom()) {
-          this.setVisible(false);
           this.unRegisterWidget(this.widgetController)
         } else {
-          this.setVisible(true);
           this.registerWidget(this.widgetController)
         }
         }
@@ -103,27 +99,6 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       visible: visible,
     });
   }
-  @bound
-  setToolVisible(visible: boolean) {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
-      widgetId: this.widgetId,
-      visible: visible,
-    });
-  }
-  @bound
-  setRttVisible(visible: boolean) {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
-      widgetId: this.widgetId,
-      visible: visible,
-    });
-  }
-  @bound
-  private _handleGranted(grantedUsers: Set<string>) {
-    const { userUuid } = this.classroomConfig.sessionInfo;
-
-    this._privilege = grantedUsers.has(userUuid);
-  }
-
   render(dom: HTMLElement) {
     this._dom = dom;
     dom.classList.add('fcr-h-full');
