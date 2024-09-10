@@ -131,8 +131,6 @@ export enum AgoraExtensionRoomEvent {
   RttContentChange = "RttContentChange",
   //接收到内容信息变更
   RttListChange = "RttListChange",
-  // 监听转写状态是否更改
-  ReceiveTranscribeOpen = "receiveTranscribeOpen",
   //状态改变到正在开启
   RttStateToOpening = "RttStateToOpening",
   //状态改变到正在聆听

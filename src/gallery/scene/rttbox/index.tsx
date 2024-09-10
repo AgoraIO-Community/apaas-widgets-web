@@ -135,7 +135,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttOptionsChanged,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttListChange,onMessage() {},})
-    this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttConversionOpenSuccess,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttConversionCloseSuccess,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttShowConversion,onMessage() {},})
@@ -222,17 +221,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
           this.rttList = ([...fcrRttManager.getShowRttList()]);
           this.showTranslate = (fcrRttManager.getConfigInfo().isOpenTranscribe());
           this.goToScrollToBottom = Math.random();
-        })
-      }
-    })
-    //转写列表改变
-    this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.ReceiveTranscribeOpen,
-      onMessage: (data: string) => {
-        runInAction(() => {
-          this.showTranslate = true
-          this.openNotification = data
-          this.setMinimize(false, { ...this.minimizedProperties });
         })
       }
     })

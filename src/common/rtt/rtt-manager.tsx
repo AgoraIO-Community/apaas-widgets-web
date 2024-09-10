@@ -307,17 +307,17 @@ class FcrRttManager {
             const last = fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1]
             console.log('最后一条翻译转写信息:', last);
             if (fcrRttManager.rttConfigInfo.isOpenSubtitle()) {
-                fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttContentChange, last)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttContentChange, last)
             }
             if (fcrRttManager.rttConfigInfo.isOpenTranscribe()) {
-                fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttListChange)
             }
         }
 
 
         //消息传递后开启三秒无回调隐藏字幕
         const id = setTimeout(() => {
-            fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttHideSubtitle)
+            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
         }, 3000)
         fcrRttManager.openSubtitleTimerList.push(id)
     }
@@ -377,9 +377,8 @@ class FcrRttManager {
                         },
                     });
                     fcrRttManager.rttConfigInfo.setOpenTranscribe(toOpen,true)
-                    fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
-                    // 监听是否开启实时转写
-                    fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.ReceiveTranscribeOpen, textContent)
+                    fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttListChange)
+                    fcrRttManager.sendBroadcat(toOpen ? AgoraExtensionRoomEvent.RttConversionOpenSuccess : AgoraExtensionRoomEvent.RttConversionCloseSuccess)
                 }
             }
             //判断是否开启了翻译
@@ -402,7 +401,7 @@ class FcrRttManager {
                         },
                     ]).slice(-100);
                     fcrRttManager.showRecordList.push(fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1])
-                    fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                    fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttListChange)
                 }
             }
 
@@ -435,8 +434,8 @@ class FcrRttManager {
                             },
                         ]).slice(-100);
                         fcrRttManager.showRecordList.push(fcrRttManager.allRecordList[fcrRttManager.allRecordList.length - 1])
-                        fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
-                        fcrRttManager.widgetController?.broadcast(AgoraExtensionRoomEvent.RttListChange)
+                        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttStateReceiveSourceLanChange)
+                        fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttListChange)
                     }
 
                 }
