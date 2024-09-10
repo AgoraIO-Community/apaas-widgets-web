@@ -16,7 +16,7 @@ export const FcrChatRoomH5 = observer(() => {
   const [showEmoji, setShowEmoji] = useState(false);
 
   const {
-    roomStore: { orientation, forceLandscape,screenShareStream },
+    roomStore: { orientation, forceLandscape, screenShareStream },
   } = useStore();
   const isLandscape = orientation === OrientationEnum.landscape || forceLandscape;
 
@@ -24,9 +24,10 @@ export const FcrChatRoomH5 = observer(() => {
     <RoomInfoContainer
       ref={containerRef}
       landscape={isLandscape}
-      classNames={classNames({
-        'fcr-chatroom-mobile-room-info-emoji-open': !isLandscape && showEmoji,
-      })}>
+    // classNames={classNames({
+    //   'fcr-chatroom-mobile-room-info-emoji-open': !isLandscape && showEmoji,
+    // })}
+    >
       <>
         {isLandscape ? (
           <>
@@ -41,7 +42,7 @@ export const FcrChatRoomH5 = observer(() => {
           </div>
         )}
         <PollMobile />
-        {isLandscape ? (
+        {/* {isLandscape ? (
           createPortal(
             <div
               className={classNames(
@@ -76,7 +77,27 @@ export const FcrChatRoomH5 = observer(() => {
               screenShareStream={screenShareStream}
               onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
           </div>
-        )}
+        )} */}
+        {
+          createPortal(
+            <div
+              className={classNames('fcr-chatroom-mobile-landscape-input-container',
+                { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
+                {
+                  'fcr-chatroom-mobile-landscape-input-container-emoji-open':
+                    isLandscape && showEmoji,
+                },
+              )}>
+              <FcrChatRoomH5Inputs
+                emojiContainer={document.querySelector('.fcr-chatroom-mobile-landscape-input-container') as HTMLDivElement}
+                showEmoji={showEmoji}
+                screenShareStream={screenShareStream}
+                onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
+              <PollMobile />
+            </div>,
+            document.querySelector('.landscape-bottom-tools')!,
+          )
+        }
       </>
     </RoomInfoContainer>
   );

@@ -288,7 +288,7 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{transI18n('chat.participants', { num: 3 })}</span>
               </div>
-              {widgetCount > 0 && <div className='fcr-application-panel-item' onClick={handleShowApplicatioon}>
+              {widgetCount > 0 && <div className='fcr-application-panel-item fcr-application-panel-item-more' onClick={handleShowApplicatioon}>
                 {/* <SvgImgMobile
                   forceLandscape={forceLandscape}
                   landscape={isLandscape}
@@ -347,7 +347,7 @@ export const FcrChatRoomH5Inputs = observer(
                   landscape={isLandscape}
                   type={SvgIconEnum.APPLICATION}
                   size={30}></SvgImgMobile>
-                <span className="fcr-chatroom-mobile-inputs-application-count">
+                <span className="fcr-chatroom-mobile-inputs-application-count fcr-application-panel-item-more">
                   {widgetCount > 99 ? '...' : widgetCount}
                 </span>
                 <span>{transI18n('chat.more')}</span>

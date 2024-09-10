@@ -1,5 +1,5 @@
 .netless-whiteboard-wrapper {
-  @apply fcr-bg-foreground fcr-border-divider fcr-border;
+  /* @apply fcr-bg-foreground fcr-border-divider fcr-border; */
   height: 100%;
   width: 100%;
   /* border-radius: 4px; */
@@ -9,7 +9,7 @@
   height: 100%;
   width: 100%;
   position: absolute;
-  background: var(--ui-02, #FEFEFE);
+  /* background: var(--ui-02, #FEFEFE); */
 }
 .board-widget-app img {
   max-width: initial;

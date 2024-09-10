@@ -1,5 +1,5 @@
 .fcr-chatroom-mobile-inputs {
-  padding: 8px 16px 10px 16px;
+  /* padding: 8px 16px 10px 16px; */
 }
 
 .fcr-application-panel-wrapped {
@@ -7,6 +7,9 @@
   display: flex;
   gap: 10px;
   height: 100%;
+
+  justify-content: space-between;
+  align-items: center;
 }
 
 
@@ -20,6 +23,7 @@
   position: relative;
   flex: 1;
   text-align: center;
+  align-self: stretch;
 }
 
 .fcr-chatroom-mobile-inputs-landscape .fcr-application-panel-item {
@@ -305,7 +309,7 @@
   width: 100%;
   height: 100%;
   position: absolute;
-  
+
   /* height: 40px; */
   /* position: absolute; */
 }
@@ -326,7 +330,7 @@
 }
 
 
-.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-chat-search-input-wrapped-muted.fcr-chatroom-mobile-inputs-chat-search-input-wrapped{
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-chat-search-input-wrapped-muted.fcr-chatroom-mobile-inputs-chat-search-input-wrapped {
   background: var(--color-monochrome-20, #E0E0E0);
   border: 0.5px solid var(--fcr_ui_scene_line1, #E3E7EF)
 }
@@ -342,7 +346,7 @@
 }
 
 .fcr-chatroom-mobile-landscape-input-container .fcr-chatroom-mobile-inputs {
-  padding: 9px;
+  /* padding: 9px; */
   /* justify-content: flex-start; */
   /* margin-bottom: 4px; */
   /* height: 52px; */
@@ -563,16 +567,28 @@
   color: rgba(255, 255, 255, .5);
 }
 
+.fcr-application-panel-item.fcr-application-panel-item-more {
+  align-self: auto;
+
+  display: inline-flex;
+  flex-direction: column; 
+  height: 45px; 
+}
+
+.fcr-application-panel-item.fcr-application-panel-item-more span:last-of-type{
+  vertical-align: bottom;
+}
+
 .fcr-chatroom-mobile-inputs-application-count {
   position: absolute;
-  bottom: 22px;
-  right: 30px;
+  bottom: 16px;
+  right: 33px;
   color: #fff;
   font-weight: 700;
   font-size: 12px;
 }
 
 .fcr-chatroom-mobile-inputs-mobile-content .fcr-chatroom-mobile-inputs-application-count {
-  bottom: 28px;
-  right: 18px;
+  bottom: 27px;
+  right: 27px;
 }

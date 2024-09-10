@@ -41,11 +41,12 @@
 /** landscape **/
 
 .fcr-chatroom-mobile-landscape-input-container {
-  flex: 1;
+  /* flex: 1;
   display: flex;
   justify-content: flex-end;
   flex-direction: column;
-  overflow: hidden;
+  overflow: hidden; */
+  height: 100%;
 }
 .fcr-chatroom-mobile-landscape-input-container-emoji-open {
   bottom: 200px;
