@@ -337,23 +337,36 @@ export class FcrRTTWidget extends FcrUISceneWidget {
        },
      });
   }
-  getRttSettingView(showToConversionSetting: boolean, showToSubtitleSetting: boolean,targetClassName:string) {
-    return <RttSettings widget={this} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting} targetClassName={targetClassName}></RttSettings>
+  getRttSettingView(showToConversionSetting: boolean, showToSubtitleSetting: boolean,targetClassName:string,hideModule:any) {
+    return <RttSettings widget={this} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting} 
+    targetClassName={targetClassName} hideModule={hideModule}></RttSettings>
   }
   getRttSettingPopView(buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean) {
     const targetClassName = 'fcr-rtt-setting-' + Math.random()
+    const changeModuleValue = (value:boolean)=>{
+      runInAction(() => { this.popoverVisible = value })
+      //强行隐藏
+      const target = document.getElementsByClassName(targetClassName)
+      if (target.length > 0) {
+        //@ts-ignore
+        target[0].style.display = value ? 'block' : 'none'
+      }
+    }
     return <div style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
       <Popover
       onVisibleChange={(value) => {
-        runInAction(() => { this.popoverVisible = value })
-        //强行隐藏
-        const target = document.getElementsByClassName(targetClassName)
-        if (target.length > 0) {
-          //@ts-ignore
-          target[0].style.display = value ? 'block' : 'none'
-        }
-      }}
-      content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting,targetClassName)}</div>}
+        changeModuleValue(value)
+        // runInAction(() => { this.popoverVisible = value })
+        // //强行隐藏
+        // const target = document.getElementsByClassName(targetClassName)
+        // if (target.length > 0) {
+        //   //@ts-ignore
+        //   target[0].style.display = value ? 'block' : 'none'
+        // }
+        }}
+        content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting, targetClassName, () => {
+          changeModuleValue(false)
+        })}</div>}
       trigger="click">
       {buttonView}
     </Popover>

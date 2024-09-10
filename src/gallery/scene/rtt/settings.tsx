@@ -15,11 +15,13 @@ export const RttSettings = ({
   showToSubtitleSetting,
   showToConversionSetting,
   targetClassName,
+  hideModule
 }: {
   widget: FcrRTTWidget;
   showToSubtitleSetting: boolean;//是否显示打开字幕设置
   showToConversionSetting: boolean;//是否显示打开转写设置
   targetClassName: string;//目标弹窗的className
+  hideModule:any
 }) => {
   const [sourceLan, setSourceLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getSourceLan());
   const [targetLan, setTargetLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getTargetLan());
@@ -70,6 +72,7 @@ export const RttSettings = ({
   const hideAllModule = () => {
     setIsModalOpen(false)
     setIsShowSetting(false)
+    hideModule()
   }
 
   return (
