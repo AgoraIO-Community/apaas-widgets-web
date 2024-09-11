@@ -144,6 +144,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttboxChanged, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttBoxshow, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.ToolboxChanged, onMessage() { }, })
+    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSettingShowSubtitle, onMessage() { }, })
   }
 
   //注册视图widget
@@ -185,6 +186,20 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   popoverVisible = (false);
 
   private addRttListener() {
+       //显示转写弹窗
+       this.addBroadcastListener({
+        messageType: AgoraExtensionRoomEvent.RttSettingShowSubtitle,
+        onMessage: () => {
+          runInAction(() => {
+            if(fcrRttManager.getConfigInfo().isOpenSubtitle()){
+              this.setMinimize(false, this.minimizedProperties);
+            }else{
+              this.setVisible(true)
+              fcrRttManager.showSubtitle()
+            }
+          })
+        }
+      })
     //倒计时修改监听
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
@@ -332,7 +347,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
           ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement1)
          }
          if (portalTargetElement2) {
-          ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement2)
+          ReactDOM.render(this.getRttSettingPopView(view,false,true), portalTargetElement2)
          }
        },
      });
@@ -363,10 +378,10 @@ export class FcrRTTWidget extends FcrUISceneWidget {
         //   //@ts-ignore
         //   target[0].style.display = value ? 'block' : 'none'
         // }
-        }}
-        content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting, targetClassName, () => {
-          changeModuleValue(false)
-        })}</div>}
+      }}
+      content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting,targetClassName,()=>{
+changeModuleValue(fal)
+      })}</div>}
       trigger="click">
       {buttonView}
     </Popover>

@@ -104,10 +104,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   render(dom: HTMLElement) {
     this._dom = dom;
     ReactDOM.render(<App widget={this} />, dom);
-    //动态添加设置按钮，需要延迟一定时间，让界面先渲染下
-    setTimeout(() => {
-      this.widgetController.broadcast(AgoraExtensionRoomEvent.RttShowSetting, { targetClsName: "fcr_rtt_settings_show", buttonView: <button className="settings-button">{transI18n('fcr_rtt_settings')} <span className="settings-button-arrow-down"></span></button> })
-    }, 200);
   }
   @bound
   clsoe() {
@@ -145,6 +141,7 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttboxChanged,onMessage() {},})
     this.widgetController.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage() {},})
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.ToolboxChanged, onMessage() { }, })
+    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSettingShowConversion, onMessage() { }, })
   }
   //根据搜索条件获取结果列表
   getSearchResultList(searchQuery: string) {
@@ -204,6 +201,20 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
 
 
   private addRttListener() {
+    //显示转写弹窗
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttSettingShowConversion,
+      onMessage: () => {
+        runInAction(() => {
+          if(fcrRttManager.getConfigInfo().isOpenTranscribe()){
+            this.setMinimize(false, this.minimizedProperties);
+          }else{
+            this.setVisible(true)
+            fcrRttManager.showConversion()
+          }
+        })
+      }
+    })
     //转写列表改变
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttShowConversion,

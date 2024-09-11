@@ -127,6 +127,7 @@ class FcrRttManager {
      * @param notify 是否发送广播通知
      */
     setCurrentSourceLan(lan: string, notify: boolean) {
+        if(this.loadingRequest){return}
         const findData: FcrRttLanguageData | undefined = this.sourceLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
@@ -146,6 +147,7 @@ class FcrRttManager {
      * @param notify 是否发送广播通知
      */
     setCurrentTargetLan(lan: string, notify: boolean) {
+        if(this.loadingRequest){return}
         const findData = this.targetLanguageList.find(item => item.value === lan);
         if (findData) {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
@@ -487,6 +489,7 @@ class FcrRttManager {
      * 显示字幕
      */
     showSubtitle() {
+        if(this.loadingRequest){return}
         //消息实际处理
         fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttShowSubtitle)
         if (fcrRttManager.rttConfigInfo.isOpenSubtitle()) {
@@ -537,6 +540,7 @@ class FcrRttManager {
      * 关闭字幕
      */
     closeSubtitle() {
+        if(this.loadingRequest){return}
         const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
         fcrRttManager.rttConfigInfo.setOpenSubtitle(false, false)
         this.sendRequest(fcrRttManager.rttConfigInfo)?.then(() => {
@@ -551,6 +555,7 @@ class FcrRttManager {
      * 显示转写
      */
     showConversion() {
+        if(this.loadingRequest){return}
         //消息实际处理
         fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttShowConversion)
         if (fcrRttManager.rttConfigInfo.isOpenTranscribe()) {
@@ -572,6 +577,7 @@ class FcrRttManager {
      * 关闭转写
      */
     closeConversion() {
+        if(this.loadingRequest){return}
         fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttCloseConversion)
         const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
         fcrRttManager.rttConfigInfo.setOpenTranscribe(false, false)

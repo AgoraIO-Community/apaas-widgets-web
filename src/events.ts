@@ -152,6 +152,10 @@ export enum AgoraExtensionRoomEvent {
   ChangeRttlanguage = "ChangeRttlanguage",
   //widget启用状态改变处理
   WidgetActiveStateChange = 'WidgetActiveStateChange',
+  //设置里面的显示字幕视图
+  RttSettingShowSubtitle = "RttSettingShowSubtitle",
+  //设置里面的显示转写视图
+  RttSettingShowConversion = "RttSettingShowConversion",
 }
 
 /**
