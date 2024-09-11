@@ -45,13 +45,12 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
 
   //操作按钮区域
   const rttOptionsWidget = useMemo(() => {
-    const targetPopClassRoom = "fcr-rtt-widget-actions-" + Math.random()
-    return <div className={`${targetPopClassRoom} fcr-rtt-widget-actions`}>
+    return <div className={`fcr-rtt-widget-actions`}>
       <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
         <PopoverWithTooltip
           popoverProps={{
             onVisibleChange: setPopoverVisible,
-            content: (widget.getRttSettingView(true, false, targetPopClassRoom,()=>{setPopoverVisible(false)})),
+            content: (widget.getRttSettingView(true, false,()=>{setPopoverVisible(false)})),
             // content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
             placement: 'top',
             overlayInnerStyle: { width: 175 },

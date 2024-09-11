@@ -4,23 +4,21 @@ import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
 import { Modal } from 'antd';
-import { fcrRttManager } from '../../../common/rtt/rtt-manager';
+import { fcrRttManager } from '../../../../common/rtt/rtt-manager';
 import { transI18n } from 'agora-common-libs';
-import { AgoraExtensionRoomEvent } from '../../../events';
-import { FcrRTTWidget } from '.';
-import { FcrRttLanguageData } from '../../../common/rtt/rtt-config';
+import { AgoraExtensionRoomEvent } from '../../../../events';
+import { FcrRTTWidget } from '..';
+import { FcrRttLanguageData } from '../../../../common/rtt/rtt-config';
 
 export const RttSettings = ({
   widget,
   showToSubtitleSetting,
   showToConversionSetting,
-  targetClassName,
   hideModule
 }: {
   widget: FcrRTTWidget;
   showToSubtitleSetting: boolean;//是否显示打开字幕设置
   showToConversionSetting: boolean;//是否显示打开转写设置
-  targetClassName: string;//目标弹窗的className
   hideModule:any
 }) => {
   const [sourceLan, setSourceLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getSourceLan());
@@ -74,9 +72,9 @@ export const RttSettings = ({
     setIsShowSetting(false)
     hideModule()
   }
-
+  const targetClassName = 'fcr-rtt-setting-' + Math.random()
   return (
-    <div>
+    <div className={targetClassName}>
       <div className="settings-container" style={{ display: isShowSetting ? 'block' : 'none' }}>
         <div className="settings-section">
           <label className="settings-label">{transI18n('fcr_subtitles_button_subtitles_setting')}</label>
