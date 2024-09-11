@@ -350,20 +350,6 @@
   padding: 0 6px !important;
 }
 
-.fcr-rtt-subtitle-widget-text {
-  display: flex;
-  margin-bottom: 10px !important;
-  margin-top: 5px !important;
-  padding: 14px 20px 0 !important;
-}
-.fcr-rtt-subtitle-widget-text > div:first-child {
-  @apply fcr-rounded-full;
-  width: 30px;
-  height: 30px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
 
 .fcr-rtt-widget-name {
   font-weight: bold;

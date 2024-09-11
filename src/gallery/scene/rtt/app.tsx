@@ -115,7 +115,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
         onMouseEnter={() => setMouseHover(true)}
         onMouseLeave={() => setMouseHover(false)}>
         {rttOptionsWidget}
-        <div>
+        <div style={{display:'contents'}}>
           {widget.starting && !widget.isRunoutTime && (
             <div className="fcr-text-2 fcr-text-center fcr-w-full fcr-flex-center" style={{ fontSize: fcrRttManager.getConfigInfo().getTextSize() + "px", lineHeight: (fcrRttManager.getConfigInfo().getTextSize() + 4) + "px" }}>
               <img src={loadingPng} style={{ width: '20px', height: '20px', marginRight: '10px', verticalAlign: 'middle', animation: 'rotate 1s linear infinite', }}></img>

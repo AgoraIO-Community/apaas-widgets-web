@@ -337,6 +337,10 @@ class FcrRttManager {
      * 房间属性变更监听
      */
     onRoomWidgetPropertiesChange(properties: never | null, operator: IAgoraUserSessionInfo | null) {
+        //这条是系统的，跳过
+        if(operator && "server" === operator.userName){
+            return
+        }
         if (properties && Object.keys(properties).length > 0 ) {
             const config = properties["extra"]
             console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：" , config)

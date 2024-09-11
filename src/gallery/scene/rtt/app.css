@@ -34,6 +34,8 @@
   min-height: 50;
   flex-grow: 1;
   position: relative;
+  display: flex;
+  align-items: center;
 }
 
 
@@ -251,6 +253,21 @@
 }
 .fcr-rtt-box:hover{
   /* @apply fcr-bg-4 fcr-rounded-8; */
+}
+.fcr-rtt-subtitle-widget-text {
+  display: flex;
+  margin-bottom: 10px !important;
+  margin-top: 5px !important;
+  padding: 14px 20px 0 !important;
+  width: 100%;
+}
+.fcr-rtt-subtitle-widget-text > div:first-child {
+  @apply fcr-rounded-full;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 
