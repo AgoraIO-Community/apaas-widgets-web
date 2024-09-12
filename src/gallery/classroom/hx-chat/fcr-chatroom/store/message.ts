@@ -111,6 +111,14 @@ export class MessageStore {
     return message.ext && message.ext?.receiverList?.length > 0;
   }
 
+  @observable
+  isopenChatDialog: boolean = false;
+
+  @action.bound
+  openChatDialog(value: boolean) {
+    this.isopenChatDialog = value;
+  }
+
   @bound
   messageTimeFormat(message: AgoraIMMessageBase) {
     //message时间戳

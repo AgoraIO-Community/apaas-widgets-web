@@ -57,6 +57,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
   const searchUserLists = useMemo(() => {
     return searchUserList.filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
   }, [searchUserList, fcrChatRoom.userInfo?.userId])
+
   useEffect(() => {
     const innerHeight = window.innerHeight;
     const domHeight = document.querySelector('.fcr-chatroom-mobile-inputs-chat-dialog-main')?.getBoundingClientRect().height || 0;
@@ -64,6 +65,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
     setHeight(dialogHeight)
 
   }, [searchUserLists.length])
+
   const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value } = e.target
     // setSearchKey(value)
@@ -140,7 +142,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
       setShowCount(false);
     }
   }
-
+ 
   return (
     <div className='fcr-chatroom-mobile-inputs-chat-dialog' style={isFullScreen ? { height: '100vh', top: 0 } : isLandscape ? { height: 'calc(100vh - 52px)', top: '52px' } : { height: 'calc(100vh - 48px - 8px)', top: '48px' }}>
       <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main', { 'fcr-chatroom-mobile-inputs-chat-dialog-main-landscape': isLandscape })} style={(isFullScreen || isLandscape) ? { top: 0, height: isFullScreen ? '100%' : 'inset' } : { top: '8px' }} onClick={(e) => e.stopPropagation()}>

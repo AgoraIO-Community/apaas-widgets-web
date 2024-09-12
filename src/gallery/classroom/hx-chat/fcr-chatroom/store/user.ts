@@ -130,11 +130,19 @@ export class UserStore {
   }
   @observable
   private _privateUser?: AgoraIMUserInfo;
- 
+
   @computed
   get privateUser() {
     return this._privateUser;
   }
+
+  @bound
+  findUserConfig(targetUser: EduStream) {
+    const config = this.userList.find((user) => user.ext.userUuid === targetUser?.fromUser?.userUuid);
+
+    return config;
+  }
+
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
     this._fcrChatRoom.setPrivateUser(user);

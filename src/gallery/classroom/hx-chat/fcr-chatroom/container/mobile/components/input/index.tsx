@@ -46,7 +46,7 @@ export const FcrChatRoomH5Inputs = observer(
       roomId,
       broadcastWidgetMessage,
       isShowPoll,
-      messageStore: { sendTextMessage, sendImageMessage },
+      messageStore: { sendTextMessage, sendImageMessage, isopenChatDialog },
       roomStore: {
         pollMinimizeState,
         allMuted,
@@ -173,6 +173,15 @@ export const FcrChatRoomH5Inputs = observer(
         setCollectVisible(false);
       }
     }, [widgets.length, roomId]);
+
+
+    useEffect(() => {
+      if (isopenChatDialog) {
+        setIsShowParticipant(false);
+        setIsShowChat(true);
+      }
+    }, [isopenChatDialog])
+
     const isMuted = allMuted || userMuted;
     const send = () => {
       // sendTextMessage(text);
@@ -221,6 +230,7 @@ export const FcrChatRoomH5Inputs = observer(
       setIsShowMore(!isShowMore);
     }
     const [isHidePrivate, setIsHidePrivate] = useState(false);
+
     useEffect(() => {
       let resizeObserver: ResizeObserver | undefined = undefined;
       // 选择你想要监听的DOM元素
@@ -245,6 +255,7 @@ export const FcrChatRoomH5Inputs = observer(
         resizeObserver?.disconnect();
       };
     }, []);
+    
     const handleShowApplicatioon = (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
       const haveShare = isLandscape && screenShareStream;

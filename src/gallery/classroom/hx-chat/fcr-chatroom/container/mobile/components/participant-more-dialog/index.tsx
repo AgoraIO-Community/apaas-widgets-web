@@ -10,16 +10,18 @@ const ParticipantMoreDialog = observer(
   ({ setIsShowMoreParticipant, user }: { setIsShowMoreParticipant: (arg0: EduStream | null) => void, user: EduStream }) => {
     const {
       fcrChatRoom,
-      userStore: { setPrivateUser },
+      userStore: { setPrivateUser, findUserConfig },
+      messageStore: { openChatDialog }
     } = useStore()
     const showUserName = user.fromUser.userName;
     const isTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, user.fromUser.role);
 
     //选择私聊
-    const selectPrivate = async () => {
-      const list = await fcrChatRoom.getUserInfoList([user.fromUser.userUuid])
-      if (list && list.length === 0) {
-        setPrivateUser(list[0])
+    const selectPrivate = () => {
+      const list = findUserConfig(user); 
+      if (list) { 
+        setPrivateUser(list);
+        openChatDialog(true);
       }
       setIsShowMoreParticipant(null);
     }
