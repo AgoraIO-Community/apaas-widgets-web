@@ -113,8 +113,8 @@ export const RttSettings = ({
               size={24}
               colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>}
           </div>
-          <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>
-          <div className="settings-option-textSize">
+          {showToSubtitleSetting && <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>}
+          {showToSubtitleSetting && <div className="settings-option-textSize">
             <input
               type="range"
               min="10"
@@ -123,11 +123,11 @@ export const RttSettings = ({
               value={horizontalValue}
               onChange={(e) => { runInAction(() => { fcrRttManager.setCurrentTextSize(Number(e.target.value), true); setHorizontalValue(Number(e.target.value)); }) }}
             />
-          </div>
+          </div>}
         </div>
-        <button className="restore-button" onClick={() => { runInAction(() => { fcrRttManager.resetAllConfig(); hideAllModule(); }) }}>
+        {showToSubtitleSetting && <button className="restore-button" onClick={() => { runInAction(() => { fcrRttManager.resetAllConfig(); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_reset_font_size')}
-        </button>
+        </button>}
         {showToConversionSetting && <button className="real-time-button" onClick={() => { runInAction(() => { widget.broadcast(AgoraExtensionRoomEvent.RttSettingShowConversion,{}); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_view_rtt_open_conversion')}
         </button>}
