@@ -161,6 +161,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeActive, {
           widgetId,
         });
+        controller.broadcast(AgoraExtensionRoomEvent.OpenWidget, true);
       } else {
         // 关闭远端
         controller.setWidgetInactive(widgetId);
@@ -168,6 +169,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId,
         });
+        controller.broadcast(AgoraExtensionRoomEvent.OpenWidget, false);
       }
     };
 

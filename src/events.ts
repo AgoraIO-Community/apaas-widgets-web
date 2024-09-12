@@ -98,6 +98,8 @@ export enum AgoraExtensionRoomEvent {
   SetCurrentApplication = 'set-current-application',
   //默认当前应用
   DefaultCurrentApplication = 'default-current-application',
+  //打开share || whiteboard 等widget
+  OpenWidget = 'open-widget',
 }
 
 /**
