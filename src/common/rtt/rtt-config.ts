@@ -190,6 +190,7 @@ export class FcrRttConfig {
     private startReduceTimer() {
         if (this.reduceTimerId != null) {
             clearInterval(this.reduceTimerId)
+            this.reduceTimerId = undefined;
         }
         if (this.isOpenSubtitle() || this.isOpenTranscribe()) {
             if (this.experienceReduceTime <= 0) {
@@ -204,6 +205,7 @@ export class FcrRttConfig {
                 if (this.experienceReduceTime <= 0) {
                     fcrRttManager.experienceFinish()
                     clearInterval(this.reduceTimerId)
+                    this.reduceTimerId = undefined;
                 }
             }, 1000)
         }
@@ -214,9 +216,17 @@ export class FcrRttConfig {
         if (!this.isOpenSubtitle() && !this.isOpenTranscribe()) {
             if (this.reduceTimerId != null) {
                 clearInterval(this.reduceTimerId)
+                this.reduceTimerId = undefined;
             }
         }
     }
+    //如果没有开始倒计时的话开始执行倒计时
+    runRedceTomer(){
+        if(!this.reduceTimerId){
+            this.startReduceTimer()
+        }
+    }
+
 
     //格式化时间
     formatReduceTime(): string {

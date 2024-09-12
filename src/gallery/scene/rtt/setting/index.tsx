@@ -128,7 +128,7 @@ export const RttSettings = ({
         {showToSubtitleSetting && <button className="restore-button" onClick={() => { runInAction(() => { fcrRttManager.resetAllConfig(); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_reset_font_size')}
         </button>}
-        {showToConversionSetting && <button className="real-time-button" onClick={() => { runInAction(() => { widget.broadcast(AgoraExtensionRoomEvent.RttSettingShowConversion,{}); hideAllModule(); }) }}>
+        {showToConversionSetting && <button className="real-time-button" onClick={() => { runInAction(() => { fcrRttManager.showConversion();widget.broadcast(AgoraExtensionRoomEvent.RttSettingShowConversion,{}); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_view_rtt_open_conversion')}
         </button>}
         {showToSubtitleSetting && <button className="real-time-button" onClick={() => { runInAction(() => { widget.broadcast(AgoraExtensionRoomEvent.RttSettingShowSubtitle,{}); hideAllModule(); }) }}>

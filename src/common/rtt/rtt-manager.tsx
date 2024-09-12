@@ -384,7 +384,12 @@ class FcrRttManager {
                     });
                     fcrRttManager.rttConfigInfo.setOpenTranscribe(toOpen,true)
                     fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttListChange)
-                    fcrRttManager.sendBroadcat(toOpen ? AgoraExtensionRoomEvent.RttConversionOpenSuccess : AgoraExtensionRoomEvent.RttConversionCloseSuccess)
+                    if(toOpen){
+                        fcrRttManager.showConversion()
+                    }else{
+                        fcrRttManager.closeConversion()
+                    }
+                    // fcrRttManager.sendBroadcat(toOpen ? AgoraExtensionRoomEvent.RttConversionOpenSuccess : AgoraExtensionRoomEvent.RttConversionCloseSuccess)
                 }
             }
             //判断是否开启了翻译
@@ -498,6 +503,7 @@ class FcrRttManager {
         fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttShowSubtitle)
         if (fcrRttManager.rttConfigInfo.isOpenSubtitle()) {
             fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttSubtitleOpenSuccess)
+            fcrRttManager.rttConfigInfo.runRedceTomer()
             //消息传递后开启三秒无回调隐藏字幕
             const id = setTimeout(() => {
                 fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttHideSubtitle)
@@ -564,6 +570,7 @@ class FcrRttManager {
         fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttShowConversion)
         if (fcrRttManager.rttConfigInfo.isOpenTranscribe()) {
             fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
+            fcrRttManager.rttConfigInfo.runRedceTomer()
         } else {
             const config: FcrRttConfig = fcrRttManager.rttConfigInfo.copy()
             fcrRttManager.rttConfigInfo.setOpenTranscribe(true, false)
