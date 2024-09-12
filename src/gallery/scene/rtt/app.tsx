@@ -24,10 +24,6 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   const rttOptionsWidgetRef = useRef<HTMLDivElement>(null);
   const settingPopRef = useRef<{ closePopover: () => void } | null>(null);
 
-  useEffect(() => {
-    widget.setVisible(true)
-  }, [widget.rttVisible, widget.starting, widget.visibleView]);
-
   const active = mouseHover || popoverVisible;
 
   //配置信息
