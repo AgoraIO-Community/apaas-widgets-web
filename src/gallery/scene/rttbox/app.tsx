@@ -221,7 +221,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
             </div>
           </div>}
         </div>
-        {widget.isRunoutTime && <div className="fcr-limited-time-experience">
+        {widget.isRunoutTime && <div className="fcr-limited-time-experience"> 
           <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
           {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
             reason1: widget.countdownDef / 60,

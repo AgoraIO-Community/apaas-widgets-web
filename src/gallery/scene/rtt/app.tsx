@@ -22,6 +22,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
   const rttExperienceRef = useRef<HTMLDivElement>(null);
   const rttContentRef = useRef<HTMLDivElement>(null);
   const rttOptionsWidgetRef = useRef<HTMLDivElement>(null);
+  const settingPopRef = useRef<{ closePopover: () => void } | null>(null);
 
   useEffect(() => {
     widget.setVisible(true)
@@ -48,15 +49,16 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
     return <div className={`fcr-rtt-widget-actions`}>
       <ToolTip content={transI18n('fcr_subtitles_button_subtitles_setting')}>
         <PopoverWithTooltip
+          ref={settingPopRef}
           popoverProps={{
             onVisibleChange: setPopoverVisible,
-            content: (widget.getRttSettingView(true, false,()=>{setPopoverVisible(false)})),
+            content: (widget.getRttSettingView(true, false,()=>{setPopoverVisible(false);settingPopRef.current?.closePopover()})),
             // content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
             placement: 'top',
             overlayInnerStyle: { width: 175 },
           }}
           toolTipProps={{ content: transI18n('fcr_subtitles_button_subtitles_setting') }}>
-          <div className="fcr-rtt-widget-action">
+          <div className="fcr-rtt-widget-action fcr-rtt-widget-setting">
             <SvgImg type={SvgIconEnum.FCR_TRANSLATE} size={24}></SvgImg>
           </div>
         </PopoverWithTooltip>

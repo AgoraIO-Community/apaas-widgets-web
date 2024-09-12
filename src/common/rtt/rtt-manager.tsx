@@ -277,7 +277,7 @@ class FcrRttManager {
                             console.log('Translation: ' + lastItemIndexByUid + text);
                             transTextStr += text;
                         });
-                        const find = trans.find(item=>item.culture === fcrRttManager.rttConfigInfo.getTargetLan().value)
+                        const find = trans.find(item=>item.culture === transItem.culture)
                         if(find){
                             find.text = transTextStr
                         }else{

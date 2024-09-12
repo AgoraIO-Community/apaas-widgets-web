@@ -86,7 +86,7 @@ export const RttSettings = ({
               currentLan={sourceLan}
               isOpen={'sourceLan' == showSelectType}
               openSelect={()=>{setShowSelectType('sourceLan' == showSelectType ? "" :'sourceLan')}}
-              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); hideAllModule(); setIsModalOpen(true); }) }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); hideAllModule(); setIsModalOpen(true);hideAllModule() }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
@@ -100,13 +100,13 @@ export const RttSettings = ({
               currentLan={targetLan}
               isOpen={'targetLan' == showSelectType}
               openSelect={()=>{setShowSelectType('targetLan' == showSelectType ? "" :'targetLan')}}
-              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }) }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan);hideAllModule() }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
               colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>
           </div>
-          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { runInAction(() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual); }) }}>
+          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { runInAction(() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual);hideAllModule() }) }}>
             <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
             {showBilingual && <SvgImg
               type={SvgIconEnum.FCR_CHOOSEIT}

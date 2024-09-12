@@ -85,7 +85,7 @@
   @apply fcr-rounded-8;
 }
 .fcr-rtt-widget-action {
-  @apply fcr-rounded-8 hover:fcr-bg-3;
+  @apply fcr-rounded-8;
   width: 24px;
   height: 24px;
   display: flex;
@@ -93,11 +93,15 @@
   justify-content: center;
   cursor: pointer;
 }
+
 .fcr-popover-trigger-opened .fcr-rtt-widget-action {
   @apply hover:fcr-bg-brand;
 }
 .fcr-rtt-widget-close {
   @apply hover:fcr-bg-red-6;
+}
+.fcr-rtt-widget-setting{
+  @apply hover:fcr-bg-brand;
 }
 
 .fcr-rtt-widget-translate,

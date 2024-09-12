@@ -40,31 +40,6 @@
   font-size: 12px;
   font-weight: 400;
 }
-.fcr-rtt-widget-actions {
-  display: flex;
-  gap: 10px;
-  position: absolute;
-  top: 3px;
-  right: 12px;
-}
-.fcr-rtt-widget-actions .fcr-popover-trigger-opened {
-  @apply fcr-rounded-8;
-}
-.fcr-rtt-widget-action {
-  @apply fcr-rounded-8 hover:fcr-bg-3;
-  width: 24px;
-  height: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-}
-.fcr-popover-trigger-opened .fcr-rtt-widget-action {
-  @apply hover:fcr-bg-brand;
-}
-.fcr-rtt-widget-close {
-  @apply hover:fcr-bg-red-6;
-}
 .fcr-rtt-widget-translate {
   @apply fcr-text-yellow;
 }
@@ -439,6 +414,10 @@ border-radius: 50%;
   color: #ffffff;
   padding: 5px 15px;
   line-height: 20px;
+    user-select: none; /* 标准CSS属性 */
+  -moz-user-select: none; /* Firefox */
+  -webkit-user-select: none; /* Safari 和 Chrome */
+ -ms-user-select: none; /* IE/Edge */
 }
 .ant-notification-notice-btn{
   margin-top: 0 !important;
