@@ -93,6 +93,9 @@ export const PollH5 = observer(() => {
       setIsSubmitting(false);
     }
   };
+
+  console.log('minimize',minimize,JSON.stringify(minimize));
+  
   return minimize ? (
     <>
       {isLandscape
@@ -116,7 +119,7 @@ export const PollH5 = observer(() => {
                   forceLandscape={forceLandscape}
                   colors={{ iconPrimary: '#fff' }}
                   landscape={isLandscape}
-                  type={SvgIconEnum.POLL_NEW}
+                  type={SvgIconEnum.POLL}
                   size={12}></SvgImgMobile>
               </div>
               
