@@ -34,7 +34,7 @@ export const PenPickerItem: FC<{ offset?: number }> = observer(({ offset }) => {
 
   const icon = lastPen
     ? penIconMap[lastPen as keyof typeof penIconMap]
-    : SvgIconEnum.FCR_MOBILE_WHITEBOARD_PED_LINE;
+    : SvgIconEnum.FCR_WHITECHOOSE_PEN;
 
   // console.log('this---lastPen', lastPen, penIconMap[lastPen as keyof typeof penIconMap]);
 

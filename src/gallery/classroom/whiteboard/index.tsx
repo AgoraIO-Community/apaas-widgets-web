@@ -759,6 +759,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       contentAreaSize: this.contentAreaSize,
       connectionState: this._connectionState,
       joinSuccessed: this._joinSuccessed,
+      isBoardFullScreen: false,
     });
 
     this._boardContext = {
@@ -793,6 +794,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       }),
       setLandscape: action((landscape: boolean) => {
         observables.isLandscape = landscape;
+      }),
+
+      sendFullScreenMessage: action((isWhiteboardFullScreen: boolean) => {
+        observables.isBoardFullScreen = isWhiteboardFullScreen;
       }),
     };
     return this._boardContext;
@@ -865,7 +870,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         observables.currentStrokeWidth = strokeWidth;
         this._boardMainWindow?.changeStrokeWidth(strokeWidth);
       }),
-      clickExpansionTool: action(() => {}),
+      clickExpansionTool: action(() => { }),
       setToolbarPosition: action((pos: { x: number; y: number }) => {
         observables.toolbarPosition = pos;
       }),
@@ -877,8 +882,8 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         this._updateDockPlacement();
         this._repositionToolbar();
       }),
-      captureApp: () => {},
-      captureScreen: () => {},
+      captureApp: () => { },
+      captureScreen: () => { },
       saveDraft: () => {
         this._getSnapshotImage();
       },

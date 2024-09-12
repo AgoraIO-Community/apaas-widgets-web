@@ -21,8 +21,9 @@ import { ShapePickerPanel } from './shape-picker';
 import { SelectorPickerPanel } from './selector-picker';
 import classnames from 'classnames';
 import { Loading } from '../loading';
+import { AgoraExtensionWidgetEvent } from '../../../../events';
 
-export const Toolbar = observer(({ closeToolBar }: any) => {
+export const Toolbar = observer(({ closeToolBar, widget }: any) => {
   const { mobileFixedTools } = useVisibleTools();
   const {
     observables,
@@ -36,8 +37,10 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     },
   } = useContext(ToolbarUIContext);
   const {
-    observables: { canOperate, connectionState, isLandscape },
+    observables: { canOperate, connectionState, isLandscape, },
   } = useContext(BoardUIContext);
+
+
   const transI18n = useI18n();
 
   const penActive = currentShape === FcrBoardShape.Curve || currentShape === FcrBoardShape.Straight;
@@ -114,6 +117,10 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
   }, [fixedBottomBarVisible, foldToolBar]);
 
   const handleFoldClick = (bool: boolean) => {
+    widget.widgetController.broadcast(
+      AgoraExtensionWidgetEvent.BoardFullScreen,
+      !bool,
+    );
     runInAction(() => {
       observables.foldToolBar = bool;
       if (!bool && closeToolBar) {

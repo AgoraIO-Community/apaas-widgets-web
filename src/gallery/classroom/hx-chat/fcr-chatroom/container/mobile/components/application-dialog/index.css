@@ -1,131 +1,155 @@
+.fcr-chatroom-mobile-application {
+  position: absolute;
+  bottom: 90px;
+  right: 10px;
+  border-radius: 12px;
+  border: 1px solid var(--border-03, #919191);
+  background: var(--ui-03, #151515);
 
-  
-  .fcr-chatroom-mobile-application{
-    position: absolute;
-    bottom: 90px;
-    right: 10px;
-    border-radius: 12px;
-    border: 1px solid #4A4C5F;
-    background: rgba(47, 47, 47, 0.95);
-    box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.25);
-    padding: 11px;
-    max-height: 326px;
-    overflow-y: auto;
-    z-index: 99;
-  }
-  .fcr-chatroom-mobile-application.active{
-    bottom: 60px;
-    right: 20px;
-  }
-  .fcr-chatroom-mobile-application-list{
-    border-radius: 6px;
-    background: #383D3E;
-    width: 214px;
-    height: 44px;
-    padding: 1px;
-    /* padding-right: 20px; */
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: 10px;
-    overflow: hidden;
+  box-shadow: 0px 0px 8px 0px rgba(0, 0, 0, 0.25);
+  padding: 9px;
+  max-height: 326px;
+  overflow-y: auto;
+  z-index: 99;
+}
 
-  }
-  .fcr-chatroom-mobile-application-list:last-child{
-    margin-bottom: 0;
-  }
-  .fcr-chatroom-mobile-application-list-left{
-    flex: 1;
-    display: flex;
-    align-items: center;
-    color: #fff;
-    font-weight: 700;
-    font-size: 14px;
-    overflow: hidden;
-  }
-  .fcr-chatroom-mobile-application-list-icon{
-    width: 54px;
-    height: 42px;
-    border-radius: 5px;
-    background: #84BD00;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 6px;
-  }
-  .fcr-chatroom-mobile-application-list-icon.whiteboard{
-    background-color: #D2DB0E;
-  }
-  .fcr-chatroom-mobile-application-list-icon.video{
-    background-color: #FF0000;
-  }
-  .fcr-chatroom-mobile-application-list-icon.bower{
-    background-color: #12B2A6;
-  }
-  .fcr-chatroom-mobile-application-list-icon.screenShare{
-    background-color: #5768FF;
-  }
-  .fcr-chatroom-mobile-application-list-icon.poll{
-    background-color: #9E0071;
-  }
+.fcr-chatroom-mobile-application.active {
+  bottom: 60px;
+  right: 20px;
+}
 
-  .fcr-chatroom-mobile-application-list-val{
-    flex: 1;
-    text-align: center;
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-    font-size: 14px;
-    color: #FEFEFE;
-    font-weight: 700;
-  }
-  .fcr-chatroom-mobile-application-list-content{
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    justify-content: center;
-    overflow: hidden;
-  }
-  .fcr-chatroom-mobile-application-list-title{
-    font-size: 10px;
-    font-weight: 400;
-    color: #bbb;
-    margin-bottom: 6px;
-    line-height: 10px;
-  }
-  .fcr-chatroom-mobile-application-list-des{
-    width: 100%;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    font-size: 10px;
-    font-weight: 400;
-    color: #fff;
-    line-height: 10px;
-  }
-  .fcr-chatroom-mobile-application-list-right{
-    margin-right: 5px;
-    width: 20px;
-    height: 20px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-  }
-  .fcr-chatroom-mobile-application-list-unselect{
-    width: 12px;
-    height: 12px;
-    border-radius: 12px;
-    border: 1px solid #F5F5F5;
-    
-  }
-  .frc-chatroom-modal-first-title{
-    margin-top:5px;
-    margin-bottom:5px;
-    width: 100%;
-    color: #FEFEFE;
-    font-size: 10px;
-    line-height: 15px;
-    font-weight: 400;
-    text-align: center;
-  }
+
+.fcr-chatroom-mobile-landscape-input-container.fcr-chatroom-mobile-landscape-input-container .fcr-chatroom-mobile-application.active {
+  bottom: 20px;
+  /* right: 0; */
+  left: 89px;
+  width: 234px;
+}
+
+.fcr-chatroom-mobile-application-list {
+  border-radius: 6px;
+  background: var(--ui-04, #505759);
+
+  width: 214px;
+  height: 44px;
+  padding: 1px;
+  /* padding-right: 20px; */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 10px;
+  overflow: hidden;
+
+}
+
+.fcr-chatroom-mobile-application-list:last-child {
+  margin-bottom: 0;
+}
+
+.fcr-chatroom-mobile-application-list-left {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  overflow: hidden;
+}
+
+.fcr-chatroom-mobile-application-list-icon {
+  width: 54px;
+  height: 42px;
+  border-radius: 5px;
+  background: #84BD00;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 6px;
+}
+
+.fcr-chatroom-mobile-application-list-icon.whiteboard {
+  background-color: #D2DB0E;
+}
+
+.fcr-chatroom-mobile-application-list-icon.video {
+  background-color: #FF0000;
+}
+
+.fcr-chatroom-mobile-application-list-icon.bower {
+  background-color: #12B2A6;
+}
+
+.fcr-chatroom-mobile-application-list-icon.screenShare {
+  background-color: #5768FF;
+}
+
+.fcr-chatroom-mobile-application-list-icon.poll {
+  background: var(--interactive-primary, #9E007E);
+}
+
+.fcr-chatroom-mobile-application-list-val {
+  flex: 1;
+  text-align: center;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  font-size: 14px;
+  color: #FEFEFE;
+  font-weight: 700;
+}
+
+.fcr-chatroom-mobile-application-list-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.fcr-chatroom-mobile-application-list-title {
+  font-size: 10px;
+  font-weight: 400;
+  color: #bbb;
+  margin-bottom: 6px;
+  line-height: 10px;
+}
+
+.fcr-chatroom-mobile-application-list-des {
+  width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 10px;
+  font-weight: 400;
+  color: #fff;
+  line-height: 10px;
+}
+
+.fcr-chatroom-mobile-application-list-right {
+  margin-right: 5px;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fcr-chatroom-mobile-application-list-unselect {
+  width: 12px;
+  height: 12px;
+  border-radius: 12px;
+  border: 1px solid #F5F5F5;
+
+}
+
+.frc-chatroom-modal-first-title {
+  margin-top: 5px;
+  margin-bottom: 5px;
+  width: 100%;
+  color: #FEFEFE;
+  font-size: 10px;
+  line-height: 15px;
+  font-weight: 400;
+  text-align: center;
+}

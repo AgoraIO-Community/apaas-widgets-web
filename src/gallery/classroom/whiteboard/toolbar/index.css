@@ -5,8 +5,8 @@
 
 .fcr-board-toolbar-list .fcr-board-toolbar-item-surrounding.fcr-board-toolbar-item-surrounding--active,
 .fcr-board-toolbar .fcr-popover-trigger-opened {
-  border-radius: var(--fcr_cornerradius_xs, 6px) !important;
-  background: var(--fcr_ui_scene_mobile_click, rgba(0, 0, 0, 0.2));
+  /* border-radius: var(--fcr_cornerradius_xs, 6px) !important; */
+  background: var(--ui-01, #F5F5F5);
 }
 
 .fcr-board-toolbar-list .fcr-popover-trigger-opened .fcr-board-toolbar-item-surrounding--active {
@@ -17,10 +17,13 @@
   width: 100px;
   background: var(--background-light, #FFFFFF);
   border: 0.5px solid var(--border-01, #DFE1E1);
+  box-shadow: 0px 0px 8px 0px #0000001A;
+
   border-radius: 12px;
   position: absolute;
-  top: 12px;
-  left: 16px;
+  /* top: 12px; */
+  bottom: 20px;
+  left: 0;
   z-index: 9;
 }
 

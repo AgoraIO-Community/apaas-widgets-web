@@ -91,7 +91,7 @@ export const useVisibleTools = () => {
         <ToolbarItem
           tooltip={transI18n('fcr_board_tool_mobile_selector')}
           texttip={transI18n('fcr_board_tool_mobile_selector')}
-          icon={SvgIconEnum.FCR_WHITECHOOSE}
+          icon={SvgIconEnum.FCR_WHITECHOOSE_NEW}
           onClick={handleToolChange(FcrBoardTool.Selector)}
           isActive={currentTool === FcrBoardTool.Selector}
         />
