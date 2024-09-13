@@ -161,7 +161,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeActive, {
           widgetId,
         });
-        controller.broadcast(AgoraExtensionRoomEvent.OpenWidget, true);
+        controller.broadcast(AgoraExtensionRoomEvent.OpenWidget, {
+          widgetId,
+          visible: true
+        });
       } else {
         // 关闭远端
         controller.setWidgetInactive(widgetId);
@@ -169,7 +172,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId,
         });
-        controller.broadcast(AgoraExtensionRoomEvent.OpenWidget, false);
+        controller.broadcast(AgoraExtensionRoomEvent.OpenWidget, {
+          widgetId,
+          visible: false
+        });
       }
     };
 
@@ -211,6 +217,12 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       widgetId: this.widgetId,
       visible: true,
     });
+
+    this.widgetController.broadcast(AgoraExtensionWidgetEvent.OpenWidget, {
+      widgetId: this.widgetId,
+      visible: true
+    });
+
 
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),
@@ -789,6 +801,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         this.setInactive();
         this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId: this.widgetId,
+        });
+        this.widgetController.broadcast(AgoraExtensionWidgetEvent.OpenWidget, {
+          widgetId: this.widgetId,
+          visible: false
         });
       },
       setPrivilege: action((canOperate: boolean) => {

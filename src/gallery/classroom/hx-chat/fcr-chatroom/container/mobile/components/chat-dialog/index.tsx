@@ -195,8 +195,8 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
             <div className="fcr-chatroom-mobile-inputs-private-select" onClick={handleShowPrivate} >
               <span className="fcr-chatroom-mobile-inputs-private-select-val">
                 {privateUser?.userId
-                  // ? `${privateUser?.ext?.role == 1 ? `${getTeacherName()}(Turtor)` : privateUser.nickName}`
-                  ? privateUser?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Turtor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{privateUser.nickName}</span>
+                  // ? `${privateUser?.ext?.role == 1 ? `${getTeacherName()}(Tutor)` : privateUser.nickName}`
+                  ? privateUser?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Tutor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{privateUser.nickName}</span>
                   : isBreakOutRoomEnabled
                     ? isBreakOutRoomIn
                       ? transI18n('chat.chat_option_my_group')

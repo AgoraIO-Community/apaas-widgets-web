@@ -134,7 +134,7 @@
 }
 
 .fcr-chatroom-private-dialog-chat-input-chat-list-all,
-.fcr-chatroom-private-dialog-chat-input-chat-list-turtor,
+.fcr-chatroom-private-dialog-chat-input-chat-list-tutor,
 .fcr-chatroom-private-dialog-chat-input-chat-list-group  {
   width: 36px;
   height: 36px;
@@ -162,7 +162,7 @@
   white-space: nowrap;
 }
 
-.fcr-chatroom-private-dialog-chat-input-chat-list-name .fcr-chatroom-private-dialog-chat-input-chat-list-turtor {
+.fcr-chatroom-private-dialog-chat-input-chat-list-name .fcr-chatroom-private-dialog-chat-input-chat-list-tutor {
   background: var(--head-4, #D2DB0E); 
 }
 

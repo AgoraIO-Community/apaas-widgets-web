@@ -28,6 +28,7 @@ export const PollH5 = observer(() => {
     landscapeToolBarVisible,
     pollBottom
   } = usePluginStore();
+
   const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -95,7 +96,6 @@ export const PollH5 = observer(() => {
       setIsSubmitting(false);
     }
   };
-
 
   return minimize ? (
     <>

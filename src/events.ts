@@ -185,4 +185,6 @@ export enum AgoraExtensionWidgetEvent {
   QueryMobileCallState = 'query-mobile-call-state',
   PollMinimizeStateChanged = 'poll-minimize-state-changed',
   QueryPollMinimizeState = 'query-poll-minimize-state',
+  //打开关闭share || whiteboard 等widget
+  OpenWidget = 'open-widget',
 }

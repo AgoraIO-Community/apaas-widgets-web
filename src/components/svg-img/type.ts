@@ -170,7 +170,7 @@ export enum SvgIconEnum {
   TRIANGLE_SOLID_DOWN = 'triangle-solid-down',
   TRIANGLE_SOLID_RIGHT = 'triangle-solid-right',
   TRIANGLE_SOLID_UP = 'triangle-solid-up',
-  TURTOR = 'turtor',
+  tutor = 'tutor',
   TEACHER_ICON = 'teacher-icon',
   TXT = 'txt',
   UNDO = 'undo',

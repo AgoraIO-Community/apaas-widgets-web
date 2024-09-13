@@ -34,12 +34,21 @@ export const MultiWindowWidgetDialog = observer(
         widget.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId: widget.widgetId,
         });
+
+        widget.widgetController.broadcast(AgoraExtensionWidgetEvent.OpenWidget, {
+          widgetId: widget.widgetId,
+          visible: false
+        });
       } else {
         widget.widgetController.broadcast(
           AgoraExtensionWidgetEvent.WidgetBecomeInactive,
           widget.widgetId,
         );
 
+        widget.widgetController.broadcast(AgoraExtensionWidgetEvent.OpenWidget, {
+          widgetId: widget.widgetId,
+          visible: false
+        });
         widget.deleteWidget();
       }
     };

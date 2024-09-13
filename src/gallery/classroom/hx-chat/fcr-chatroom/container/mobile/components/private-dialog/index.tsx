@@ -152,15 +152,15 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
                 <div className='fcr-chatroom-private-dialog-chat-input-chat-list-name'>
                   {/* <Avatar size={36} borderRadius='8px' textSize={12} nickName={user.nickName} style={{ background: 'var(--head-4, #D2DB0E)' }}></Avatar> */}
 
-                  <div className='fcr-chatroom-private-dialog-chat-input-chat-list-turtor'>
+                  <div className='fcr-chatroom-private-dialog-chat-input-chat-list-tutor'>
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
                       landscape={isLandscape}
-                      type={SvgIconEnum.TURTOR}
+                      type={SvgIconEnum.tutor}
                     />
                   </div>
                   <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val'>
-                    {user?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Turtor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{txts[0]}</span>}
+                    {user?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Tutor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{txts[0]}</span>}
                     <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-search'>{txts[1]}</span>
                     {txts[2]}
                   </span>

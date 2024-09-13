@@ -51,16 +51,6 @@ export class PluginStore {
       onMessage: this._pollMinimizeStateChanged,
     });
 
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.OpenWidget,
-      onMessage: value => this._handlePollBottom('widget', value as boolean),
-    });
-
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
-      onMessage: value => this._handlePollBottom('whiteBoardIcon', value),
-    });
-
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
   }
 
@@ -69,10 +59,10 @@ export class PluginStore {
 
   @action.bound
   _handlePollBottom(type: string, visible: any) {
-    if (type === 'widget' && visible) {
-      this.pollBottom = '227px';
-    } else if (type === 'whiteBoardIcon' && Array.isArray(visible) && visible?.length > 1 && visible[1]) {
+    if (type === 'widget' && visible?.visible) {
       this.pollBottom = '163px';
+    } else if (type === 'whiteBoardIcon' && Array.isArray(visible) && visible?.length > 1 && visible[1]) {
+      this.pollBottom = '227px';
     } else {
       this.pollBottom = '67px';
     }
@@ -254,16 +244,6 @@ export class PluginStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
       onMessage: this._pollMinimizeStateChanged,
-    });
-
-    this._widget.removeBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.OpenWidget,
-      onMessage: value => this._handlePollBottom('widget', value as boolean),
-    });
-
-    this._widget.removeBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
-      onMessage: value => this._handlePollBottom('whiteBoardIcon', value as boolean),
     });
   }
 
