@@ -5,7 +5,7 @@ import { PluginStore } from './store';
 import { observable, action } from 'mobx';
 import { WidgetModal } from '../../../components/modal';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
-import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduClassroomConfig, EduRoleTypeEnum, type AgoraWidgetController } from 'agora-edu-core';
 import { transI18n, ThemeProvider } from 'agora-common-libs';
 import { addResource } from './i18n/config';
 import { PollH5 } from './mobile/app';
@@ -55,16 +55,6 @@ export class AgoraPolling extends AgoraEduToolWidget {
     this.userProperties = userProperties;
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, true);
 
-    // this.widgetController.addBroadcastListener({
-    //   messageType: AgoraExtensionWidgetEvent.OpenWidget,
-    //   onMessage: value => this._store?._handlePollBottom('widget', value),
-    // });
-
-    this.widgetController.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
-      onMessage: value => this._store?._handlePollBottom('whiteBoardIcon', value),
-    });
-
   }
   @action
   onPropertiesUpdate(properties: any): void {
@@ -79,17 +69,6 @@ export class AgoraPolling extends AgoraEduToolWidget {
   onDestroy(): void {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, true);
-
-    // this.widgetController.removeBroadcastListener({
-    //   messageType: AgoraExtensionWidgetEvent.OpenWidget,
-    //   onMessage: value => this._store?._handlePollBottom('widget', value),
-    // });
-
-    // this.widgetController.removeBroadcastListener({
-    //   messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
-    //   onMessage: value => this._store?._handlePollBottom('whiteBoardIcon', value),
-    // });
-
     if (this._store) {
       this._store.destroy();
     }

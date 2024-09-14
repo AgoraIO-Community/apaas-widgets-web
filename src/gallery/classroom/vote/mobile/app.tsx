@@ -26,21 +26,29 @@ export const PollH5 = observer(() => {
     forceLandscape,
     addSubmitToast,
     landscapeToolBarVisible,
-    pollBottom
+    z0Widgets,
+    boardEditOpen
   } = usePluginStore();
 
   const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState<number | null>(null);
+  const [pollBottom, setPollBottom] = useState<number>(67);
   const [isShow, setIsShow] = useState<boolean>(true);
+
+  const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
 
   const timer = useRef<NodeJS.Timeout>();
   const timer1 = useRef<NodeJS.Timeout>();
+
+
   useEffect(() => {
     const language = getLanguage()
     setWidth(language === 'en' ? 32 : 49)
   }, [])
+
+
   useEffect(() => {
     if (timer.current) {
       clearTimeout(timer.current);
@@ -97,6 +105,16 @@ export const PollH5 = observer(() => {
     }
   };
 
+  useEffect(() => {
+    const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName));
+    if (!!isOpenWidget) {
+      boardEditOpen ? setPollBottom(isLandscape ? 67 : 227) : setPollBottom(isLandscape ? 12 : 163);
+    } else {
+      setPollBottom(isLandscape ? 12 : 67);
+    }
+  }, [widgets, isLandscape, boardEditOpen])
+
+
   return minimize ? (
     <>
       {isLandscape
@@ -106,7 +124,7 @@ export const PollH5 = observer(() => {
             onClick={() => {
               setMinimize(false);
             }}
-            style={pollBottom ? { bottom: `${+pollBottom?.split('px')[0] - 96}px` } : {}}
+            style={{ bottom: pollBottom }}
           >
 
             <div className="fcr-mobile-poll-widget-minimize-icon">
@@ -136,9 +154,7 @@ export const PollH5 = observer(() => {
             onClick={() => {
               setMinimize(false);
             }}
-
-            style={pollBottom ? { bottom: pollBottom } : {}}
-
+            style={{ bottom: pollBottom }}
           >
             <div className="fcr-mobile-poll-widget-minimize-icon">
               <SvgImgMobile

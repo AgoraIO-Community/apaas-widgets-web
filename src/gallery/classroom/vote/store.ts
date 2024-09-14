@@ -1,7 +1,7 @@
 import { Toast } from '../../../components/toast';
 import { action, autorun, computed, observable, runInAction } from 'mobx';
 import { AgoraPolling } from '.';
-import { transI18n, bound } from 'agora-common-libs';
+import { transI18n, bound, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { OrientationEnum } from '../hx-chat/type';
 
@@ -51,21 +51,60 @@ export class PluginStore {
       onMessage: this._pollMinimizeStateChanged,
     });
 
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    });
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
+      onMessage: this.setBoardEditOpen,
+    });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.SetCurrentApplication,
+      onMessage: widget => {
+        const currentWidget = widget as AgoraWidgetBase; 
+        if (currentWidget?.widgetName == "netlessBoard") {
+          this.setBoardEditOpen([currentWidget?.widgetId, true])
+        } else {
+          this.setBoardEditOpen([currentWidget?.widgetId, false])
+        }
+      }
+    }
+    );
+
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
   }
 
-  @observable pollBottom: string = '67px';
+  @observable
+  private _widgetInstanceList: AgoraWidgetBase[] = [];
 
+  @bound
+  private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
+    console.log(
+      'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
+      this._widget.classroomStore.widgetStore.widgetController,
+    );
+    this._widgetInstanceList = Object.values(widgetInstances);
+  }
+
+  @computed
+  get z0Widgets() {
+    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    const arr: any = [];
+    for (let i = 0; i < widgets.length; i++) {
+      const item = widgets[i];
+      arr.unshift(item);
+    }
+    return arr;
+  }
+
+  @observable boardEditOpen: boolean = false;
 
   @action.bound
-  _handlePollBottom(type: string, visible: any) {
-    if (type === 'widget' && visible?.visible) {
-      this.pollBottom = '163px';
-    } else if (type === 'whiteBoardIcon' && Array.isArray(visible) && visible?.length > 1 && visible[1]) {
-      this.pollBottom = '227px';
-    } else {
-      this.pollBottom = '67px';
-    }
+  setBoardEditOpen(value: any) {
+    this.boardEditOpen = value && value?.length && value[1];
   }
 
   @observable minimize = true;

@@ -308,10 +308,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       ),
     );
     this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
-    this.broadcast(AgoraExtensionWidgetEvent.OpenWidget, {
-      widgetId: this.widgetId,
-      visible: true
-    });
+  
 
   }
 
@@ -320,10 +317,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     this.unmount();
 
     this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
-    this.broadcast(AgoraExtensionWidgetEvent.OpenWidget, {
-      widgetId: this.widgetId,
-      visible: false
-    });
 
     if (this._listenerDisposer) {
       this._listenerDisposer();

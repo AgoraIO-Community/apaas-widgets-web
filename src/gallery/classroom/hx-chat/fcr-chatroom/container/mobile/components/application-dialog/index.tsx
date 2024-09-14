@@ -6,6 +6,9 @@ import './index.css';
 import { observer } from 'mobx-react';
 import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../../../../../../../src/events';
+
+
+ 
 const ApplicationDialog = observer(
   ({ setIsShowApplication }: { setIsShowApplication: (arg0: boolean) => void }) => {
     const {
@@ -13,6 +16,7 @@ const ApplicationDialog = observer(
       broadcastWidgetMessage,
       roomStore: { isLandscape, forceLandscape, z0Widgets, setCurrentWidget, currentWidget },
     } = useStore();
+
     console.log('currentWidgetcurrentWidgetdialog', currentWidget);
     // const widgets = z0Widgets;
     const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
