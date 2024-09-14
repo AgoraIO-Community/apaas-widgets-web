@@ -199,8 +199,6 @@ export class FcrRttboxWidget extends FcrUISceneWidget {
   showTranslate = fcrRttManager.getConfigInfo().isOpenTranscribe();
   @observable
   goToScrollToBottom = 0;//通过随机数更新
-  @observable
-  openNotification:string|null = null;//通知显示处理
 
 
   private addRttListener() {
