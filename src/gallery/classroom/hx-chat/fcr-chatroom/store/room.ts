@@ -163,7 +163,7 @@ export class RoomStore {
     }
     return arr;
   }
- 
+
   /**
    * 重置默认当前的weidget，如果未设置
    */
@@ -181,28 +181,30 @@ export class RoomStore {
       this.setCurrentWidget(
         this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
       );
-    }
-    if (!this.screenShareStream) {
+
+      return;
+    } else {
       this._widgetInstanceList = this._widgetInstanceList.filter(
         (item) => item.widgetName !== 'screenShare',
       );
       if (this.currentWidget?.widgetName === 'screenShare') {
         this.setCurrentWidget(undefined);
+
+        return;
       }
     }
 
-    if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
-      const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-      console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
 
-      const arr: any = [];
-      for (let i = 0; i < widgets.length; i++) {
-        const item = widgets[i];
-        arr.unshift(item);
-      }
-      const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
-      this.setCurrentWidget(allWidgets[0]);
+    const arr: any = [];
+    for (let i = 0; i < widgets.length; i++) {
+      const item = widgets[i];
+      arr.unshift(item);
     }
+    const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
+    this.setCurrentWidget(allWidgets[0]);
+
   }
 
   @action.bound
