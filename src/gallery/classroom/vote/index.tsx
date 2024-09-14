@@ -60,10 +60,10 @@ export class AgoraPolling extends AgoraEduToolWidget {
     //   onMessage: value => this._store?._handlePollBottom('widget', value),
     // });
 
-    // this.widgetController.addBroadcastListener({
-    //   messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
-    //   onMessage: value => this._store?._handlePollBottom('whiteBoardIcon', value),
-    // });
+    this.widgetController.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
+      onMessage: value => this._store?._handlePollBottom('whiteBoardIcon', value),
+    });
 
   }
   @action
