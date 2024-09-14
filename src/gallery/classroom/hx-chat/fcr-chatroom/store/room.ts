@@ -163,13 +163,7 @@ export class RoomStore {
     }
     return arr;
   }
-
-  @action.bound
-  getIsOpenWidget() {
-    const widgets = this.z0Widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName));
-    return !!widgets
-  }
-
+ 
   /**
    * 重置默认当前的weidget，如果未设置
    */

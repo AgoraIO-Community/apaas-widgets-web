@@ -20,6 +20,9 @@ const ApplicationDialog = observer(
     console.log('currentWidgetcurrentWidgetdialog', currentWidget);
     // const widgets = z0Widgets;
     const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
+
+    console.log('ApplicationDialog widgets',widgets);
+    
     const handleClose = () => {
       setIsShowApplication(false);
     };

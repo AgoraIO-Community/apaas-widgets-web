@@ -30,6 +30,14 @@ export class PluginStore {
       });
     });
 
+    autorun(() => {
+      if (this._widget.classroomStore.roomStore.screenShareStreamUuid) {
+        this.setOpenScreenShare(true);
+      } else {
+        this.setOpenScreenShare(false);
+      }
+    })
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
       onMessage: this._handleMobileLandscapeToolBarStateChanged,
@@ -60,10 +68,11 @@ export class PluginStore {
       messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
       onMessage: this.setBoardEditOpen,
     });
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.SetCurrentApplication,
       onMessage: widget => {
-        const currentWidget = widget as AgoraWidgetBase; 
+        const currentWidget = widget as AgoraWidgetBase;
         if (currentWidget?.widgetName == "netlessBoard") {
           this.setBoardEditOpen([currentWidget?.widgetId, true])
         } else {
@@ -74,6 +83,13 @@ export class PluginStore {
     );
 
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
+  }
+
+  @observable isOpenScreenShare: boolean = false;
+
+  @action.bound
+  setOpenScreenShare(value: boolean) {
+    this.isOpenScreenShare = value;
   }
 
   @observable
@@ -272,6 +288,12 @@ export class PluginStore {
     this.options = ['', ''];
     this.selectedOptions = [];
     this.type = 'radio';
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: this._handleMobileLandscapeToolBarStateChanged,
+    });
+
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -284,6 +306,28 @@ export class PluginStore {
       messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
       onMessage: this._pollMinimizeStateChanged,
     });
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    });
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
+      onMessage: this.setBoardEditOpen,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.SetCurrentApplication,
+      onMessage: widget => {
+        const currentWidget = widget as AgoraWidgetBase;
+        if (currentWidget?.widgetName == "netlessBoard") {
+          this.setBoardEditOpen([currentWidget?.widgetId, true])
+        } else {
+          this.setBoardEditOpen([currentWidget?.widgetId, false])
+        }
+      }
+    }
+    );
   }
 
   /**

@@ -27,7 +27,8 @@ export const PollH5 = observer(() => {
     addSubmitToast,
     landscapeToolBarVisible,
     z0Widgets,
-    boardEditOpen
+    boardEditOpen,
+    isOpenScreenShare
   } = usePluginStore();
 
   const transI18n = useI18n();
@@ -105,14 +106,14 @@ export const PollH5 = observer(() => {
     }
   };
 
-  useEffect(() => {
-    const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName));
+  useEffect(() => { 
+    const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName)) || isOpenScreenShare;
     if (!!isOpenWidget) {
       boardEditOpen ? setPollBottom(isLandscape ? 67 : 227) : setPollBottom(isLandscape ? 12 : 163);
     } else {
       setPollBottom(isLandscape ? 12 : 67);
     }
-  }, [widgets, isLandscape, boardEditOpen])
+  }, [widgets, isLandscape, boardEditOpen, isOpenScreenShare])
 
 
   return minimize ? (
