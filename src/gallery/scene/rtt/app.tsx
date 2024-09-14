@@ -48,7 +48,7 @@ export const RttComponet = observer(({ widget }: { widget: FcrRTTWidget }) => {
           ref={settingPopRef}
           popoverProps={{
             onVisibleChange: setPopoverVisible,
-            content: (widget.getRttSettingView(true, false,()=>{setPopoverVisible(false);settingPopRef.current?.closePopover()})),
+            content: (widget.getRttSettingView(false, true,()=>{setPopoverVisible(false);settingPopRef.current?.closePopover()})),
             // content: (<SettingView buttonView={undefined} showToConversionSetting={true} showToSubtitleSetting={false} ></SettingView>),
             placement: 'top',
             overlayInnerStyle: { width: 175 },
