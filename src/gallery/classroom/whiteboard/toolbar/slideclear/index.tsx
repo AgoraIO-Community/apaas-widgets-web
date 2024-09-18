@@ -198,8 +198,8 @@ export default class CleanSimpleVerify extends React.Component<
     return (
       <div style={this.style} className="simple-verify">
         <div className="verify-tips">
-          <span>{this.props.tips}</span>
-          <SvgImg size={16} type={SvgIconEnum.FCR_MOBILE_ARROW_RIGHT} />
+          {this.props.tips}
+          <SvgImg size={12} type={SvgIconEnum.FCR_MOBILE_ARROW_RIGHT} colors={{iconPrimary:'#FEFEFE'}} />
         </div>
         <div className="verify-box">
           <div style={slideStyle} className="veriry-slide" />
@@ -235,7 +235,7 @@ export const CleanModal = observer(({ onToggle }: any) => {
         }}
       />
       <div className="fcr-mobile-slide__close" onClick={() => onToggle(false)}>
-        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} colors={{ iconPrimary: 'var(--ui-01, #F5F5F5)' }} size={16} />
+        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} colors={{ iconPrimary: '#F5F5F5' }} size={16} />
       </div>
     </>
   );
