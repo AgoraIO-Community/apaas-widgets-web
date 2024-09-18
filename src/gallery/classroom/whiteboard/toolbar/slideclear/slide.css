@@ -16,17 +16,12 @@
 .fcr-mobile-slide__close {
   margin-left: 5px ;
   border-radius: 18px;
-<<<<<<< HEAD
   background: var(--background-dark, #151515);
-
   box-shadow: 0px 0px 10px 0px rgba(151, 151, 151, 0.15);
-
   color: var(--ui-01, #F5F5F5);
-=======
   border: 2px solid var(--border-02, #151515);
   background: var(--background-dark, #151515);
   box-shadow: 0px 0px 10px 0px #97979726;
->>>>>>> 3c9ef81 (feat:ui)
   width: 36px;
   height: 36px;
   display: flex;
@@ -61,14 +56,10 @@
   font-size: 14px;
   font-weight: 400;
   pointer-events: none;
-<<<<<<< HEAD
   gap: 7px;
-
   margin-left: 44px;
-=======
   background: var(--disabled-interactive-02, #919191);
   padding-right: 22px;
->>>>>>> 3c9ef81 (feat:ui)
 }
 
 .verify-box {
@@ -79,7 +70,6 @@
   height: calc(100% - 8px);
 
   overflow: hidden;
-<<<<<<< HEAD
   border-radius: 35.71px;
   /* border: 2px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5)); */
   /* background: var(--fcr_ui_scene_ramp_brand1, rgba(66, 98, 255, 0.2)); */
@@ -87,12 +77,9 @@
 
   /* fcr_trans2 */
   box-shadow: 0px 0px 10px 0px rgba(151, 151, 151, 0.15);
-=======
-
   border: 2px solid var(--border-03, #919191);
   box-shadow: 0px 0px 10px 0px #97979726;
   border-radius: var(--fcr_cornerradius_round, 50px);
->>>>>>> 3c9ef81 (feat:ui)
 }
 
 .veriry-slide {
@@ -100,7 +87,6 @@
   left: 3px; */
   /* width: 42px;
   height: 42px;
-<<<<<<< HEAD
   top: 3px; */
 
   /* width: 209px;
@@ -109,16 +95,13 @@
   height: 100%;
   border-radius: 50px;
   background: var(--leave, #BD0101);
-
   /* background: linear-gradient(313deg, #4262ff 0%, #4262ff 100%); */
   /* border: 2px solid var(--border-03, #919191); */
-=======
   top: 3px;
   opacity: 0;
   border-radius: 21px;
   background: linear-gradient(313deg, #BD0101 0%, #BD0101 100%);
   border: 1.43px solid var(--interactive-primary, #9E007E);
->>>>>>> 3c9ef81 (feat:ui)
   transition: opacity 0.1s linear, transform 0.3s ease;
 }
 
