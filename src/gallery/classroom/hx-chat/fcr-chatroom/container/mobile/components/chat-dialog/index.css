@@ -54,7 +54,8 @@
 
 .fcr-chatroom-mobile-inputs-chat-dialog-full-screen {
   position: absolute;
-  left: 290px;
+  /* left: 59px; */
+  right: 59px;
   top: 10px;
   width: 26px;
   height: 26px;
@@ -67,7 +68,7 @@
 
 .fcr-chatroom-mobile-inputs-chat-dialog-close {
   position: absolute;
-  left: 334px;
+  right: 15px;
   top: 10px;
   width: 26px;
   height: 26px;
@@ -80,6 +81,7 @@
 
 .fcr-chatroom-mobile-inputs-chat-dialog-title {
   margin-top: 4px;
+  margin-bottom: 8px;
   padding: 13px;
   text-align: left;
   color: #fff;
@@ -89,6 +91,7 @@
   font-weight: 800;
   line-height: 15px;
   text-align: left;
+  height: 50px;  
 
   border-radius: 16px 16px 0 0;
 }

@@ -96,7 +96,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
     }
     sendTextMessage(text, privateUser ? [privateUser] : undefined);
     setText('');
-    textAreaRef.current.dom?.blur();
+    // textAreaRef.current.dom?.blur();
   };
 
   const handleKeyDown: React.KeyboardEventHandler<HTMLTextAreaElement> = (e) => {
