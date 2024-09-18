@@ -7,7 +7,6 @@
   z-index: 9999;
   height: 100vh;
   background: var(--background-dark, #151515);
-
   /* 竖版定位 */
 }
 
@@ -23,6 +22,7 @@
   flex-direction: column;
   padding-bottom: env(safe-area-inset-bottom);
   overflow: hidden;
+  z-index: 9999;
 }
 
 .fcr-chatroom-mobile-inputs-chat-dialog-main.active {
@@ -191,7 +191,7 @@
 .fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-textarea .fcr-textarea-wc {
   font-family: Helvetica Neue;
   font-size: 13px;
-  font-weight: 400; 
+  font-weight: 400;
   text-align: left;
   top: 50%;
   transform: translateY(-50%);
