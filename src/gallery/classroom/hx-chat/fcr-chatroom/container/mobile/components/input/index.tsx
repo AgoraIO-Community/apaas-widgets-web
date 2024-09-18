@@ -1,5 +1,5 @@
 import { observer } from 'mobx-react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
@@ -8,10 +8,6 @@ import './index.css';
 import { useI18n } from 'agora-common-libs';
 import { useClickAnywhere } from '../../../../utils/hooks';
 import classNames from 'classnames';
-import { AgoraExtensionWidgetEvent } from '../../../../../../../../events';
-import { MobileCallState } from '../../../../store/room';
-import { ToolTip } from '../tooltip';
-import MoreDialog from '../more-dialog';
 import ChatDialog from '../chat-dialog';
 import ApplicationDialog from '../application-dialog';
 import ParticipantDialog from '../participant-dialog';
@@ -32,7 +28,6 @@ export const FcrChatRoomH5Inputs = observer(
     const [text, setText] = useState('');
     const [isShowStudents, setIsShowStudents] = useState(false);
     const [isShowChat, setIsShowChat] = useState(false);
-    const [isShowMore, setIsShowMore] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
     const [widgetCount, setWidgetCount] = useState(0);
@@ -40,74 +35,27 @@ export const FcrChatRoomH5Inputs = observer(
     const [whiteTooltip, setWhiteTooltip] = useState(true);
     const transI18n = useI18n();
 
-    const inputRef = useRef<HTMLInputElement>(null);
-    const fileInputRef = useRef<HTMLInputElement>(null);
     const {
       roomId,
-      broadcastWidgetMessage,
       isShowPoll,
-      messageStore: { sendTextMessage, sendImageMessage, isopenChatDialog },
+      messageStore: { isopenChatDialog },
       roomStore: {
-        pollMinimizeState,
-        allMuted,
         isLandscape,
-        messageVisible,
-        setMessageVisible,
         forceLandscape,
-        landscapeToolBarVisible,
-        quitForceLandscape,
-        mobileCallState,
         z0Widgets,
         addToast,
-        currentWidget, // 当前正在使用的widget-不能删
-        isBreakOutRoomEnabled,
-        isBreakOutRoomDisable,
-        isBreakOutRoomIn,
       },
       userStore: {
-        userList,
         setSearchKey,
-        privateUser,
-        userMuted,
         isRaiseHand,
         raiseHand,
         lowerHand,
-        allUIStreams,
-        raiseHandTooltipVisible,
+        allUIStreamsCount:allStreamCount,
       },
+
     } = useStore();
     const widgets = z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
 
-    const [allStreamCount, setAllStreamCount] = useState([allUIStreams.values()]?.length)
-
-    const getCallIcon = () => {
-      switch (mobileCallState) {
-        case MobileCallState.Initialize:
-          return {
-            icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
-          };
-        case MobileCallState.VideoAndVoiceCall:
-          return {
-            icon: SvgIconEnum.CALLING_MOBILE,
-          };
-        case MobileCallState.VoiceCall:
-          return {
-            icon: SvgIconEnum.VOICE_CALLING_MOBILE,
-          };
-        case MobileCallState.VideoCall:
-          return {
-            icon: SvgIconEnum.VIDEO_CALLING_MOBILE,
-          };
-        case MobileCallState.DeviceOffCall:
-          return {
-            icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
-          };
-        default:
-          return {
-            icon: SvgIconEnum.DEVICE_OFF_CALL_MOBILE,
-          };
-      }
-    };
     const closeCollectTip = () => {
       setCollectVisible(false);
     };
@@ -182,40 +130,9 @@ export const FcrChatRoomH5Inputs = observer(
       }
     }, [isopenChatDialog])
 
-    const isMuted = allMuted || userMuted;
-    const send = () => {
-      // sendTextMessage(text);
-
-      const isPrivateInRoom = userList.find((v) => v.userId === privateUser?.userId);
-      if (!isPrivateInRoom && privateUser?.userId) {
-        addToast(transI18n('fcr_private_leave_room', { reason: privateUser?.nickName }), 'warning');
-      }
-      sendTextMessage(text, privateUser ? [privateUser] : undefined);
-      setText('');
-      onShowEmojiChanged(false);
-      inputRef.current?.blur();
-    };
-    const handleImgInputClick = () => {
-      fileInputRef.current?.focus();
-      fileInputRef.current?.click();
-    };
-    const handleFileInputChange = () => {
-      const file = fileInputRef.current?.files?.[0];
-      if (file) {
-        sendImageMessage(file, privateUser ? [privateUser] : undefined);
-      }
-    };
     const handleEmojiClick = (emoji: string) => {
-      setText((prev) => prev + emoji);
+      // setText((prev) => prev + emoji);
     };
-    const toggleMessageVisible = () => {
-      setMessageVisible(!messageVisible);
-    };
-    const openHandsUpActionSheet = () => {
-      broadcastWidgetMessage(AgoraExtensionWidgetEvent.OpenMobileHandsUpActionSheet, undefined);
-    };
-    const inputVisible =
-      (messageVisible && landscapeToolBarVisible && pollMinimizeState) || !isLandscape;
 
     const handleShowDialog = () => {
       setIsShowChat(!isShowChat);
@@ -226,9 +143,6 @@ export const FcrChatRoomH5Inputs = observer(
       setIsShowParticipant(!isShowParticipant);
       setSearchKey('');
     };
-    const handleShowMoreDialog = () => {
-      setIsShowMore(!isShowMore);
-    }
     const [isHidePrivate, setIsHidePrivate] = useState(false);
 
     useEffect(() => {
@@ -267,12 +181,6 @@ export const FcrChatRoomH5Inputs = observer(
       }
       setIsShowApplication(!isShowApplication);
     };
-
-
-    useEffect(() => {
-      const allStream = [...allUIStreams.values()];
-      setAllStreamCount(allStream?.length);
-    }, [allUIStreams])
 
     return (
       <>
@@ -409,7 +317,7 @@ export const FcrChatRoomH5Inputs = observer(
         </div>
         {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />}
         {isShowChat && <ChatDialog setIsShowChat={setIsShowChat} />}
-        {isShowParticipant && <ParticipantDialog setIsShowParticipant={setIsShowParticipant} />}
+        {isShowParticipant && <ParticipantDialog setIsShowParticipant={setIsShowParticipant}/>}
         {/* {isShowMore && <MoreDialog setIsShowMore = {setIsShowMore}/>} */}
         {showEmoji && emojiContainer && (
           <EmojiContainer

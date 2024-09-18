@@ -24,60 +24,19 @@ export const FcrChatRoomH5 = observer(() => {
     <RoomInfoContainer
       ref={containerRef}
       landscape={isLandscape}
-    // classNames={classNames({
-    //   'fcr-chatroom-mobile-room-info-emoji-open': !isLandscape && showEmoji,
-    // })}
     >
       <>
         {isLandscape ? (
           <>
             <UserJoined></UserJoined>
-            {/* <MessageList></MessageList> */}
           </>
         ) : (
           <div className="fcr-chatroom-mobile-container">
             <UserJoined></UserJoined>
             <div className="fcr-chatroom-mobile-mask"></div>
-            {/* <MessageList></MessageList> */}
           </div>
         )}
         <PollMobile />
-        {/* {isLandscape ? (
-          createPortal(
-            <div
-              className={classNames(
-                { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
-                {
-                  'fcr-chatroom-mobile-landscape-input-container-emoji-open':
-                    isLandscape && showEmoji,
-                },
-              )}>
-              <FcrChatRoomH5Inputs
-                emojiContainer={ document.querySelector('.fcr-chatroom-mobile-landscape-input-container') as HTMLDivElement}
-                showEmoji={showEmoji}
-                screenShareStream={screenShareStream}
-                onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
-              <PollMobile />
-            </div>,
-            document.querySelector('.landscape-bottom-tools')!,
-          )
-        ) : (
-          <div
-            className={classNames(
-              { 'fcr-chatroom-mobile-landscape-input-container': isLandscape },
-              {
-                'fcr-chatroom-mobile-landscape-input-container-emoji-open':
-                  isLandscape && showEmoji,
-              },
-              'fcr-chatroom-mobile-input-container'
-            )}>
-            <FcrChatRoomH5Inputs
-              emojiContainer={containerRef.current?.parentNode as HTMLDivElement}
-              showEmoji={showEmoji}
-              screenShareStream={screenShareStream}
-              onShowEmojiChanged={setShowEmoji}></FcrChatRoomH5Inputs>
-          </div>
-        )} */}
         {
           createPortal(
             <div

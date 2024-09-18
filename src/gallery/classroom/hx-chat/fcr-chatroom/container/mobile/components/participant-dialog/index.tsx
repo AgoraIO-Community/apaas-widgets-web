@@ -13,14 +13,13 @@ import ParticipantMoreDialog from '../participant-more-dialog';
 const ParticipantDialog = observer(
   ({ setIsShowParticipant }: { setIsShowParticipant: (arg0: boolean) => void }) => {
     const {
-      userStore: { searchUserList, searchKey, setSearchKey, setPrivateUser, allUIStreams, checkCameraEnabled, checkMicEnabled },
+      userStore: { searchKey, setSearchKey, checkCameraEnabled, checkMicEnabled,allUIStreamsCount,allUIStreams:allStream},
     } = useStore()
     //当前选择操作更多的处理
     const [cureentOptionsUser, setCureentOptionsUser] = useState<EduStream | null>();
     //设置是否全屏
     const [fullShow, setFullShow] = useState<boolean>(false);
 
-    const [allStream, setAllStream] = useState([...allUIStreams.values()]);
     //关闭函数
     //搜索文本改变
     const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -28,18 +27,13 @@ const ParticipantDialog = observer(
       setSearchKey(value)
     } 
 
-    useEffect(() => {
-      const allStream = [...allUIStreams.values()];
-      setAllStream(allStream);
-    }, [allUIStreams])
-
     //选择所有
     return (
       <div>
         <div className="fcr-chatroom-mobile-participant"
           style={{ height: fullShow ? '100%' : 'calc(100% - 48px - 8px)', borderRadius: fullShow ? '0px' : '16px 16px 0px 0px' }}>
           {!fullShow && <div className="fcr-chatroom-mobile-participant-title">
-            <div className="fcr-chatroom-mobile-participant-title-title">{transI18n('fcr_participant_people_count')} ({allStream?.length})</div>
+            <div className="fcr-chatroom-mobile-participant-title-title">{transI18n('fcr_participant_people_count')} ({allUIStreamsCount})</div>
             <div className='fcr-chatroom-mobile-participant-title-icons'>
               <SvgImg
                 className="fcr-chatroom-mobile-participant-title-icon"
@@ -73,21 +67,23 @@ const ParticipantDialog = observer(
             />
             <input className='fcr-chatroom-mobile-participant-search-input' type="search" placeholder={transI18n('fcr_chat_dialog_placeholder')} onChange={handleSearchChange} />
           </div>
-          <div className={classNames('fcr-chatroom-mobile-participant-user-lists', allStream?.length === 0 && 'nodata')}>
-            {allStream?.length === 0 && searchKey && (
+          <div className={classNames('fcr-chatroom-mobile-participant-user-lists', allUIStreamsCount === 0 && 'nodata')}>
+            {allUIStreamsCount === 0 && searchKey && (
               <div className="fcr-chatroom-mobile-participant-user-list-empty-placeholder">
                 <img className='fcr-chatroom-mobile-participant-user-list-empty-img' src={emptyPng} alt="no_data" />
                 <span>{transI18n('fcr_chat_no_data')}</span>
               </div>
             )}
-            {allStream?.length > 0 && allStream.map((user, index) => {
+            {allUIStreamsCount > 0 && allStream.map((user, index) => {
               const localStream = allStream?.find(item => item?.isLocal);
-              const isLocalTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, localStream?.fromUser?.role as string);
+              //@ts-ignore
+              const isLocalTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(window.EduClassroomConfig.sessionInfo.roomType, localStream?.fromUser?.role as string);
 
               const showUserName = user.fromUser.userName;
               const showUserId = user.fromUser.userUuid;
               //是否是老师角色
-              const isTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, user.fromUser.role);
+              //@ts-ignore
+              const isTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(window.EduClassroomConfig.sessionInfo.roomType, user.fromUser.role);
               //是否开启了音频
               const enableAudio = checkMicEnabled(user);
               //是否开启了视频

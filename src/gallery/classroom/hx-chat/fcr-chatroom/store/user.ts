@@ -1,5 +1,5 @@
 import { AgoraHXChatWidget } from '../..';
-import { computed, observable, runInAction, action } from 'mobx';
+import { computed, observable,IReactionDisposer, runInAction, action,reaction } from 'mobx';
 
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
 import { Scheduler, bound, transI18n } from 'agora-common-libs';
@@ -18,11 +18,13 @@ export class UserStore {
   @observable muteList: string[] = [];
   @observable userCarouselAnimDelay = 3000;
   @observable userMap: Map<string, AgoraIMUserInfo> = new Map();
+  @observable userSteamList: EduStream[] = []
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
   @observable isRaiseHand = false;
   @observable raiseHandTooltipVisible = false;
   @observable searchKey = '';
+  private _disposers: IReactionDisposer[] = [];
   @action.bound
   setSearchKey(key: string) {
     this.searchKey = key;
@@ -113,6 +115,24 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
+    this._disposers.push(
+      reaction(
+        () => this.userList,
+        (data) => {
+          const { streamByUserUuid, streamByStreamUuid } = this._widget.classroomStore.streamStore;
+          this.userSteamList = []
+          data.forEach(user => {
+            const streamUuids = streamByUserUuid.get(user.ext.userUuid) || new Set();
+            for (const streamUuid of streamUuids) {
+              const stream = streamByStreamUuid.get(streamUuid);
+              if (stream) {
+                this.userSteamList.push(stream)
+              }
+            }
+          })
+        },
+      ),
+    );
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
@@ -127,6 +147,8 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
+    this._disposers.forEach((d) => d());
+    this._disposers = [];
   }
   @observable
   private _privateUser?: AgoraIMUserInfo;
@@ -327,87 +349,20 @@ export class UserStore {
     return userList.every((element) => judgeUserList.includes(element));
   }
 
-
-
-  @computed
-  private get localUser() {
-    return this._widget.classroomStore.userStore.localUser;
-  }
-  @computed
-  private get isInGroup() {
-    return this._widget.classroomStore.groupStore.groupUuidByUserUuid.get(
-      this.localUser?.userUuid || '',
-    );
-  }
-  @computed
-  private get cameraUIStreams() {
-    return Array.from(this.cameraStreams)
-      .filter((stream) => {
-        return this.isInGroup
-          ? true
-          : !this._widget.classroomStore.groupStore.groupUuidByUserUuid.get(
-            stream.fromUser.userUuid,
-          );
-      })
-      .map((stream) => new EduStream(stream));
-  }
-  @computed
-  private get teacherUIStream() {
-    return this.cameraUIStreams.find((stream) => {
-      return RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, stream.fromUser.role) === EduRoleTypeEnum.teacher;
-    });
-  }
   /**
-   * 老师流信息
+   * 分离窗口视频流
    * @returns
    */
-  @computed
-  private get teacherCameraStream() {
-    return this.teacherUIStream;
-  }
-  @computed
-  private get studentCameraUIStreams() {
-    const { classroomStore } = this._widget;
-    const { studentList } = classroomStore.userStore;
-
-    return this.cameraUIStreams.filter((stream) => {
-      return studentList.has(stream.fromUser.userUuid);
-    });
-  }
-  /**
-   * 学生流信息列表
-   * @returns
-   */
-  @computed
-  private get studentCameraStreams(): EduStream[] {
-    return this.studentCameraUIStreams.map((stream) => stream);
-  }
-  @computed
-  private get cameraStreams() {
-    const { streamByUserUuid, streamByStreamUuid } =
-      this._widget.classroomStore.streamStore;
-    const cameraStreams = extractUserStreams(
-      this._widget.classroomStore.userStore.users,
-      streamByUserUuid,
-      streamByStreamUuid,
-      [AgoraRteVideoSourceType.Camera],
-    );
-    return cameraStreams;
+  get allUIStreams(): EduStream[] {
+    return this.userSteamList;
   }
   /**
    * 分离窗口视频流
    * @returns
    */
   @computed
-  get allUIStreams(): Map<string, EduStream> {
-    const uiStreams = new Map<string, EduStream>();
-
-    [this.teacherCameraStream, ...this.studentCameraStreams].forEach((streamUI) => {
-      if (streamUI) {
-        uiStreams.set(streamUI.streamUuid, streamUI);
-      }
-    });
-    return uiStreams;
+  get allUIStreamsCount(): number {
+    return this.userList.length
   }
   //相机是否开启
   checkCameraEnabled(stream?: EduStream) {
@@ -418,26 +373,3 @@ export class UserStore {
     return AgoraRteMediaSourceState.started === stream?.audioSourceState && AgoraRteMediaPublishState.Published === stream?.audioState;
   }
 }
-
-/**
- * 提取流列表
- */
-const extractUserStreams = (
-  users: Map<string, EduUserStruct>,
-  streamByUserUuid: Map<string, Set<string>>,
-  streamByStreamUuid: Map<string, EduStream>,
-  sourceTypes: AgoraRteVideoSourceType[],
-) => {
-  const streams = new Set<EduStream>();
-  for (const user of users.values()) {
-    const streamUuids = streamByUserUuid.get(user.userUuid) || new Set();
-    for (const streamUuid of streamUuids) {
-      const stream = streamByStreamUuid.get(streamUuid);
-
-      if (stream && sourceTypes.includes(stream.videoSourceType)) {
-        streams.add(stream);
-      }
-    }
-  }
-  return streams;
-};
