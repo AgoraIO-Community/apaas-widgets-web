@@ -1,0 +1,275 @@
+.fcr-chatroom-mobile-inputs-chat-dialog {
+  position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
+  z-index: 9999;
+  height: 100vh;
+  background: var(--background-dark, #151515);
+
+  /* 竖版定位 */
+}
+
+.fcr-chatroom-mobile-inputs-chat-dialog-main {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  background: var(--fcr_mobile_ui_scene_color_popup_fill2, #3C3C3C);
+  border-radius: 16px 16px 0 0;
+  width: 100%;
+  height: calc(100vh - 48px - 8px);
+  display: flex;
+  flex-direction: column;
+  padding-bottom: env(safe-area-inset-bottom);
+  overflow: hidden;
+}
+
+.fcr-chatroom-mobile-inputs-chat-dialog-main.active {
+  max-height: 80%;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-empty-placeholder {
+  color: rgba(255, 255, 255, 0.70);
+  text-align: center;
+  font-family: "PingFang HK";
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: 14px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  justify-content: center;
+  padding-bottom: 27px;
+  padding-top: 30px;
+  overflow: hidden;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-empty-img {
+  width: 126px;
+  margin-bottom: 15px;
+  object-fit: cover;
+}
+
+.fcr-chatroom-mobile-inputs-chat-dialog-full-screen {
+  position: absolute;
+  left: 290px;
+  top: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--inverse-icon-secondary, #FAFAFA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fcr-chatroom-mobile-inputs-chat-dialog-close {
+  position: absolute;
+  left: 334px;
+  top: 10px;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: var(--inverse-icon-secondary, #FAFAFA);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fcr-chatroom-mobile-inputs-chat-dialog-title {
+  margin-top: 4px;
+  padding: 13px;
+  text-align: left;
+  color: #fff;
+  text-align: center;
+  font-family: Inter;
+  font-size: 15px;
+  font-weight: 800;
+  line-height: 15px;
+  text-align: left;
+
+  border-radius: 16px 16px 0 0;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search {
+  padding: 10px;
+  margin: 0 15px;
+  border-radius: 16px 16px 0 0;
+  border: 1px solid rgba(74, 76, 95, 0.50);
+  background: var(--background-dark, #151515);
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  color: var(--inverse-icon-primary, #FEFEFE);
+  overflow: hidden;
+  margin: 0;
+}
+
+/* 私聊 */
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-person-list {
+  text-align: left;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-person-list .fcr-chatroom-mobile-inputs-private-label {
+  color: #FFF;
+  font-feature-settings: 'clig' off, 'liga' off;
+  font-family: Inter;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 14px;
+  text-align: left;
+
+  margin-right: 4px;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-person-list .fcr-chatroom-mobile-inputs-private-select {
+  display: flex;
+  align-items: center;
+  margin-right: 4px;
+}
+
+
+/* 输入框容器 */
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-chat-search-input-wrapped {
+  width: 100%;
+  display: flex;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-chat-input {
+  width: calc(100% - 40px);
+  position: relative;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-chat-input.fcr-chat-input-focus-text {
+  width: 100%;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-chat-input .fcr-chat-input-send {
+  position: absolute;
+  right: 2px;
+
+  bottom: 0;
+  margin: auto;
+  z-index: 1;
+  cursor: pointer;
+  width: 40px;
+  height: 40px;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-chat-input .fcr-chat-input-send-disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-textarea {
+  width: 100%;
+  padding: 10px 54px 4px 10px;
+  min-height: 20px;
+  background: var(--field, #FFFFFF);
+  border: 0.5px solid var(--fcr_ui_scene_line1, #E3E7EF);
+  border-right: 0px;
+  border-radius: 6px 0 0 6px;
+  font-family: Helvetica Neue;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 19.5px;
+  text-align: left;
+  outline: none;
+}
+
+.fcr-chat-input-focus-text .fcr-textarea {
+  border-radius: 6px;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-textarea .fcr-textarea-wc {
+  font-family: Helvetica Neue;
+  font-size: 13px;
+  font-weight: 400; 
+  text-align: left;
+  top: 50%;
+  transform: translateY(-50%);
+  right: 2px;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-textarea textarea {
+  color: var(--text-tertiary, #505759);
+  padding: 0;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-input-wrapped .fcr-textarea.fcr-textarea--focused:not(.fcr-textarea--disabled) {
+  border-color: var(--fcr_ui_scene_line1, #E3E7EF);
+  box-shadow: none;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search-icon {
+  height: 100%;
+  width: 40px;
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  background: var(--field, #FFFFFF);
+  border: 0.5px solid var(--fcr_ui_scene_line1, #E3E7EF);
+  border-left: 0px;
+  border-radius: 0 6px 6px 0;
+}
+
+.fcr-chatroom-mobile-inputs-chat-lists {
+  flex: 1;
+  overflow-y: auto;
+}
+
+.fcr-chatroom-mobile-inputs-chat-lists.nodata {
+  justify-content: center;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list {
+  display: flex;
+  align-items: center;
+  padding: 12px 21px 12px 15px;
+  justify-content: space-between;
+  width: 100%;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-all {
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 8px;
+  background: #4262FF;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-name {
+  display: flex;
+  align-items: center;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-name-search {
+  background-color: #415ad9;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-name-val {
+  margin-left: 7px;
+  color: #FFF;
+  font-family: Montserrat;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: 14px;
+}
+
+.fcr-chatroom-mobile-inputs-chat-list-select-empty {
+  width: 12px;
+  height: 12px;
+  border-radius: 14px;
+  border: 1px solid rgba(74, 76, 95, 0.50);
+  margin-right: 5px;
+}

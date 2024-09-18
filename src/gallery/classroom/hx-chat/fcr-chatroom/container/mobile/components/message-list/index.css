@@ -7,6 +7,7 @@
   padding-top: 30px;
   border-radius: 20px 20px 0 0;
 }
+
 .fcr-chatroom-mobile-message-placeholder {
   top: 0;
   bottom: 0;
@@ -15,9 +16,11 @@
   margin: auto;
   position: absolute;
 }
+
 .fcr-chatroom-mobile-messages-has-new-container {
   position: relative;
 }
+
 .fcr-chatroom-mobile-messages-has-new-container::before {
   content: '';
   width: 100vw;
@@ -28,6 +31,7 @@
   bottom: 0;
   z-index: 0;
 }
+
 .fcr-chatroom-mobile-messages-has-new {
   height: 28px;
   line-height: 28px;
@@ -41,13 +45,23 @@
   position: relative;
   top: 2px;
 }
+
 .fcr-chatroom-mobile-messages-wrap {
   padding: 10px 10px 0;
 }
-.fcr-chatroom-mobile-messages-wrap.isLandscape{
+
+.fcr-chatroom-mobile-messages-wrap.isLandscape {
   padding: 10px 20px 0;
 }
-.fcr-chatroom-mobile-message-item {
+
+.fcr-chatroom-mobile-message-item-wrapped {
+  display: flex;
+  justify-content: flex-start;
+  width: 100%;
+}
+
+
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item {
   border-radius: 12px;
   font-weight: 500;
   font-size: 13px;
@@ -60,15 +74,18 @@
   line-height: 18px;
   overflow: hidden;
 }
-.fcr-chatroom-mobile-message-item:last-child{
+
+.fcr-chatroom-mobile-message-item:last-child {
   margin-bottom: 0;
 }
+
 .fcr-chatroom-mobile-message-item-img {
   padding: 10px 10px;
   display: flex;
   flex-direction: column;
 }
-.fcr-chatroom-mobile-message-item-img > img {
+
+.fcr-chatroom-mobile-message-item-img>img {
   float: right;
   width: 140px;
   max-height: 220px;
@@ -77,18 +94,43 @@
 }
 
 .fcr-chatroom-mobile-message-item-student {
-  background: rgba(76, 84, 98, .5);
   backdrop-filter: blur(25px);
 }
 
-.fcr-chatroom-mobile-message-item-self {
-  background: rgba(66, 98, 255, 0.4);
+
+.fcr-chatroom-mobile-message-item-wrapped.fcr-chatroom-mobile-message-item-self-wrapped {
+  justify-content: flex-end;
 }
+
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item-self {
+  
+}
+
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item-list {
+  display: flex;
+}
+
+.fcr-chatroom-mobile-message-item-wrapped .fcr-chatroom-mobile-message-item-list .fcr-chatroom-mobile-message-content,
+.fcr-chatroom-mobile-message-item.fcr-chatroom-mobile-message-item-student .fcr-chatroom-mobile-message-content
+{
+  padding: 16px;
+  background: var(--ui-04, #505759);
+  border-radius: 0 12px 12px 12px;
+}
+
+.fcr-chatroom-mobile-message-item-self .fcr-chatroom-mobile-message-item-list .fcr-chatroom-mobile-message-content {
+  background: var(--color-monochrome-20, #E0E0E0);
+  color: var(--text-primary, #151515);
+  border-radius: 12px 0 12px 12px;
+}
+
 .fcr-chatroom-mobile-message-item-name {
-  color: rgba(91, 208, 245, 1);
-  margin-right: 4px;
+  margin-bottom: 7px;
+  display: flex;
+  gap: 9px;
 }
-.fcr-chatroom-mobile-message-item-teacher{
+
+.fcr-chatroom-mobile-message-item-teacher {
   background: rgba(29, 24, 254, 0.45);
   padding-left: 2px;
 }
@@ -104,10 +146,12 @@
   height: 18px;
   vertical-align: bottom;
 }
-.fcr-chatroom-mobile-message-item-host.active{
+
+.fcr-chatroom-mobile-message-item-host.active {
   background: rgba(255, 255, 255, 0.9);
 }
-.fcr-chatroom-mobile-message-item-private{
+
+.fcr-chatroom-mobile-message-item-private {
   position: relative;
   display: inline-flex;
   align-items: center;
@@ -121,7 +165,8 @@
   vertical-align: middle;
   top: -2px;
 }
-.fcr-chatroom-mobile-message-item-host > svg {
+
+.fcr-chatroom-mobile-message-item-host>svg {
   display: inline-block;
   position: absolute;
   left: 0;
@@ -130,6 +175,7 @@
   bottom: 0;
   margin: auto;
 }
+
 .fcr-chatroom-mobile-message-announcement {
   background: rgba(76, 84, 98, 0.6);
   color: rgba(91, 208, 245, 1);
@@ -143,6 +189,7 @@
   width: 100%;
   white-space: pre-wrap;
 }
+
 .fcr-chatroom-mobile-message-item-announcement-label {
   font-weight: 700;
   font-size: 12px;
@@ -155,6 +202,7 @@
   left: 0;
   top: -9px;
 }
+
 /** landscape **/
 .fcr-chatroom-mobile-messages-landscape {
   height: 179px;
@@ -162,29 +210,47 @@
   overflow-y: auto;
   pointer-events: all;
 }
+
 .fcr-chatroom-mobile-messages-landscape::-webkit-scrollbar {
   display: none;
 }
+
 .fcr-chatroom-mobile-messages-has-new-container-landscape {
   position: fixed;
   bottom: 58px;
   background: transparent;
 }
+
 .fcr-chatroom-mobile-messages-has-new-container-landscape .fcr-chatroom-mobile-messages-has-new {
   position: relative;
   pointer-events: all;
   margin-left: 20px;
 }
-.fcr-chat-private-tag{
+
+.fcr-chat-private-tag {
   color: #FFF;
   font-feature-settings: 'clig' off, 'liga' off;
   font-family: "Helvetica Neue";
   font-size: 13px;
   font-style: normal;
   font-weight: 500;
-  line-height: 19.5px;
+  line-height: 19.5px; 
 }
-.fcr-text-yellow{
+
+
+.fcr-chatroom-mobile-message-item.fcr-chatroom-mobile-message-item-self .fcr-chatroom-mobile-message-content{
+  padding: 16px;
+  background: var(--ui-04, #505759);
+  border-radius: 0 12px 12px 12px;
+}
+
+.fcr-chatroom-mobile-message-item.fcr-chatroom-mobile-message-item-self .fcr-chatroom-mobile-message-content{
+  background: var(--color-monochrome-20, #E0E0E0);
+  color: var(--text-primary, #151515);
+  border-radius: 12px 0 12px 12px;
+}
+
+.fcr-text-yellow {
   color: #D4A80A;
   font-feature-settings: 'clig' off, 'liga' off;
   font-family: "Helvetica Neue";
@@ -193,7 +259,8 @@
   font-weight: 400;
   line-height: 19.5px;
 }
-.fcr-text-blue{
+
+.fcr-text-blue,.fcr-text-white {
   color: #5BD0F5;
   font-feature-settings: 'clig' off, 'liga' off;
   font-family: "Helvetica Neue";
@@ -201,4 +268,8 @@
   font-style: normal;
   font-weight: 500;
   line-height: 19.5px;
+}
+
+.fcr-text-white{
+  color: var(--inverse-text-primary, #FEFEFE);
 }

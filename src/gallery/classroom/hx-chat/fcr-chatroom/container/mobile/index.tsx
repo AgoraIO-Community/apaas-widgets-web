@@ -3,7 +3,7 @@ import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useStore } from '../../hooks/useStore';
 import { FcrChatRoomH5Inputs } from './components/input';
-import { MessageList } from './components/message-list';
+// import { MessageList } from './components/message-list';
 import { RoomInfoContainer } from './components/room-info';
 import { UserJoined } from './components/user-joined';
 import classNames from 'classnames';
@@ -30,13 +30,13 @@ export const FcrChatRoomH5 = observer(() => {
         {isLandscape ? (
           <>
             <UserJoined></UserJoined>
-            <MessageList></MessageList>
+            {/* <MessageList></MessageList> */}
           </>
         ) : (
           <div className="fcr-chatroom-mobile-container">
             <UserJoined></UserJoined>
             <div className="fcr-chatroom-mobile-mask"></div>
-            <MessageList></MessageList>
+            {/* <MessageList></MessageList> */}
           </div>
         )}
         <PollMobile />

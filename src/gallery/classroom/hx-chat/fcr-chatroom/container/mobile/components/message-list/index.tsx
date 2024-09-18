@@ -18,6 +18,9 @@ import { useStore } from '../../../../hooks/useStore';
 import './index.css';
 import { createPortal } from 'react-dom';
 import classNames from 'classnames';
+import { Avatar } from '@components/avatar';
+import dayjs from 'dayjs';
+import { getNameColor } from '@components/avatar/helper';
 export const MessageList = observer(() => {
   const {
     messageStore: {
@@ -31,7 +34,7 @@ export const MessageList = observer(() => {
     roomStore: { isLandscape, messageVisible, forceLandscape, landscapeToolBarVisible },
     fcrChatRoom,
   } = useStore();
-  console.log('MessageListMessageList', unreadMessageCount,messageVisible)
+  console.log('MessageListMessageList', unreadMessageCount, messageVisible)
   const scrollingRef = useRef(false);
   const scrollingTaskRef = useRef<Scheduler.Task | null>(null);
   const isAndroid = useMemo(() => /android/.test(navigator.userAgent.toLowerCase()), []);
@@ -170,9 +173,8 @@ const UnreadMessage = ({
   return container && !isLandscape ? (
     createPortal(
       <div
-        className={`fcr-chatroom-mobile-messages-has-new-container${
-          isLandscape ? '-landscape' : ''
-        }`}>
+        className={`fcr-chatroom-mobile-messages-has-new-container${isLandscape ? '-landscape' : ''
+          }`}>
         <div onClick={onClick} className="fcr-chatroom-mobile-messages-has-new">
           <span>
             {unreadMessageCount}&nbsp;
@@ -184,9 +186,8 @@ const UnreadMessage = ({
     )
   ) : (
     <div
-      className={`fcr-chatroom-mobile-messages-has-new-container${
-        isLandscape ? '-landscape' : ''
-      }`}>
+      className={`fcr-chatroom-mobile-messages-has-new-container${isLandscape ? '-landscape' : ''
+        }`}>
       <div onClick={onClick} className="fcr-chatroom-mobile-messages-has-new">
         <span>
           {unreadMessageCount}&nbsp;
@@ -199,21 +200,29 @@ const UnreadMessage = ({
 const AnnouncementMessage = ({ announcement }: { announcement: string }) => {
   const transI18n = useI18n();
   return (
-    <div
-      key={announcement}
-      className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-announcement`}>
-      <span className="fcr-chatroom-mobile-message-item-announcement-label">
-        {transI18n('chat.announcement')}
-      </span>
-      {announcement}
+    <div className='fcr-chatroom-mobile-message-item-wrapped'>
+      <div
+        key={announcement}
+        className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-announcement`}>
+        <span className="fcr-chatroom-mobile-message-item-announcement-label">
+          {transI18n('chat.announcement')}
+        </span>
+        {announcement}
+      </div>
     </div>
+
   );
 };
 const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
   const {
     fcrChatRoom,
     messageStore: { checkIsPrivateMessage },
-    roomStore: { isLandscape, forceLandscape },
+    roomStore: {
+      isLandscape,
+      forceLandscape,
+      isBreakOutRoomEnabled,
+      isBreakOutRoomIn },
+    userStore: { privateUser, chatGroup }
   } = useStore();
   const { isTeacherMessage, messageFromAlias, messageStyleType } = useMessageParams({
     message,
@@ -222,61 +231,83 @@ const TextMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
   const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
   const textMessage = message as AgoraIMTextMessage;
 
-  //替换内容中的超链接
+//替换内容中的超链接
   const replaceContentToLink = (text: string | null):string => {
     const urlRegex = /((https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g;
     return text ? text.replace(urlRegex, (match, url) => {
       return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     }) : "";
   }
-
   return (
     <div
-      key={textMessage.id}
-      className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-${messageStyleType}`}>
-      {isTeacherMessage && (
-        <span className={`fcr-chatroom-mobile-message-item-host ${!isLandscape ? '' : 'active'}`}>
-          <SvgImgMobile
-            colors={{ iconPrimary: isLandscape ? 'black' : 'white'}}
-            forceLandscape={forceLandscape}
-            landscape={isLandscape}
-            type={SvgIconEnum.HOST}
-            size={24}></SvgImgMobile>
-        </span>
-      )}
-      {checkIsPrivateMessage(message) && isLandscape && (
-        <span className="fcr-chatroom-mobile-message-item-private">
-          <SvgImgMobile
-            forceLandscape={forceLandscape}
-            landscape={isLandscape}
-            type={SvgIconEnum.PRIVATE}
-            size={16}></SvgImgMobile>
-        </span>
-      )}
-      {!checkIsPrivateMessage(message) && <span className="fcr-chatroom-mobile-message-item-name">
-        {textMessage.ext?.nickName}
-        {messageFromAlias}:
-      </span>}
-      {isSelfMessage && checkIsPrivateMessage(message) && (
-        <span className="fcr-chat-private-tag">
-          <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
-          {transI18n('fcr_chat_label_i_said_to')}&nbsp;
-          <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
-          <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
-          <span className='fcr-text-split'>:</span>
-        </span>
-      )}
-      {!isSelfMessage && checkIsPrivateMessage(message) && (
-        <span className="fcr-chat-private-tag">
-          <span className="fcr-text-blue">{message.ext?.nickName}</span>
-          &nbsp;{transI18n('fcr_chat_label_said_to_me')}
-          <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
-          <span className='fcr-text-split'>:</span>
-        </span>
-      )}
-      <div key={textMessage.id}
-        dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+      className={`fcr-chatroom-mobile-message-item-wrapped fcr-chatroom-mobile-message-item-${messageStyleType}-wrapped`}
+    >
+      <div
+        key={textMessage.id}
+        className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-${messageStyleType}`}
+      >
+        {isTeacherMessage && (
+          <span className={`fcr-chatroom-mobile-message-item-host ${!isLandscape ? '' : 'active'}`}>
+            <SvgImgMobile
+              colors={{ iconPrimary: isLandscape ? 'black' : 'white' }}
+              forceLandscape={forceLandscape}
+              landscape={isLandscape}
+              type={SvgIconEnum.HOST}
+              size={24}></SvgImgMobile>
+          </span>
+        )}
+        {checkIsPrivateMessage(message) && isLandscape && (
+          <span className="fcr-chatroom-mobile-message-item-private">
+            <SvgImgMobile
+              forceLandscape={forceLandscape}
+              landscape={isLandscape}
+              type={SvgIconEnum.PRIVATE}
+              size={16}></SvgImgMobile>
+          </span>
+        )}
+        {!checkIsPrivateMessage(message) && <div className="fcr-chatroom-mobile-message-item-list">
+          {!isSelfMessage && <Avatar size={36} borderRadius={'50%'} textSize={16} nickName={textMessage.ext?.nickName || ''}></Avatar>}
+          <div className='fcr-chatroom-mobile-message-item-name-content'>
+            <div className='fcr-chatroom-mobile-message-item-name' >
+              <span style={{ color: isSelfMessage ? 'var(--inverse-text-primary, #FEFEFE)' : getNameColor(textMessage.ext?.nickName || '') }}>{textMessage.ext?.nickName}
+              </span>
+              <span>  {message?.ts && (
+                <div className="fcr-chat-message-list-item-time">
+                  {dayjs(message.ts).format(isSelfMessage ? 'MM-DD hh:mm A' : 'YYYY-MM-DD hh:mm A')}
+                </div>
+              )}</span>
+            </div>
+            <div className='fcr-chatroom-mobile-message-content'dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+          </div>
+          {/* {messageFromAlias}: */}
+        </div>}
+        {isSelfMessage && checkIsPrivateMessage(message) && (
+          <div className="fcr-chatroom-mobile-message-item-list">
+            <span className="fcr-chat-private-tag fcr-chat-private-tag-right">
+              <span className="fcr-text-white">{transI18n('fcr_chat_label_i')}</span>
+              {transI18n('fcr_chat_label_i_said_to')}&nbsp;
+              <span className="fcr-text-white">{message.ext?.receiverList?.[0].nickName}</span>
+              <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+              <span className='fcr-text-split'>:</span>
+            </span>
+            <div className='fcr-chatroom-mobile-message-content'dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+          </div>
+        )}
+        {!isSelfMessage && checkIsPrivateMessage(message) && (
+          <div className="fcr-chatroom-mobile-message-item-list">
+            <Avatar size={36} borderRadius={'50%'} textSize={16} nickName={textMessage.ext?.nickName || ''}></Avatar>
+            <span className="fcr-chat-private-tag">
+              <span className="fcr-text-blue">{message.ext?.nickName}</span>
+              &nbsp;{transI18n('fcr_chat_label_said_to_me')}
+              <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+              <span className='fcr-text-split'>:</span>
+            </span>
+            <div className='fcr-chatroom-mobile-message-content'dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+          </div>
+        )}
+      </div>
     </div>
+
   );
 });
 const ImageMessage = observer(
@@ -315,7 +346,9 @@ const ImageMessage = observer(
     };
 
     return (
-      <>
+      <div
+        className={`fcr-chatroom-mobile-message-item-wrapped fcr-chatroom-mobile-message-item-img-wrapped fcr-chatroom-mobile-message-item-${messageStyleType}-wrapped`}
+      >
         <div
           onClick={previewImage}
           key={imageMessage.id}
@@ -330,7 +363,7 @@ const ImageMessage = observer(
                 size={24}></SvgImgMobile>
             </span>
           )}
-          {checkIsPrivateMessage(message) && isLandscape  && (
+          {checkIsPrivateMessage(message) && isLandscape && (
             <span className="fcr-chatroom-mobile-message-item-private">
               <SvgImgMobile
                 forceLandscape={forceLandscape}
@@ -362,12 +395,12 @@ const ImageMessage = observer(
           )}
           <img onLoad={onImgLoad} src={imageUrl}></img>
         </div>
-      </>
+      </div>
     );
   },
 );
 const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
-  const { fcrChatRoom, messageStore: { checkIsPrivateMessage }, roomStore: { isLandscape }} = useStore();
+  const { fcrChatRoom, messageStore: { checkIsPrivateMessage }, roomStore: { isLandscape } } = useStore();
 
   const { messageFromAlias } = useMessageParams({
     message,
@@ -379,27 +412,27 @@ const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) =>
     <div
       key={cmdMessage.id}
       className={`fcr-chatroom-mobile-message-item fcr-chatroom-mobile-message-item-student`}>
-        {!checkIsPrivateMessage(message) && <span className="fcr-chatroom-mobile-message-item-name">
-            {cmdMessage.ext?.nickName}
-            {messageFromAlias}:
-        </span>}
-        {isSelfMessage && checkIsPrivateMessage(message) && (
-          <span className="fcr-chat-private-tag">
-            <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
-            {transI18n('fcr_chat_label_i_said_to')}&nbsp;
-            <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
-            <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
-            <span className='fcr-text-split'>:</span>
-          </span>
-        )}
-        {!isSelfMessage && checkIsPrivateMessage(message) && (
-          <span className="fcr-chat-private-tag">
-            <span className="fcr-text-blue">{message.ext?.nickName}</span>
-            &nbsp;{transI18n('fcr_chat_label_said_to_me')}
-            <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
-            <span className='fcr-text-split'>:</span>
-          </span>
-        )}
+      {!checkIsPrivateMessage(message) && <span className="fcr-chatroom-mobile-message-item-name">
+        {cmdMessage.ext?.nickName}
+        {messageFromAlias}:
+      </span>}
+      {isSelfMessage && checkIsPrivateMessage(message) && (
+        <span className="fcr-chat-private-tag">
+          <span className="fcr-text-blue">{transI18n('fcr_chat_label_i')}</span>
+          {transI18n('fcr_chat_label_i_said_to')}&nbsp;
+          <span className="fcr-text-blue">{message.ext?.receiverList?.[0].nickName}</span>
+          <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+          <span className='fcr-text-split'>:</span>
+        </span>
+      )}
+      {!isSelfMessage && checkIsPrivateMessage(message) && (
+        <span className="fcr-chat-private-tag">
+          <span className="fcr-text-blue">{message.ext?.nickName}</span>
+          &nbsp;{transI18n('fcr_chat_label_said_to_me')}
+          <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>
+          <span className='fcr-text-split'>:</span>
+        </span>
+      )}
       {convertCmdMessageAction(cmdMessage.action)}
     </div>
   );
@@ -434,8 +467,8 @@ const useMessageParams = ({
   const messageFromAlias = isSelfMessage
     ? `(${transI18n('fcr_chat_label_i')})`
     : isTeacherMessage
-    ? `(${transI18n('chat.teacher')})`
-    : '';
+      ? `(${transI18n('chat.teacher')})`
+      : '';
   const messageStyleType = isSelfMessage ? 'self' : isTeacherMessage ? 'teacher' : 'student';
   return {
     isSelfMessage,

@@ -12,7 +12,7 @@ import { AgoraExtensionWidgetEvent } from '../../../../../../../../events';
 import { MobileCallState } from '../../../../store/room';
 import { ToolTip } from '../tooltip';
 import MoreDialog from '../more-dialog';
-import PrivateDialog from '../private-dialog';
+import ChatDialog from '../chat-dialog';
 import ApplicationDialog from '../application-dialog';
 import ParticipantDialog from '../participant-dialog';
 
@@ -32,7 +32,8 @@ export const FcrChatRoomH5Inputs = observer(
     const [text, setText] = useState('');
     const [isShowStudents, setIsShowStudents] = useState(false);
     const [isShowParticipant, setIsShowParticipant] = useState(false);
-    const [isShowMore,setIsShowMore] = useState(false);
+    const [isShowChat, setIsShowChat] = useState(false);
+    const [isShowMore, setIsShowMore] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
     const [widgetCount, setWidgetCount] =useState(0);
@@ -198,7 +199,7 @@ export const FcrChatRoomH5Inputs = observer(
       (messageVisible && landscapeToolBarVisible && pollMinimizeState) || !isLandscape;
 
     const handleShowDialog = () => {
-      setIsShowStudents(!isShowStudents);
+      setIsShowChat(!isShowChat);
       setSearchKey('');
     };
     //显示花名册
@@ -379,7 +380,7 @@ export const FcrChatRoomH5Inputs = observer(
           )}
         </div>
         {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />}
-        {isShowStudents && <PrivateDialog setIsShowStudents={setIsShowStudents} />}
+        {isShowChat && <ChatDialog setIsShowChat={setIsShowChat} />}
         {isShowParticipant && <ParticipantDialog setIsShowParticipant={setIsShowParticipant} />}
         {/* {isShowMore && <MoreDialog setIsShowMore = {setIsShowMore}/>} */}
         {showEmoji && emojiContainer && (
