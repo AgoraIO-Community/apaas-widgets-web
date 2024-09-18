@@ -1,17 +1,35 @@
-  .fcr-chatroom-mobile-participant {
+  .fcr-chatroom-mobile-participant-mask {
     position: fixed;
-    display: flex;
-    flex-direction: column;
+     
     left: 0;
     right: 0;
     bottom: 0;
+
+    overflow-y: auto;
+    z-index: 98;
+    width: 100%;
+    height: calc(100% - 48px);
+
+    background: #151515;
+
+  }
+
+  .fcr-chatroom-mobile-participant {
+    position: absolute;
+    bottom: 0;
+    
+    display: flex;
+    flex-direction: column;
+    
     border-radius: 12px;
     overflow-y: auto;
     z-index: 98;
     width: 100%;
-    height: calc(100% - 48px - 8px);
-    border-radius: 16px 16px 0px 0px;
+    height: calc(100% - 8px);
+
+  
     background: var(--fcr_mobile_ui_scene_color_popup_fill2, rgba(60, 60, 60, 1));
+    border-radius: 16px 16px 0px 0px;
   }
 
   .fcr-chatroom-mobile-participant-title {
@@ -22,6 +40,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+
   }
 
   .fcr-chatroom-mobile-participant-title-title {
