@@ -88,13 +88,15 @@ const enUS = {
   fcr_participants_tips_lower_hand: 'Lower Hand',
   fcr_chat_options_no_one_room: 'The student and you are not in the same room, so it is impossible to operate.',
   fcr_application_screen_share: 'Screen Share',
-  fcr_more_tip_title:'Files',
-  fcr_more_options_whiteboard:'Whiteboard',
-  fcr_more_options_youtube:'Youtube',
-  fcr_more_options_tutor_scream:'Tutor‘s Scream',
-  fcr_more_options_page_notice:'notice tooltip',
-  fcr_more_tip_second_title:'Apps',
-  fcr_more_options_poll:'Poll'
+  fcr_more_tip_title: 'Files',
+  fcr_more_options_whiteboard: 'Whiteboard',
+  fcr_more_options_youtube: 'Youtube',
+  fcr_more_options_tutor_scream: 'Tutor‘s Scream',
+  fcr_more_options_page_notice: 'notice tooltip',
+  fcr_more_tip_second_title: 'Apps',
+  fcr_more_options_poll: 'Poll',
+  frc_more_white_tooltip: 'The teaching content and applications used by the tutor will be folded here',
+  frc_more_white_showpoll_tooltip: 'Tutor opened a poll, click here to open and vote'
 };
 
 export default enUS;

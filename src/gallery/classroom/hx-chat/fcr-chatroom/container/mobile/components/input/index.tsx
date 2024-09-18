@@ -33,7 +33,8 @@ export const FcrChatRoomH5Inputs = observer(
     const [isShowMore, setIsShowMore] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
-    const [widgetCount, setWidgetCount] = useState(0);
+    const [widgetCount, setWidgetCount] =useState(0);
+    const [whiteTooltip,setWhiteTooltip] = useState(true);
     const transI18n = useI18n();
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -123,15 +124,30 @@ export const FcrChatRoomH5Inputs = observer(
         }
       };
     }, [collectVisible]);
-    useEffect(() => {
-      const count = widgets.length > 0 ? widgets.length : 0;
-      if (isShowPoll) {
-        setWidgetCount(count + 1)
-      } else {
+    useEffect(()=>{
+      const count = widgets.length > 0?widgets.length:0;
+      if(isShowPoll){
+        setWidgetCount(count+1)
+      }else{
         setWidgetCount(count)
       }
-    }, [widgets.length, isShowPoll])
+    },[widgets.length,isShowPoll])
+    useEffect(()=>{
+      if(isShowPoll){
+        addToast(transI18n('frc_more_white_showpoll_tooltip'),'success');
+      }
+    },[isShowPoll])
+    useEffect(()=>{
+      if(whiteTooltip){
+        if(widgets.find((widget:any)=>{
+          return widget.widgetName =='mediaPlayer' || widget.widgetName =='netlessBoard' || widget.widgetName =='webView'
+        })!=null){
+          addToast(transI18n('frc_more_white_tooltip'),'success');
+          setWhiteTooltip(false);
+        }   
+      }
 
+    },[widgets.length])
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
       if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
