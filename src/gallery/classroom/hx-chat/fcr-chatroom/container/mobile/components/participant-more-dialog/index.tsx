@@ -4,7 +4,7 @@ import './index.css';
 import { observer } from 'mobx-react';
 import { transI18n } from 'agora-common-libs';
 import { Avatar } from '@components/avatar';
-import { EduStream } from 'agora-edu-core';
+import { EduClassroomConfig, EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
 
 const ParticipantMoreDialog = observer(
   ({ setIsShowMoreParticipant, user }: { setIsShowMoreParticipant: (arg0: EduStream | null) => void, user: EduStream }) => {
@@ -13,6 +13,8 @@ const ParticipantMoreDialog = observer(
       userStore: { setPrivateUser },
     } = useStore()
     const showUserName = user.fromUser.userName;
+    const isTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, user.fromUser.role);
+
     //选择私聊
     const selectPrivate = async () => {
       const list = await fcrChatRoom.getUserInfoList([user.fromUser.userUuid])
@@ -27,7 +29,7 @@ const ParticipantMoreDialog = observer(
         <div className='fcr-chatroom-mobile-participant-more-content'>
           <div className="title-container">
             <span className='icon'>
-              <Avatar size={36} borderRadius='10px' textSize={14} nickName={showUserName}></Avatar>
+              <Avatar size={36} borderRadius='10px' textSize={14} nickName={showUserName} style={isTeacher ? { background: 'var(--head-4, #D2DB0E)' } : {}} ></Avatar>
             </span>
             <span className='title'>{showUserName}</span>
           </div>

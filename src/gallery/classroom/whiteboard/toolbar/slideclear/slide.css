@@ -2,38 +2,49 @@
   background: none;
   /* width: 245px; */
 }
+
 .fcr-mobile-slide__dialog .adm-dialog-content * {
   pointer-events: auto;
 }
+
 .fcr-mobile-slide__dialog .adm-dialog-content {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
 }
+
 .fcr-mobile-slide__close {
   border-radius: 18px;
-  border: 2px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5));
-  background: var(--fcr_mobile_ui_scene_color_popup_fill2, #3c3c3c);
+  background: var(--background-dark, #151515);
+
   box-shadow: 0px 0px 10px 0px rgba(151, 151, 151, 0.15);
+
+  color: var(--ui-01, #F5F5F5);
   width: 36px;
   height: 36px;
   display: flex;
   justify-content: center;
   align-items: center;
 }
+
 .simple-verify {
   box-sizing: border-box;
   line-height: 1;
-  position: relative;
   -webkit-user-select: none;
   margin-right: 11px;
   height: 50px;
+
   backdrop-filter: blur(5px);
   border-radius: 25px;
   overflow: hidden;
+  background: var(--disabled-interactive-02, #919191);
+
+
+  position: relative;
 }
+
 .verify-tips {
-  widows: 100%;
+  width: calc(100% - 46px);
   height: 100%;
   color: #fff;
   display: flex;
@@ -41,61 +52,95 @@
   justify-content: center;
   align-items: center;
   font-size: 14px;
+  font-weight: 400;
   pointer-events: none;
+  gap: 7px;
+
+  margin-left: 44px;
 }
 
 .verify-box {
   position: absolute;
-  left: -1px;
-  top: -1px;
-  width: calc(100% + 2px);
-  height: calc(100% + 2px);
+  left: 4px;
+  top: 4px;
+  width: calc(100% - 8px);
+  height: calc(100% - 8px);
+
   overflow: hidden;
-  border-radius: var(--fcr_cornerradius_round, 50px);
-  border: 2px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5));
-  background: var(--fcr_ui_scene_ramp_brand1, rgba(66, 98, 255, 0.2));
+  border-radius: 35.71px;
+  /* border: 2px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5)); */
+  /* background: var(--fcr_ui_scene_ramp_brand1, rgba(66, 98, 255, 0.2)); */
+  /* border: 2px solid var(--border-03, #919191); */
+
   /* fcr_trans2 */
   box-shadow: 0px 0px 10px 0px rgba(151, 151, 151, 0.15);
 }
 
 .veriry-slide {
-  position: absolute;
-  left: 3px;
-  width: 42px;
+  /* position: absolute;
+  left: 3px; */
+  /* width: 42px;
   height: 42px;
-  top: 3px;
-  opacity: 0;
-  border-radius: 21px;
-  background: linear-gradient(313deg, #4262ff 0%, #4262ff 100%);
+  top: 3px; */
+
+  /* width: 209px;
+  height: 50px; */
+  width: 100%;
+  height: 100%;
+  border-radius: 50px;
+  background: var(--leave, #BD0101);
+
+  /* background: linear-gradient(313deg, #4262ff 0%, #4262ff 100%); */
+  /* border: 2px solid var(--border-03, #919191); */
   transition: opacity 0.1s linear, transform 0.3s ease;
 }
 
 .verify-bar {
   position: absolute;
-  left: 3px;
-  top: 3px;
-  height: calc(100% - 6px);
-  /* width: 42px; */
-  align-items: center;
+  left: 4px;
+  top: 4px;
+  
   cursor: pointer;
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
+  background: var(--leave, #BD0101);
+  
   z-index: 1;
   transition: transform 0.3s ease;
   touch-action: none;
-  /* background: var(--fcr_ui_scene_ramp_brand6, #4262ff); */
-  border-radius: 21px;
+  
+  border-radius: 50%;
+}
+
+.verify-bar .icon-wrapped {
+  width: 42px;
+  height: 42px;
+  /* background: var(--inverse-icon-tertiary, #F5F5F5); */
+  background: var(--leave, #BD0101);
+  border-radius: 50%;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
 .verify-bar .icon {
-  width: 36px;
-  height: 36px;
-  border: 4px solid #ddd;
-  box-shadow: rgba(#717277, 0.3) 0 3px 10px;
-  border-radius: 20px;
-  display: inline-flex;
+  box-sizing: content-box;
+  width: 32px;
+  height: 32px;
+
+  background: var(--leave, #BD0101);
+
+  border: 1.43px solid var(--interactive-primary, #9E007E);
+
+  border: 5px solid var(--inverse-icon-tertiary, #F5F5F5);
+  box-shadow: 0 0 0 1.43px var(--interactive-primary, #9E007E);
+  border-radius: 50%;
+  /* border-radius: 20px; */
+
+  display: flex;
   justify-content: center;
   align-items: center;
+
+  position: absolute;
+  top: 0;
+  left: -1px;
 }

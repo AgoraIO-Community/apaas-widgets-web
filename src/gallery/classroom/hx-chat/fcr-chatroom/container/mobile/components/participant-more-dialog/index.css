@@ -31,7 +31,7 @@
     width: 100%;
     padding: 12px 20px;
     color: var(--inverse-icon-primary, rgba(254, 254, 254, 1));
-    display: block;
+    display: flex;
   }
 
   .fcr-chatroom-mobile-participant-more-content .title-container .icon {
@@ -46,6 +46,11 @@
     text-align: left;
     padding-left: 11px;
     display: inline-block;
+    width: 100%;
+
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
   }
 
   .fcr-chatroom-mobile-participant-more-content .item-options {

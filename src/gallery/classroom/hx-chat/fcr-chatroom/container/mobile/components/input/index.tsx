@@ -31,13 +31,13 @@ export const FcrChatRoomH5Inputs = observer(
     const [inputFocus, setInputFocus] = useState(false);
     const [text, setText] = useState('');
     const [isShowStudents, setIsShowStudents] = useState(false);
-    const [isShowParticipant, setIsShowParticipant] = useState(false);
     const [isShowChat, setIsShowChat] = useState(false);
     const [isShowMore, setIsShowMore] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
-    const [widgetCount, setWidgetCount] =useState(0);
-    const [whiteTooltip,setWhiteTooltip] = useState(true);
+    const [widgetCount, setWidgetCount] = useState(0);
+    const [isShowParticipant, setIsShowParticipant] = useState(false);
+    const [whiteTooltip, setWhiteTooltip] = useState(true);
     const transI18n = useI18n();
 
     const inputRef = useRef<HTMLInputElement>(null);
@@ -72,10 +72,13 @@ export const FcrChatRoomH5Inputs = observer(
         isRaiseHand,
         raiseHand,
         lowerHand,
+        allUIStreams,
         raiseHandTooltipVisible,
       },
     } = useStore();
     const widgets = z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
+
+    const [allStreamCount, setAllStreamCount] = useState([allUIStreams.values()]?.length)
 
     const getCallIcon = () => {
       switch (mobileCallState) {
@@ -127,30 +130,37 @@ export const FcrChatRoomH5Inputs = observer(
         }
       };
     }, [collectVisible]);
-    useEffect(()=>{
-      const count = widgets.length > 0?widgets.length:0;
-      if(isShowPoll){
-        setWidgetCount(count+1)
-      }else{
+    useEffect(() => {
+      const count = widgets.length > 0 ? widgets.length : 0;
+      if (isShowPoll) {
+        setWidgetCount(count + 1)
+      } else {
         setWidgetCount(count)
       }
-    },[widgets.length,isShowPoll])
-    useEffect(()=>{
-      if(isShowPoll){
-        addToast(transI18n('frc_more_white_showpoll_tooltip'),'success');
+    }, [widgets.length, isShowPoll])
+    useEffect(() => {
+      const count = widgets.length > 0 ? widgets.length : 0;
+      if (isShowPoll) {
+        setWidgetCount(count + 1)
+      } else {
+        setWidgetCount(count)
       }
-    },[isShowPoll])
-    useEffect(()=>{
-      if(whiteTooltip){
-        if(widgets.find((widget:any)=>{
-          return widget.widgetName =='mediaPlayer' || widget.widgetName =='netlessBoard' || widget.widgetName =='webView'
-        })!=null){
-          addToast(transI18n('frc_more_white_tooltip'),'success');
+    }, [widgets.length, isShowPoll])
+    useEffect(() => {
+      if (isShowPoll) {
+        addToast(transI18n('frc_more_white_showpoll_tooltip'), 'success');
+      }
+    }, [isShowPoll])
+    useEffect(() => {
+      if (whiteTooltip) {
+        if (widgets.find((widget: any) => {
+          return widget.widgetName == 'mediaPlayer' || widget.widgetName == 'netlessBoard' || widget.widgetName == 'webView'
+        }) != null) {
+          addToast(transI18n('frc_more_white_tooltip'), 'success');
           setWhiteTooltip(false);
-        }   
+        }
       }
-
-    },[widgets.length])
+    }, [widgets.length])
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
       if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
@@ -207,7 +217,7 @@ export const FcrChatRoomH5Inputs = observer(
       setIsShowParticipant(!isShowParticipant);
       setSearchKey('');
     };
-    const handleShowMoreDialog=()=>{
+    const handleShowMoreDialog = () => {
       setIsShowMore(!isShowMore);
     }
     const [isHidePrivate, setIsHidePrivate] = useState(false);
@@ -246,6 +256,13 @@ export const FcrChatRoomH5Inputs = observer(
       }
       setIsShowApplication(!isShowApplication);
     };
+
+
+    useEffect(() => {
+      const allStream = [...allUIStreams.values()];
+      setAllStreamCount(allStream?.length);
+    }, [allUIStreams])
+
     return (
       <>
         <div
@@ -286,7 +303,7 @@ export const FcrChatRoomH5Inputs = observer(
                   landscape={isLandscape}
                   type={SvgIconEnum.GROUP}
                 />
-                <span>{transI18n('chat.participants', { num: 3 })}</span>
+                <span>{transI18n('chat.participants', { num: allStreamCount || 0 })}</span>
               </div>
               {widgetCount > 0 && <div className='fcr-application-panel-item fcr-application-panel-item-more' onClick={handleShowApplicatioon}>
                 {/* <SvgImgMobile
@@ -333,13 +350,13 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{transI18n('chat.chat')}</span>
               </div>
-              <div className='fcr-application-panel-item'>
+              <div className='fcr-application-panel-item' onClick={handleShowParticipantDialog}>
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
                   landscape={isLandscape}
                   type={SvgIconEnum.GROUP}
                 />
-                <span>3</span>
+                <span>{allStreamCount || 0}</span>
               </div>
               {widgetCount > 0 && <div className='fcr-application-panel-item' onClick={handleShowApplicatioon}>
                 <SvgImgMobile

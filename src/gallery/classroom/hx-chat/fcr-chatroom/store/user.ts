@@ -140,7 +140,7 @@ export class UserStore {
     this._fcrChatRoom.setPrivateUser(user);
     this._privateUser = user;
   }
- 
+
   @action.bound
   private _handlePrivateChat(message: { widgetId: string; userId: string }) {
     if (message.widgetId === this._widget.widgetId) {
@@ -390,7 +390,8 @@ export class UserStore {
    * 分离窗口视频流
    * @returns
    */
-  @computed get allUIStreams(): Map<string, EduStream> {
+  @computed
+  get allUIStreams(): Map<string, EduStream> {
     const uiStreams = new Map<string, EduStream>();
 
     [this.teacherCameraStream, ...this.studentCameraStreams].forEach((streamUI) => {

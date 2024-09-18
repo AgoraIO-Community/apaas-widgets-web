@@ -18,7 +18,7 @@ export default {
   fcr_board_tool_pen: 'Pen',
   fcr_board_tool_screen: 'Screen',
   fcr_board_tool_shape: 'Shape',
-  fcr_board_slide_clean: 'Slide Clean',
+  fcr_board_slide_clean: 'Swipe to clear all',
   fcr_board_window_connect_board1: 'We are  reconnecting the whiteboard for you, please wait...',
   fcr_board_window_connect_board2:
     "If you haven't connected to the whiteboard for a long time, you can temporarily close the whiteboard and try again later.",
