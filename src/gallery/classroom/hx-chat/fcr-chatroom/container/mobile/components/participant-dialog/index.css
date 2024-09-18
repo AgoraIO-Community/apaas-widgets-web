@@ -1,0 +1,201 @@
+  .fcr-chatroom-mobile-participant {
+    position: fixed;
+    display: flex;
+    flex-direction: column;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    border-radius: 12px;
+    overflow-y: auto;
+    z-index: 98;
+    width: 100%;
+    height: calc(100% - 48px);
+    border-radius: 16px 16px 0px 0px;
+    background: var(--fcr_mobile_ui_scene_color_popup_fill2, rgba(60, 60, 60, 1));
+  }
+
+  .fcr-chatroom-mobile-participant-title {
+    width: 100%;
+    padding: 16px 15px 10px 15px;
+    color: var(--inverse-icon-primary, rgba(254, 254, 254, 1));
+    display: block;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .fcr-chatroom-mobile-participant-title-title {
+    font-size: 15px;
+    text-decoration: underline;
+    cursor: pointer;
+    text-decoration: underline;
+  }
+
+  .fcr-chatroom-mobile-participant-title-icons {
+    text-decoration: none;
+    display: inline-block;
+  }
+
+  .fcr-chatroom-mobile-participant-title-icon {
+    width: 30px;
+    height: 30px;
+    margin-left: 10px;
+    cursor: pointer;
+    display: inline-block;
+  }
+
+  .fcr-chatroom-mobile-participant-back{
+    width: 100%;
+    height: 48px;
+    padding-left: 15px;
+    display: block;
+  }
+
+  .fcr-chatroom-mobile-participant-back .icon{
+    display: inline-block;
+    margin-top: -5px;
+  }
+  .fcr-chatroom-mobile-participant-back .text{
+    font-family: Open Sans;
+    font-size: 16px;
+    font-weight: 600;
+    line-height: 48px;
+    text-align: left;
+    display: inline-block;
+    padding-left: 5px;
+    color: rgba(254, 254, 254, 1);
+  }
+
+
+  .fcr-chatroom-mobile-participant-search {
+    width: calc(100% - 32px);
+    margin: 0 16px;
+    height: 36px;
+    gap: 0px;
+    border-radius: 8px;
+    opacity: 0px;
+    background: var(--field, rgba(255, 255, 255, 1));
+    border: 0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))
+  }
+
+  .fcr-chatroom-mobile-participant-search-icon {
+    width: 18px;
+    height: 18px;
+    margin-left: 12px;
+    gap: 0px;
+    opacity: 0px;
+    color: var(--icon-primary, rgba(21, 21, 21, 1));
+    display: inline-block;
+  }
+
+  .fcr-chatroom-mobile-participant-search-input {
+    font-family: Inter;
+    font-size: 14px;
+    font-weight: 400;
+    line-height: 14px;
+    text-align: left;
+    color: var(--text-tertiary, rgba(80, 87, 89, 1));
+    display: inline-block;
+    line-height: 36px;
+    background: transparent;
+    padding-left: 6px;
+    width: calc(100% - 40px);
+  }
+
+  .fcr-chatroom-mobile-participant-user-list-empty-placeholder {
+    color: rgba(255, 255, 255, 0.70);
+    text-align: center;
+    font-family: "PingFang HK";
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px;
+    display: flex;
+    align-items: center;
+    flex-direction: column;
+    justify-content: center;
+    padding-bottom: 27px;
+    padding-top: 30px;
+    overflow: hidden;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list-empty-img {
+    width: 126px;
+    margin-bottom: 15px;
+    object-fit: cover;
+  }
+
+  .fcr-chatroom-mobile-participant-user-lists {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  .fcr-chatroom-mobile-participant-user-lists.nodata {
+    justify-content: center;
+    display: flex;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 7px 8px 8px;
+    justify-content: space-between;
+    background: var(--ui-04, rgba(80, 87, 89, 1));
+    border-radius: 16px;
+    opacity: 0px;
+    margin: 10px 17px 5px;
+    width: calc(100% - 34px);
+    height: 50px;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list .name-container {
+    flex: 1;
+    flex-grow: 1;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list-name {
+    align-items: center;
+    font-family: Montserrat;
+    font-size: 14px;
+    font-weight: 600;
+    line-height: 14px;
+    text-align: left;
+    padding-left: 7px;
+    color: var(--inverse-text-primary, rgba(254, 254, 254, 1));
+    text-overflow: ellipsis;   /* Use ellipsis for overflow */
+    overflow: hidden;
+    word-break: break-all;
+    display: -webkit-box;
+    white-space: pre-wrap;
+    -webkit-box-orient: vertical;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list-name-search {
+    background-color: #415ad9;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list-name-role {
+    font-family: Open Sans;
+    font-size: 12px;
+    font-weight: 400;
+    line-height: 18px;
+    text-align: center;
+    color: rgba(254, 254, 254, 1);
+    display: flex;
+    padding-left: 7px;
+    padding-top: 2px;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list-name-role-name {
+    padding-left: 5px;
+  }
+
+  .fcr-chatroom-mobile-participant-user-list .options-container {
+    padding-left: 4px;
+    padding-right: 8px;
+  }
+  .fcr-chatroom-mobile-participant-user-list-options-icon {
+    display: inline-block;
+    margin-right: -6px;
+  }

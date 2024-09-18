@@ -96,7 +96,11 @@ const enUS = {
   fcr_more_tip_second_title: 'Apps',
   fcr_more_options_poll: 'Poll',
   frc_more_white_tooltip: 'The teaching content and applications used by the tutor will be folded here',
-  frc_more_white_showpoll_tooltip: 'Tutor opened a poll, click here to open and vote'
+  frc_more_white_showpoll_tooltip: 'Tutor opened a poll, click here to open and vote',
+  fcr_participant_more_item_text_private_chat: 'Private Chat',
+  fcr_participant_people_count: 'Participants',
+  fcr_participant_back: 'Back',
+
 };
 
 export default enUS;

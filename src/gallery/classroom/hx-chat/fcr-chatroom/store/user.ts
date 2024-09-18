@@ -7,6 +7,8 @@ import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../
 import { CustomMessageHandsUpState } from '../../type';
 import { iterateMap } from 'agora-common-libs';
 import { AgoraIM } from '../../../../../common/im/wrapper';
+import { AgoraRteMediaPublishState, AgoraRteMediaSourceState, AgoraRteVideoSourceType } from 'agora-rte-sdk';
+import { EduClassroomConfig, EduRoleTypeEnum, EduStream, EduUserStruct, RteRole2EduRole } from 'agora-edu-core';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -309,4 +311,117 @@ export class UserStore {
     //判断要禁言的用户是不是实际在当前房间里
     return userList.every((element) => judgeUserList.includes(element));
   }
+
+
+
+  @computed
+  private get localUser() {
+    return this._widget.classroomStore.userStore.localUser;
+  }
+  @computed
+  private get isInGroup() {
+    return this._widget.classroomStore.groupStore.groupUuidByUserUuid.get(
+      this.localUser?.userUuid || '',
+    );
+  }
+  @computed
+  private get cameraUIStreams() {
+    return Array.from(this.cameraStreams)
+      .filter((stream) => {
+        return this.isInGroup
+          ? true
+          : !this._widget.classroomStore.groupStore.groupUuidByUserUuid.get(
+            stream.fromUser.userUuid,
+          );
+      })
+      .map((stream) => new EduStream(stream));
+  }
+  @computed
+  private get teacherUIStream() {
+    return this.cameraUIStreams.find((stream) => {
+      return RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, stream.fromUser.role) === EduRoleTypeEnum.teacher;
+    });
+  }
+  /**
+   * 老师流信息
+   * @returns
+   */
+  @computed
+  private get teacherCameraStream() {
+    return this.teacherUIStream;
+  }
+  @computed
+  private get studentCameraUIStreams() {
+    const { classroomStore } = this._widget;
+    const { studentList } = classroomStore.userStore;
+
+    return this.cameraUIStreams.filter((stream) => {
+      return studentList.has(stream.fromUser.userUuid);
+    });
+  }
+  /**
+   * 学生流信息列表
+   * @returns
+   */
+  @computed
+  private get studentCameraStreams(): EduStream[] {
+    return this.studentCameraUIStreams.map((stream) => stream);
+  }
+  @computed
+  private get cameraStreams() {
+    const { streamByUserUuid, streamByStreamUuid } =
+      this._widget.classroomStore.streamStore;
+    const cameraStreams = extractUserStreams(
+      this._widget.classroomStore.userStore.users,
+      streamByUserUuid,
+      streamByStreamUuid,
+      [AgoraRteVideoSourceType.Camera],
+    );
+    return cameraStreams;
+  }
+  /**
+   * 分离窗口视频流
+   * @returns
+   */
+  @computed get allUIStreams(): Map<string, EduStream> {
+    const uiStreams = new Map<string, EduStream>();
+
+    [this.teacherCameraStream, ...this.studentCameraStreams].forEach((streamUI) => {
+      if (streamUI) {
+        uiStreams.set(streamUI.streamUuid, streamUI);
+      }
+    });
+    return uiStreams;
+  }
+  //相机是否开启
+  checkCameraEnabled(stream?: EduStream) {
+    return AgoraRteMediaSourceState.started === stream?.videoSourceState && AgoraRteMediaPublishState.Published === stream?.videoState;
+  }
+  //麦克风是否开启
+  checkMicEnabled(stream?: EduStream) {
+    return AgoraRteMediaSourceState.started === stream?.audioSourceState && AgoraRteMediaPublishState.Published === stream?.audioState;
+  }
 }
+
+/**
+ * 提取流列表
+ */
+const extractUserStreams = (
+  users: Map<string, EduUserStruct>,
+  streamByUserUuid: Map<string, Set<string>>,
+  streamByStreamUuid: Map<string, EduStream>,
+  sourceTypes: AgoraRteVideoSourceType[],
+) => {
+  const streams = new Set<EduStream>();
+  for (const user of users.values()) {
+    const streamUuids = streamByUserUuid.get(user.userUuid) || new Set();
+    for (const streamUuid of streamUuids) {
+      const stream = streamByStreamUuid.get(streamUuid);
+
+      if (stream && sourceTypes.includes(stream.videoSourceType)) {
+        streams.add(stream);
+      }
+    }
+  }
+  return streams;
+};
