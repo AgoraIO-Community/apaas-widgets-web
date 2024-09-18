@@ -35,7 +35,7 @@ const ParticipantDialog = observer(
 
           <div
             className='fcr-chatroom-mobile-participant'
-            style={{ borderRadius: fullShow ? '0px' : '16px 16px 0px 0px' }}
+            style={{ height: fullShow ? '100%' : 'calc(100% - 8px)' }}
           >
             {!fullShow && <div className="fcr-chatroom-mobile-participant-title">
               <div className="fcr-chatroom-mobile-participant-title-title">{transI18n('fcr_participant_people_count')} ({allUIStreamsCount})</div>
@@ -54,12 +54,13 @@ const ParticipantDialog = observer(
                 />
               </div>
             </div>}
-            {fullShow && <div className='fcr-chatroom-mobile-participant-back' onClick={() => { setFullShow(false) }}>
+            {fullShow && <div className='fcr-chatroom-mobile-participant-back'>
               <SvgImg
                 className="icon"
                 type={SvgIconEnum.PARTICIPANT_FULL_SCREEN_BACK}
                 size={26}
                 colors={{ iconPrimary: 'rgba(254, 254, 254, 1)' }}
+                onClick={() => { setFullShow(false) }}
               />
               <span className='text'>{transI18n('fcr_participant_back')}</span>
             </div>}
@@ -120,7 +121,7 @@ const ParticipantDialog = observer(
                       <div className='name-container'>
                         <div className='fcr-chatroom-mobile-participant-user-list-name'
                           style={{ maxHeight: ((isLocalTeacher ? 1 : 3) * 14) + 'px', WebkitLineClamp: (isLocalTeacher ? 1 : 2) }}>
-                          {localTexts[0]}
+                          {`${localTexts[0]}(${transI18n('fcr_H5_participant_Me')})`}
                           <span className='fcr-chatroom-mobile-participant-user-list-name-search'>{localTexts[1]}</span>{localTexts[2]}
                         </div>
                         {isLocalTeacher &&

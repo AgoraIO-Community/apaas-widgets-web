@@ -64,6 +64,7 @@ const enUS = {
     sentence_connector: ',',
     me: 'me',
   },
+  fcr_H5_participant_Me: 'Me',
   fcr_private_leave_room: '{reason} has leaved room',
   fcr_chat_no_data: 'Student not found.',
   fcr_h5_label_watched: '',
