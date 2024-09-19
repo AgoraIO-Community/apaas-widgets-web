@@ -362,6 +362,8 @@
   background: var(--color-monochrome-20, #E0E0E0);
   color: var(--text-primary, #151515);
   border-radius: 12px 0 12px 12px;
+  width: fit-content;
+  margin-left: auto;
 }
 
 .fcr-text-yellow {
