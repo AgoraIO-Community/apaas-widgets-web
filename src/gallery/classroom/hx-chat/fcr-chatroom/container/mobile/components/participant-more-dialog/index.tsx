@@ -4,17 +4,17 @@ import './index.css';
 import { observer } from 'mobx-react';
 import { transI18n } from 'agora-common-libs';
 import { Avatar } from '@components/avatar';
-import { EduClassroomConfig, EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
+import { EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
 
 const ParticipantMoreDialog = observer(
   ({ setIsShowMoreParticipant, user }: { setIsShowMoreParticipant: (arg0: EduStream | null) => void, user: EduStream }) => {
     const {
-      fcrChatRoom,
       userStore: { setPrivateUser, findUserConfig },
       messageStore: { openChatDialog }
     } = useStore()
     const showUserName = user.fromUser.userName;
-    const isTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(EduClassroomConfig.shared.sessionInfo.roomType, user.fromUser.role);
+    //@ts-ignore
+    const isTeacher = EduRoleTypeEnum.teacher === RteRole2EduRole(window.EduClassroomConfig.sessionInfo.roomType, user.fromUser.role);
 
     //选择私聊
     const selectPrivate = () => {

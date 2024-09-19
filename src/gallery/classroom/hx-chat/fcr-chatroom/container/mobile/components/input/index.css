@@ -366,7 +366,6 @@
   background: rgba(227, 231, 239, 0.9);
   color: #000;
   border: 1px solid #e3e7ef;
-  backdrop-filter: blur(25px);
 }
 
 .fcr-chatroom-mobile-inputs-input-landscape-btn {

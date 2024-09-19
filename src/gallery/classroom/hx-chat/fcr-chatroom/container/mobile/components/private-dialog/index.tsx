@@ -4,26 +4,24 @@ import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/sv
 import { useStore } from '../../../../hooks/useStore';
 import emptyPng from './empty.png'
 import { useI18n } from 'agora-common-libs';
-import { Avatar } from '@components/avatar';
 import classNames from 'classnames';
 import { observer } from 'mobx-react';
+import { EduRoleTypeEnum } from 'agora-edu-core';
+import { AgoraIMUserInfo } from 'src/common/im/wrapper/typs';
 const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg0: boolean) => void }) => {
   const {
     roomStore: {
       isLandscape,
       forceLandscape,
-      isBreakOutRoomDisable,
       isBreakOutRoomEnabled,
       isBreakOutRoomIn
     },
-    fcrChatRoom,
     userStore: { getTeacherName, searchUserList, searchKey, setSearchKey, privateUser, setPrivateUser },
   } = useStore();
   const transI18n = useI18n();
   const [height, setHeight] = useState(0);
 
   const searchUserLists = useMemo(() => {
-    // return searchUserList.filter((user) => user.userId !== fcrChatRoom.userInfo?.userId)
     //只能私聊老师
     return searchUserList.filter((user) => user?.ext?.role == 1)
   }, [searchUserList])
@@ -43,7 +41,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
   const handleCloseDialog = () => {
     setIsShowStudents(false)
   }
-  const handleSetPrivate = (user: any) => {
+  const handleSetPrivate = (user: AgoraIMUserInfo | undefined) => {
     setPrivateUser(user)
     setIsShowStudents(false)
   }
@@ -137,21 +135,20 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
           </div>}
 
           {searchUserLists.length > 0 && searchUserLists.map((user) => {
+            const name = EduRoleTypeEnum.teacher === user?.ext?.role ? `${getTeacherName()}(${transI18n('chat.teacher')})` : user.nickName;
             let txts: string[] = ['', '', '']
             if (searchKey) {
-              const index = user.nickName.indexOf(searchKey)
-              txts[0] = user.nickName.slice(0, index)
+              const index = name.indexOf(searchKey)
+              txts[0] = name.slice(0, index)
               txts[1] = searchKey
-              txts[2] = user.nickName.slice(index + searchKey.length, user.nickName.length)
+              txts[2] = name.slice(index + searchKey.length, name.length)
             } else {
-              txts = [user.nickName, '', '']
+              txts = [name, '', '']
             }
 
             return (
               <div key={user.userId} className='fcr-chatroom-private-dialog-chat-input-chat-list' onClick={() => handleSetPrivate(user)}>
                 <div className='fcr-chatroom-private-dialog-chat-input-chat-list-name'>
-                  {/* <Avatar size={36} borderRadius='8px' textSize={12} nickName={user.nickName} style={{ background: 'var(--head-4, #D2DB0E)' }}></Avatar> */}
-
                   <div className='fcr-chatroom-private-dialog-chat-input-chat-list-tutor'>
                     <SvgImgMobile
                       forceLandscape={forceLandscape}
@@ -160,7 +157,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
                     />
                   </div>
                   <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val'>
-                    {user?.ext?.role == 1 ? (< ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{getTeacherName()}</span>(Tutor)</>) : <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{txts[0]}</span>}
+                    {<span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{txts[0]}</span>}
                     <span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-search'>{txts[1]}</span>
                     {txts[2]}
                   </span>

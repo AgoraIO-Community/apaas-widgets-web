@@ -78,10 +78,9 @@
 
 .fcr-chatroom-private-dialog-chat-input-chat-search {
   margin: 0 16px;
-  border-radius: 50px;
+  border-radius: 8px;
   border: 0.5px solid var(--fcr_ui_scene_line1, #E3E7EF);
   background: var(--field, #FFFFFF);
-
   height: 36px;
   display: flex;
   align-items: center;
@@ -95,10 +94,7 @@
   height: 100%;
   background: transparent !important;
   border: none !important;
-  background: var(--text-tertiary, #505759);
-
   outline: none;
-
   font-family: Inter;
   font-size: 14px;
   font-weight: 400;

@@ -24,9 +24,6 @@ export const FcrChatRoomH5Inputs = observer(
     onShowEmojiChanged: (show: boolean) => void;
     emojiContainer: HTMLDivElement | null;
   }) => {
-    const [inputFocus, setInputFocus] = useState(false);
-    const [text, setText] = useState('');
-    const [isShowStudents, setIsShowStudents] = useState(false);
     const [isShowChat, setIsShowChat] = useState(false);
     const [isShowApplication, setIsShowApplication] = useState(false);
     const [collectVisible, setCollectVisible] = useState(false);
@@ -130,7 +127,7 @@ export const FcrChatRoomH5Inputs = observer(
       }
     }, [isopenChatDialog])
 
-    const handleEmojiClick = (emoji: string) => {
+    const handleEmojiClick = () => {
       // setText((prev) => prev + emoji);
     };
 
@@ -288,37 +285,12 @@ export const FcrChatRoomH5Inputs = observer(
                 </span>
                 <span>{transI18n('chat.more')}</span>
               </div>}
-
-              {/* <div className="fcr-chatroom-mobile-inputs-mobile-right">
-                <ToolTip
-                  placement="topLeft"
-                  content={transI18n('fcr_teacher_use_collected_tip')}
-                  visible={collectVisible}>
-                  <div
-                    className={classNames(
-                      'fcr-chatroom-mobile-inputs-application landscape',
-                      isLandscape ? widgets.length === 0 && 'zero' : 1,
-                      isShowApplication && 'active',
-                    )}
-                    onClick={handleShowApplicatioon}>
-                    <SvgImgMobile
-                      forceLandscape={forceLandscape}
-                      landscape={isLandscape}
-                      type={SvgIconEnum.APPLICATION}
-                      size={30}></SvgImgMobile>
-                    <span className="fcr-chatroom-mobile-inputs-application-count">
-                      {widgets.length > 99 ? '...' : widgets.length}
-                    </span>
-                  </div>
-                </ToolTip>
-              </div> */}
             </div>
           )}
         </div>
         {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />}
         {isShowChat && <ChatDialog setIsShowChat={setIsShowChat} />}
         {isShowParticipant && <ParticipantDialog setIsShowParticipant={setIsShowParticipant}/>}
-        {/* {isShowMore && <MoreDialog setIsShowMore = {setIsShowMore}/>} */}
         {showEmoji && emojiContainer && (
           <EmojiContainer
             onOuterClick={() => onShowEmojiChanged(false)}

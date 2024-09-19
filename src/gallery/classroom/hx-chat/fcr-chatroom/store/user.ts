@@ -7,8 +7,8 @@ import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../
 import { CustomMessageHandsUpState } from '../../type';
 import { iterateMap } from 'agora-common-libs';
 import { AgoraIM } from '../../../../../common/im/wrapper';
-import { AgoraRteMediaPublishState, AgoraRteMediaSourceState, AgoraRteVideoSourceType } from 'agora-rte-sdk';
-import { EduClassroomConfig, EduRoleTypeEnum, EduStream, EduUserStruct, RteRole2EduRole } from 'agora-edu-core';
+import { AgoraRteMediaPublishState, AgoraRteMediaSourceState } from 'agora-rte-sdk';
+import { EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -251,19 +251,6 @@ export class UserStore {
     if (users) {
       this.updateAllUsers(users);
     }
-    // this.updateUsers([user]);
-    // if (this.joinedUser) return;
-    // const userInfoList = await this._fcrChatRoom.getUserInfoList([user]);
-    // const joinedUser = userInfoList[0];
-    // if (joinedUser.ext.role !== 2) return;
-    // runInAction(() => {
-    //   if (joinedUser) this.joinedUser = joinedUser;
-    // });
-    // Scheduler.shared.addDelayTask(() => {
-    //   runInAction(() => {
-    //     this.joinedUser = undefined;
-    //   });
-    // }, this.userCarouselAnimDelay + 500);
   }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];
@@ -348,14 +335,6 @@ export class UserStore {
     //判断要禁言的用户是不是实际在当前房间里
     return userList.every((element) => judgeUserList.includes(element));
   }
-
-  /**
-   * 分离窗口视频流
-   * @returns
-   */
-  get allUIStreams(): EduStream[] {
-    return this.userSteamList;
-  }
   /**
    * 分离窗口视频流
    * @returns
@@ -364,6 +343,38 @@ export class UserStore {
   get allUIStreamsCount(): number {
     return this.userList.length
   }
+
+
+  //视频流排序
+  @computed
+  get sortStreamList(){
+    /*1、我、tutor、其他参会者（按照姓名排序） */
+    let meStream:EduStream|null = null;
+    let teacherStream:EduStream|null = null;
+    const streamList: EduStream[] = [];
+    this.userSteamList.forEach(item=>{
+      //@ts-ignore
+      if(EduRoleTypeEnum.teacher === RteRole2EduRole(window.EduClassroomConfig.sessionInfo.roomType, item?.fromUser?.role as string)){
+        teacherStream = item
+      }else if(item.isLocal){
+        meStream = item;
+      }else{
+        streamList.push(item)
+      }
+    })
+    streamList.sort((item1, item2) => { return item1.fromUser.userName < item2.fromUser.userName ? 1 : -1 })
+    const firstList: EduStream[] = []
+    if (meStream) {
+      firstList.push(meStream)
+    }
+    if (teacherStream) {
+      firstList.push(teacherStream)
+    }
+    return [...firstList, ...streamList];
+  }
+
+
+
   //相机是否开启
   checkCameraEnabled(stream?: EduStream) {
     return AgoraRteMediaSourceState.started === stream?.videoSourceState && AgoraRteMediaPublishState.Published === stream?.videoState;
