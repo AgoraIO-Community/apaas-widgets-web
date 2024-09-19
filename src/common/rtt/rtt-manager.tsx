@@ -118,6 +118,15 @@ class FcrRttManager {
     release() {
         //清除缓存
         this.clearStore()
+        fcrRttManager.allRecordList = []
+        fcrRttManager.showRecordList = []
+        fcrRttManager.lastRecord = null
+        //清除字幕定时器
+        if (fcrRttManager.openSubtitleTimerList && fcrRttManager.openSubtitleTimerList.length > 0) {
+            for (const item of fcrRttManager.openSubtitleTimerList) {
+                clearTimeout(item)
+            }
+        }
         //清除广播接收器
         this.removeMessageListener()
         this.removeBroadCaseListener()
@@ -352,6 +361,7 @@ class FcrRttManager {
             if(currentInfo === fcrRttManager.lastPropInfo || "" === currentInfo){
                 return
             }
+            debugger
             fcrRttManager.lastPropInfo = currentInfo
             //判断是否改变了转写状态
             const transcribeState = Number(config["transcribe"])
@@ -666,6 +676,9 @@ class FcrRttManager {
         if (!current) {
             return [null, null]
         }
+        if(!current.uid){
+            return [current?.text,null]
+        }
         //是否设置了翻译语言
         const enableTargetLan = targetLanValue && "" !== targetLanValue
         //声源语言
@@ -700,7 +713,7 @@ class FcrRttManager {
         const data = {
             languages: {
                 source: config.getSourceLan().value,
-                target: config.getTargetLanList().filter((item, index) => config.getTargetLanList().indexOf(item) === index && "" !== item.value).map(item => item.value),
+                target: config.getTargetLanList().filter((item, index) => config.getTargetLanList().indexOf(item) === index && item.value !== undefined && item.value !== null && "" !== item.value).map(item => item.value),
             },
             transcribe: config.isOpenTranscribe() ? 1 : 0,
             subtitle: config.isOpenSubtitle() ? 1 : 0

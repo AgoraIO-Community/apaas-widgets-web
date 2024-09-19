@@ -86,7 +86,7 @@ export const RttSettings = ({
               currentLan={sourceLan}
               isOpen={'sourceLan' == showSelectType}
               openSelect={()=>{setShowSelectType('sourceLan' == showSelectType ? "" :'sourceLan')}}
-              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); hideAllModule(); setIsModalOpen(true);hideAllModule() }) }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); setIsShowSetting(false); setIsModalOpen(true) }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
