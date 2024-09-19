@@ -361,7 +361,6 @@ class FcrRttManager {
             if(currentInfo === fcrRttManager.lastPropInfo || "" === currentInfo){
                 return
             }
-            debugger
             fcrRttManager.lastPropInfo = currentInfo
             //判断是否改变了转写状态
             const transcribeState = Number(config["transcribe"])
