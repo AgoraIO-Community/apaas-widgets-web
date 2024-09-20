@@ -5,7 +5,7 @@
   right: 0;
   bottom: 0;
   left: 0;
-  height: calc(100vh - 48px - 8px);
+  height: calc(100% - 48px - 8px);
   background: var(--background-dark, #151515);
   /* 竖版定位 */
   padding-bottom: env(safe-area-inset-bottom);

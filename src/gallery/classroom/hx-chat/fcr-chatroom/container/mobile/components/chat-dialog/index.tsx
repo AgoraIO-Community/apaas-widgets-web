@@ -144,7 +144,7 @@ const ChatDialog = observer(({ setIsShowChat }: { setIsShowChat: (arg0: boolean)
   }
  
   return (
-    <div className='fcr-chatroom-mobile-inputs-chat-dialog' style={isFullScreen ? { height: '100vh', top: 0 } : isLandscape ? { height: 'calc(100vh - 52px)', top: '52px' } : { height: 'calc(100vh - 48px - 8px)', top: '48px' }}>
+    <div className='fcr-chatroom-mobile-inputs-chat-dialog' style={isFullScreen ? { height: '100%', top: 0 } : isLandscape ? { height: 'calc(100% - 52px)', top: '52px' } : { height: 'calc(100% - 48px - 8px)', top: '48px' }}>
       <div className={classNames('fcr-chatroom-mobile-inputs-chat-dialog-main', { 'fcr-chatroom-mobile-inputs-chat-dialog-main-landscape': isLandscape })} style={(isFullScreen || isLandscape) ? { top: 0, height: isFullScreen ? '100%' : 'inset' } : { top: '8px' }} onClick={(e) => e.stopPropagation()}>
         <div className='fcr-chatroom-mobile-inputs-chat-dialog-title'>
           {transI18n('chat.chat')}
