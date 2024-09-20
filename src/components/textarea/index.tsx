@@ -161,7 +161,9 @@ export const TextArea = forwardRef<{ dom: HTMLTextAreaElement | null }, TextArea
       'fcr-textarea--disabled': disabled,
       'fcr-textarea--overflow': overflowText
     });
-    const autoSizeStyle = autoSize ? { ...autoSizeParams, height: autoSizeParams.minHeight } : {};
+    const maxHeight = Math.min(autoSizeParams.maxHeight,inputRef?.current?.scrollHeight ? inputRef?.current?.scrollHeight : 0);
+    const {minHeight} = autoSizeParams
+    const autoSizeStyle = autoSize ? { ...autoSizeParams, maxHeight: value && value.length > 0 ? maxHeight : minHeight} : {};
     return (
       <div className={cls} onClick={handleClick}>
         <textarea
