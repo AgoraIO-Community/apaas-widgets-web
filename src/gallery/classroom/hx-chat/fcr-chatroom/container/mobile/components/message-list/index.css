@@ -178,10 +178,11 @@
   /* max-width: 100%; */
 }
 
+
 .fcr-chatroom-mobile-message-item-name-content .fcr-chatroom-mobile-message-content-image {
   max-width: 100px;
-  max-height: 100px;
-  object-fit: contain;
+  /* max-height: 100px; */
+  object-fit: cover;
 }
 
 .fcr-chatroom-mobile-message-item-self .fcr-chatroom-mobile-message-item-name-content .fcr-chatroom-mobile-message-content-image {
