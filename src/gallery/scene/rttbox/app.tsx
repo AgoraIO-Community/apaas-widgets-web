@@ -7,8 +7,6 @@ import { Avatar } from '@components/avatar';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 import { transI18n } from 'agora-common-libs';
 import { Input } from '@components/input';
-import { notification } from 'antd';
-import './NotificationStyle.css';
 import { fcrRttManager } from '../../../common/rtt/rtt-manager';
 import { FcrRttItem } from 'src/common/rtt/rtt-item';
 
@@ -33,43 +31,6 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
     })
   }, [widget.goToScrollToBottom])
 
-  //通知信息处理
-  notification.config({
-    maxCount: 1
-  });
-  useEffect(() => {
-    if (widget.openNotification) {
-      const key = `open${Date.now()}`;
-      const btn = (
-        <div>
-          <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#555B69', borderRadius: '10px', color: '#ffffff', marginRight: '10px' }} onClick={() => { notification.destroy() }}>
-            {transI18n('fcr_rtt_notification_ignore')}
-          </button>
-          <button style={{ padding: ' 4px 10px 4px 10px', backgroundColor: '#4262FF', borderRadius: '10px', color: '#ffffff' }} onClick={() => { notification.destroy();fcrRttManager.showConversion()  }}>
-            {transI18n('fcr_rtt_notification_view')}
-          </button>
-        </div>
-      );
-      notification.open({
-        message: <span style={{ color: '#ffffff', paddingLeft: '20px' }}>{transI18n('fcr_rtt_button_open')}</span>,
-        description: <p style={{ color: '#ffffff', paddingLeft: '20px' }}>{widget.openNotification}</p>,
-        btn,
-        key,
-        duration: 5,
-        placement: 'topLeft',
-        top: 46,
-        maxCount: 1,
-        style: {
-          background: 'rgba(47, 47, 47, 0.95)',
-          color: '#ffffff',
-          borderRadius: '10px'
-        },
-        // SvgIconEnum.FCR_V2_SUBTITIES
-        icon: <div style={{ width: '48px', height: '48px', display: 'flex', justifyContent: 'center', alignItems: 'center', backgroundColor: '#16D1A4', borderRadius: '50%' }}><SvgImg type={SvgIconEnum.FCR_V2_RTT} size={36}></SvgImg></div>,
-        onClose: () => console.log('Notification was closed.'),
-      });
-    }
-  }, [widget.openNotification])
   //时间格式化
   const formatMillisecondsToDateTime = (milliseconds: number): string => {
     if (milliseconds == 0) {
@@ -170,6 +131,16 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
       setCurrentIndex(currentIndex + 1);
     }
   };
+
+  const handlerClose = ()=>{
+    if(fcrRttManager.getConfigInfo().isOpenTranscribe()){
+      widget.setMinimize(true, widget.minimizedProperties);
+    }else{
+      widget.clsoe()
+      widget.setVisible(false)
+    }
+  }
+
   return (
     // <div className="fcr-chatroom-dialog-wrapper">
     <div
@@ -178,7 +149,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
       <div className="fcr-chatroom-dialog-title">
         <div
           className="fcr-chatroom-dialog-title-close"
-          onClick={() => widget.clsoe()}>
+          onClick={handlerClose}>
           <SvgImg type={SvgIconEnum.FCR_CLOSE} size={16}></SvgImg>
         </div>
         <span className='fcr-chatroom-dialog-title-text' fcr-chatroom-dialog-title>{transI18n('fcr_rtt_button_open')}</span>
@@ -192,7 +163,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
             value={searchQuery}
             onChange={setSearchQuery}
             iconPrefix={SvgIconEnum.FCR_V2_SEARCH}
-            placeholder={transI18n('fcr_chat_label_search')}
+            placeholder={transI18n('fcr_dialog_rtt_search')}
           />
           {searchQuery && <div style={{ display: 'flex', alignItems: 'center', position: 'absolute', right: '10px', top: '9px' }}>
             <div className='fcr-input-icon-clear' onClick={() => { setSearchQuery("") }}>
@@ -211,7 +182,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
             </div>
           </div>}
         </div>
-        {widget.isRunoutTime && <div className="fcr-limited-time-experience">
+        {widget.isRunoutTime && <div className="fcr-limited-time-experience"> 
           <div className="fcr-limited-box-title">{transI18n('fcr_limited_time_experience')}</div>
           {transI18n('fcr_dialog_rtt_subtitles_dialog_time_limit_end', {
             reason1: widget.countdownDef / 60,

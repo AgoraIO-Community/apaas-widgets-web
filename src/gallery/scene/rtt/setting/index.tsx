@@ -4,22 +4,22 @@ import classnames from 'classnames';
 import { SvgIconEnum, SvgImg } from '@components/svg-img';
 // import { transI18n } from './transI18n';
 import { Modal } from 'antd';
-import { fcrRttManager } from '../../../common/rtt/rtt-manager';
+import { fcrRttManager } from '../../../../common/rtt/rtt-manager';
 import { transI18n } from 'agora-common-libs';
-import { AgoraExtensionRoomEvent } from '../../../events';
-import { FcrRTTWidget } from '.';
-import { FcrRttLanguageData } from '../../../common/rtt/rtt-config';
+import { AgoraExtensionRoomEvent } from '../../../../events';
+import { FcrRTTWidget } from '..';
+import { FcrRttLanguageData } from '../../../../common/rtt/rtt-config';
 
 export const RttSettings = ({
   widget,
   showToSubtitleSetting,
   showToConversionSetting,
-  targetClassName,
+  hideModule
 }: {
   widget: FcrRTTWidget;
   showToSubtitleSetting: boolean;//是否显示打开字幕设置
   showToConversionSetting: boolean;//是否显示打开转写设置
-  targetClassName: string;//目标弹窗的className
+  hideModule:any
 }) => {
   const [sourceLan, setSourceLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getSourceLan());
   const [targetLan, setTargetLan] = useState<FcrRttLanguageData>(fcrRttManager.getConfigInfo().getTargetLan());
@@ -70,10 +70,11 @@ export const RttSettings = ({
   const hideAllModule = () => {
     setIsModalOpen(false)
     setIsShowSetting(false)
+    hideModule()
   }
-
+  const targetClassName = 'fcr-rtt-setting-' + Math.random()
   return (
-    <div>
+    <div className={targetClassName}>
       <div className="settings-container" style={{ display: isShowSetting ? 'block' : 'none' }}>
         <div className="settings-section">
           <label className="settings-label">{transI18n('fcr_subtitles_button_subtitles_setting')}</label>
@@ -85,7 +86,7 @@ export const RttSettings = ({
               currentLan={sourceLan}
               isOpen={'sourceLan' == showSelectType}
               openSelect={()=>{setShowSelectType('sourceLan' == showSelectType ? "" :'sourceLan')}}
-              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); hideAllModule(); setIsModalOpen(true); }) }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { setPreSourceLan(lan); setIsShowSetting(false); setIsModalOpen(true) }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
@@ -99,21 +100,21 @@ export const RttSettings = ({
               currentLan={targetLan}
               isOpen={'targetLan' == showSelectType}
               openSelect={()=>{setShowSelectType('targetLan' == showSelectType ? "" :'targetLan')}}
-              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan); }) }}
+              onSelectLang={(lan: FcrRttLanguageData) => { runInAction(() => { fcrRttManager.setCurrentTargetLan(lan.value, true); setTargetLan(lan);hideAllModule() }) }}
             />
             <SvgImg type={SvgIconEnum.FCR_ARROW_RIGHT}
               size={24}
               colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>
           </div>
-          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { runInAction(() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual); }) }}>
+          <div className="settings-option" style={{ paddingRight: '2px' }} onClick={() => { runInAction(() => { fcrRttManager.setShowDoubleLan(!showBilingual, true); setShowBilingual(!showBilingual);hideAllModule() }) }}>
             <span>{transI18n('fcr_subtitles_option_translation_display_bilingual')}</span>
             {showBilingual && <SvgImg
               type={SvgIconEnum.FCR_CHOOSEIT}
               size={24}
               colors={{ iconPrimary: 'white', iconSecondary: 'white' }}></SvgImg>}
           </div>
-          <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>
-          <div className="settings-option-textSize">
+          {showToSubtitleSetting && <label className="settings-label">{transI18n('fcr_device_option_font_size')}</label>}
+          {showToSubtitleSetting && <div className="settings-option-textSize">
             <input
               type="range"
               min="10"
@@ -122,19 +123,20 @@ export const RttSettings = ({
               value={horizontalValue}
               onChange={(e) => { runInAction(() => { fcrRttManager.setCurrentTextSize(Number(e.target.value), true); setHorizontalValue(Number(e.target.value)); }) }}
             />
-          </div>
+          </div>}
         </div>
-        <button className="restore-button" onClick={() => { runInAction(() => { fcrRttManager.resetAllConfig(); hideAllModule(); }) }}>
+        {showToSubtitleSetting && <button className="restore-button" onClick={() => { runInAction(() => { fcrRttManager.resetAllConfig(); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_reset_font_size')}
-        </button>
-        {showToConversionSetting && <button className="real-time-button" onClick={() => { runInAction(() => { fcrRttManager.showConversion(); hideAllModule(); }) }}>
+        </button>}
+        {showToConversionSetting && <button className="real-time-button" onClick={() => { runInAction(() => { fcrRttManager.showConversion();widget.broadcast(AgoraExtensionRoomEvent.RttSettingShowConversion,{}); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_view_rtt_open_conversion')}
         </button>}
-        {showToSubtitleSetting && <button className="real-time-button" onClick={() => { runInAction(() => { fcrRttManager.showSubtitle(); hideAllModule(); }) }}>
+        {showToSubtitleSetting && <button className="real-time-button" onClick={() => { runInAction(() => { widget.broadcast(AgoraExtensionRoomEvent.RttSettingShowSubtitle,{}); hideAllModule(); }) }}>
           {transI18n('fcr_device_option_view_rtt_open_subtitle')}
         </button>}
       </div>
-      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} okText={transI18n('fcr_modal_okText')} onOk={() => { runInAction(() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan); }) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
+      <Modal title={transI18n('fcr_device_option_change_sourc')} open={isModalOpen} width={415} zIndex={9999}
+        okText={transI18n('fcr_modal_okText')} onOk={() => { runInAction(() => { fcrRttManager.setCurrentSourceLan(preSourceLan.value, true); hideAllModule(); setSourceLan(preSourceLan); }) }} cancelText={(transI18n('fcr_modal_cancelText'))} onCancel={() => { hideAllModule() }}>
         <p>{transI18n('fcr_device_option_choose_lang_content_1')}<span style={{ color: '#4262FF' }}>{transI18n(preSourceLan.text)}</span>{transI18n('fcr_device_option_choose_lang_content_2')}</p>
       </Modal>
     </div>

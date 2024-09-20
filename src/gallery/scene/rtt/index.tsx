@@ -12,7 +12,9 @@ import { observable, runInAction } from 'mobx';
 import { ToastApi } from '@components/toast';
 import { FcrRttItem } from 'src/common/rtt/rtt-item';
 import { ReactNode } from 'react';
-import { RttSettings } from './settings';
+import { RttSettings } from './setting';
+import { RttSettingPop } from './settingPop';
+import { show } from 'antd-mobile/es/components/toast/methods';
 
 export class FcrRTTWidget extends FcrUISceneWidget {
   private static _installationDisposer?: CallableFunction;
@@ -29,7 +31,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     return [1, 3].includes(role) || this._privilege;
   }
   get dragHandleClassName(): string {
-    return 'fcr-rtt-widget-container';
+    return 'fcr-rtt-subtitle-drag-handle';
   }
   get draggable(): boolean {
     return true;
@@ -43,11 +45,11 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       width: this.defaultWidth,
       height: this.defaultHeight,
       x: clientRect.width / 2 - this.defaultWidth / 2,
-      y: clientRect.height - 125 - this.defaultHeight,
+      y: clientRect.height - 70 - this.defaultHeight,
     };
   }
   defaultWidth = 750;
-  defaultHeight = 50;
+  defaultHeight = 88;
 
   get minWidth() {
     return 400;
@@ -68,24 +70,20 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     fcrRttManager.resetDefaultInfo(properties, this.classroomStore)
     console.log("数据初始化了", properties)
     if (fcrRttManager.isInSubRoom()) {
-      this.setVisible(false);
       this.unRegisterWidget(this.widgetController)
     } else {
-      this.setVisible(true)
       this.registerWidget(this.widgetController)
     }
     this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
       onMessage: () => {
         if (fcrRttManager.isInSubRoom()) {
-          this.setVisible(false);
           this.unRegisterWidget(this.widgetController)
         } else {
-          this.setVisible(true);
           this.registerWidget(this.widgetController)
         }
-        }
       }
+    }
     );
     this.widgetController.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttboxChanged,
@@ -103,29 +101,9 @@ export class FcrRTTWidget extends FcrUISceneWidget {
       visible: visible,
     });
   }
-  @bound
-  setToolVisible(visible: boolean) {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
-      widgetId: this.widgetId,
-      visible: visible,
-    });
-  }
-  @bound
-  setRttVisible(visible: boolean) {
-    this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
-      widgetId: this.widgetId,
-      visible: visible,
-    });
-  }
-  @bound
-  private _handleGranted(grantedUsers: Set<string>) {
-    const { userUuid } = this.classroomConfig.sessionInfo;
-
-    this._privilege = grantedUsers.has(userUuid);
-  }
-
   render(dom: HTMLElement) {
     this._dom = dom;
+    dom.classList.add('fcr-h-full');
     ReactDOM.render(<App widget={this} />, dom);
   }
   @bound
@@ -161,22 +139,23 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttStateToListener, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSubtitleOpenSuccess, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack, onMessage() { }, })
-    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttCloseSubtitle, onMessage() { }, })
+    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSubtitleCloseSuccess, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttContentChange, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttShowSetting, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttboxChanged, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttBoxshow, onMessage() { }, })
     this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.ToolboxChanged, onMessage() { }, })
+    this.widgetController.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttSettingShowSubtitle, onMessage() { }, })
   }
 
   //注册视图widget
   private registerWidget(controller: AgoraWidgetController) {
-      controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-        id: this.widgetName,
-        name: !fcrRttManager.getConfigInfo()?.isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
-        iconType: SvgIconEnum.FCR_V2_SUBTITIES,
-      });
+    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+      id: this.widgetName,
+      name: !fcrRttManager.getConfigInfo()?.isOpenSubtitle() ? transI18n('fcr_subtitles_button_open') : transI18n('fcr_subtitles_button_close'),
+      iconType: SvgIconEnum.FCR_V2_SUBTITIES,
+    });
   }
   //取消注册视图widget
   private unRegisterWidget(controller: AgoraWidgetController) {
@@ -194,7 +173,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   @observable
   visibleView = false
   @observable
-  lastRecord: FcrRttItem|null = null
+  lastRecord: FcrRttItem | null = null
   @observable
   starting = (false);
   @observable
@@ -209,6 +188,20 @@ export class FcrRTTWidget extends FcrUISceneWidget {
   popoverVisible = (false);
 
   private addRttListener() {
+    //显示转写弹窗
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttSettingShowSubtitle,
+      onMessage: () => {
+        runInAction(() => {
+          if (fcrRttManager.getConfigInfo().isOpenSubtitle()) {
+            this.setMinimize(false, this.minimizedProperties);
+          } else {
+            this.setVisible(true)
+            fcrRttManager.showSubtitle()
+          }
+        })
+      }
+    })
     //倒计时修改监听
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttReduceTimeChange,
@@ -228,6 +221,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttShowSubtitle,
       onMessage: () => {
+        this.setVisible(true)
         runInAction(() => {
           this.visibleView = !this.visibleView
         })
@@ -237,6 +231,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttHideSubtitle,
       onMessage: () => {
+        this.setVisible(false)
         runInAction(() => {
           this.visibleView = false
           this.starting = false
@@ -249,6 +244,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttStateToOpening,
       onMessage: () => {
+        this.setVisible(true)
         this.registerWidget(this.widgetController)
         runInAction(() => {
           this.starting = (true)
@@ -259,6 +255,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttStateToListener,
       onMessage: () => {
+        this.setVisible(true)
         runInAction(() => {
           this.starting = false
           this.listening = true
@@ -270,6 +267,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttSubtitleOpenSuccess,
       onMessage: () => {
+        this.setVisible(true)
         runInAction(() => {
           this.starting = false
           this.listening = false
@@ -281,6 +279,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttStateToNoSpeack,
       onMessage: () => {
+        this.setVisible(true)
         runInAction(() => {
           this.starting = false
           this.listening = false
@@ -290,8 +289,9 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     })
     //字幕关闭
     this.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.RttCloseSubtitle,
+      messageType: AgoraExtensionRoomEvent.RttSubtitleCloseSuccess,
       onMessage: () => {
+        this.setVisible(false)
         this.registerWidget(this.widgetController)
         runInAction(() => {
           this.visibleView = false
@@ -308,6 +308,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttContentChange,
       onMessage: () => {
+        this.setVisible(true)
         runInAction(() => {
           this.lastRecord = fcrRttManager.getLastRecord();
           this.showTranslate = (fcrRttManager.getConfigInfo().isOpenTranscribe());
@@ -317,70 +318,55 @@ export class FcrRTTWidget extends FcrUISceneWidget {
           this.listening = (false)
           this.noOnespeakig = (false)
         });
-        
-       },
-     })
-     //设置弹窗显示处理
-     this.addBroadcastListener({
-       messageType: AgoraExtensionRoomEvent.RttShowSetting,
-       onMessage:(message: { targetClsName: string, buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean })=> {
-         const element = document.getElementsByClassName(message.targetClsName)
-         if (element) {
-           ReactDOM.render(this.getRttSettingPopView(message.buttonView,message.showToConversionSetting,message.showToSubtitleSetting), element[0])
-         }
-       },
-     })
-     //实时转写按钮点击监听
-     this.removeBroadcastListener({messageType: AgoraExtensionRoomEvent.RttBoxshow,onMessage: () => {}})
-     this.addBroadcastListener({
-       messageType: AgoraExtensionRoomEvent.RttBoxshow,
-       onMessage: () => {
-         const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
-         setTimeout(() => {
-           if (rttSettingBtn) {
-             const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
-             ReactDOM.render(this.getRttSettingPopView(view,false,true), rttSettingBtn)
-           }
-         }, 3000)
-       },
-     });
-     //工具箱按钮点击监听
-     this.addBroadcastListener({
-       messageType: AgoraExtensionRoomEvent.ToolboxChanged,
-       onMessage: () => {
-         const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
-         const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
-         const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
-         const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
-         if (portalTargetElement1) {
-          ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement1)
-         }
-         if (portalTargetElement2) {
-          ReactDOM.render(this.getRttSettingPopView(view,true,false), portalTargetElement2)
-         }
-       },
-     });
+
+      },
+    })
+    //设置弹窗显示处理
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttShowSetting,
+      onMessage: (message: { targetClsName: string, buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean }) => {
+        const element = document.getElementsByClassName(message.targetClsName)
+        if (element) {
+          ReactDOM.render(this.getRttSettingPopView(message.buttonView, message.showToConversionSetting, message.showToSubtitleSetting), element[0])
+        }
+      },
+    })
+    //实时转写按钮点击监听
+    this.removeBroadcastListener({ messageType: AgoraExtensionRoomEvent.RttBoxshow, onMessage: () => { } })
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.RttBoxshow,
+      onMessage: () => {
+        const rttSettingBtn: HTMLElement | null = document.getElementById('fcr-rtt-settings-button')
+        setTimeout(() => {
+          if (rttSettingBtn) {
+            const view = <div onClick={(e) => { e.stopPropagation(); }} className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>
+            ReactDOM.render(this.getRttSettingPopView(view, false, true), rttSettingBtn)
+          }
+        }, 3000)
+      },
+    });
+    //工具箱按钮点击监听
+    this.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.ToolboxChanged,
+      onMessage: () => {
+        const portalTargetList = document.getElementsByClassName('fcr-toolbox-popover-item-dropbox')
+        const portalTargetElement1 = portalTargetList[portalTargetList.length - 1];
+        const portalTargetElement2 = portalTargetList[portalTargetList.length - 2];
+        if (portalTargetElement1) {
+          ReactDOM.render(this.getRttSettingPopView(<div className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>, true, false), portalTargetElement1)
+        }
+        if (portalTargetElement2) {
+          ReactDOM.render(this.getRttSettingPopView(<div className="fcr-rtt-box"><SvgImg type={SvgIconEnum.FCR_DROPUP4}></SvgImg></div>, false, true), portalTargetElement2)
+        }
+      },
+    });
   }
-  getRttSettingView(showToConversionSetting: boolean, showToSubtitleSetting: boolean,targetClassName:string) {
-    return <RttSettings widget={this} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting} targetClassName={targetClassName}></RttSettings>
+  getRttSettingView(showToConversionSetting: boolean, showToSubtitleSetting: boolean, hideModule: any) {
+    return <RttSettings widget={this} showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting} hideModule={hideModule}></RttSettings>
   }
   getRttSettingPopView(buttonView: ReactNode, showToConversionSetting: boolean, showToSubtitleSetting: boolean) {
-    const targetClassName = 'fcr-rtt-setting-' + Math.random()
-    return <div style={{display: 'flex',alignItems: 'center',justifyContent: 'center',}}>
-      <Popover
-      onVisibleChange={(value) => {
-        runInAction(() => { this.popoverVisible = value })
-        //强行隐藏
-        const target = document.getElementsByClassName(targetClassName)
-        if (target.length > 0) {
-          //@ts-ignore
-          target[0].style.display = value ? 'block' : 'none'
-        }
-      }}
-      content={<div className={targetClassName} >{this.getRttSettingView(showToConversionSetting, showToSubtitleSetting,targetClassName)}</div>}
-      trigger="click">
+    return <RttSettingPop showToConversionSetting={showToConversionSetting} showToSubtitleSetting={showToSubtitleSetting} widget={this}>
       {buttonView}
-    </Popover>
-    </div>
+    </RttSettingPop>
   }
 }

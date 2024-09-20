@@ -23,4 +23,5 @@ export default {
   fcr_rtt_stop_transcription:'停止转写',
   fcr_rtt_notification_view:'查看',
   fcr_rtt_notification_ignore:'忽视',
+  fcr_dialog_rtt_search: '搜索',
 };
