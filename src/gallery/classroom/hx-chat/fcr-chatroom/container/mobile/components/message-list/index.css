@@ -84,7 +84,7 @@
   display: inline-flex;
 }
 
-.fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis{
+.fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis {
   flex: 1;
 
   overflow: hidden;
@@ -171,7 +171,7 @@
   width: fit-content;
 }
 
-.fcr-chatroom-mobile-message-item-list .fcr-chatroom-mobile-message-item-name-content{
+.fcr-chatroom-mobile-message-item-list .fcr-chatroom-mobile-message-item-name-content {
   /* flex-grow: 0; */
   flex: 1;
   overflow: hidden;
@@ -179,10 +179,12 @@
 }
 
 
-.fcr-chatroom-mobile-message-item-name-content .fcr-chatroom-mobile-message-content-image {
+.fcr-chatroom-mobile-message-item-name-content .fcr-chatroom-mobile-message-content-image img{
+  height: auto;
+  width: auto;
   max-width: 100px;
-  /* max-height: 100px; */
-  object-fit: cover;
+  max-height: 100px;
+  object-fit: contain;
 }
 
 .fcr-chatroom-mobile-message-item-self .fcr-chatroom-mobile-message-item-name-content .fcr-chatroom-mobile-message-content-image {
