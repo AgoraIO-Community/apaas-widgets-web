@@ -1,7 +1,7 @@
 import { observer } from 'mobx-react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
-import { SvgIconEnum, SvgImgMobile } from '../../../../../../../../components/svg-img';
+import { SvgIconEnum, SvgImg, SvgImgMobile } from '../../../../../../../../components/svg-img';
 import { useStore } from '../../../../hooks/useStore';
 import { emojis } from '../../../../utils/emoji';
 import './index.css';
@@ -11,6 +11,7 @@ import classNames from 'classnames';
 import ChatDialog from '../chat-dialog';
 import ApplicationDialog from '../application-dialog';
 import ParticipantDialog from '../participant-dialog';
+import { ToolTip } from '@components/tooltip';
 
 export const FcrChatRoomH5Inputs = observer(
   ({
@@ -30,7 +31,13 @@ export const FcrChatRoomH5Inputs = observer(
     const [widgetCount, setWidgetCount] = useState(0);
     const [isShowParticipant, setIsShowParticipant] = useState(false);
     const [whiteTooltip, setWhiteTooltip] = useState(true);
+    const [openApplicatonMsg, setOpenApplicationMsg] = useState(false);
+
     const transI18n = useI18n();
+
+    const applicationTooltip = transI18n('frc_more_white_tooltip');
+
+    let applicationMsgTimer = useRef<NodeJS.Timeout | null>(null);
 
     const {
       roomId,
@@ -47,7 +54,7 @@ export const FcrChatRoomH5Inputs = observer(
         isRaiseHand,
         raiseHand,
         lowerHand,
-        allUIStreamsCount:allStreamCount,
+        allUIStreamsCount: allStreamCount,
       },
 
     } = useStore();
@@ -83,29 +90,34 @@ export const FcrChatRoomH5Inputs = observer(
         setWidgetCount(count)
       }
     }, [widgets.length, isShowPoll])
-    useEffect(() => {
-      const count = widgets.length > 0 ? widgets.length : 0;
-      if (isShowPoll) {
-        setWidgetCount(count + 1)
-      } else {
-        setWidgetCount(count)
-      }
-    }, [widgets.length, isShowPoll])
+
     useEffect(() => {
       if (isShowPoll) {
         addToast(transI18n('frc_more_white_showpoll_tooltip'), 'success');
       }
     }, [isShowPoll])
+
     useEffect(() => {
-      if (whiteTooltip) {
+      if (whiteTooltip && applicationTooltip != 'frc_more_white_tooltip') {
         if (widgets.find((widget: any) => {
           return widget.widgetName == 'mediaPlayer' || widget.widgetName == 'netlessBoard' || widget.widgetName == 'webView'
         }) != null) {
-          addToast(transI18n('frc_more_white_tooltip'), 'success');
+          setOpenApplicationMsg(true);
           setWhiteTooltip(false);
+          applicationMsgTimer.current = setTimeout(() => {
+            setOpenApplicationMsg(false);
+          }, 3000);
         }
       }
-    }, [widgets.length])
+
+      return () => {
+        if (applicationMsgTimer.current) {
+          clearTimeout(applicationMsgTimer.current);
+        }
+      }
+    }, [widgets.length, applicationTooltip])
+
+
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
       if (widgets.length > 0 && (!obj || (obj && JSON.parse(obj).roomId !== roomId))) {
@@ -166,7 +178,7 @@ export const FcrChatRoomH5Inputs = observer(
         resizeObserver?.disconnect();
       };
     }, []);
-    
+
     const handleShowApplicatioon = (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
       const haveShare = isLandscape && screenShareStream;
@@ -178,6 +190,12 @@ export const FcrChatRoomH5Inputs = observer(
       }
       setIsShowApplication(!isShowApplication);
     };
+
+
+    const handleLowerHand = () => {
+      addToast(transI18n('fcr_hands_lower'), 'success');
+      lowerHand();
+    }
 
     return (
       <>
@@ -193,7 +211,7 @@ export const FcrChatRoomH5Inputs = observer(
             <div className="fcr-application-panel-wrapped">
               <div
                 className='fcr-application-panel-item'
-                onClick={isRaiseHand ? lowerHand : raiseHand}
+                onClick={isRaiseHand ? handleLowerHand : raiseHand}
               >
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
@@ -221,23 +239,49 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{transI18n('chat.participants', { num: allStreamCount || 0 })}</span>
               </div>
-              {widgetCount > 0 && <div className='fcr-application-panel-item fcr-application-panel-item-more' onClick={handleShowApplicatioon}>
-                {/* <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.MORE_NEW}
-                  size={30}
-                /> */}
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.APPLICATION}
-                  size={30}></SvgImgMobile>
-                <span className="fcr-chatroom-mobile-inputs-application-count">
-                  {widgetCount > 99 ? '...' : widgetCount}
-                </span>
-                <span>{transI18n('chat.more')}</span>
-              </div>}
+              {widgetCount > 0 &&
+                <ToolTip
+                  visible={openApplicatonMsg}
+                  overlayClassName={classNames('fcr-application-panel-item-more-application-message', {
+                    'fcr-application-panel-item-more-application-message-vertical': !isLandscape,
+                  })}
+                  overlayInnerStyle={
+                    {
+                      backgroundColor: 'var(--background-light, #FFFFFF)',
+                      padding: '14px 16px',
+                      color: 'var(--text-primary, #151515)',
+                      fontSize: '13px',
+                      fontWeight: 400,
+                      borderWidth: 0
+                    }
+                  }
+                  arrowContent={<SvgImg
+                    type={SvgIconEnum.FCR_TOOLTIP_ARROW}
+                    colors={{
+                      iconPrimary: 'var(--background-light, #FFFFFF)',
+                    }}
+                    size={16}
+                  />}
+                  content={<div>
+                    {transI18n('frc_more_white_tooltip')}
+                  </div>}
+                >
+                  <div className='fcr-application-panel-item fcr-application-panel-item-more' onClick={handleShowApplicatioon}>
+                    <div className='fcr-application-panel-item-more-svg-wrap'>
+
+                      <SvgImgMobile
+                        forceLandscape={forceLandscape}
+                        landscape={isLandscape}
+                        type={SvgIconEnum.APPLICATION}
+                        size={30}></SvgImgMobile>
+                      <span className="fcr-chatroom-mobile-inputs-application-count">
+                        {widgetCount > 99 ? '...' : widgetCount}
+                      </span>
+                    </div>
+                    <span>{transI18n('chat.more')}</span>
+
+                  </div>
+                </ToolTip>}
             </div>
           )}
 
@@ -246,7 +290,7 @@ export const FcrChatRoomH5Inputs = observer(
             <div className="fcr-chatroom-mobile-inputs-mobile-content fcr-application-panel-wrapped">
               <div
                 className='fcr-application-panel-item'
-                onClick={isRaiseHand ? lowerHand : raiseHand}
+                onClick={isRaiseHand ? handleLowerHand : raiseHand}
               >
                 <SvgImgMobile
                   forceLandscape={forceLandscape}
@@ -274,23 +318,55 @@ export const FcrChatRoomH5Inputs = observer(
                 />
                 <span>{allStreamCount || 0}</span>
               </div>
-              {widgetCount > 0 && <div className='fcr-application-panel-item' onClick={handleShowApplicatioon}>
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.APPLICATION}
-                  size={30}></SvgImgMobile>
-                <span className="fcr-chatroom-mobile-inputs-application-count fcr-application-panel-item-more">
-                  {widgetCount > 99 ? '...' : widgetCount}
-                </span>
-                <span>{transI18n('chat.more')}</span>
-              </div>}
+              {widgetCount > 0 &&
+                <ToolTip
+                  placement='left'
+                  visible={openApplicatonMsg}
+                  overlayClassName={classNames('fcr-application-panel-item-more-application-message', {
+                    'fcr-application-panel-item-more-application-message-landscape': isLandscape,
+                  })}
+                  overlayInnerStyle={
+                    {
+                      backgroundColor: 'var(--background-light, #FFFFFF)',
+                      padding: '14px 16px',
+                      color: 'var(--text-primary, #151515)',
+                      fontSize: '13px',
+                      fontWeight: 400,
+                      borderWidth: 0
+                    }
+                  }
+                  arrowContent={<SvgImg
+                    type={SvgIconEnum.FCR_TOOLTIP_ARROW}
+                    colors={{
+                      iconPrimary: 'var(--background-light, #FFFFFF)',
+                    }}
+                    size={16}
+                  />}
+                  content={<div>
+                    {transI18n('frc_more_white_tooltip')}
+                  </div>}
+                >
+                  <div className='fcr-application-panel-item fcr-application-panel-item-more' onClick={handleShowApplicatioon}>
+                    <div className='fcr-application-panel-item-more-svg-wrap'>
+                      <SvgImgMobile
+                        forceLandscape={forceLandscape}
+                        landscape={isLandscape}
+                        type={SvgIconEnum.APPLICATION}
+                        size={30}></SvgImgMobile>
+                      <span className="fcr-chatroom-mobile-inputs-application-count fcr-application-panel-item-more">
+                        {widgetCount > 99 ? '...' : widgetCount}
+                      </span>
+                    </div>
+                    <span>{transI18n('chat.more')}</span>
+                  </div>
+                </ToolTip>
+              }
             </div>
           )}
         </div>
         {isShowApplication && <ApplicationDialog setIsShowApplication={setIsShowApplication} />}
         {isShowChat && <ChatDialog setIsShowChat={setIsShowChat} />}
-        {isShowParticipant && <ParticipantDialog setIsShowParticipant={setIsShowParticipant}/>}
+        {isShowParticipant && <ParticipantDialog setIsShowParticipant={setIsShowParticipant} />}
         {showEmoji && emojiContainer && (
           <EmojiContainer
             onOuterClick={() => onShowEmojiChanged(false)}
