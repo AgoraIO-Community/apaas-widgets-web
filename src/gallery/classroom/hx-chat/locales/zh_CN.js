@@ -65,7 +65,7 @@ const im_CN = {
     sentence_connector: '，',
     me: '我',
   },
-  fcr_H5_participant_Me:'我',
+  fcr_H5_participant_Me: '我',
   fcr_private_leave_room: '{reason}已离开房间',
   fcr_chat_no_data: '没有找到该学生',
   fcr_h5_label_watched: '人',
@@ -99,9 +99,11 @@ const im_CN = {
   fcr_more_options_page_notice: '网页提醒框',
   fcr_more_tip_second_title: 'Apps',
   fcr_more_options_poll: 'Poll',
-  frc_more_white_tooltip: 'The teaching content and applications used by the tutor will be folded here',
-  frc_more_white_showpoll_tooltip: 'Tutor opened a poll, click here to open and vote',
+  frc_more_white_tooltip: '老师的教学内容和使用的应用程序将在此折叠',
+  frc_more_white_showpoll_tooltip: '老师开启了一个投票，点击这里打开并投票',
   fcr_participant_more_item_text_private_chat: 'Private Chat',
   fcr_participant_people_count: '参会者',
+  fcr_participant_back: '返回',
+  fcr_hands_lower:'手已放下'
 };
 export default im_CN;

@@ -102,7 +102,7 @@ const enUS = {
   fcr_participant_more_item_text_private_chat: 'Private Chat',
   fcr_participant_people_count: 'Participants',
   fcr_participant_back: 'Back',
-
+  fcr_hands_lower:'hands down'
 };
 
 export default enUS;
