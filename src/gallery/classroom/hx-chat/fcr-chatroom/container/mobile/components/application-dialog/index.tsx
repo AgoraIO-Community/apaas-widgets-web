@@ -8,7 +8,7 @@ import { transI18n } from 'agora-common-libs';
 import { AgoraExtensionWidgetEvent } from '../../../../../../../../../src/events';
 
 
- 
+
 const ApplicationDialog = observer(
   ({ setIsShowApplication }: { setIsShowApplication: (arg0: boolean) => void }) => {
     const {
@@ -19,10 +19,13 @@ const ApplicationDialog = observer(
 
     console.log('currentWidgetcurrentWidgetdialog', currentWidget);
     // const widgets = z0Widgets;
-    const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
+    const widgets = z0Widgets && z0Widgets?.filter((v: any) => v.widgetName !== 'easemobIM' && v.zContainer === 0) || [];
 
-    console.log('ApplicationDialog widgets',widgets);
-    
+
+    const showPoll = !!z0Widgets && z0Widgets.find(({ zContainer }) => zContainer === 10) || isShowPoll;
+
+
+
     const handleClose = () => {
       setIsShowApplication(false);
     };
@@ -34,14 +37,14 @@ const ApplicationDialog = observer(
       setCurrentWidget(widget);
     };
 
-    const showMinimize =(e: { stopPropagation: () => void })=>{
+    const showMinimize = (e: { stopPropagation: () => void }) => {
       e.stopPropagation();
       broadcastWidgetMessage(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, false);
     }
     return (
       <div className={classNames('fcr-chatroom-mobile-application', isLandscape && 'active')}>
         <div className="fcr-chatroom-mobile-application-split"></div>
-        {widgets.length>0 && <div className="frc-chatroom-modal-first-title">{transI18n('fcr_more_tip_title')}</div>}
+        {widgets.length > 0 && <div className="frc-chatroom-modal-first-title">{transI18n('fcr_more_tip_title')}</div>}
         <div className="fcr-chatroom-mobile-application-lists">
           {widgets.map((item: any) => {
             return (
@@ -96,8 +99,8 @@ const ApplicationDialog = observer(
                       {item.widgetName === 'netlessBoard'
                         ? 'Whiteboard'
                         : item.widgetName === 'mediaPlayer'
-                        ? item.webviewTitle
-                        : ''}
+                          ? item.webviewTitle
+                          : ''}
                     </span>
                   )}
                   {item.widgetName === 'webView' && (
@@ -169,17 +172,17 @@ const ApplicationDialog = observer(
             </div> */}
         </div>
 
-       {isShowPoll&&<div className="frc-chatroom-modal-first-title">
-              {transI18n('fcr_more_tip_second_title')}
+        {showPoll && <div className="frc-chatroom-modal-first-title">
+          {transI18n('fcr_more_tip_second_title')}
         </div>}
-        {isShowPoll&&<div className='fcr-chatroom-mobile-application-list' onClick={(e) => showMinimize(e)}>
+        {showPoll && <div className='fcr-chatroom-mobile-application-list' onClick={(e) => showMinimize(e)}>
           <div className='fcr-chatroom-mobile-application-list-icon poll'>
             <SvgImgMobile
-                forceLandscape={forceLandscape}
-                landscape={isLandscape}
-                type={SvgIconEnum.MOBILE_VOTE}
-                size={30}
-                />
+              forceLandscape={forceLandscape}
+              landscape={isLandscape}
+              type={SvgIconEnum.MOBILE_VOTE}
+              size={30}
+            />
           </div>
           <span className='fcr-chatroom-mobile-application-list-val'>{transI18n('fcr_more_options_poll')}</span>
         </div>}

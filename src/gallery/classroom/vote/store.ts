@@ -69,18 +69,6 @@ export class PluginStore {
       onMessage: this.setBoardEditOpen,
     });
 
-    this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.SetCurrentApplication,
-      onMessage: widget => {
-        const currentWidget = widget as AgoraWidgetBase;
-        if (currentWidget?.widgetName == "netlessBoard") {
-          this.setBoardEditOpen([currentWidget?.widgetId, true])
-        } else {
-          this.setBoardEditOpen([currentWidget?.widgetId, false])
-        }
-      }
-    }
-    );
 
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
   }
@@ -116,7 +104,7 @@ export class PluginStore {
     return arr;
   }
 
-  @observable boardEditOpen: boolean = false;
+  @observable boardEditOpen: boolean = this._widget.classroomStore.groupStore.state == 1;
 
   @action.bound
   setBoardEditOpen(value: any) {
@@ -316,18 +304,6 @@ export class PluginStore {
       messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
       onMessage: this.setBoardEditOpen,
     });
-    this._widget.removeBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.SetCurrentApplication,
-      onMessage: widget => {
-        const currentWidget = widget as AgoraWidgetBase;
-        if (currentWidget?.widgetName == "netlessBoard") {
-          this.setBoardEditOpen([currentWidget?.widgetId, true])
-        } else {
-          this.setBoardEditOpen([currentWidget?.widgetId, false])
-        }
-      }
-    }
-    );
   }
 
   /**

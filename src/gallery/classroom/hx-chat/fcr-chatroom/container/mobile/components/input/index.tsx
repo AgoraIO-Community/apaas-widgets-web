@@ -55,10 +55,11 @@ export const FcrChatRoomH5Inputs = observer(
         raiseHand,
         lowerHand,
         allUIStreamsCount: allStreamCount,
+        sortStreamList
       },
 
     } = useStore();
-    const widgets = z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM');
+    const widgets = z0Widgets && z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM') || [];
 
     const closeCollectTip = () => {
       setCollectVisible(false);
@@ -84,12 +85,8 @@ export const FcrChatRoomH5Inputs = observer(
     }, [collectVisible]);
     useEffect(() => {
       const count = widgets.length > 0 ? widgets.length : 0;
-      if (isShowPoll) {
-        setWidgetCount(count + 1)
-      } else {
-        setWidgetCount(count)
-      }
-    }, [widgets.length, isShowPoll])
+      setWidgetCount(count)
+    }, [widgets.length])
 
     useEffect(() => {
       if (isShowPoll) {
@@ -197,6 +194,8 @@ export const FcrChatRoomH5Inputs = observer(
       lowerHand();
     }
 
+    console.log('sortStreamList',sortStreamList);
+    
     return (
       <>
         <div
@@ -237,7 +236,7 @@ export const FcrChatRoomH5Inputs = observer(
                   landscape={isLandscape}
                   type={SvgIconEnum.GROUP}
                 />
-                <span>{transI18n('chat.participants', { num: allStreamCount || 0 })}</span>
+                <span>{transI18n('chat.participants', { num: sortStreamList?.length || 0 })}</span>
               </div>
               {widgetCount > 0 &&
                 <ToolTip
@@ -316,7 +315,7 @@ export const FcrChatRoomH5Inputs = observer(
                   landscape={isLandscape}
                   type={SvgIconEnum.GROUP}
                 />
-                <span>{allStreamCount || 0}</span>
+                <span>{sortStreamList?.length || 0}</span>
               </div>
               {widgetCount > 0 &&
                 <ToolTip

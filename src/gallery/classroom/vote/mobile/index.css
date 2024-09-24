@@ -54,7 +54,6 @@
   display: flex;
   margin-right: 3px;
   /* justify-content: flex-end; */
-  position: initial;
   min-width: 40px;
   height: 40px;
   display: flex;
@@ -63,7 +62,7 @@
 
 
   position: fixed;
-  left: 100px;
+  left: 96px;
   bottom: 70px;
   box-shadow: 0px 0px 15px 0px #97979740;
 }

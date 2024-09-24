@@ -37,6 +37,7 @@ export const PollH5 = observer(() => {
   const [width, setWidth] = useState<number | null>(null);
   const [pollBottom, setPollBottom] = useState<number>(67);
   const [isShow, setIsShow] = useState<boolean>(true);
+  const [ratio, setRatio] = useState<number>(window.innerHeight / 812);
 
   const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
 
@@ -106,15 +107,19 @@ export const PollH5 = observer(() => {
     }
   };
 
-  useEffect(() => { 
+  useEffect(() => {
     const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName)) || isOpenScreenShare;
     if (!!isOpenWidget) {
       boardEditOpen ? setPollBottom(isLandscape ? 67 : 227) : setPollBottom(isLandscape ? 12 : 163);
     } else {
       setPollBottom(isLandscape ? 12 : 67);
     }
-  }, [widgets, isLandscape, boardEditOpen, isOpenScreenShare])
+  }, [widgets?.length, isLandscape, boardEditOpen, isOpenScreenShare])
 
+
+  useEffect(() => {
+    setRatio(isLandscape ? window.innerHeight / 375 : window.innerHeight / 812)
+  }, [isLandscape])
 
   return minimize ? (
     <>
@@ -125,7 +130,7 @@ export const PollH5 = observer(() => {
             onClick={() => {
               setMinimize(false);
             }}
-            style={{ bottom: pollBottom }}
+            style={{ bottom: (pollBottom * ratio) }}
           >
 
             <div className="fcr-mobile-poll-widget-minimize-icon">
@@ -155,7 +160,7 @@ export const PollH5 = observer(() => {
             onClick={() => {
               setMinimize(false);
             }}
-            style={{ bottom: pollBottom }}
+            style={{ bottom: (pollBottom * ratio) }}
           >
             <div className="fcr-mobile-poll-widget-minimize-icon">
               <SvgImgMobile
