@@ -135,7 +135,7 @@
 .fcr-board-toolbar-fold {
   pointer-events: auto;
   position: fixed;
-  left: 10px;
+  left: 8px;
   z-index: 9;
   transition: all 0.25s;
 

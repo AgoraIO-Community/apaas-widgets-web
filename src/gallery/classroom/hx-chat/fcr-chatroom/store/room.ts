@@ -7,7 +7,6 @@ import { transI18n, bound, Scheduler, AgoraWidgetBase } from 'agora-common-libs'
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
 import { EduClassroomConfig, EduStream } from 'agora-edu-core';
-import { FcrBoardWidget } from '../../../../../../src/classroom';
 
 export enum MobileCallState {
   Initialize = 'initialize',
@@ -36,6 +35,8 @@ export class RoomStore {
   @observable
   private _widgetInstanceList: AgoraWidgetBase[] = [];
   @observable currentWidget: AgoraWidgetBase | undefined = undefined;
+
+  @observable z0Widgets: AgoraWidgetBase[] | undefined = [];
 
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
@@ -148,20 +149,17 @@ export class RoomStore {
     console.log(
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
       this._widget.classroomStore.widgetStore.widgetController,
-    );
+    ); 
     this._widgetInstanceList = Object.values(widgetInstances);
-    this.resetDefaultCurrentWidget();
-  }
-  @computed
-  get z0Widgets() {
-    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
-    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0 || zContainer === 10);
+
     const arr: any = [];
     for (let i = 0; i < widgets.length; i++) {
       const item = widgets[i];
       arr.unshift(item);
     }
-    return arr;
+    this.z0Widgets = arr;
+    this.resetDefaultCurrentWidget();
   }
 
   /**
@@ -195,7 +193,6 @@ export class RoomStore {
     }
 
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
 
     const arr: any = [];
     for (let i = 0; i < widgets.length; i++) {
