@@ -23,7 +23,7 @@ const PrivateDialog = observer(({ setIsShowStudents }: { setIsShowStudents: (arg
 
   const searchUserLists = useMemo(() => {
     //只能私聊老师
-    return searchUserList.filter((user) => user?.ext?.role == 1)
+    return searchUserList.filter((user) => user?.ext?.role === 1)
   }, [searchUserList])
 
   useEffect(() => {

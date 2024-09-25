@@ -104,7 +104,7 @@ export class PluginStore {
     return arr;
   }
 
-  @observable boardEditOpen: boolean = this._widget.classroomStore.groupStore.state == 1;
+  @observable boardEditOpen: boolean = this._widget.classroomStore.groupStore.state === 1;
 
   @action.bound
   setBoardEditOpen(value: any) {

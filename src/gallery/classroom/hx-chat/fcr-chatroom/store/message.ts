@@ -134,8 +134,8 @@ export class MessageStore {
       msgMonth: number | string = dayjs(msgTime)?.month() + 1, //获取当前月份(0-11,0代表1月)
       msgDate: number | string = dayjs(msgTime)?.date(); // 获取当前日(1-31)
 
-    const result = year == msgYear
-      ? (month == msgMonth && strDate == msgDate)
+    const result = year === msgYear
+      ? (month === msgMonth && strDate === msgDate)
         ? dayjs(msgTime).format('hh:mm A')
         : dayjs(msgTime).format('MM-DD hh:mm A')
       : dayjs(msgTime).format('YYYY-MM-DD hh:mm A');

@@ -2,7 +2,7 @@ function textNodesUnder(node: Node | null | undefined) {
   // https://stackoverflow.com/a/10730777/3245937
   let all = [] as Node[];
   for (node = node?.firstChild; node; node = node.nextSibling) {
-    if (node.nodeType == 3) {
+    if (node.nodeType === 3) {
       all.push(node);
     } else {
       all = all.concat(textNodesUnder(node));
