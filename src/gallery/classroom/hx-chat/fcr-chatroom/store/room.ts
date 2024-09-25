@@ -60,12 +60,12 @@ export class RoomStore {
         () => this.screenShareStream,
         () => {
           this.resetDefaultCurrentWidget();
-          const shareWidget = this._widgetInstanceList.find(
-            (item) => item.widgetName === 'screenShare',
-          );
-          if (shareWidget) {
-            this.setCurrentWidget(shareWidget);
-          }
+          // const shareWidget = this._widgetInstanceList.find(
+          //   (item) => item.widgetName === 'screenShare',
+          // );
+          // if (shareWidget) {
+          //   this.setCurrentWidget(shareWidget);
+          // }
         },
       ),
     );
@@ -149,8 +149,15 @@ export class RoomStore {
     console.log(
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
       this._widget.classroomStore.widgetStore.widgetController,
-    ); 
+    );
     this._widgetInstanceList = Object.values(widgetInstances);
+    //比较更新
+    // Object.values(widgetInstances)?.map(item => {
+    //   if (!this._widgetInstanceList?.find(wid => wid?.widgetName == item?.widgetName)) {
+    //     this._widgetInstanceList.push(item);
+    //   }
+    // })
+
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0 || zContainer === 10);
 
     const arr: any = [];
@@ -175,6 +182,7 @@ export class RoomStore {
         this._widgetInstanceList.push(
           new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore),
         );
+        this.z0Widgets?.unshift(new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore))
       }
       this.setCurrentWidget(
         this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
@@ -414,7 +422,7 @@ export class RoomStore {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
 
-    this.resetDefaultCurrentWidget();
+    // this.resetDefaultCurrentWidget();
   }
   @bound
   quitForceLandscape() {

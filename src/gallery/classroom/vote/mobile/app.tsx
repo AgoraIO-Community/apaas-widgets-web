@@ -110,7 +110,7 @@ export const PollH5 = observer(() => {
   useEffect(() => {
     const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName)) || isOpenScreenShare;
     if (!!isOpenWidget) {
-      boardEditOpen ? setPollBottom(isLandscape ? 67 : 227) : setPollBottom(isLandscape ? 12 : 163);
+      boardEditOpen ? setPollBottom(isLandscape ? 67 : 265) : setPollBottom(isLandscape ? 12 : 200);
     } else {
       setPollBottom(isLandscape ? 12 : 67);
     }
