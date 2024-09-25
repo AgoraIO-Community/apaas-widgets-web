@@ -329,7 +329,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                   size={16}
                 />}
                 <span className="fcr-chat-private-tag">
-                  <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(textMessage.ext?.nickName || '') }} ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{!isPrivate ? groupName : message.ext?.nickName}</span>{`${isTeacherMessage ? '(Tutor)' : ''}`} </span>
+                  <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(textMessage.ext?.nickName || '') }} ><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{!isPrivate&&isSelfMessage ? groupName : message.ext?.nickName}</span>{`${isTeacherMessage ? '(Tutor)' : ''}`} </span>
                   {isPrivate && <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>}
                 </span>
                 {textMessage?.ts && (
@@ -468,7 +468,7 @@ const ImageMessage = observer(
                     size={16}
                   />}
                   <span className="fcr-chat-private-tag">
-                    <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(imageMessage.ext?.nickName || '') }}><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{!isPrivate ? groupName : imageMessage.ext?.nickName}</span>{`${isTeacherMessage ? '(Tutor)' : ''}`} </span>
+                    <span className='fcr-chatroom-mobile-message-item-nickname' style={{ color: isTeacherMessage ? 'var(--head-4, #D2DB0E)' : getNameColor(imageMessage.ext?.nickName || '') }}><span className='fcr-chatroom-private-dialog-chat-input-chat-list-name-val-eplisis'>{!isPrivate && isSelfMessage ? groupName : imageMessage.ext?.nickName}</span>{`${isTeacherMessage ? '(Tutor)' : ''}`} </span>
                     {isPrivate && <span className="fcr-text-yellow">({transI18n('fcr_chat_label_private')})</span>}
                   </span>
                   {imageMessage?.ts && (
@@ -571,7 +571,7 @@ const useMessageParams = ({
 }) => {
   const transI18n = useI18n();
   const isSelfMessage = message.from === fcrChatRoom.userInfo?.userId;
-  const isTeacherMessage = message.ext?.role === 1;
+  const isTeacherMessage = message.ext?.role == 1;
   const messageFromAlias = isSelfMessage
     ? `(${transI18n('fcr_chat_label_i')})`
     : isTeacherMessage
