@@ -117,7 +117,6 @@ export const MessageList = observer(() => {
           <div className={classNames("fcr-chatroom-mobile-messages-wrap", isLandscape && 'fcr-chatroom-mobile-messages-wrap-isLandscape')}>
             {messageList.map((message, index) => {
               const lastMsg = index > 0 ? messageList[index - 1] : { from: '' } as AgoraIMMessageBase;
-
               if (typeof message === 'string') {
                 return (
                   <AnnouncementMessage key={message} announcement={message}></AnnouncementMessage>
@@ -252,15 +251,16 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
 
   const isPrivate = checkIsPrivateMessage(textMessage);
 
-//替换内容中的超链接
-  const replaceContentToLink = (text: string | null):string => {
+  //替换内容中的超链接
+  const replaceContentToLink = (text: string | null): string => {
     const urlRegex = /((https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g;
     return text ? text.replace(urlRegex, (match, url) => {
       return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
     }) : "";
   }
+
   const isHidden = lastMsg?.from == textMessage?.from && (
-    (checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0)) || (!checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0)));
+    (checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string') || (!checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
 
 
   return (
@@ -292,7 +292,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                 </div>
               )}
             </div>}
-            <div className='fcr-chatroom-mobile-message-content'dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+            <div className='fcr-chatroom-mobile-message-content' dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
           </div>
           {/* {messageFromAlias}: */}
         </div>}
@@ -314,7 +314,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                 </div>
               )}
             </div>}
-            <div className='fcr-chatroom-mobile-message-content'dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+            <div className='fcr-chatroom-mobile-message-content' dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
           </div>
         )}
         {!isSelfMessage && (isPrivate || (!isPrivate && isBreakOutRoomEnabled && isBreakOutRoomIn)) && (
@@ -339,7 +339,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                   </div>
                 )}
               </div>}
-              <div className='fcr-chatroom-mobile-message-content'dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+              <div className='fcr-chatroom-mobile-message-content' dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
             </div>
           </div>
         )}
@@ -373,7 +373,7 @@ const ImageMessage = observer(
     const isPrivate = checkIsPrivateMessage(imageMessage);
 
     const isHidden = lastMsg?.from == imageMessage?.from && (
-      (checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0)) || (!checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0)));
+      (checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')) || (!checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
 
     const imageUrl =
       imageMessage.url || (imageMessage.file ? URL.createObjectURL(imageMessage.file) : '');
