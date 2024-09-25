@@ -103,7 +103,6 @@ export class UserStore {
   }
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
-    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this.updateUser);
     this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
 
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
