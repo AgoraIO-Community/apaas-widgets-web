@@ -35,7 +35,7 @@ export const PollH5 = observer(() => {
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState<number | null>(null);
-  const [pollBottom, setPollBottom] = useState<number>(67);
+  const [pollBottom, setPollBottom] = useState<number>(87);
   const [isShow, setIsShow] = useState<boolean>(true);
   const [ratio, setRatio] = useState<number>(window.innerHeight / 812);
 
@@ -110,9 +110,9 @@ export const PollH5 = observer(() => {
   useEffect(() => {
     const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName)) || isOpenScreenShare;
     if (!!isOpenWidget) {
-      boardEditOpen ? setPollBottom(isLandscape ? 67 : 265) : setPollBottom(isLandscape ? 12 : 200);
+      boardEditOpen ? setPollBottom(isLandscape ? 87 : 265) : setPollBottom(isLandscape ? 12 : 200);
     } else {
-      setPollBottom(isLandscape ? 12 : 67);
+      setPollBottom(isLandscape ? 12 : 87);
     }
   }, [widgets?.length, isLandscape, boardEditOpen, isOpenScreenShare])
 
