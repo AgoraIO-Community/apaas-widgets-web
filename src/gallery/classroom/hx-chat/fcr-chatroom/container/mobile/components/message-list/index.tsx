@@ -21,6 +21,7 @@ import classNames from 'classnames';
 import { Avatar } from '@components/avatar';
 import dayjs from 'dayjs';
 import { getNameColor } from '@components/avatar/helper';
+import { splitTextAndUrls, urlRegex } from '../../../../../../../../utils/split-url';
 export const MessageList = observer(() => {
   const {
     messageStore: {
@@ -114,6 +115,7 @@ export const MessageList = observer(() => {
         className={`fcr-chatroom-mobile-messages${isLandscape ? '-landscape' : ''}`}
         ref={messageContainerRef}>
         {messageList.length > 0 ? (
+
           <div className={classNames("fcr-chatroom-mobile-messages-wrap", isLandscape && 'fcr-chatroom-mobile-messages-wrap-isLandscape')}>
             {messageList.map((message, index) => {
               const lastMsg = index > 0 ? messageList[index - 1] : { from: '' } as AgoraIMMessageBase;
@@ -494,6 +496,7 @@ const ImageMessage = observer(
   },
 );
 const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) => {
+
   const { fcrChatRoom, messageStore: { checkIsPrivateMessage },
     roomStore: { isLandscape, forceLandscape },
   } = useStore();
