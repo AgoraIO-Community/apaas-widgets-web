@@ -42,6 +42,13 @@
 
 }
 
+@media screen and (min-device-pixel-ratio: 2) {
+  .fcr-application-panel-wrapped .fcr-application-panel-item>span {
+    font-size: 10pt; /* 对于高分辨率设备（如Retina屏幕），设置字体大小为10点 */
+  }
+}
+
+
 .fcr-chatroom-mobile-application-list:last-child {
   margin-bottom: 0;
 }
