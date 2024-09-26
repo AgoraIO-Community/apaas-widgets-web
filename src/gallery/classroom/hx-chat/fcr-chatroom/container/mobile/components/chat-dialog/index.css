@@ -125,6 +125,10 @@
 }
 
 .fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-person-list .fcr-chatroom-mobile-inputs-private-label {
+  white-space: nowrap;
+}
+
+.fcr-chatroom-mobile-inputs-chat-search .fcr-chatroom-mobile-inputs-person-list .fcr-chatroom-mobile-inputs-private-label {
   color: #FFF;
   font-feature-settings: 'clig' off, 'liga' off;
   font-family: Inter;
