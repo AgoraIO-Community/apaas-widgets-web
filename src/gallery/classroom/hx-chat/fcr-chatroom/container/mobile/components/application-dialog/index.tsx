@@ -19,10 +19,10 @@ const ApplicationDialog = observer(
 
     console.log('currentWidgetcurrentWidgetdialog', currentWidget);
     // const widgets = z0Widgets;
-    const widgets = z0Widgets && z0Widgets?.filter((v: any) => v.widgetName !== 'easemobIM' && v.zContainer === 0) || [];
+    const widgets = z0Widgets && z0Widgets?.filter((v: any) => !['easemobIM', 'countdownTimer'].includes(v.widgetName) && v.zContainer === 0) || [];
 
 
-    const showPoll = !!z0Widgets && z0Widgets.find(({ zContainer }) => zContainer === 10) || isShowPoll;
+    const showPoll = !!z0Widgets && z0Widgets.find(({ widgetName }) => widgetName == 'poll') || isShowPoll;
 
 
 

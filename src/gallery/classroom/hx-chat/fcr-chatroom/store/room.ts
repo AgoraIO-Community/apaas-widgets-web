@@ -182,7 +182,12 @@ export class RoomStore {
         this._widgetInstanceList.push(
           new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore),
         );
-        this.z0Widgets?.unshift(new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore))
+
+        const widgetScreenShare = this.z0Widgets?.some(
+          (item) => item.widgetName === 'screenShare',
+        );
+
+        !widgetScreenShare && this.z0Widgets?.unshift(new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore))
       }
       this.setCurrentWidget(
         this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
@@ -193,6 +198,11 @@ export class RoomStore {
       this._widgetInstanceList = this._widgetInstanceList.filter(
         (item) => item.widgetName !== 'screenShare',
       );
+
+      this.z0Widgets = this.z0Widgets?.filter(
+        (item) => item.widgetName !== 'screenShare',
+      );
+
       if (this.currentWidget?.widgetName === 'screenShare') {
         this.setCurrentWidget(undefined);
 

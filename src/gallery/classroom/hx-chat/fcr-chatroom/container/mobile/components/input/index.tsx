@@ -59,7 +59,7 @@ export const FcrChatRoomH5Inputs = observer(
       },
 
     } = useStore();
-    const widgets = z0Widgets && z0Widgets.filter((v: { widgetName: string; }) => v.widgetName !== 'easemobIM') || [];
+    const widgets = z0Widgets && z0Widgets.filter((v: { widgetName: string; }) => !['easemobIM', 'countdownTimer'].includes(v.widgetName)) || [];
 
     const closeCollectTip = () => {
       setCollectVisible(false);
@@ -83,6 +83,9 @@ export const FcrChatRoomH5Inputs = observer(
         }
       };
     }, [collectVisible]);
+
+
+
     useEffect(() => {
       const count = widgets.length > 0 ? widgets.length : 0;
       setWidgetCount(count)
@@ -95,25 +98,30 @@ export const FcrChatRoomH5Inputs = observer(
     }, [isShowPoll])
 
     useEffect(() => {
+      // let applicationMsgTimer: NodeJS.Timeout | null = null;
       if (whiteTooltip && applicationTooltip != 'frc_more_white_tooltip') {
         if (widgets.find((widget: any) => {
           return widget.widgetName == 'mediaPlayer' || widget.widgetName == 'netlessBoard' || widget.widgetName == 'webView'
         }) != null) {
           setOpenApplicationMsg(true);
           setWhiteTooltip(false);
+
+          if (applicationMsgTimer.current) {
+            clearTimeout(applicationMsgTimer.current);
+          }
+
           applicationMsgTimer.current = setTimeout(() => {
             setOpenApplicationMsg(false);
           }, 3000);
         }
       }
 
-      return () => {
-        if (applicationMsgTimer.current) {
-          clearTimeout(applicationMsgTimer.current);
-        }
-      }
-    }, [widgets.length, applicationTooltip])
-
+      // return () => {
+      //   if (applicationMsgTimer.current) {
+      //     clearTimeout(applicationMsgTimer.current);
+      //   }
+      // }
+    }, [widgets?.length, applicationTooltip])
 
     useEffect(() => {
       const obj = window.localStorage.getItem('application-room-id');
@@ -194,8 +202,7 @@ export const FcrChatRoomH5Inputs = observer(
       lowerHand();
     }
 
-    console.log('sortStreamList',sortStreamList);
-    
+
     return (
       <>
         <div
