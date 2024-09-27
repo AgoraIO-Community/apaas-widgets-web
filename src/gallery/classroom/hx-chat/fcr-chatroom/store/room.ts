@@ -173,6 +173,7 @@ export class RoomStore {
           }
           if(oldList[old].widgetName === 'screenShare'){
             arr.unshift(oldList[old]);
+            lastOldIndex += 1
           }
         }
       }
@@ -180,7 +181,7 @@ export class RoomStore {
     }
     this.z0Widgets = arr;
     this.resetDefaultCurrentWidget();
-    const allWidgets = (this.z0Widgets ? this.z0Widgets : []).filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
+    const allWidgets = (this.z0Widgets ? this.z0Widgets : []).filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
     if(allWidgets.length > 0){
       this.setCurrentWidget(allWidgets[0])
     }else{
@@ -236,7 +237,7 @@ export class RoomStore {
       const item = widgets[i];
       arr.unshift(item);
     }
-    const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
+    const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
     this.setCurrentWidget(allWidgets[0]);
 
   }
