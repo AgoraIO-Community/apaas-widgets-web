@@ -335,15 +335,6 @@ export class UserStore {
     //判断要禁言的用户是不是实际在当前房间里
     return userList.every((element) => judgeUserList.includes(element));
   }
-  /**
-   * 分离窗口视频流
-   * @returns
-   */
-  @computed
-  get allUIStreamsCount(): number {
-    return this.userList.length
-  }
-
 
   //视频流排序
   @computed

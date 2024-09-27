@@ -55,7 +55,6 @@ export const FcrChatRoomH5Inputs = observer(
         isRaiseHand,
         raiseHand,
         lowerHand,
-        allUIStreamsCount: allStreamCount,
         sortStreamList
       },
 

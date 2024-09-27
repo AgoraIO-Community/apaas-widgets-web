@@ -13,7 +13,7 @@ import ParticipantMoreDialog from '../participant-more-dialog';
 const ParticipantDialog = observer(
   ({ setIsShowParticipant }: { setIsShowParticipant: (arg0: boolean) => void }) => {
     const {
-      userStore: { searchKey, setSearchKey, checkCameraEnabled, checkMicEnabled, allUIStreamsCount, sortStreamList: allStream },
+      userStore: { searchKey, setSearchKey, checkCameraEnabled, checkMicEnabled, sortStreamList: allStream },
     } = useStore()
     //当前选择操作更多的处理
     const [cureentOptionsUser, setCureentOptionsUser] = useState<EduStream | null>();
@@ -26,7 +26,8 @@ const ParticipantDialog = observer(
       const { value } = e.target
       setSearchKey(value)
     }
-//选择所有
+    const allUIStreamsCount = allStream?.length || 0;
+    //选择所有
     return (
       <div>
         <div className="fcr-chatroom-mobile-participant-mask"
