@@ -160,7 +160,7 @@ export const PollH5 = observer(() => {
             onClick={() => {
               setMinimize(false);
             }}
-            style={{ bottom: (pollBottom * ratio) }}
+            style={{ bottom: '56vw' }}
           >
             <div className="fcr-mobile-poll-widget-minimize-icon">
               <SvgImgMobile
