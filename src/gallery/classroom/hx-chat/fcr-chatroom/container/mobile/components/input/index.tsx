@@ -48,6 +48,7 @@ export const FcrChatRoomH5Inputs = observer(
         forceLandscape,
         z0Widgets,
         addToast,
+        currentWidget
       },
       userStore: {
         setSearchKey,
@@ -96,6 +97,11 @@ export const FcrChatRoomH5Inputs = observer(
         addToast(transI18n('frc_more_white_showpoll_tooltip'), 'success');
       }
     }, [isShowPoll])
+    useEffect(() => {
+      if (!currentWidget) {
+        setIsShowApplication(false)
+      }
+    }, [currentWidget])
 
     useEffect(() => {
       // let applicationMsgTimer: NodeJS.Timeout | null = null;

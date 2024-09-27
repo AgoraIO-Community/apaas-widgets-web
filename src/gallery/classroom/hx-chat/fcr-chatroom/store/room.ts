@@ -161,12 +161,31 @@ export class RoomStore {
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0 || zContainer === 10);
 
     const arr: any = [];
+    const oldList : AgoraWidgetBase[] | undefined = this.z0Widgets;
+    let lastOldIndex = 0
     for (let i = 0; i < widgets.length; i++) {
       const item = widgets[i];
+      if(oldList && this.screenShareStream){
+        for(let old = lastOldIndex; old < oldList.length;old++){
+          lastOldIndex = old
+          if(oldList[old].widgetId === item.widgetId){
+            break
+          }
+          if(oldList[old].widgetName === 'screenShare'){
+            arr.unshift(oldList[old]);
+          }
+        }
+      }
       arr.unshift(item);
     }
     this.z0Widgets = arr;
     this.resetDefaultCurrentWidget();
+    const allWidgets = (this.z0Widgets ? this.z0Widgets : []).filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
+    if(allWidgets.length > 0){
+      this.setCurrentWidget(allWidgets[0])
+    }else{
+      this.setCurrentWidget(undefined);
+    }
   }
 
   /**
