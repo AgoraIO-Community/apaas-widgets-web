@@ -47,10 +47,10 @@ export const ColorToolPickerItem = observer(({ origin }: any) => {
       popoverOffset={12}
       overlayInnerStyle={{
         width: 'fit-content',
-        background: 'rgba(41, 46, 51, 0.95)',
+        background: 'var(--fcr_mobile_ui_scene_color_popup_block1, #FFFFFFF2)',
         borderRadius: '6px',
         paddingTop: '2.5px',
-        border: '0.5px solid var(--fcr_ui_scene_line1, rgba(74, 76, 95, 0.5))',
+        border: '0.5px solid var(--fcr_ui_scene_line1, #E3E7EF)',
       }}
       popoverContent={<ColorPickerPanel />}
       iconProps={{ colors: { iconPrimary: currentColor } }}

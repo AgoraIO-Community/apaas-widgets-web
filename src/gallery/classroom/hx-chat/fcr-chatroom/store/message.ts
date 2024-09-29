@@ -14,18 +14,22 @@ import {
   AgoraIMUserInfo,
 } from '../../../../../common/im/wrapper/typs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
+import { FcrChatRoomStore } from '.';
+import dayjs from 'dayjs';
 const MAX_MESSAGE_COUNT = 1000;
 export class MessageStore {
   private _disposers: (() => void)[] = [];
   private _pollingMessageTask?: Scheduler.Task;
   private _messageQueue: AgoraIMMessageBase[] = [];
   private _messageListDom: HTMLDivElement | null = null;
+
   @observable isBottom = true;
   @observable unreadMessageCount = 0;
   @observable messageList: (AgoraIMMessageBase | string)[] = [];
   @observable announcement = '';
   @observable showAnnouncement = false;
   @observable historyMessageLoaded = false;
+  @observable isFullScreen = false;
   constructor(private _widget: AgoraHXChatWidget, private _fcrChatRoom: AgoraIMBase) {
     this._addEventListeners();
   }
@@ -106,6 +110,40 @@ export class MessageStore {
   checkIsPrivateMessage(message: AgoraIMMessageBase) {
     return message.ext && message.ext?.receiverList?.length > 0;
   }
+
+  @observable
+  isopenChatDialog: boolean = false;
+
+  @action.bound
+  openChatDialog(value: boolean) {
+    this.isopenChatDialog = value;
+  }
+
+  @bound
+  messageTimeFormat(message: AgoraIMMessageBase) {
+    //message时间戳
+    const msgTime = message?.ts;
+    //今日
+    let date = new Date(),
+      year: number | string = date.getFullYear(), //获取完整的年份(4位)
+      month: number | string = date.getMonth() + 1, //获取当前月份(0-11,0代表1月)
+      strDate: number | string = date.getDate(); // 获取当前日(1-31)
+    //message
+
+    let msgYear: number | string = dayjs(msgTime)?.year(), //获取完整的年份(4位)
+      msgMonth: number | string = dayjs(msgTime)?.month() + 1, //获取当前月份(0-11,0代表1月)
+      msgDate: number | string = dayjs(msgTime)?.date(); // 获取当前日(1-31)
+
+    const result = year === msgYear
+      ? (month === msgMonth && strDate === msgDate)
+        ? dayjs(msgTime).format('hh:mm A')
+        : dayjs(msgTime).format('MM-DD hh:mm A')
+      : dayjs(msgTime).format('YYYY-MM-DD hh:mm A');
+
+    return result
+  }
+
+
   @bound
   setMessageListDom(dom: HTMLDivElement) {
     this._messageListDom = dom;
@@ -131,6 +169,12 @@ export class MessageStore {
   setShowAnnouncement(show: boolean) {
     this.showAnnouncement = show;
   }
+
+  @action.bound
+  setIsFullScreen(value: boolean) {
+    this.isFullScreen = value;
+  }
+
   @action.bound
   setIsBottom(isBottom: boolean) {
     if (isBottom) {

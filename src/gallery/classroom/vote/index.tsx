@@ -5,11 +5,11 @@ import { PluginStore } from './store';
 import { observable, action } from 'mobx';
 import { WidgetModal } from '../../../components/modal';
 import { AgoraEduToolWidget } from '../../../common/edu-tool-widget';
-import type { AgoraWidgetController } from 'agora-edu-core';
+import { EduClassroomConfig, EduRoleTypeEnum, type AgoraWidgetController } from 'agora-edu-core';
 import { transI18n, ThemeProvider } from 'agora-common-libs';
 import { addResource } from './i18n/config';
 import { PollH5 } from './mobile/app';
-import { AgoraExtensionWidgetEvent } from '../../../events';
+import { AgoraExtensionWidgetEvent, AgoraExtensionRoomEvent } from '../../../events';
 
 export class AgoraPolling extends AgoraEduToolWidget {
   private _store?: PluginStore;
@@ -54,6 +54,7 @@ export class AgoraPolling extends AgoraEduToolWidget {
     this.roomProperties = properties;
     this.userProperties = userProperties;
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, true);
+
   }
   @action
   onPropertiesUpdate(properties: any): void {
@@ -68,7 +69,6 @@ export class AgoraPolling extends AgoraEduToolWidget {
   onDestroy(): void {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollActiveStateChanged, false);
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, true);
-
     if (this._store) {
       this._store.destroy();
     }

@@ -6,7 +6,8 @@ import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up'
 import { transI18n, bound, Scheduler, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
-import { EduStream } from 'agora-edu-core';
+import { EduClassroomConfig, EduStream } from 'agora-edu-core';
+
 export enum MobileCallState {
   Initialize = 'initialize',
   Processing = 'processing',
@@ -15,6 +16,8 @@ export enum MobileCallState {
   VideoAndVoiceCall = 'videoAndVoiceCall',
   DeviceOffCall = 'deviceOffCall',
 }
+
+
 export class RoomStore {
   private _disposers: (() => void)[] = [];
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
@@ -32,6 +35,8 @@ export class RoomStore {
   @observable
   private _widgetInstanceList: AgoraWidgetBase[] = [];
   @observable currentWidget: AgoraWidgetBase | undefined = undefined;
+
+  @observable z0Widgets: AgoraWidgetBase[] | undefined = [];
 
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
@@ -55,12 +60,12 @@ export class RoomStore {
         () => this.screenShareStream,
         () => {
           this.resetDefaultCurrentWidget();
-          const shareWidget = this._widgetInstanceList.find(
-            (item) => item.widgetName === 'screenShare',
-          );
-          if (shareWidget) {
-            this.setCurrentWidget(shareWidget);
-          }
+          // const shareWidget = this._widgetInstanceList.find(
+          //   (item) => item.widgetName === 'screenShare',
+          // );
+          // if (shareWidget) {
+          //   this.setCurrentWidget(shareWidget);
+          // }
         },
       ),
     );
@@ -83,6 +88,13 @@ export class RoomStore {
     });
     this._thumbsUpCountCache = thumbsUpCount;
   }
+
+  @bound
+  getRoomName() {
+    const { groupDetails, currentSubRoom } = this._widget.classroomStore.groupStore;
+    return currentSubRoom ? groupDetails.get(currentSubRoom)?.groupName : ''
+  }
+
   @action.bound
   addToast(message: string, type: 'error' | 'warning' | 'success' | undefined) {
     return this._widget.ui.addToast(message, type);
@@ -139,18 +151,42 @@ export class RoomStore {
       this._widget.classroomStore.widgetStore.widgetController,
     );
     this._widgetInstanceList = Object.values(widgetInstances);
-    this.resetDefaultCurrentWidget();
-  }
-  @computed
-  get z0Widgets() {
-    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
-    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    //比较更新
+    // Object.values(widgetInstances)?.map(item => {
+    //   if (!this._widgetInstanceList?.find(wid => wid?.widgetName == item?.widgetName)) {
+    //     this._widgetInstanceList.push(item);
+    //   }
+    // })
+
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0 || zContainer === 10);
+
     const arr: any = [];
+    const oldList : AgoraWidgetBase[] | undefined = this.z0Widgets;
+    let lastOldIndex = 0
     for (let i = 0; i < widgets.length; i++) {
       const item = widgets[i];
+      if(oldList && this.screenShareStream){
+        for(let old = lastOldIndex; old < oldList.length;old++){
+          lastOldIndex = old
+          if(oldList[old].widgetId === item.widgetId){
+            break
+          }
+          if(oldList[old].widgetName === 'screenShare'){
+            arr.unshift(oldList[old]);
+            lastOldIndex += 1
+          }
+        }
+      }
       arr.unshift(item);
     }
-    return arr;
+    this.z0Widgets = arr;
+    this.resetDefaultCurrentWidget();
+    const allWidgets = (this.z0Widgets ? this.z0Widgets : []).filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
+    if(allWidgets.length > 0){
+      this.setCurrentWidget(allWidgets[0])
+    }else{
+      this.setCurrentWidget(undefined);
+    }
   }
 
   /**
@@ -158,7 +194,7 @@ export class RoomStore {
    */
   @action.bound
   private resetDefaultCurrentWidget() {
-    if (this.screenShareStream && this.isLandscape) {
+    if (this.screenShareStream) {
       const hasScreenShare = this._widgetInstanceList.some(
         (item) => item.widgetName === 'screenShare',
       );
@@ -166,32 +202,44 @@ export class RoomStore {
         this._widgetInstanceList.push(
           new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore),
         );
+
+        const widgetScreenShare = this.z0Widgets?.some(
+          (item) => item.widgetName === 'screenShare',
+        );
+
+        !widgetScreenShare && this.z0Widgets?.unshift(new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore))
       }
       this.setCurrentWidget(
         this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
       );
-    }
-    if (!this.isLandscape || !this.screenShareStream) {
+
+      return;
+    } else {
       this._widgetInstanceList = this._widgetInstanceList.filter(
         (item) => item.widgetName !== 'screenShare',
       );
+
+      this.z0Widgets = this.z0Widgets?.filter(
+        (item) => item.widgetName !== 'screenShare',
+      );
+
       if (this.currentWidget?.widgetName === 'screenShare') {
         this.setCurrentWidget(undefined);
+
+        return;
       }
     }
 
-    if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
-      const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-      console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
 
-      const arr: any = [];
-      for (let i = 0; i < widgets.length; i++) {
-        const item = widgets[i];
-        arr.unshift(item);
-      }
-      const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
-      this.setCurrentWidget(allWidgets[0]);
+    const arr: any = [];
+    for (let i = 0; i < widgets.length; i++) {
+      const item = widgets[i];
+      arr.unshift(item);
     }
+    const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
+    this.setCurrentWidget(allWidgets[0]);
+
   }
 
   @action.bound
@@ -404,7 +452,7 @@ export class RoomStore {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
 
-    this.resetDefaultCurrentWidget();
+    // this.resetDefaultCurrentWidget();
   }
   @bound
   quitForceLandscape() {

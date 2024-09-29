@@ -308,6 +308,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       ),
     );
     this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
+  
+
   }
 
   onDestroy() {
@@ -315,6 +317,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     this.unmount();
 
     this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
+
     if (this._listenerDisposer) {
       this._listenerDisposer();
     }
@@ -790,7 +793,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         observables.currentStrokeWidth = strokeWidth;
         this._boardMainWindow?.changeStrokeWidth(strokeWidth);
       }),
-      clickExpansionTool: action(() => {}),
+      clickExpansionTool: action(() => { }),
       setToolbarPosition: action((pos: { x: number; y: number }) => {
         observables.toolbarPosition = pos;
       }),
@@ -802,8 +805,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         this._updateDockPlacement();
         this._repositionToolbar();
       }),
-      captureApp: () => {},
-      captureScreen: () => {},
+      captureApp: () => { },
+      captureScreen: () => { },
       saveDraft: () => {
         this._getSnapshotImage();
       },

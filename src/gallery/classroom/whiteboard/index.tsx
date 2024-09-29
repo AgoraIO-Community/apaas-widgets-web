@@ -160,14 +160,14 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         // 打开本地
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeActive, {
           widgetId,
-        });
+        }); 
       } else {
         // 关闭远端
         controller.setWidgetInactive(widgetId);
         // 关闭本地
         controller.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId,
-        });
+        }); 
       }
     };
 
@@ -208,8 +208,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
       widgetId: this.widgetId,
       visible: true,
-    });
-
+    }); 
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),
     );
@@ -759,6 +758,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       contentAreaSize: this.contentAreaSize,
       connectionState: this._connectionState,
       joinSuccessed: this._joinSuccessed,
+      isBoardFullScreen: false,
     });
 
     this._boardContext = {
@@ -786,13 +786,17 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         this.setInactive();
         this.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId: this.widgetId,
-        });
+        }); 
       },
       setPrivilege: action((canOperate: boolean) => {
         observables.canOperate = canOperate;
       }),
       setLandscape: action((landscape: boolean) => {
         observables.isLandscape = landscape;
+      }),
+
+      sendFullScreenMessage: action((isWhiteboardFullScreen: boolean) => {
+        observables.isBoardFullScreen = isWhiteboardFullScreen;
       }),
     };
     return this._boardContext;
@@ -865,7 +869,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         observables.currentStrokeWidth = strokeWidth;
         this._boardMainWindow?.changeStrokeWidth(strokeWidth);
       }),
-      clickExpansionTool: action(() => {}),
+      clickExpansionTool: action(() => { }),
       setToolbarPosition: action((pos: { x: number; y: number }) => {
         observables.toolbarPosition = pos;
       }),
@@ -877,8 +881,8 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
         this._updateDockPlacement();
         this._repositionToolbar();
       }),
-      captureApp: () => {},
-      captureScreen: () => {},
+      captureApp: () => { },
+      captureScreen: () => { },
       saveDraft: () => {
         this._getSnapshotImage();
       },

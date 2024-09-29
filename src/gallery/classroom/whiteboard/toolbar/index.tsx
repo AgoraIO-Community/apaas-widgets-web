@@ -21,8 +21,9 @@ import { ShapePickerPanel } from './shape-picker';
 import { SelectorPickerPanel } from './selector-picker';
 import classnames from 'classnames';
 import { Loading } from '../loading';
+import { AgoraExtensionWidgetEvent } from '../../../../events';
 
-export const Toolbar = observer(({ closeToolBar }: any) => {
+export const Toolbar = observer(({ closeToolBar, widget }: any) => {
   const { mobileFixedTools } = useVisibleTools();
   const {
     observables,
@@ -36,8 +37,10 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     },
   } = useContext(ToolbarUIContext);
   const {
-    observables: { canOperate, connectionState, isLandscape },
+    observables: { canOperate, connectionState, isLandscape, },
   } = useContext(BoardUIContext);
+
+
   const transI18n = useI18n();
 
   const penActive = currentShape === FcrBoardShape.Curve || currentShape === FcrBoardShape.Straight;
@@ -85,7 +88,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
     const element: any = document.querySelector(
       '.whiteboard-mobile-container .netless-whiteboard-wrapper',
     );
-    const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
+    // const chatDom: any = document.querySelector('.widget-slot-chat-mobile');
     const inputDom: any = document.querySelector('.landscape-bottom-tools');
     const pptDom: any = document.querySelector('.netless-app-slide-wb-view');
 
@@ -99,21 +102,25 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
       pptDom ? pptDom.style.setProperty('pointer-events', 'auto', 'important') : '';
       inputDom ? (inputDom.style.bottom = '-100px') : '';
     }
-    if (!chatDom) return;
-    const height = chatDom.style.height;
-    if (!fixedBottomBarVisible && foldToolBar) {
-      chatDom.style.height = height;
-    } else {
-      chatDom.style.height = '0';
-    }
-    return () => {
-      if (chatDom) {
-        chatDom.style.height = '256px';
-      }
-    };
+    // if (!chatDom) return;
+    // const height = chatDom.style.height;
+    // if (!fixedBottomBarVisible && foldToolBar) {
+    //   chatDom.style.height = height;
+    // } else {
+    //   chatDom.style.height = '0';
+    // }
+    // return () => {
+    //   if (chatDom) {
+    //     chatDom.style.height = '256px';
+    //   }
+    // };
   }, [fixedBottomBarVisible, foldToolBar]);
 
   const handleFoldClick = (bool: boolean) => {
+    widget.widgetController.broadcast(
+      AgoraExtensionWidgetEvent.BoardFullScreen,
+      !bool,
+    );
     runInAction(() => {
       observables.foldToolBar = bool;
       if (!bool && closeToolBar) {
@@ -140,7 +147,7 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
                 <div
                   className="fcr-board-toolbar-fold"
                   style={{
-                    top: (toolbarDockPosition.y || 12) + 'px',
+                    bottom: 12 + 'px',
                   }}
                   onClick={() => handleFoldClick(false)}>
                   <div
@@ -149,14 +156,14 @@ export const Toolbar = observer(({ closeToolBar }: any) => {
                     )}>
                     <SvgImg
                       type={SvgIconEnum.WHITEBOARDEDIT}
-                      colors={{ iconPrimary: 'white' }}
+                      colors={{ iconPrimary: '#151515' }}
                       size={32}></SvgImg>
                   </div>
                 </div>
               ) : (
                 <div className="fcr-board-toolbar-main">
                   <div className="fcr-board-title-box" onClick={() => handleFoldClick(true)}>
-                    <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} />
+                    <SvgImg type={SvgIconEnum.FCR_WHITEBOARD_TOOLS} size={30} colors={{ iconPrimary: '#151515' }} />
                     <span className="fcr-board-title">{transI18n('fcr_board_toolbar_hide')}</span>
                   </div>
                   <ul className="fcr-board-toolbar-list">
@@ -216,7 +223,7 @@ export const ToolbarItem: FC<{
 
   return (
     <div className={cls} onClick={isDisabled ? undefined : onClick}>
-      <SvgImg type={icon} size={28} />
+      <SvgImg type={icon} size={28} colors={{ iconPrimary: '#151515', iconSecondary: '#373C42' }} />
       {texttip && <text>{texttip}</text>}
     </div>
   );
@@ -254,24 +261,24 @@ export const ExpansionToolbarItem: FC<{
   iconProps,
   texttip,
 }) => {
-  const cls = classNames('', {
-    'fcr-board-toolbar-item-surrounding--active': isActive,
-  });
-  return (
-    <PopoverWithTooltip
-      toolTipProps={tooltip ? { placement: tooltipPlacement, content: tooltip } : undefined}
-      popoverProps={{
-        overlayOffset: popoverOffset,
-        placement: popoverPlacement,
-        content: popoverContent,
-        overlayClassName: popoverOverlayClassName,
-        overlayInnerStyle,
-        visible: true,
-      }}>
-      <div className={cls} onClick={onClick}>
-        <SvgImg colors={{ iconPrimary: 'white' }} {...iconProps} type={icon} size={28} />
-        {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
-      </div>
-    </PopoverWithTooltip>
-  );
-};
+    const cls = classNames('', {
+      'fcr-board-toolbar-item-surrounding--active': isActive,
+    });
+    return (
+      <PopoverWithTooltip
+        toolTipProps={tooltip ? { placement: tooltipPlacement, content: tooltip } : undefined}
+        popoverProps={{
+          overlayOffset: popoverOffset,
+          placement: popoverPlacement,
+          content: popoverContent,
+          overlayClassName: popoverOverlayClassName,
+          overlayInnerStyle,
+          visible: true,
+        }}>
+        <div className={cls} onClick={onClick}>
+          <SvgImg colors={{ iconPrimary: '#151515' }} {...iconProps} type={icon} size={28} />
+          {texttip && <div className="fcr-board-toolbar-item__texttip">{texttip}</div>}
+        </div>
+      </PopoverWithTooltip>
+    );
+  };

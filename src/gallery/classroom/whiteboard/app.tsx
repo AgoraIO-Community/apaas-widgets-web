@@ -122,7 +122,7 @@ export const App = ({ widget }: { widget: FcrBoardWidget }) => {
 
       <div id="fcr_board_center_position" className="fcr_board_center_position" />
       {/* toolbar */}
-      <Toolbar closeToolBar={handleCloseToolbar} />
+      <Toolbar closeToolBar={handleCloseToolbar} widget={widget} />
     </React.Fragment>
   );
 };

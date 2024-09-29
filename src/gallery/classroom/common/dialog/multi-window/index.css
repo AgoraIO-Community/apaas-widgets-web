@@ -50,7 +50,7 @@
   @apply fcr-bg-brand;
 }
 .fcr-widget-dialog-content {
-  @apply fcr-bg-7;
+  /* @apply fcr-bg-7; */
   flex-grow: 1;
   position: relative;
   /* prevent toolbar moving out of content area */

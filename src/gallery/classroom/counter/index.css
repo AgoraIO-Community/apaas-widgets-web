@@ -1,8 +1,8 @@
 .fcr-countdown-mobile,
 .fcr-countdown-mobile-landscape {
   position: absolute;
-  top: 8px;
-  left: 15px;
+  top: 53px;
+  left: 5px;
   padding: 5px;
   border-radius: 12px;
   background: rgba(255, 255, 255, 0.5);
@@ -13,9 +13,9 @@
 .fcr-countdown-mobile.fcr-countdown-mobile-landscape {
   position: absolute;
   bottom: auto;
-  left: auto;
-  top: 54px;
-  left: 20px;
+  left: calc(75px + 14px + 5px);
+  top: 57px;
+ 
   /* right: 63px; */
   transform-origin: right top;
   z-index: 1;

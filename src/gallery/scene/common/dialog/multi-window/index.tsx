@@ -33,13 +33,13 @@ export const MultiWindowWidgetDialog = observer(
         // close the widget locally
         widget.widgetController.broadcast(AgoraExtensionWidgetEvent.WidgetBecomeInactive, {
           widgetId: widget.widgetId,
-        });
+        }); 
       } else {
         widget.widgetController.broadcast(
           AgoraExtensionWidgetEvent.WidgetBecomeInactive,
           widget.widgetId,
         );
-
+ 
         widget.deleteWidget();
       }
     };

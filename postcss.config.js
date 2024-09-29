@@ -11,8 +11,8 @@ module.exports = {
       unitPrecision: 5,
       viewportUnit: 'vw',
       fontViewportUnit: 'vw',
-      include: [/\/classroom\//],
-      exclude: [/\/node_modules\//i],
+      include: [/gallery/],
+      exclude: [/\/node_modules\//i, /scene/, /proctor/,/hx-chat/],
       landscape: true, // 是否处理横屏情况
       landscapeUnit: 'vw', // (String) 横屏时使用的单位
       landscapeWidth: 812, // (Number) 横屏时使用的视口宽度
