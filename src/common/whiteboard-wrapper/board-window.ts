@@ -76,6 +76,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         autoFPS,
         maxResolutionLevel,
         forceCanvas,
+        invisibleBehavior: 'pause',
       },
     });
 
