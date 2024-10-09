@@ -146,6 +146,7 @@ export class RoomStore {
   }
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
+    const isChange = this._widgetInstanceList?.length == 0 || (this._widgetInstanceList?.length !== Object.values(widgetInstances)?.length);
     console.log(
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
       this._widget.classroomStore.widgetStore.widgetController,
@@ -161,17 +162,17 @@ export class RoomStore {
     const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0 || zContainer === 10);
 
     const arr: any = [];
-    const oldList : AgoraWidgetBase[] | undefined = this.z0Widgets;
+    const oldList: AgoraWidgetBase[] | undefined = this.z0Widgets;
     let lastOldIndex = 0
     for (let i = 0; i < widgets.length; i++) {
       const item = widgets[i];
-      if(oldList && this.screenShareStream){
-        for(let old = lastOldIndex; old < oldList.length;old++){
+      if (oldList && this.screenShareStream) {
+        for (let old = lastOldIndex; old < oldList.length; old++) {
           lastOldIndex = old
-          if(oldList[old].widgetId === item.widgetId){
+          if (oldList[old].widgetId === item.widgetId) {
             break
           }
-          if(oldList[old].widgetName === 'screenShare'){
+          if (oldList[old].widgetName === 'screenShare') {
             arr.unshift(oldList[old]);
             lastOldIndex += 1
           }
@@ -180,13 +181,13 @@ export class RoomStore {
       arr.unshift(item);
     }
     this.z0Widgets = arr;
-    this.resetDefaultCurrentWidget();
-    const allWidgets = (this.z0Widgets ? this.z0Widgets : []).filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
-    if(allWidgets.length > 0){
-      this.setCurrentWidget(allWidgets[0])
-    }else{
-      this.setCurrentWidget(undefined);
-    }
+    if (isChange) this.resetDefaultCurrentWidget();
+    // const allWidgets = (this.z0Widgets ? this.z0Widgets : []).filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
+    // if (allWidgets.length > 0) {
+    //   this.setCurrentWidget(allWidgets[0])
+    // } else {
+    //   this.setCurrentWidget(undefined);
+    // }
   }
 
   /**
@@ -239,7 +240,6 @@ export class RoomStore {
     }
     const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM' && v.widgetName !== 'poll');
     this.setCurrentWidget(allWidgets[0]);
-
   }
 
   @action.bound
