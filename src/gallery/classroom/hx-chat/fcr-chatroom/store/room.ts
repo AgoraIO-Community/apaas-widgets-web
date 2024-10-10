@@ -189,7 +189,7 @@ export class RoomStore {
     const newList = this.getWidgetList(true, true, true, Object.values(widgetInstances))
     const noSpecialWidgetChange = !this.compareWidgetList(lastList,newList)
     //是否是新增的
-    const isAddWieget = lastList.length < newList.length || !!this.screenShareStream && (lastList.find(item=>item.widgetName === "netlessBoard")) && !newList.find(item=>item.widgetName === "netlessBoard")
+    const isAddWieget = lastList.length < newList.length || !!this.screenShareStream && (!!lastList.find(item=>item.widgetName === "netlessBoard")) && !newList.find(item=>item.widgetName === "netlessBoard")
     //更新总的记录
     this._widgetInstanceList = Object.values(widgetInstances);
     //总记录中相应等级的数据
