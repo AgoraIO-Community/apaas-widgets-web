@@ -7,8 +7,8 @@ import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../
 import { CustomMessageHandsUpState } from '../../type';
 import { iterateMap } from 'agora-common-libs';
 import { AgoraIM } from '../../../../../common/im/wrapper';
-import { AgoraRteMediaPublishState, AgoraRteMediaSourceState } from 'agora-rte-sdk';
-import { EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
+import { AgoraRteAudioSourceType, AgoraRteMediaPublishState, AgoraRteMediaSourceState, AgoraRteVideoSourceType, AgoraStream } from 'agora-rte-sdk';
+import { EduRole2RteRole, EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -104,6 +104,7 @@ export class UserStore {
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListRefresh);
 
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
@@ -136,7 +137,8 @@ export class UserStore {
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
-    this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserLeft);
+    this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._onUserLeft);
+    this._fcrChatRoom.off(AgoraIMEvents.UserListUpdated, this._onUserListRefresh);
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
     this._widget.removeBroadcastListener({
@@ -252,6 +254,13 @@ export class UserStore {
       this.updateAllUsers(users);
     }
   }
+  @bound
+  private async _onUserListRefresh() {
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
+    }
+  }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];
   }
@@ -336,23 +345,53 @@ export class UserStore {
     return userList.every((element) => judgeUserList.includes(element));
   }
 
+  //用户信息转空的流
+  private userToEduStream(user: AgoraIMUserInfo): EduStream {
+    return new EduStream(new AgoraStream({
+      streamUuid: '',
+      streamName: '',
+      fromUser: {
+        userUuid: user.ext.userUuid,
+        userName: user.nickName,
+        //@ts-ignore
+        role: EduRole2RteRole(window.EduClassroomConfig.sessionInfo.roomType, user.ext.role)
+      },
+      videoSourceType: AgoraRteVideoSourceType.None,
+      audioSourceType: AgoraRteAudioSourceType.None,
+      videoState: AgoraRteMediaPublishState.Unpublished,
+      audioState: AgoraRteMediaPublishState.Unpublished,
+      videoSourceState: AgoraRteMediaSourceState.error,
+      audioSourceState: AgoraRteMediaSourceState.error,
+    }))
+  }
+
   //视频流排序
   @computed
-  get sortStreamList(){
+  get sortStreamList() {
     /*1、我、tutor、其他参会者（按照姓名排序） */
-    let meStream:EduStream|null = null;
+    const meStream:EduStream|undefined = this.userSteamList.find(item=>item.isLocal);
     let teacherStream:EduStream|null = null;
     const streamList: EduStream[] = [];
-    this.userSteamList.forEach(item=>{
-      //@ts-ignore
-      if(EduRoleTypeEnum.teacher === RteRole2EduRole(window.EduClassroomConfig.sessionInfo.roomType, item?.fromUser?.role as string)){
-        teacherStream = item
-      }else if(item.isLocal){
-        meStream = item;
-      }else{
-        streamList.push(item)
+    this.userList.forEach(element => {
+      if (EduRoleTypeEnum.teacher === element.ext.role) {
+        teacherStream = this.userSteamList.find(item => item.fromUser.userUuid === element.ext.userUuid) || this.userToEduStream(element)
+      }else if(element.ext.userUuid !== meStream?.fromUser.userUuid){
+        streamList.push(this.userToEduStream(element))
       }
-    })
+    });
+    // let meStream:EduStream|null = null;
+    // let teacherStream:EduStream|null = null;
+    // const streamList: EduStream[] = [];
+    // this.userSteamList.forEach(item=>{
+      //@ts-ignore
+      // if(EduRoleTypeEnum.teacher === EduRole2RteRole(window.EduClassroomConfig.sessionInfo.roomType, item?.fromUser?.role as string)){
+    //     teacherStream = item
+    //   }else if(item.isLocal){
+    //     meStream = item;
+    //   }else{
+    //     streamList.push(item)
+    //   }
+    // })
     streamList.sort((item1, item2) => { return item1.fromUser.userName < item2.fromUser.userName ? 1 : -1 })
     const firstList: EduStream[] = []
     if (meStream) {

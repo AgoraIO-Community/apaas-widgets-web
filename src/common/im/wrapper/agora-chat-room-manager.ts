@@ -211,6 +211,7 @@ export class FcrChatRoomManager {
     });
     return this._currentUserInfo;
   }
+  private _timer:NodeJS.Timeout|null = null;//定时器请求数据
 
   @Log.silence
   private _addEventListener() {
@@ -313,6 +314,15 @@ export class FcrChatRoomManager {
           await chatRoom.managerOptionsJoin();
           //刷新当前用户列表
           await this.refreshRoomUserList(this._defaultChatRoomeId)
+          //清除定时器
+          if (this._timer) {
+            clearInterval(this._timer)
+            this._timer = null;
+          }
+          this._timer = setInterval(() => {
+            //每10s刷新一次列表
+            this.refreshRoomUserList(this._defaultChatRoomeId)
+          }, 10000)
           if (chatRoom.isJoin) {
             this.emitEventsInfo(AgoraIMEvents.UserListUpdated, null);
           }
@@ -358,6 +368,11 @@ export class FcrChatRoomManager {
     })
   }
   destory() {
+      //清除定时器
+      if(this._timer){
+        clearInterval(this._timer)
+        this._timer = null;
+      }
     this._chatRoomItemMap.forEach((value) => {
       value.managerOptionsLeave(true);
     });
@@ -381,6 +396,7 @@ export class FcrChatRoomManager {
           return item.member ? item.member : '';
         }));
       this._roomeUserMap.set(roomId,list);
+      this.emitEventsInfo(AgoraIMEvents.UserListUpdated, null, this._defaultChatRoomeId);
   }
   /**
    * 监听到用户进入房间
