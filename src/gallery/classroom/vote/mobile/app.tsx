@@ -125,7 +125,7 @@ export const PollH5 = observer(() => {
     <>
       {isLandscape
         ? createPortal(
-          <>{landscapeToolBarVisible ? <div
+          <div
             className={classNames(`fcr-mobile-poll-widget-minimize fcr-mobile-poll-widget-minimize-landscape`, !isShow && 'landmin')}
             onClick={() => {
               setMinimize(false);
@@ -151,8 +151,8 @@ export const PollH5 = observer(() => {
                 size={12}></SvgImgMobile>
             </div>
 
-          </div> : null}</>,
-          document.querySelector('.landscape-bottom-tools')!,
+          </div>,
+          document.querySelector('.fcr-poll-mobile-widget')!,
         )
         : createPortal(
           <div
@@ -160,7 +160,7 @@ export const PollH5 = observer(() => {
             onClick={() => {
               setMinimize(false);
             }}
-            style={{ bottom: '56vw' }}
+            style={{ bottom:  (pollBottom * ratio) }}
           >
             <div className="fcr-mobile-poll-widget-minimize-icon">
               <SvgImgMobile
