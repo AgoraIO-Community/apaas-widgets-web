@@ -38,6 +38,16 @@ export class PluginStore {
       }
     })
 
+    autorun(async () => {
+      const widgets = this.z0Widgets.find((v: any) => v.widgetName == 'netlessBoard');
+
+      if (widgets) {
+        const res = await this._widget.widgetController.getWidgetProperties(widgets.widgetId)?.extra?.grantedUsers;
+        const { userUuid } = this._widget.classroomConfig.sessionInfo;
+        this.setBoardEditOpen(!!res[userUuid]);
+      }
+    })
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
       onMessage: this._handleMobileLandscapeToolBarStateChanged,
@@ -108,7 +118,11 @@ export class PluginStore {
 
   @action.bound
   setBoardEditOpen(value: any) {
-    this.boardEditOpen = value && value?.length && value[1];
+    if (typeof value == 'boolean') {
+      this.boardEditOpen = value;
+    } else {
+      this.boardEditOpen = value && value?.length && value[1];
+    }
   }
 
   @observable minimize = true;
