@@ -248,7 +248,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
   });
   const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
   const textMessage = message as AgoraIMTextMessage;
-  const isToTeacher = message.ext?.receiverList[0]?.ext?.role == 1;
+  const isToTeacher = (message.ext?.receiverList && message.ext?.receiverList?.length > 0 && message.ext?.receiverList[0]?.ext?.role == 1) || message.ext?.role == 1;
   const groupName = getRoomName();
 
   const isPrivate = checkIsPrivateMessage(textMessage);
@@ -262,7 +262,7 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
   }
 
   const isHidden = lastMsg?.from == textMessage?.from && (
-    (checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string') || (!checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
+    (checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string') || (!checkIsPrivateMessage(textMessage) && ((lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) || (message.ext?.role === lastMsg?.ext?.role)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
 
 
   return (
@@ -368,14 +368,14 @@ const ImageMessage = observer(
       fcrChatRoom,
     });
     const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
-    const isToTeacher = message.ext?.receiverList[0]?.ext?.role == 1;
+    const isToTeacher = (message.ext?.receiverList && message.ext?.receiverList?.length > 0 && message.ext?.receiverList[0]?.ext?.role == 1) || message.ext?.role == 1;
     const imageMessage = message as AgoraIMImageMessage;
     const groupName = getRoomName();
 
     const isPrivate = checkIsPrivateMessage(imageMessage);
 
     const isHidden = lastMsg?.from == imageMessage?.from && (
-      (checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')) || (!checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
+      (checkIsPrivateMessage(imageMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')) || (!checkIsPrivateMessage(imageMessage) && ((lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) || (message.ext?.role === lastMsg?.ext?.role)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
 
     const imageUrl =
       imageMessage.url || (imageMessage.file ? URL.createObjectURL(imageMessage.file) : '');
@@ -506,7 +506,7 @@ const CustomMessage = observer(({ message }: { message: AgoraIMMessageBase }) =>
     fcrChatRoom,
   });
   const isSelfMessage = message?.from === fcrChatRoom.userInfo?.userId;
-  const isToTeacher = message.ext?.receiverList[0]?.ext?.role == 1;
+  const isToTeacher = (message.ext?.receiverList && message.ext?.receiverList?.length > 0 && message.ext?.receiverList[0]?.ext?.role == 1) || message.ext?.role == 1;
   const cmdMessage = message as AgoraIMCustomMessage;
   const isPrivate = checkIsPrivateMessage(cmdMessage);
 

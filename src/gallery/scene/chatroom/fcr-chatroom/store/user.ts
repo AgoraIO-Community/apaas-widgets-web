@@ -121,6 +121,7 @@ export class UserStore {
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListRefresh);
 
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
@@ -132,6 +133,7 @@ export class UserStore {
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._onUserLeft);
+    this._fcrChatRoom.off(AgoraIMEvents.UserListUpdated, this._onUserListRefresh);
 
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
@@ -191,6 +193,13 @@ export class UserStore {
     const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList()
     if(users){
       this.updateAllUsers(users)
+    }
+  }
+  @bound
+  private async _onUserListRefresh() {
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
     }
   }
   @computed get teacherName() {
