@@ -347,7 +347,7 @@ export class UserStore {
 
   //用户信息转空的流
   private userToEduStream(user: AgoraIMUserInfo): EduStream {
-    return new EduStream(new AgoraStream({
+    return new UseStream(new AgoraStream({
       streamUuid: '',
       streamName: '',
       fromUser: {
@@ -379,19 +379,6 @@ export class UserStore {
         streamList.push(this.userToEduStream(element))
       }
     });
-    // let meStream:EduStream|null = null;
-    // let teacherStream:EduStream|null = null;
-    // const streamList: EduStream[] = [];
-    // this.userSteamList.forEach(item=>{
-      //@ts-ignore
-      // if(EduRoleTypeEnum.teacher === EduRole2RteRole(window.EduClassroomConfig.sessionInfo.roomType, item?.fromUser?.role as string)){
-    //     teacherStream = item
-    //   }else if(item.isLocal){
-    //     meStream = item;
-    //   }else{
-    //     streamList.push(item)
-    //   }
-    // })
     streamList.sort((item1, item2) => { return item1.fromUser.userName < item2.fromUser.userName ? 1 : -1 })
     const firstList: EduStream[] = []
     if (meStream) {
@@ -412,5 +399,10 @@ export class UserStore {
   //麦克风是否开启
   checkMicEnabled(stream?: EduStream) {
     return AgoraRteMediaSourceState.started === stream?.audioSourceState && AgoraRteMediaPublishState.Published === stream?.audioState;
+  }
+}
+class UseStream extends EduStream{
+  get isLocal(): boolean {
+      return false
   }
 }
