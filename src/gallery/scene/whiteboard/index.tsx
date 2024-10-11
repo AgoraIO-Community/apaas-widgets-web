@@ -308,8 +308,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       ),
     );
     this.broadcast(AgoraExtensionWidgetEvent.WidgetCreated, { widgetId: this.widgetId });
-  
-
   }
 
   onDestroy() {
@@ -474,7 +472,11 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   @bound
   private async _loadAttributes() {
-    if (!this._isInitialUser) {
+    const shouldLoadAttributes =
+      //@ts-ignore
+      this.classroomStore.connectionStore._mainRoomScene?.dataStore._roomProperties?.get('groups')
+        ?.syncBoardScenes && this._isInitialUser;
+    if (!shouldLoadAttributes) {
       return;
     }
     const mainWindow = this._boardMainWindow;
@@ -483,7 +485,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       const attributes = await this.classroomStore.api.getWindowManagerAttributes(
         sessionInfo.roomUuid,
       );
-
       mainWindow.setAttributes(attributes);
     }
   }
@@ -793,7 +794,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         observables.currentStrokeWidth = strokeWidth;
         this._boardMainWindow?.changeStrokeWidth(strokeWidth);
       }),
-      clickExpansionTool: action(() => { }),
+      clickExpansionTool: action(() => {}),
       setToolbarPosition: action((pos: { x: number; y: number }) => {
         observables.toolbarPosition = pos;
       }),
@@ -805,8 +806,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
         this._updateDockPlacement();
         this._repositionToolbar();
       }),
-      captureApp: () => { },
-      captureScreen: () => { },
+      captureApp: () => {},
+      captureScreen: () => {},
       saveDraft: () => {
         this._getSnapshotImage();
       },
