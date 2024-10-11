@@ -313,7 +313,9 @@
 
 /** landscape **/
 .fcr-chatroom-mobile-messages-landscape {
-  height: 179px;
+  height: calc(100% - 40px - 12px - 90px );
+
+  /* height: 179px; */
   /* width: 296px; */
   width: 100%;
   overflow-y: auto;
