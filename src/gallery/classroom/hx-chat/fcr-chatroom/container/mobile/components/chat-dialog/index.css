@@ -84,7 +84,7 @@
 .fcr-chatroom-mobile-inputs-chat-dialog-title {
   position: relative;
   margin-top: 4px;
-  margin-bottom: 8px;
+  /* margin-bottom: 8px; */
   padding: 13px;
   text-align: left;
   color: #fff;
@@ -94,7 +94,7 @@
   font-weight: 800;
   line-height: 15px;
   text-align: left;
-  height: 50px;
+  height: 40px;
 
   border-radius: 16px 16px 0 0;
 }
