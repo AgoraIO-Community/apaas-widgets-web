@@ -79,7 +79,9 @@ export class PluginStore {
         const { userUuid } = this._widget.classroomConfig.sessionInfo;
         if (value instanceof Set && value?.has(userUuid)) {
           this.setBoardEditOpen(true);
-        } else this.setBoardEditOpen(false);
+        } else {
+          this.setBoardEditOpen(false);
+        }
       }
     });
 

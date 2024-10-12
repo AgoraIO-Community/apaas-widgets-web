@@ -347,7 +347,7 @@ export class UserStore {
 
   //用户信息转空的流
   private userToEduStream(user: AgoraIMUserInfo): EduStream {
-    return new UseStream(new AgoraStream({
+    return new UserStream(new AgoraStream({
       streamUuid: '',
       streamName: '',
       fromUser: {
@@ -401,7 +401,7 @@ export class UserStore {
     return AgoraRteMediaSourceState.started === stream?.audioSourceState && AgoraRteMediaPublishState.Published === stream?.audioState;
   }
 }
-class UseStream extends EduStream{
+class UserStream extends EduStream{
   get isLocal(): boolean {
       return false
   }
