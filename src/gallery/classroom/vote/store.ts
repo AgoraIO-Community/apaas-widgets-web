@@ -40,7 +40,6 @@ export class PluginStore {
 
     autorun(async () => {
       const widgets = this.z0Widgets.find((v: any) => v.widgetName == 'netlessBoard');
-
       if (widgets) {
         const res = await this._widget.widgetController.getWidgetProperties(widgets.widgetId)?.extra?.grantedUsers;
         const { userUuid } = this._widget.classroomConfig.sessionInfo;
@@ -75,8 +74,15 @@ export class PluginStore {
     });
 
     this._widget.addBroadcastListener({
-      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
-      onMessage: this.setBoardEditOpen,
+      messageType: AgoraExtensionWidgetEvent.BoardGrantedUsersUpdated,
+      onMessage: value => {
+        const { userUuid } = this._widget.classroomConfig.sessionInfo;
+        if (value instanceof Set && value?.has(userUuid)) {
+          this.setBoardEditOpen(true);
+        } else {
+          this.setBoardEditOpen(false);
+        }
+      }
     });
 
 
