@@ -143,11 +143,14 @@ export class RoomStore {
    * @param ignoreScreenShare  忽略屏幕分享
    * @param ignoreIm  忽略聊天
    * @param ignorePoll  忽略投票
+   * @param ignoreCountDown  忽略倒计时
    */
-  private getWidgetList(ignoreScreenShare: boolean, ignoreIm: boolean, ignorePoll: boolean, list: AgoraWidgetBase[]): AgoraWidgetBase[] {
+  private getWidgetList(ignoreConfig:{ignoreScreenShare: boolean, ignoreIm: boolean, ignorePoll: boolean,ignoreCountDown?:boolean}, list: AgoraWidgetBase[]): AgoraWidgetBase[] {
+    const {ignoreScreenShare, ignoreIm, ignorePoll,ignoreCountDown} = ignoreConfig
     return (list ? list : []).filter((v: { widgetName: string }) =>
       !(v.widgetName === 'easemobIM' && ignoreIm
         || v.widgetName === 'poll' && ignorePoll
+        || v.widgetName === 'countdownTimer' && (ignoreCountDown || false)
         || v.widgetName === 'poscreenSharell' && ignoreScreenShare)
     )
   }
@@ -170,7 +173,7 @@ export class RoomStore {
 
   //重置显示的Widget视图
   private resetShowDefaultWidget(isAddWieget:boolean){
-    const allWidgets = this.getWidgetList(false,true,true,this.z0Widgets || []);
+    const allWidgets = this.getWidgetList({ignoreScreenShare:false,ignoreIm:true,ignorePoll:true,ignoreCountDown:true},this.z0Widgets || []);
     if (allWidgets.length > 0) {
       this.setCurrentWidget(isAddWieget ? allWidgets[0] : allWidgets.find(item=>item.instanceId === this.currentWidget?.instanceId) || allWidgets[0])
     } else {
@@ -185,8 +188,8 @@ export class RoomStore {
       this._widget.classroomStore.widgetStore.widgetController,
     );
     //判断除了特殊的屏幕分享等Widget是否有更新
-    const lastList = this.getWidgetList(true, true, true, this._widgetInstanceList)
-    const newList = this.getWidgetList(true, true, true, Object.values(widgetInstances))
+    const lastList = this.getWidgetList({ignoreScreenShare:true,ignoreIm:true,ignorePoll:true}, this._widgetInstanceList)
+    const newList = this.getWidgetList({ignoreScreenShare:true,ignoreIm:true,ignorePoll:true}, Object.values(widgetInstances))
     const noSpecialWidgetChange = !this.compareWidgetList(lastList,newList)
     //是否是新增的
     const isAddWieget = lastList.length < newList.length || !!this.screenShareStream && (!!lastList.find(item=>item.widgetName === "netlessBoard")) && !newList.find(item=>item.widgetName === "netlessBoard")
