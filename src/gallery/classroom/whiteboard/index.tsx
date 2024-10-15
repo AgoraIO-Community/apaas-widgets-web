@@ -209,7 +209,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       widgetId: this.widgetId,
       visible: true,
     });
-
     const boardEvents = Object.values(AgoraExtensionRoomEvent).filter((key) =>
       key.startsWith('board-'),
     );
@@ -476,7 +475,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   @bound
   private async _loadAttributes() {
-    if (!this._isInitialUser) {
+    const shouldLoadAttributes =
+      //@ts-ignore
+      this.classroomStore.connectionStore._mainRoomScene?.dataStore._roomProperties?.get('groups')
+        ?.syncBoardScenes && this._isInitialUser;
+    if (!shouldLoadAttributes) {
       return;
     }
     const mainWindow = this._boardMainWindow;
@@ -759,6 +762,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       contentAreaSize: this.contentAreaSize,
       connectionState: this._connectionState,
       joinSuccessed: this._joinSuccessed,
+      isBoardFullScreen: false,
     });
 
     this._boardContext = {
@@ -793,6 +797,10 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
       }),
       setLandscape: action((landscape: boolean) => {
         observables.isLandscape = landscape;
+      }),
+
+      sendFullScreenMessage: action((isWhiteboardFullScreen: boolean) => {
+        observables.isBoardFullScreen = isWhiteboardFullScreen;
       }),
     };
     return this._boardContext;

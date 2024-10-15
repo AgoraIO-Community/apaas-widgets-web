@@ -1,0 +1,113 @@
+.fcr-textarea {
+  @apply fcr-bg-8 fcr-rounded-12 fcr-border-1;
+  border-style: solid;
+  border-width: 1px;
+  padding-bottom: 26px;
+  box-sizing: border-box;
+  transition: all 0.2s ease-in-out;
+  position: relative;
+}
+
+.fcr-textarea textarea {
+  @apply fcr-text-1;
+  outline: none;
+  width: 100%;
+  height: 100%;
+  border: none;
+  font-size: 12px;
+  background: transparent;
+  display: block;
+  padding: 12px;
+  overflow: hidden;
+  font-weight: 300;
+}
+
+.fcr-textarea textarea::placeholder {
+  @apply fcr-text-3;
+}
+
+.fcr-textarea:hover:not(.fcr-textarea--disabled) {
+  @apply fcr-border-notsb-inverse;
+}
+
+.fcr-textarea.fcr-textarea--focused:not(.fcr-textarea--disabled) {
+  @apply fcr-border-brand;
+}
+
+.fcr-textarea-wc {
+  @apply fcr-text-3;
+  position: absolute;
+  font-size: 12px;
+  bottom: 7px;
+  right: 12px;
+  line-height: 1;
+}
+
+.fcr-textarea--overflow .fcr-textarea-overflow {
+  color: red;
+}
+
+.fcr-textarea--non-count {
+  padding-bottom: 0;
+}
+
+.fcr-textarea--non-resizable textarea {
+  resize: none;
+}
+
+.fcr-textarea-divider {
+  @apply fcr-border-1;
+  border-top-width: 1px;
+  border-top-style: solid;
+}
+
+.fcr-textarea.fcr-textarea--disabled {
+  cursor: not-allowed;
+  opacity: 50%;
+}
+
+.fcr-textarea.fcr-textarea--disabled textarea {
+  @apply fcr-text-2;
+  cursor: not-allowed;
+}
+
+.fcr-textarea.fcr-textarea--disabled textarea::placeholder {
+  @apply fcr-text-2;
+}
+
+.fcr-textarea.fcr-textarea-borderless {
+  @apply fcr-rounded-none;
+  border-top-width: 0;
+  border-left-width: 0;
+  border-right-width: 0;
+  background: none;
+  display: flex;
+  align-items: center;
+  padding-left: 4px;
+  padding-bottom: 12px;
+  padding-right: 12px;
+}
+
+.fcr-textarea.fcr-textarea-borderless.fcr-textarea--focused {
+  @apply fcr-border-notsb-inverse;
+  box-shadow: none;
+}
+
+.fcr-textarea.fcr-textarea-borderless .fcr-textarea-label {
+  @apply fcr-font-title fcr-text-1;
+  font-size: 20px;
+  margin-right: 22px;
+}
+
+.fcr-textarea .fcr-textarea__inner-editor {
+  @apply fcr-text-1;
+  outline: none;
+  word-break: break-all;
+  font-size: 12px;
+  font-weight: 400;
+}
+
+.fcr-textarea .fcr-textarea__inner-editor[contenteditable='true']:empty::before {
+  @apply fcr-text-3;
+  content: attr(placeholder);
+}

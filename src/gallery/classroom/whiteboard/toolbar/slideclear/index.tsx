@@ -24,7 +24,7 @@ export default class CleanSimpleVerify extends React.Component<
   CleanSimpleVerifyState
 > {
   static defaultProps = {
-    width: 180,
+    width: 209,
     tips: '滑动清除所有',
   };
 
@@ -186,7 +186,7 @@ export default class CleanSimpleVerify extends React.Component<
     const slideStyle = {
       borderRadius: `${this.state.slideWidth / 2}px`,
       width: `${this.state.diff + this.state.slideWidth}px`,
-      maxWidth: `${this.props.width - 6}px`,
+      // maxWidth: `${this.props.width - 6}px`,
       opacity: 1,
       transitionDuration: !this.state.isMouseEnter || !this.isMousedown ? '.3s' : '0s',
     };
@@ -199,7 +199,7 @@ export default class CleanSimpleVerify extends React.Component<
       <div style={this.style} className="simple-verify">
         <div className="verify-tips">
           {this.props.tips}
-          <SvgImg size={12} type={SvgIconEnum.FCR_MOBILE_ARROW_RIGHT} />
+          <SvgImg size={12} type={SvgIconEnum.FCR_MOBILE_ARROW_RIGHT} colors={{iconPrimary:'#FEFEFE'}} />
         </div>
         <div className="verify-box">
           <div style={slideStyle} className="veriry-slide" />
@@ -235,7 +235,7 @@ export const CleanModal = observer(({ onToggle }: any) => {
         }}
       />
       <div className="fcr-mobile-slide__close" onClick={() => onToggle(false)}>
-        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} colors={{ iconPrimary: '#FB584E' }} size={16} />
+        <SvgImg type={SvgIconEnum.FCR_MOBILE_CLOSE} colors={{ iconPrimary: '#F5F5F5' }} size={16} />
       </div>
     </>
   );

@@ -121,13 +121,13 @@ export const HalfRoundedPagination: FC<HalfRoundedProps> = ({
     <div className="fcr-pagination-half-r-wrapper">
       <div className={cls}>
         <div className="fcr-pagination__extra" onClick={onAdd}>
-          <SvgImg type={SvgIconEnum.FCR_MOBILE_NEWWHITEBOARDPAGE} size={24} />
+          <SvgImg type={SvgIconEnum.FCR_MOBILE_NEWWHITEBOARDPAGE} size={24} colors={{iconPrimary:'#151515'}} />
         </div>
         {total > 1 ? (
           <div className="fcr-pagination__expage">
             <div className="fcr-pagination__prev">
               <button className={prevCls} onClick={handlePrev}>
-                <SvgImg type={SvgIconEnum.FCR_DROPUP4} size={24} />
+                <SvgImg type={SvgIconEnum.FCR_DROPUP4} size={24} colors={{iconPrimary:'#151515'}}/>
               </button>
             </div>
             <div
@@ -144,7 +144,7 @@ export const HalfRoundedPagination: FC<HalfRoundedProps> = ({
             </div>
             <div className="fcr-pagination__next">
               <button className={nextCls} onClick={handleNext}>
-                <SvgImg type={SvgIconEnum.FCR_DROPDOWN4} size={24} />
+                <SvgImg type={SvgIconEnum.FCR_DROPDOWN4} size={24} colors={{iconPrimary:'#151515'}}/>
               </button>
             </div>
           </div>

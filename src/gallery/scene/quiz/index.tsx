@@ -86,17 +86,17 @@ export class FcrPopupQuizWidget extends FcrUISceneWidget {
     return role === 0;
   }
   async onInstall(controller: AgoraWidgetController) {
-    await addResource();
+    // await addResource();
 
-    controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
-      id: this.widgetName,
-      name: transI18n('fcr_popup_quiz'),
-      iconType: SvgIconEnum.FCR_V2_ANSWER,
-    });
+    // controller.broadcast(AgoraExtensionWidgetEvent.RegisterCabinetTool, {
+    //   id: this.widgetName,
+    //   name: transI18n('fcr_popup_quiz'),
+    //   iconType: SvgIconEnum.FCR_V2_ANSWER,
+    // });
   }
 
   onUninstall(controller: AgoraWidgetController) {
-    controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
+    // controller.broadcast(AgoraExtensionWidgetEvent.UnregisterCabinetTool, this.widgetName);
   }
 
   @action

@@ -26,18 +26,31 @@ export const PollH5 = observer(() => {
     forceLandscape,
     addSubmitToast,
     landscapeToolBarVisible,
+    z0Widgets,
+    boardEditOpen,
+    isOpenScreenShare
   } = usePluginStore();
+
   const transI18n = useI18n();
   const [selectedOptions, setSelectedOptions] = useState<Set<number>>(new Set());
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [width, setWidth] = useState<number | null>(null);
+  const [pollBottom, setPollBottom] = useState<number>(87);
   const [isShow, setIsShow] = useState<boolean>(true);
+  const [ratio, setRatio] = useState<number>(window.innerHeight / 812);
+
+  const widgets = z0Widgets.filter((v: any) => v.widgetName !== 'easemobIM');
+
   const timer = useRef<NodeJS.Timeout>();
   const timer1 = useRef<NodeJS.Timeout>();
+
+
   useEffect(() => {
     const language = getLanguage()
-    setWidth(language === 'en' ? 32 : 49) 
+    setWidth(language === 'en' ? 32 : 49)
   }, [])
+
+
   useEffect(() => {
     if (timer.current) {
       clearTimeout(timer.current);
@@ -93,66 +106,89 @@ export const PollH5 = observer(() => {
       setIsSubmitting(false);
     }
   };
+
+  useEffect(() => {
+    const isOpenWidget = widgets?.find((v: any) => ['netlessBoard', 'mediaPlayer', 'webView', 'screenShare'].includes(v.widgetName)) || isOpenScreenShare;
+    if (!!isOpenWidget) {
+      boardEditOpen ? setPollBottom(isLandscape ? 87 : 265) : setPollBottom(isLandscape ? 12 : 200);
+    } else {
+      setPollBottom(isLandscape ? 12 : 87);
+    }
+  }, [widgets?.length, isLandscape, boardEditOpen, isOpenScreenShare])
+
+
+  useEffect(() => {
+    setRatio(isLandscape ? window.innerHeight / 375 : window.innerHeight / 812)
+  }, [isLandscape])
+
   return minimize ? (
     <>
       {isLandscape
         ? createPortal(
-            <>{landscapeToolBarVisible ? <div
-              className={classNames(`fcr-mobile-poll-widget-minimize fcr-mobile-poll-widget-minimize-landscape`, !isShow && 'landmin')}
-              onClick={() => {
-                setMinimize(false);
-              }}>
-              <div className="fcr-mobile-poll-widget-minimize-icon">
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.POLL}></SvgImgMobile>
-              </div>
-              <div className={classNames('fcr-mobile-poll-widget-minimize-content', !isShow && 'hidden')} style={{ width: `${width}px`, transition: 'width 0.2s linear'}}>
-                <span>{transI18n('widget_polling.appName')}</span>
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  colors={{ iconPrimary: '#fff' }}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.POLL_ICON}
-                  size={12}></SvgImgMobile>
-              </div>
-              
-            </div> : null}</>,
-            document.querySelector('.landscape-bottom-tools')!,
-          )
-        : createPortal(
-            <div
-              className={classNames(`fcr-mobile-poll-widget-minimize active`, !isShow && 'min')}
-              onClick={() => {
-                setMinimize(false);
-              }}>
-              <div className="fcr-mobile-poll-widget-minimize-icon">
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.POLL}></SvgImgMobile>
-              </div>
+          <div
+            className={classNames(`fcr-mobile-poll-widget-minimize fcr-mobile-poll-widget-minimize-landscape`, !isShow && 'landmin')}
+            onClick={() => {
+              setMinimize(false);
+            }}
+            style={{ bottom: (pollBottom * ratio) }}
+          >
 
-              <div className={classNames('fcr-mobile-poll-widget-minimize-content', !isShow && 'hidden')} style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear'} : { width: 'fit-content'}}>
-                <span>{transI18n('widget_polling.appName')}</span>
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  colors={{ iconPrimary: '#fff' }}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.POLL_ICON}
-                  size={12}></SvgImgMobile>
-              </div>
-            </div>,
-            document.querySelector('.fcr-poll-mobile-widget')!,
-          )}
+            <div className="fcr-mobile-poll-widget-minimize-icon">
+              <SvgImgMobile
+                forceLandscape={forceLandscape}
+                landscape={isLandscape}
+                type={SvgIconEnum.POLL_NEW}
+                size={26}
+              ></SvgImgMobile>
+            </div>
+            <div className={classNames('fcr-mobile-poll-widget-minimize-content', !isShow && 'hidden')} style={{ width: `${width}px`, transition: 'width 0.2s linear' }}>
+              <span>{transI18n('widget_polling.appName')}</span>
+              <SvgImgMobile
+                forceLandscape={forceLandscape}
+                colors={{ iconPrimary: '#fff' }}
+                landscape={isLandscape}
+                type={SvgIconEnum.POLL}
+                size={12}></SvgImgMobile>
+            </div>
+
+          </div>,
+          document.querySelector('.fcr-poll-mobile-widget')!,
+        )
+        : createPortal(
+          <div
+            className={classNames(`fcr-mobile-poll-widget-minimize active`, !isShow && 'min')}
+            onClick={() => {
+              setMinimize(false);
+            }}
+            style={{ bottom:  (pollBottom * ratio) }}
+          >
+            <div className="fcr-mobile-poll-widget-minimize-icon">
+              <SvgImgMobile
+                forceLandscape={forceLandscape}
+                landscape={isLandscape}
+                type={SvgIconEnum.POLL_NEW}
+                size={26}
+              ></SvgImgMobile>
+            </div>
+
+            <div className={classNames('fcr-mobile-poll-widget-minimize-content', !isShow && 'hidden')} style={width !== null ? { width: `${width}px`, transition: 'all 0.2s linear' } : { width: 'fit-content' }}>
+              <span>{transI18n('widget_polling.appName')}</span>
+              <SvgImgMobile
+                forceLandscape={forceLandscape}
+                colors={{ iconPrimary: '#fff' }}
+                landscape={isLandscape}
+                type={SvgIconEnum.POLL_ICON}
+                size={12}></SvgImgMobile>
+            </div>
+          </div>,
+          document.querySelector('.fcr-poll-mobile-widget')!,
+        )}
     </>
   ) : (
     createPortal(
       <div
-        className={`fcr-mobile-poll-widget-modal ${
-          isLandscape ? 'fcr-mobile-poll-widget-modal-landscape' : ''
-        }`}>
+        className={`fcr-mobile-poll-widget-modal ${isLandscape ? 'fcr-mobile-poll-widget-modal-landscape' : ''
+          }`}>
         <div
           className="fcr-mobile-poll-widget-modal-close"
           onClick={() => {
@@ -161,7 +197,7 @@ export const PollH5 = observer(() => {
           <SvgImgMobile
             forceLandscape={forceLandscape}
             landscape={isLandscape}
-            type={SvgIconEnum.CLOSE}></SvgImgMobile>
+            type={SvgIconEnum.POLL_CLOSE}></SvgImgMobile>
         </div>
         <div className="fcr-mobile-poll-widget-modal-content">
           <div
@@ -198,9 +234,8 @@ export const PollH5 = observer(() => {
                     <div
                       onClick={() => handleOptionClick(index)}
                       key={value}
-                      className={`fcr-mobile-poll-widget-option ${
-                        isSelected ? 'fcr-mobile-poll-widget-option-selected' : ''
-                      } ${isShowResultSection ? 'fcr-mobile-poll-widget-option-result' : ''}`}>
+                      className={`fcr-mobile-poll-widget-option ${isSelected ? 'fcr-mobile-poll-widget-option-selected' : ''
+                        } ${isShowResultSection ? 'fcr-mobile-poll-widget-option-result' : ''}`}>
                       <p>{value}</p>
                       {isShowResultSection && (
                         <>
@@ -209,11 +244,10 @@ export const PollH5 = observer(() => {
                             <div>{percentage}</div>
                           </div>
                           <div
-                            className={`fcr-mobile-poll-widget-option-result-progress ${
-                              isSelected
-                                ? 'fcr-mobile-poll-widget-option-result-progress-selected'
-                                : ''
-                            }`}
+                            className={`fcr-mobile-poll-widget-option-result-progress ${isSelected
+                              ? 'fcr-mobile-poll-widget-option-result-progress-selected'
+                              : ''
+                              }`}
                             style={{ width: percentage }}></div>
                         </>
                       )}
@@ -230,22 +264,21 @@ export const PollH5 = observer(() => {
             {!isShowResultSection && (
               <div
                 onClick={handleSubmit}
-                className={`fcr-mobile-poll-widget-submit ${
-                  isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
-                }`}>
+                className={`fcr-mobile-poll-widget-submit ${isSubmitBtnDisabled ? 'fcr-mobile-poll-widget-submit-disabled' : ''
+                  }`}>
                 {isSubmitting ? (
                   <SvgImgMobile
                     className="fcr-button-loading"
                     forceLandscape={forceLandscape}
                     landscape={isLandscape}
                     type={SvgIconEnum.FCR_BTN_LOADING}
-                    size={48}></SvgImgMobile>
+                    size={40}></SvgImgMobile>
                 ) : (
                   <SvgImgMobile
                     forceLandscape={forceLandscape}
                     landscape={isLandscape}
                     type={SvgIconEnum.TICK}
-                    size={48}></SvgImgMobile>
+                    size={40}></SvgImgMobile>
                 )}
               </div>
             )}

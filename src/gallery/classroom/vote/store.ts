@@ -1,7 +1,7 @@
 import { Toast } from '../../../components/toast';
 import { action, autorun, computed, observable, runInAction } from 'mobx';
 import { AgoraPolling } from '.';
-import { transI18n, bound } from 'agora-common-libs';
+import { transI18n, bound, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../events';
 import { OrientationEnum } from '../hx-chat/type';
 
@@ -30,6 +30,23 @@ export class PluginStore {
       });
     });
 
+    autorun(() => {
+      if (this._widget.classroomStore.roomStore.screenShareStreamUuid) {
+        this.setOpenScreenShare(true);
+      } else {
+        this.setOpenScreenShare(false);
+      }
+    })
+
+    autorun(async () => {
+      const widgets = this.z0Widgets.find((v: any) => v.widgetName == 'netlessBoard');
+      if (widgets) {
+        const res = await this._widget.widgetController.getWidgetProperties(widgets.widgetId)?.extra?.grantedUsers;
+        const { userUuid } = this._widget.classroomConfig.sessionInfo;
+        this.setBoardEditOpen(!!res[userUuid]);
+      }
+    })
+
     this._widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
       onMessage: this._handleMobileLandscapeToolBarStateChanged,
@@ -46,7 +63,72 @@ export class PluginStore {
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
+      onMessage: this._pollMinimizeStateChanged,
+    });
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    });
+
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.BoardGrantedUsersUpdated,
+      onMessage: value => {
+        const { userUuid } = this._widget.classroomConfig.sessionInfo;
+        if (value instanceof Set && value?.has(userUuid)) {
+          this.setBoardEditOpen(true);
+        } else {
+          this.setBoardEditOpen(false);
+        }
+      }
+    });
+
+
     this._widget.broadcast(AgoraExtensionWidgetEvent.RequestOrientationStates, undefined);
+  }
+
+  @observable isOpenScreenShare: boolean = false;
+
+  @action.bound
+  setOpenScreenShare(value: boolean) {
+    this.isOpenScreenShare = value;
+  }
+
+  @observable
+  private _widgetInstanceList: AgoraWidgetBase[] = [];
+
+  @bound
+  private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
+    console.log(
+      'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
+      this._widget.classroomStore.widgetStore.widgetController,
+    );
+    this._widgetInstanceList = Object.values(widgetInstances);
+  }
+
+  @computed
+  get z0Widgets() {
+    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
+    const arr: any = [];
+    for (let i = 0; i < widgets.length; i++) {
+      const item = widgets[i];
+      arr.unshift(item);
+    }
+    return arr;
+  }
+
+  @observable boardEditOpen: boolean = this._widget.classroomStore.groupStore.state === 1;
+
+  @action.bound
+  setBoardEditOpen(value: any) {
+    if (typeof value == 'boolean') {
+      this.boardEditOpen = value;
+    } else {
+      this.boardEditOpen = value && value?.length && value[1];
+    }
   }
 
   @observable minimize = true;
@@ -86,13 +168,16 @@ export class PluginStore {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
   }
+  @action.bound
+  private _pollMinimizeStateChanged(params: boolean) {
+    this.minimize = params
+  }
   @bound
   handleQueryPollMinimizeState() {
     this._widget.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, this.minimize);
   }
   @action.bound
   setMinimize(minimize: boolean) {
-    this.minimize = minimize;
     this._widget.broadcast(AgoraExtensionWidgetEvent.PollMinimizeStateChanged, minimize);
   }
 
@@ -169,7 +254,7 @@ export class PluginStore {
           Toast.show({
             type: 'error',
             text: JSON.stringify(e),
-            closeToast: () => {},
+            closeToast: () => { },
           });
           reject(e);
         });
@@ -211,6 +296,12 @@ export class PluginStore {
     this.options = ['', ''];
     this.selectedOptions = [];
     this.type = 'radio';
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.MobileLandscapeToolBarVisibleChanged,
+      onMessage: this._handleMobileLandscapeToolBarStateChanged,
+    });
+
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionRoomEvent.OrientationStatesChanged,
       onMessage: this._handleOrientationChanged,
@@ -218,6 +309,20 @@ export class PluginStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionWidgetEvent.QueryPollMinimizeState,
       onMessage: this.handleQueryPollMinimizeState,
+    });
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.PollMinimizeStateChanged,
+      onMessage: this._pollMinimizeStateChanged,
+    });
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.GetApplications,
+      onMessage: this._handleGetWidgets,
+    });
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionRoomEvent.BoardGrantPrivilege,
+      onMessage: this.setBoardEditOpen,
     });
   }
 

@@ -6,7 +6,9 @@ import { ThumbsUpAni } from '../container/mobile/components/thumbs-up/thumbs-up'
 import { transI18n, bound, Scheduler, AgoraWidgetBase } from 'agora-common-libs';
 import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../../events';
 import { OrientationEnum } from '../../type';
-import { EduStream } from 'agora-edu-core';
+import { EduClassroomConfig, EduStream } from 'agora-edu-core';
+import { show } from 'antd-mobile/es/components/dialog/show';
+
 export enum MobileCallState {
   Initialize = 'initialize',
   Processing = 'processing',
@@ -15,6 +17,8 @@ export enum MobileCallState {
   VideoAndVoiceCall = 'videoAndVoiceCall',
   DeviceOffCall = 'deviceOffCall',
 }
+
+
 export class RoomStore {
   private _disposers: (() => void)[] = [];
   roomName = this._widget.classroomConfig.sessionInfo.roomName;
@@ -32,6 +36,8 @@ export class RoomStore {
   @observable
   private _widgetInstanceList: AgoraWidgetBase[] = [];
   @observable currentWidget: AgoraWidgetBase | undefined = undefined;
+
+  @observable z0Widgets: AgoraWidgetBase[] | undefined = [];
 
   //用于本地展示点赞数
   @observable thumbsUpRenderCache = 0;
@@ -53,15 +59,7 @@ export class RoomStore {
     this._disposers.push(
       reaction(
         () => this.screenShareStream,
-        () => {
-          this.resetDefaultCurrentWidget();
-          const shareWidget = this._widgetInstanceList.find(
-            (item) => item.widgetName === 'screenShare',
-          );
-          if (shareWidget) {
-            this.setCurrentWidget(shareWidget);
-          }
-        },
+        () => {this.onScreenShareChange();},
       ),
     );
     this.getWidgets();
@@ -83,6 +81,13 @@ export class RoomStore {
     });
     this._thumbsUpCountCache = thumbsUpCount;
   }
+
+  @bound
+  getRoomName() {
+    const { groupDetails, currentSubRoom } = this._widget.classroomStore.groupStore;
+    return currentSubRoom ? groupDetails.get(currentSubRoom)?.groupName : ''
+  }
+
   @action.bound
   addToast(message: string, type: 'error' | 'warning' | 'success' | undefined) {
     return this._widget.ui.addToast(message, type);
@@ -132,65 +137,121 @@ export class RoomStore {
     console.log('getWidgetsgetWidgetsgetWidgets');
     this._widget.broadcast(AgoraExtensionRoomEvent.ChangeRoom, true);
   }
+
+  /**
+   * 获取组件列表 
+   * @param ignoreScreenShare  忽略屏幕分享
+   * @param ignoreIm  忽略聊天
+   * @param ignorePoll  忽略投票
+   * @param ignoreCountDown  忽略倒计时
+   */
+  private getWidgetList(ignoreConfig:{ignoreScreenShare: boolean, ignoreIm: boolean, ignorePoll: boolean,ignoreCountDown?:boolean}, list: AgoraWidgetBase[]): AgoraWidgetBase[] {
+    const {ignoreScreenShare, ignoreIm, ignorePoll,ignoreCountDown} = ignoreConfig
+    return (list ? list : []).filter((v: { widgetName: string }) =>
+      !(v.widgetName === 'easemobIM' && ignoreIm
+        || v.widgetName === 'poll' && ignorePoll
+        || v.widgetName === 'countdownTimer' && (ignoreCountDown || false)
+        || v.widgetName === 'poscreenSharell' && ignoreScreenShare)
+    )
+  }
+  //比较两个Widget列表是否是一致的
+  private compareWidgetList(origin?: AgoraWidgetBase[], target?: AgoraWidgetBase[]): boolean {
+    if (!(origin && target)) {
+      return true
+    } else if (origin.length !== target.length) {
+      return false
+    }
+    const originList = [...origin].sort((item1, item2) => item1.widgetName.localeCompare(item2.widgetName))
+    const targetList = [...target].sort((item1, item2) => item1.widgetName.localeCompare(item2.widgetName))
+    for (const index in originList) {
+      if (originList[index].widgetName !== targetList[index].widgetName) {
+        return false
+      }
+    }
+    return true
+  }
+
+  //重置显示的Widget视图
+  private resetShowDefaultWidget(isAddWieget:boolean){
+    const allWidgets = this.getWidgetList({ignoreScreenShare:false,ignoreIm:true,ignorePoll:true,ignoreCountDown:true},this.z0Widgets || []);
+    if (allWidgets.length > 0) {
+      this.setCurrentWidget(isAddWieget ? allWidgets[0] : allWidgets.find(item=>item.instanceId === this.currentWidget?.instanceId) || allWidgets[0])
+    } else {
+      this.setCurrentWidget(undefined);
+    }
+  }
+
   @bound
   private _handleGetWidgets(widgetInstances: Record<string, AgoraWidgetBase>) {
     console.log(
       'AgoraExtensionRoomEvent.GetApplications_handleGetWidgets',
       this._widget.classroomStore.widgetStore.widgetController,
     );
+    //判断除了特殊的屏幕分享等Widget是否有更新
+    const lastList = this.getWidgetList({ignoreScreenShare:true,ignoreIm:true,ignorePoll:true}, this._widgetInstanceList)
+    const newList = this.getWidgetList({ignoreScreenShare:true,ignoreIm:true,ignorePoll:true}, Object.values(widgetInstances))
+    const noSpecialWidgetChange = !this.compareWidgetList(lastList,newList)
+    //是否是新增的
+    const isAddWieget = lastList.length < newList.length || !!this.screenShareStream && (!!lastList.find(item=>item.widgetName === "netlessBoard")) && !newList.find(item=>item.widgetName === "netlessBoard")
+    //更新总的记录
     this._widgetInstanceList = Object.values(widgetInstances);
-    this.resetDefaultCurrentWidget();
-  }
-  @computed
-  get z0Widgets() {
-    console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
-    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-    const arr: any = [];
-    for (let i = 0; i < widgets.length; i++) {
-      const item = widgets[i];
-      arr.unshift(item);
+    //总记录中相应等级的数据
+    const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0 || zContainer === 10);
+    const arr: AgoraWidgetBase[] = [];
+    widgets.forEach(item=>arr.unshift(item))
+    const oldList: AgoraWidgetBase[] | undefined = this.z0Widgets;
+    // 我们需要从 list1 中找到 4，并确定它应该插入 list2 的正确位置
+    const showList: AgoraWidgetBase[] = [];
+    let isAddScreenShare = false
+    if (oldList) {
+      let find: AgoraWidgetBase | undefined
+      arr.forEach((item) => {
+        find = oldList.find(old => old.instanceId === item.instanceId && item.widgetId === old.widgetId)
+        if (find && !isAddScreenShare) {
+          const index = oldList.indexOf(find)
+          if (index && oldList[Math.max(0, index - 1)].widgetName === 'screenShare') {
+            showList.push(oldList[Math.max(0, index - 1)])
+            isAddScreenShare = true
+          }
+        }
+        showList.push(item)
+        if (find && !isAddScreenShare) {
+          const index = oldList.indexOf(find)
+          if (index && oldList[Math.min(oldList.length - 1, index + 1)].widgetName === 'screenShare') {
+            showList.push(oldList[Math.min(oldList.length - 1, index + 1)])
+            isAddScreenShare = true
+          }
+        }
+      })
+      if (!showList.find(item => item.widgetName === 'screenShare')) {
+        find = oldList.find(old => old.widgetName === 'screenShare')
+        if (find) {
+          showList.push(find)
+        }
+      }
+    }else{
+      showList.concat(arr)
     }
-    return arr;
+    this.z0Widgets = showList;
+    if(noSpecialWidgetChange){
+      this.resetShowDefaultWidget(isAddWieget)
+    }
   }
 
   /**
-   * 重置默认当前的weidget，如果未设置
+   * 屏幕共享改变逻辑
    */
   @action.bound
-  private resetDefaultCurrentWidget() {
-    if (this.screenShareStream && this.isLandscape) {
-      const hasScreenShare = this._widgetInstanceList.some(
-        (item) => item.widgetName === 'screenShare',
-      );
-      if (!hasScreenShare) {
-        this._widgetInstanceList.push(
-          new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore),
-        );
+  private onScreenShareChange() {
+    if (this.screenShareStream) {
+      this.z0Widgets?.unshift(new ScreenShareWidget(this._widget.widgetController, this._widget.classroomStore))
+      this.resetShowDefaultWidget(true)
+    } else {
+      const index = this.z0Widgets?.findIndex(item=>item.widgetName === 'screenShare')
+      if(index !== null && index !== undefined && index >= 0){
+        this.z0Widgets?.splice(index,1)
+        this.resetShowDefaultWidget(false)
       }
-      this.setCurrentWidget(
-        this._widgetInstanceList.find((item) => item.widgetName === 'screenShare'),
-      );
-    }
-    if (!this.isLandscape || !this.screenShareStream) {
-      this._widgetInstanceList = this._widgetInstanceList.filter(
-        (item) => item.widgetName !== 'screenShare',
-      );
-      if (this.currentWidget?.widgetName === 'screenShare') {
-        this.setCurrentWidget(undefined);
-      }
-    }
-
-    if (!this.currentWidget || 'easemobIM' === this.currentWidget?.widgetId) {
-      const widgets = this._widgetInstanceList.filter(({ zContainer }) => zContainer === 0);
-      console.log('AgoraExtensionRoomEvent.GetApplications_z0Widgets', this._widgetInstanceList);
-
-      const arr: any = [];
-      for (let i = 0; i < widgets.length; i++) {
-        const item = widgets[i];
-        arr.unshift(item);
-      }
-      const allWidgets = arr.filter((v: { widgetName: string }) => v.widgetName !== 'easemobIM');
-      this.setCurrentWidget(allWidgets[0]);
     }
   }
 
@@ -403,8 +464,6 @@ export class RoomStore {
   }) {
     this.orientation = params.orientation;
     this.forceLandscape = params.forceLandscape;
-
-    this.resetDefaultCurrentWidget();
   }
   @bound
   quitForceLandscape() {

@@ -315,6 +315,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     this.unmount();
 
     this.broadcast(AgoraExtensionWidgetEvent.WidgetDestroyed, { widgetId: this.widgetId });
+
     if (this._listenerDisposer) {
       this._listenerDisposer();
     }
@@ -471,7 +472,11 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   @bound
   private async _loadAttributes() {
-    if (!this._isInitialUser) {
+    const shouldLoadAttributes =
+      //@ts-ignore
+      this.classroomStore.connectionStore._mainRoomScene?.dataStore._roomProperties?.get('groups')
+        ?.syncBoardScenes && this._isInitialUser;
+    if (!shouldLoadAttributes) {
       return;
     }
     const mainWindow = this._boardMainWindow;
@@ -480,7 +485,6 @@ export class FcrBoardWidget extends FcrUISceneWidget {
       const attributes = await this.classroomStore.api.getWindowManagerAttributes(
         sessionInfo.roomUuid,
       );
-
       mainWindow.setAttributes(attributes);
     }
   }

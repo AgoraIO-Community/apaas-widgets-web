@@ -83,8 +83,8 @@
   padding-right: 20px;
   padding-left: 10px;
   line-height: 130%;
-  color: var(--fcr_ui_scene_white10, #fff);
-  background: var(--fcr_ui_scene_ramp_brand4, rgba(66, 98, 255, 0.6));
+  background: var(--interactive-primary-40, #9E007E66);
+  color: var(--inverse-text-primary, #FEFEFE);
 }
 .fcr-mobile-board__connect .loading-icon {
   width: 60px;

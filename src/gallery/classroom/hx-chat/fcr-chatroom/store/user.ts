@@ -1,5 +1,5 @@
 import { AgoraHXChatWidget } from '../..';
-import { computed, observable, runInAction, action } from 'mobx';
+import { computed, observable,IReactionDisposer, runInAction, action,reaction } from 'mobx';
 
 import { AgoraIMBase, AgoraIMEvents, AgoraIMUserInfo } from '../../../../../common/im/wrapper/typs';
 import { Scheduler, bound, transI18n } from 'agora-common-libs';
@@ -7,6 +7,8 @@ import { AgoraExtensionRoomEvent, AgoraExtensionWidgetEvent } from '../../../../
 import { CustomMessageHandsUpState } from '../../type';
 import { iterateMap } from 'agora-common-libs';
 import { AgoraIM } from '../../../../../common/im/wrapper';
+import { AgoraRteAudioSourceType, AgoraRteMediaPublishState, AgoraRteMediaSourceState, AgoraRteVideoSourceType, AgoraStream } from 'agora-rte-sdk';
+import { EduRole2RteRole, EduRoleTypeEnum, EduStream, RteRole2EduRole } from 'agora-edu-core';
 
 enum UserMutedState {
   Unmuted = 0,
@@ -16,11 +18,13 @@ export class UserStore {
   @observable muteList: string[] = [];
   @observable userCarouselAnimDelay = 3000;
   @observable userMap: Map<string, AgoraIMUserInfo> = new Map();
+  @observable userSteamList: EduStream[] = []
   @observable joinedUser?: AgoraIMUserInfo;
   @observable userMuted = false;
   @observable isRaiseHand = false;
   @observable raiseHandTooltipVisible = false;
   @observable searchKey = '';
+  private _disposers: IReactionDisposer[] = [];
   @action.bound
   setSearchKey(key: string) {
     this.searchKey = key;
@@ -35,6 +39,12 @@ export class UserStore {
     this._onUserJoined = this._onUserJoined.bind(this);
     this._initUserMuted();
   }
+
+  @bound
+  getTeacherName() {
+    return this._widget.classroomStore.userStore.mainRoomDataStore.teacherList.values().next()?.value?.userName;
+  }
+
   @computed
   get userList() {
     return iterateMap(this.userMap, {
@@ -94,6 +104,7 @@ export class UserStore {
   private _addEventListeners() {
     this._fcrChatRoom.on(AgoraIMEvents.UserJoined, this._onUserJoined);
     this._fcrChatRoom.on(AgoraIMEvents.UserLeft, this._onUserLeft);
+    this._fcrChatRoom.on(AgoraIMEvents.UserListUpdated, this._onUserListRefresh);
 
     this._fcrChatRoom.on(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.on(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
@@ -105,10 +116,29 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
+    this._disposers.push(
+      reaction(
+        () => this.userList,
+        (data) => {
+          const { streamByUserUuid, streamByStreamUuid } = this._widget.classroomStore.streamStore;
+          this.userSteamList = []
+          data.forEach(user => {
+            const streamUuids = streamByUserUuid.get(user.ext.userUuid) || new Set();
+            for (const streamUuid of streamUuids) {
+              const stream = streamByStreamUuid.get(streamUuid);
+              if (stream) {
+                this.userSteamList.push(stream)
+              }
+            }
+          })
+        },
+      ),
+    );
   }
   private _removeEventListeners() {
     this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserJoined);
-    this._fcrChatRoom.off(AgoraIMEvents.UserJoined, this._onUserLeft);
+    this._fcrChatRoom.off(AgoraIMEvents.UserLeft, this._onUserLeft);
+    this._fcrChatRoom.off(AgoraIMEvents.UserListUpdated, this._onUserListRefresh);
     this._fcrChatRoom.off(AgoraIMEvents.UserMuted, this._onUserMuted);
     this._fcrChatRoom.off(AgoraIMEvents.UserUnmuted, this._onUserUnmuted);
     this._widget.removeBroadcastListener({
@@ -119,13 +149,24 @@ export class UserStore {
       messageType: AgoraExtensionRoomEvent.RaiseHandStateChanged,
       onMessage: this._onRaiseHandStateChanged,
     });
+    this._disposers.forEach((d) => d());
+    this._disposers = [];
   }
   @observable
   private _privateUser?: AgoraIMUserInfo;
+
   @computed
   get privateUser() {
     return this._privateUser;
   }
+
+  @bound
+  findUserConfig(targetUser: EduStream) {
+    const config = this.userList.find((user) => user.ext.userUuid === targetUser?.fromUser?.userUuid);
+
+    return config;
+  }
+
   @action.bound
   setPrivateUser(user: AgoraIMUserInfo | undefined) {
     this._fcrChatRoom.setPrivateUser(user);
@@ -212,19 +253,13 @@ export class UserStore {
     if (users) {
       this.updateAllUsers(users);
     }
-    // this.updateUsers([user]);
-    // if (this.joinedUser) return;
-    // const userInfoList = await this._fcrChatRoom.getUserInfoList([user]);
-    // const joinedUser = userInfoList[0];
-    // if (joinedUser.ext.role !== 2) return;
-    // runInAction(() => {
-    //   if (joinedUser) this.joinedUser = joinedUser;
-    // });
-    // Scheduler.shared.addDelayTask(() => {
-    //   runInAction(() => {
-    //     this.joinedUser = undefined;
-    //   });
-    // }, this.userCarouselAnimDelay + 500);
+  }
+  @bound
+  private async _onUserListRefresh() {
+    const users = AgoraIM.getRoomManager(this._fcrChatRoom.getRoomId())?.getAllUserList();
+    if (users) {
+      this.updateAllUsers(users);
+    }
   }
   @computed get teacherName() {
     return this._widget.classroomStore.roomStore.flexProps['teacherName'];
@@ -308,5 +343,66 @@ export class UserStore {
     }
     //判断要禁言的用户是不是实际在当前房间里
     return userList.every((element) => judgeUserList.includes(element));
+  }
+
+  //用户信息转空的流
+  private userToEduStream(user: AgoraIMUserInfo): EduStream {
+    return new UserStream(new AgoraStream({
+      streamUuid: '',
+      streamName: '',
+      fromUser: {
+        userUuid: user.ext.userUuid,
+        userName: user.nickName,
+        //@ts-ignore
+        role: EduRole2RteRole(window.EduClassroomConfig.sessionInfo.roomType, user.ext.role)
+      },
+      videoSourceType: AgoraRteVideoSourceType.None,
+      audioSourceType: AgoraRteAudioSourceType.None,
+      videoState: AgoraRteMediaPublishState.Unpublished,
+      audioState: AgoraRteMediaPublishState.Unpublished,
+      videoSourceState: AgoraRteMediaSourceState.error,
+      audioSourceState: AgoraRteMediaSourceState.error,
+    }))
+  }
+
+  //视频流排序
+  @computed
+  get sortStreamList() {
+    /*1、我、tutor、其他参会者（按照姓名排序） */
+    const meStream:EduStream|undefined = this.userSteamList.find(item=>item.isLocal);
+    let teacherStream:EduStream|null = null;
+    const streamList: EduStream[] = [];
+    this.userList.forEach(element => {
+      if (EduRoleTypeEnum.teacher === element.ext.role) {
+        teacherStream = this.userSteamList.find(item => item.fromUser.userUuid === element.ext.userUuid) || this.userToEduStream(element)
+      }else if(element.ext.userUuid !== meStream?.fromUser.userUuid){
+        streamList.push(this.userToEduStream(element))
+      }
+    });
+    streamList.sort((item1, item2) => { return item1.fromUser.userName < item2.fromUser.userName ? 1 : -1 })
+    const firstList: EduStream[] = []
+    if (meStream) {
+      firstList.push(meStream)
+    }
+    if (teacherStream) {
+      firstList.push(teacherStream)
+    }
+    return [...firstList, ...streamList];
+  }
+
+
+
+  //相机是否开启
+  checkCameraEnabled(stream?: EduStream) {
+    return AgoraRteMediaSourceState.started === stream?.videoSourceState && AgoraRteMediaPublishState.Published === stream?.videoState;
+  }
+  //麦克风是否开启
+  checkMicEnabled(stream?: EduStream) {
+    return AgoraRteMediaSourceState.started === stream?.audioSourceState && AgoraRteMediaPublishState.Published === stream?.audioState;
+  }
+}
+class UserStream extends EduStream{
+  get isLocal(): boolean {
+      return false
   }
 }
