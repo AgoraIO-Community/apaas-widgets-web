@@ -576,20 +576,7 @@ const MessageListItem = observer(({ messages }: { messages: AgoraIMMessageBase[]
           switch (message.type) {
             case AgoraIMMessageType.Text:
               const textMessage = message as AgoraIMTextMessage;
-              return (
-                <div key={textMessage.id} className="fcr-chat-message-list-item-content">
-                  {splitTextAndUrls(textMessage.msg).map((text) => {
-                    const isUrl = urlRegex.test(text);
-                    return isUrl ? (
-                      <a href={text} target="_blank" rel="noopener noreferrer">
-                        {text}
-                      </a>
-                    ) : (
-                      text
-                    );
-                  })}
-                </div>
-              );
+              return <TextMessageItem textMessage={textMessage}></TextMessageItem>;
             case AgoraIMMessageType.Image:
               const imageMessage = message as AgoraIMImageMessage;
               return <MessageImageItem message={imageMessage} />;
@@ -1046,6 +1033,23 @@ const ChatMoreOptions = () => {
     </>
   );
 };
+
+const TextMessageItem = observer(({ textMessage }: { textMessage: AgoraIMTextMessage }) => {
+  return (
+    <div key={textMessage.id} className="fcr-chat-message-list-item-content">
+      {splitTextAndUrls(textMessage.msg).map((text) => {
+        const isUrl = urlRegex.test(text);
+        return isUrl ? (
+          <a href={text} target="_blank" rel="noopener noreferrer">
+            {text}
+          </a>
+        ) : (
+          text
+        );
+      })}
+    </div>
+  );
+});
 
 const MessageImageItem = observer((props: { message: AgoraIMImageMessage }) => {
   const imgRef = useRef<HTMLImageElement>(null);
