@@ -253,14 +253,6 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
 
   const isPrivate = checkIsPrivateMessage(textMessage);
 
-  //替换内容中的超链接
-  const replaceContentToLink = (text: string | null): string => {
-    const urlRegex = /((https?:\/\/|www\.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*))/g;
-    return text ? text.replace(urlRegex, (match, url) => {
-      return `<a href="${url}" target="_blank" rel="noopener noreferrer">${url}</a>`;
-    }) : "";
-  }
-
   const isHidden = lastMsg?.from == textMessage?.from && (
     (checkIsPrivateMessage(textMessage) && (lastMsg?.ext && lastMsg?.ext?.receiverList?.length > 0)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string') || (!checkIsPrivateMessage(textMessage) && ((lastMsg?.ext && lastMsg?.ext?.receiverList?.length == 0) || (message.ext?.role === lastMsg?.ext?.role)) && (lastMsg?.type != 'custom') && (typeof lastMsg !== 'string')));
 
@@ -294,7 +286,18 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                 </div>
               )}
             </div>}
-            <div className='fcr-chatroom-mobile-message-content' dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+            <div className='fcr-chatroom-mobile-message-content'>
+              {splitTextAndUrls(textMessage.msg).map((text) => {
+                const isUrl = urlRegex.test(text);
+                return isUrl ? (
+                  <a href={text} target="_blank" rel="noopener noreferrer">
+                    {text}
+                  </a>
+                ) : (
+                  text
+                );
+              })}
+            </div>
           </div>
           {/* {messageFromAlias}: */}
         </div>}
@@ -316,7 +319,18 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                 </div>
               )}
             </div>}
-            <div className='fcr-chatroom-mobile-message-content' dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+            <div className='fcr-chatroom-mobile-message-content'>
+              {splitTextAndUrls(textMessage.msg).map((text) => {
+                const isUrl = urlRegex.test(text);
+                return isUrl ? (
+                  <a href={text} target="_blank" rel="noopener noreferrer">
+                    {text}
+                  </a>
+                ) : (
+                  text
+                );
+              })}
+            </div>
           </div>
         )}
         {!isSelfMessage && (isPrivate || (!isPrivate && isBreakOutRoomEnabled && isBreakOutRoomIn)) && (
@@ -341,7 +355,18 @@ const TextMessage = observer(({ message, lastMsg }: { message: AgoraIMMessageBas
                   </div>
                 )}
               </div>}
-              <div className='fcr-chatroom-mobile-message-content' dangerouslySetInnerHTML={{ __html: replaceContentToLink(textMessage.msg) }}></div>
+              <div className='fcr-chatroom-mobile-message-content'>
+                {splitTextAndUrls(textMessage.msg).map((text) => {
+                  const isUrl = urlRegex.test(text);
+                  return isUrl ? (
+                    <a href={text} target="_blank" rel="noopener noreferrer">
+                      {text}
+                    </a>
+                  ) : (
+                    text
+                  );
+                })}
+              </div>
             </div>
           </div>
         )}
