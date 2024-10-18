@@ -3,8 +3,9 @@ import {
   AgoraIMBase,
   AgoraIMConnectionState,
   AgoraIMEvents,
+  AgoraIMMessageBase,
 } from '../../../../../common/im/wrapper/typs';
-import {  action,observable } from 'mobx';
+import { action, observable } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import { MessageStore } from './message';
 import { UserStore } from './user';
@@ -12,7 +13,7 @@ import { RoomStore } from './room';
 import { retryAttempt } from 'agora-common-libs';
 import to from 'await-to-js';
 import { transI18n, bound, Logger } from 'agora-common-libs';
-import {  AgoraExtensionWidgetEvent } from '../../../../../events';
+import { AgoraExtensionWidgetEvent } from '../../../../../events';
 
 export class FcrChatRoomStore {
   fcrChatRoom: AgoraIMBase;
@@ -46,6 +47,20 @@ export class FcrChatRoomStore {
     this.roomId = roomId;
     console.log('roomIdroomIdroomId', roomId);
   }
+
+  @observable lastUnreadMessage: AgoraIMMessageBase | null = null;
+  @observable unreadMessageCount: number = 0;
+  @action.bound
+  private _handleChatUnreadMessageUpdate(message: AgoraIMMessageBase) {
+    this.lastUnreadMessage = message;
+    this.setUnreadCount(this.unreadMessageCount + 1);
+  }
+
+  @action.bound
+  setUnreadCount(value: number) {
+    this.unreadMessageCount = value;
+  }
+
   private _addListeners() {
     this.fcrChatRoom.on(
       AgoraIMEvents.ConnectionStateChanged,
@@ -57,6 +72,12 @@ export class FcrChatRoomStore {
       messageType: AgoraExtensionWidgetEvent.PollActiveStateChanged,
       onMessage: this._handlePollWidgetActiveStateChanged,
     });
+    this._widget.addBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.ChatUnreadMessageUpdate,
+      onMessage: this._handleChatUnreadMessageUpdate,
+    });
+
+
   }
   private _removeListeners() {
     this.fcrChatRoom.off(
@@ -70,6 +91,11 @@ export class FcrChatRoomStore {
     this._widget.removeBroadcastListener({
       messageType: AgoraExtensionWidgetEvent.PollActiveStateChanged,
       onMessage: this._handlePollWidgetActiveStateChanged,
+    });
+
+    this._widget.removeBroadcastListener({
+      messageType: AgoraExtensionWidgetEvent.ChatUnreadMessageUpdate,
+      onMessage: this._handleChatUnreadMessageUpdate,
     });
   }
   @action.bound
