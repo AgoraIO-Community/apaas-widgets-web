@@ -58,6 +58,14 @@ export class MessageStore {
       onMessage: this.messageListScrollToBottom,
     });
   }
+
+  @observable lastUnreadMessage: AgoraIMTextMessage | AgoraIMImageMessage | null = null;
+  @action.bound
+  setLastUnreadMessage(message: AgoraIMTextMessage | AgoraIMImageMessage) {
+    this.lastUnreadMessage = message;
+    this._widget.broadcast(AgoraExtensionWidgetEvent.ChatUnreadMessageUpdate, message);
+  }
+
   private _startPollingMessageTask() {
     if (!this._pollingMessageTask) {
       this._pollingMessageTask = Scheduler.shared.addIntervalTask(() => {
@@ -70,6 +78,12 @@ export class MessageStore {
             ) {
               const deletedMessageId = (msg.ext as unknown as { msgId: string }).msgId;
               deletedMessageIds.set(deletedMessageId, true);
+            }
+            if (
+              (msg.type === AgoraIMMessageType.Text || msg.type === AgoraIMMessageType.Image) &&
+              msg.from !== this._fcrChatRoom.userInfo?.userId
+            ) {
+              this.setLastUnreadMessage(msg);
             }
           });
           runInAction(() => {
