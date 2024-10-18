@@ -24,6 +24,33 @@
   flex: 1;
   text-align: center;
   align-self: stretch;
+  justify-self: center;
+}
+
+.fcr-application-panel-wrapped>.fcr-application-panel-item>.fcr-application-panel-item-chat-icon {
+  position: relative;
+  display: flex;
+  justify-content: center;
+}
+
+.fcr-application-panel-wrapped>.fcr-application-panel-item>.fcr-application-panel-item-chat-icon>.chat-unread-count {
+  background: var(--fcr_ui_scene_ramp_red6, #F5655C);
+  width: 18px;
+  height: 17px;
+  border-radius: 4px;
+
+  font-family: Helvetica Neue;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 13px;
+  text-align: left;
+  color: var(--fcr_ui_scene_white10, #FFFFFF);
+  text-align: center;
+  vertical-align: middle;
+
+  position: absolute;
+  left: 50%;
+  transform: translateX(50%) translateY(-40%);
 }
 
 .fcr-chatroom-mobile-inputs-landscape .fcr-application-panel-item {
