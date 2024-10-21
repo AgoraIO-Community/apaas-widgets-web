@@ -42,6 +42,8 @@ export const FcrChatRoomH5Inputs = observer(
     const {
       roomId,
       isShowPoll,
+      unreadMessageCount,
+      setUnreadCount,
       messageStore: { isopenChatDialog },
       roomStore: {
         isLandscape,
@@ -154,8 +156,9 @@ export const FcrChatRoomH5Inputs = observer(
     };
 
     const handleShowDialog = () => {
-      setIsShowChat(!isShowChat);
+      setIsShowChat(true);
       setSearchKey('');
+      setUnreadCount(0);
     };
     //显示花名册
     const handleShowParticipantDialog = () => {
@@ -235,11 +238,14 @@ export const FcrChatRoomH5Inputs = observer(
                 className='fcr-application-panel-item'
                 onClick={handleShowDialog}
               >
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.CHAT_NEW}
-                />
+                <div className='fcr-application-panel-item-chat-icon'>
+                  <SvgImgMobile
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.CHAT_NEW}
+                  />
+                  {!!(unreadMessageCount && typeof unreadMessageCount === 'number' && unreadMessageCount > 0) && <span className='chat-unread-count'>{unreadMessageCount > 99 ? '...' : unreadMessageCount}</span>}
+                </div>
                 <span>{transI18n('chat.chat')}</span>
               </div>
               <div className='fcr-application-panel-item' onClick={handleShowParticipantDialog}>
@@ -314,12 +320,14 @@ export const FcrChatRoomH5Inputs = observer(
                 className='fcr-application-panel-item'
                 onClick={handleShowDialog}
               >
-                <SvgImgMobile
-                  forceLandscape={forceLandscape}
-                  landscape={isLandscape}
-                  type={SvgIconEnum.CHAT_NEW}
-                />
-                <span>{transI18n('chat.chat')}</span>
+                <div className='fcr-application-panel-item-chat-icon'>
+                  <SvgImgMobile
+                    forceLandscape={forceLandscape}
+                    landscape={isLandscape}
+                    type={SvgIconEnum.CHAT_NEW}
+                  />
+                  {!!(unreadMessageCount && typeof unreadMessageCount === 'number' && unreadMessageCount > 0) && <span className='chat-unread-count'>{unreadMessageCount > 99 ? '...' : unreadMessageCount}</span>}
+                </div>
               </div>
               <div className='fcr-application-panel-item' onClick={handleShowParticipantDialog}>
                 <SvgImgMobile
