@@ -220,8 +220,8 @@ class FcrRttManager {
      * 消息数据处理,所有的this都要使用fcrRttManager，因为没有做变量化
      */
     private messageDataProcessing(uid: string, data: Uint8Array) {
-        //当前仅教师显示，因为web端学生角色没有入口，分组内也不必要记录处理数据
-        if(EduRoleTypeEnum.teacher !== fcrRttManager.classroomStore?.userStore.localUser?.userRole || fcrRttManager.isInSubRoom()){
+        //分组内也不必要记录处理数据
+        if (fcrRttManager.isInSubRoom()) {
             return
         }
         //清除字幕定时器
@@ -349,6 +349,7 @@ class FcrRttManager {
      * 房间属性变更监听
      */
     onRoomWidgetPropertiesChange(properties: never | null, operator: IAgoraUserSessionInfo | null) {
+        debugger
         //这条是系统的，跳过
         if(operator && "server" === operator.userName){
             return
