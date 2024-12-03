@@ -19,6 +19,11 @@ export class MessageAPI {
     const loginUser = state?.propsData.userUuid;
     var id = WebIM.conn.getUniqueId(); //生成本地消息id
     var msg = new WebIM.message('cmd', id); //创建命令消息
+
+    var muteNickName = ""
+    if(userId && state.room.roomUsersInfo[userId]){
+      muteNickName = state.room.roomUsersInfo[userId].nickname
+    }
     msg.set({
       to: roomId, //接收消息对象
       action: action, //用户自定义，cmd消息必填
@@ -29,7 +34,7 @@ export class MessageAPI {
         roomUuid: roomUuid,
         role: roleType,
         muteMember: userId || '',
-        muteNickName: (userId && state.room.roomUsersInfo[userId].nickname) || '',
+        muteNickName: muteNickName,
         nickName: loginName,
       }, //用户自扩展的消息内容（群聊用法相同）
       success: (id, serverId) => {

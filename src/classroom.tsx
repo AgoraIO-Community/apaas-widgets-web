@@ -1,6 +1,7 @@
 import { AgoraSelector } from './gallery/classroom/answer';
 import { AgoraCountdown } from './gallery/classroom/counter';
 import { AgoraHXChatWidget } from './gallery/classroom/hx-chat';
+import { AgoraHXChatWidget as AgoraHXChatGroupWidget } from  './gallery/classroom/hx-chatgroup'
 import { FcrStreamMediaPlayerWidget } from './gallery/classroom/stream-media';
 import { AgoraPolling } from './gallery/classroom/vote';
 import { FcrWatermarkWidget } from './gallery/classroom/watermark';
@@ -16,6 +17,7 @@ export {
   AgoraSelector,
   AgoraCountdown,
   AgoraHXChatWidget,
+  AgoraHXChatGroupWidget,
   FcrStreamMediaPlayerWidget,
   AgoraPolling,
   FcrWatermarkWidget,

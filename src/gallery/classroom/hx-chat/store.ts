@@ -278,8 +278,6 @@ export class WidgetChatUIStore {
       return acc;
     }, [] as string[][]);
 
-    console.log('newArr', newArr);
-
     const res = await Promise.all(
       newArr.map((item, index) => {
         console.log(`start fetchUserInfoById [${index}/${newArr.length}]`);

@@ -1,5 +1,12 @@
+import { ErrorType } from "@netless/slide";
 import type { WindowManager } from '@netless/window-manager';
 import type { FcrBoardMainWindow } from './board-window';
+
+
+export interface SlideError extends Error {
+  errorType: ErrorType;
+  errorMsg: string;
+}
 
 export enum BoardConnectionState {
   Disconnected = 0,
@@ -82,6 +89,7 @@ export interface FcrBoardRoomEventEmitter {
 }
 
 export enum FcrBoardMainWindowEvent {
+  SlideError = 'slide-error',
   OpenedCoursewareListChanged = 'opened-courseware-list-changed',
   PageInfoUpdated = 'page-info-updated',
   RedoStepsUpdated = 'redo-steps-updated',

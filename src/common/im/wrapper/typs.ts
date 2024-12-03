@@ -186,4 +186,5 @@ export interface AgoraIMUserInfo<E extends AgoraIMUserInfoExt = AgoraIMUserInfoE
 export interface AgoraIMUserInfoExt {
   role: EduRoleTypeEnum;
   userUuid: string;
+  chatGroupUuids?: string[]
 }

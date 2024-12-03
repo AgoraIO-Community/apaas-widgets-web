@@ -1,4 +1,6 @@
+import { FcrChatroomWidget as FcrChatroomGroup } from './gallery/scene/chatroom-group';
 import { FcrChatroomWidget as FcrChatroom } from './gallery/scene/chatroom';
+
 import { FcrPollingWidget } from './gallery/scene/polling';
 import { FcrBoardWidget } from './gallery/scene/whiteboard';
 import { FcrWebviewWidget } from './gallery/scene/webview';
@@ -7,6 +9,7 @@ import { FcrCountdownWidget } from './gallery/scene/countdown';
 import { FcrPopupQuizWidget } from './gallery/scene/quiz';
 export {
   FcrChatroom,
+  FcrChatroomGroup,
   FcrBoardWidget,
   FcrPollingWidget,
   FcrWebviewWidget,

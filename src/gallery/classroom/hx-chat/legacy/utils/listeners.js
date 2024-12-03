@@ -24,7 +24,7 @@ export const createListener = (store) => {
 
   const createListen = (new_IM_Data, appkey) => {
     const { apis } = store.getState();
-
+    console.log(">>>>>>>>>>>>>>>>>>>>>>>>....createListen")
     const dispatchMessageAction = throttle(() => {
       const temp = [...messageArr];
       messageArr = [];

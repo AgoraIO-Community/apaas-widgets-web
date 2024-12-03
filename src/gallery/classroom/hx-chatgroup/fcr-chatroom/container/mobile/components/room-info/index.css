@@ -1,0 +1,294 @@
+.fcr-mobile-interact-container {
+  display: flex;
+  flex-direction: column;
+  left: 0;
+  bottom: 0;
+  height: 100%;
+  background: #f4f4ff;
+  position: relative;
+  min-height: 100px;
+}
+.fcr-mobile-interact-container-top {
+  position: relative;
+  z-index: 1;
+  transition: height 0.2s;
+  pointer-events: none;
+}
+.fcr-mobile-interact-container-placeholder {
+  height: 32px;
+}
+.fcr-mobile-inter-room-info {
+  width: 100%;
+  height: 91px;
+  background: #4752dd;
+  border-top-left-radius: 20px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  padding: 0 12px;
+  position: absolute;
+  left: 0;
+  top: 0;
+  height: 100%;
+}
+.fcr-mobile-inter-room-info-left,
+.fcr-mobile-inter-room-info-right {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  height: 32px;
+  align-items: center;
+}
+
+.fcr-mobile-inter-room-info-logo {
+  width: 34px;
+  height: 34px;
+  z-index: 2;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: relative;
+  top: 8px;
+}
+.fcr-mobile-inter-room-info-teacher-name > span:last-child {
+  color: #fff;
+  padding-left: 4px;
+}
+.fcr-mobile-inter-room-info-teacher-name {
+  height: 32px;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.fcr-mobile-inter-room-info-hot {
+  height: 32px;
+  line-height: 32px;
+  display: flex;
+  align-items: center;
+  padding-left: 14px;
+  font-weight: 500;
+  font-size: 12px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.fcr-mobile-inter-room-info-teacher-name {
+  padding-left: 7px;
+}
+.fcr-chatroom-mobile-announcement {
+  z-index: 1;
+  padding-left: 55px;
+  padding-right: 15px;
+  padding-bottom: 12px;
+  font-weight: 500;
+  font-size: 11px;
+  line-height: 130%;
+  transition: height 0.2s;
+  overflow: hidden;
+  color: #ffffff;
+  word-break: break-all;
+  white-space: pre-wrap;
+}
+.fcr-chatroom-mobile-announcement > span:first-child {
+  padding: 0 5px;
+  background: #fff;
+  border-radius: 20px;
+  color: #4262ff;
+  display: inline-block;
+  word-break: break-all;
+  font-size: 8px;
+  line-height: 12px;
+  margin-right: 5px;
+}
+
+.fcr-mobile-inter-room-info-start-time {
+  line-height: 32px;
+  color: rgba(255, 255, 255, 0.8);
+}
+.fcr-mobile-inter-room-info-toggle-announcement {
+  width: 24px;
+  height: 14px;
+  border-radius: 6px;
+  background: rgba(255, 255, 255, 0.9);
+  margin-left: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fcr-mobile-inter-room-info-toggle-announcement > svg {
+  transition: all 0.2s;
+}
+
+/** landscape **/
+.fcr-mobile-interact-container-landscape {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  align-items: flex-end;
+  pointer-events: none;
+}
+.fcr-mobile-landscape-inter-room-info {
+  position: fixed;
+  left: 0;
+  top: 0;
+  width: 100%;
+  display: flex;
+  flex-direction: row;
+}
+.fcr-mobile-landscape-inter-room-info-left {
+  display: flex;
+  flex-direction: row;
+  padding: 16px 0 0 16px;
+}
+.fcr-mobile-landscape-inter-room-info-back {
+  background: rgba(240, 242, 248, 0.6);
+  width: 40px;
+  height: 40px;
+  backdrop-filter: blur(25px);
+
+  border-radius: 50px;
+  margin-right: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  pointer-events: all;
+}
+.fcr-mobile-landscape-inter-room-info-back > svg {
+  transform: rotate(-90deg);
+}
+.fcr-mobile-landscape-inter-room-info-room {
+  display: flex;
+  flex-direction: column;
+}
+.fcr-mobile-landscape-inter-room-info-room > div:not(:last-child) {
+  margin-bottom: 10px;
+}
+.fcr-mobile-landscape-inter-room-info-teacher {
+  background: rgba(240, 242, 248, 0.6);
+  border-radius: 50px;
+  height: 40px;
+  padding: 3px;
+  backdrop-filter: blur(25px);
+}
+.fcr-mobile-landscape-inter-room-info-teacher {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  padding-right: 21px;
+}
+.fcr-mobile-landscape-inter-room-info-teacher .fcr-mobile-inter-room-info-logo {
+  position: static;
+  margin-right: 7px;
+}
+.fcr-mobile-landscape-inter-room-info-teacher-name {
+  font-weight: 700;
+  font-size: 14px;
+  line-height: 100%;
+  padding-bottom: 7px;
+}
+.fcr-mobile-landscape-inter-room-info-teacher-fcr {
+  font-weight: 400;
+  font-size: 10px;
+  line-height: 100%;
+  color: #555555;
+}
+.fcr-mobile-landscape-inter-room-info-hot {
+  width: fit-content;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 30px;
+  background: rgba(240, 242, 248, 0.6);
+  border-radius: 50px;
+  backdrop-filter: blur(25px);
+}
+.fcr-mobile-landscape-inter-room-info-hot .fcr-mobile-inter-room-info-hot {
+  color: #555555;
+  font-weight: 400;
+  font-size: 14px;
+  padding: 0 15px 0 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.fcr-mobile-landscape-inter-room-info-name {
+  color: white;
+  padding-top: 19px;
+  padding-left: 16px;
+  padding-right: 190px;
+  flex: 1;
+}
+.fcr-mobile-landscape-inter-room-info-name > div:first-child {
+  text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 100%;
+  padding-bottom: 4px;
+}
+.fcr-mobile-landscape-inter-room-info-name > div:last-child {
+  text-shadow: 0px 1px 4px rgba(0, 0, 0, 0.2);
+  font-weight: 400;
+  font-size: 12px;
+  line-height: 100%;
+}
+.fcr-mobile-landscape-inter-mask-top {
+  width: 100%;
+  height: 100px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: linear-gradient(
+    360deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.0050963) 8.07%,
+    rgba(0, 0, 0, 0.019437) 15.54%,
+    rgba(0, 0, 0, 0.0416) 22.5%,
+    rgba(0, 0, 0, 0.070163) 29.04%,
+    rgba(0, 0, 0, 0.103704) 35.26%,
+    rgba(0, 0, 0, 0.1408) 41.25%,
+    rgba(0, 0, 0, 0.18003) 47.1%,
+    rgba(0, 0, 0, 0.21997) 52.9%,
+    rgba(0, 0, 0, 0.2592) 58.75%,
+    rgba(0, 0, 0, 0.296296) 64.74%,
+    rgba(0, 0, 0, 0.329837) 70.96%,
+    rgba(0, 0, 0, 0.3584) 77.5%,
+    rgba(0, 0, 0, 0.380563) 84.46%,
+    rgba(0, 0, 0, 0.394904) 91.93%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}
+.fcr-mobile-landscape-inter-mask-bottom {
+  width: 100%;
+  height: 70px;
+  position: fixed;
+  left: 0;
+  bottom: 0;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.0050963) 8.07%,
+    rgba(0, 0, 0, 0.019437) 15.54%,
+    rgba(0, 0, 0, 0.0416) 22.5%,
+    rgba(0, 0, 0, 0.070163) 29.04%,
+    rgba(0, 0, 0, 0.103704) 35.26%,
+    rgba(0, 0, 0, 0.1408) 41.25%,
+    rgba(0, 0, 0, 0.18003) 47.1%,
+    rgba(0, 0, 0, 0.21997) 52.9%,
+    rgba(0, 0, 0, 0.2592) 58.75%,
+    rgba(0, 0, 0, 0.296296) 64.74%,
+    rgba(0, 0, 0, 0.329837) 70.96%,
+    rgba(0, 0, 0, 0.3584) 77.5%,
+    rgba(0, 0, 0, 0.380563) 84.46%,
+    rgba(0, 0, 0, 0.394904) 91.93%,
+    rgba(0, 0, 0, 0.4) 100%
+  );
+  pointer-events: none;
+}
