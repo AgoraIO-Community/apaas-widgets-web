@@ -574,10 +574,16 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   private _deliverWindowEvents(mainWindow: FcrBoardMainWindow) {
     mainWindow.on(FcrBoardMainWindowEvent.MountSuccess, async () => {
-      await mainWindow.updateOperationPrivilege(this.hasPrivilege);
-      this._resetToolIfNeed();
-      if (this._boardMainWindow) {
-        this._boardMainWindow.emitPageInfo();
+      const hasPrivilege = this.hasPrivilege;
+      const boardMainWindow = this._boardMainWindow;
+      try {
+        await mainWindow.updateOperationPrivilege(hasPrivilege);
+        this._resetToolIfNeed(hasPrivilege);
+      } catch (e) {
+        this.logger.error('Fcr board update operation privilege failure', e);
+      }
+      if (boardMainWindow) {
+        boardMainWindow.emitPageInfo();
       }
       this.broadcast(AgoraExtensionWidgetEvent.BoardMountStateChanged, BoardMountState.Mounted);
     });
@@ -623,8 +629,12 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     const grantedUsers = this._grantedUsers;
     const hasPrivilege = this.hasPrivilege;
     if (prev !== hasPrivilege && this._boardMainWindow) {
-      await this._boardMainWindow.updateOperationPrivilege(hasPrivilege);
-      this._resetToolIfNeed();
+      try {
+        await this._boardMainWindow.updateOperationPrivilege(hasPrivilege);
+        this._resetToolIfNeed(hasPrivilege);
+      } catch (e) {
+        this.logger.error('Fcr board update operation privilege failure', e);
+      }
     }
 
     this.broadcast(AgoraExtensionWidgetEvent.BoardGrantedUsersUpdated, grantedUsers);
@@ -660,8 +670,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   onUserPropertiesUpdate(userProps: any) {
     this.logger.info('FcrBoardWidget onUserPropertiesUpdate', userProps);
     this._isInitialUser = userProps.initial;
-    if(this._loadAttributesIsCalled) {
-      this._loadAttributes();  
+    if (this._loadAttributesIsCalled) {
+      this._loadAttributes();
     }
   }
 
@@ -989,14 +999,14 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     }
   }
 
-  private _resetToolIfNeed() {
-    if (this.hasPrivilege && this._boardMainWindow?.mounted) {
+  private _resetToolIfNeed(hasPrivilege: boolean) {
+    if (hasPrivilege && this._boardMainWindow?.mounted) {
       const { strokeColor, strokeWidth, tool } = this._defaultBoardState;
       this._toolbarContext?.setStrokeColor(strokeColor);
       this._toolbarContext?.setStrokeWidth(strokeWidth);
       this._toolbarContext?.setTool(tool);
     }
-    this._boardContext?.setPrivilege(this.hasPrivilege);
+    this._boardContext?.setPrivilege(hasPrivilege);
   }
   @bound
   private _setBackgourndImage() {
