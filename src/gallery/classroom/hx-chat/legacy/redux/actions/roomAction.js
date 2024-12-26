@@ -7,6 +7,10 @@ export const roomUsers = (data, option) => {
   return { type: 'ROOM_USERS', data, option };
 };
 
+export const roomUsersBatch = (list) => {
+  return { type: 'ROOM_USERS_BATCH', data: { list } };
+};
+
 // 成员数
 export const roomUserCount = (data) => {
   return { type: 'ROOM_USERS_COUNT', data };

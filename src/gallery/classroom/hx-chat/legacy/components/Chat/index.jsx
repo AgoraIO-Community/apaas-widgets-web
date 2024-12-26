@@ -1,4 +1,5 @@
-import { useState, useEffect } from 'react';
+/* eslint-disable react/prop-types */
+import { useState, Fragment } from 'react';
 import { useStore } from 'react-redux';
 import { Tabs } from 'antd';
 import { MessageBox } from '../MessageBox';
@@ -13,36 +14,47 @@ import { announcementNotice } from '../../redux/actions/roomAction';
 // import minimize from '../../themes/img/minimize.png';
 import minimize from '../../themes/svg/minimize.svg';
 import notice from '../../themes/img/notice.png';
-import concat from 'lodash/concat';
-import assign from 'lodash/assign';
+// import concat from 'lodash/concat';
+// import assign from 'lodash/assign';
 import './index.css';
 import { useShallowEqualSelector } from '../../utils';
 
 const { TabPane } = Tabs;
 
 // 主页面，定义 tabs
-export const Chat = () => {
+export const Chat = ({
+  searchKeyword,
+  keyWordChangeHandle,
+  userList,
+  hasMoreUsers,
+  fetchNextUsersList,
+  startAutoFetch,
+  stopAutoFetch,
+}) => {
   const [tabKey, setTabKey] = useState(CHAT_TABS_KEYS.chat);
-  const [roomUserList, setRoomUserList] = useState([]);
+  // const [roomUserList, setRoomUserList] = useState([]);
+  // const [roomMemberCount, setRoomMemberCount] = useState(0);
   const {
-    isLogin,
+    // isLogin,
     announcement,
     showRed,
     showAnnouncementNotice,
     roleType,
-    roomUsers,
-    roomUsersInfo,
+    // roomUsers,
+    // roomUsersInfo,
     showMIniIcon,
+    // memberCount,
     configUIVisible,
   } = useShallowEqualSelector((state) => {
     return {
-      isLogin: _.get(state, 'isLogin'),
+      // isLogin: _.get(state, 'isLogin'),
       announcement: _.get(state, 'room.announcement', ''),
       showRed: _.get(state, 'showRed'),
       showAnnouncementNotice: _.get(state, 'showAnnouncementNotice'),
       roleType: _.get(state, 'propsData.roleType', ''),
-      roomUsers: _.get(state, 'room.roomUsers', []),
-      roomUsersInfo: _.get(state, 'room.roomUsersInfo', {}),
+      // roomUsers: _.get(state, 'room.roomUsers', []),
+      // memberCount: _.get(state, 'room.memberCount', 0),
+      // roomUsersInfo: _.get(state, 'room.roomUsersInfo', {}),
       showMIniIcon: _.get(state, 'isShowMiniIcon'),
       configUIVisible: _.get(state, 'configUIVisible'),
     };
@@ -51,40 +63,50 @@ export const Chat = () => {
   // 直接在 propsData 中取值
   const isTeacher =
     roleType === ROLE.teacher.id || roleType === ROLE.assistant.id || roleType === ROLE.observer.id;
-  useEffect(() => {
-    // 加载成员信息
-    let _speakerTeacher = [];
-    let _assistant = [];
-    let _student = [];
-    if (isLogin) {
-      let val;
-      roomUsers.map((item) => {
-        if (item === '系统管理员') return;
-        if (Object.keys(roomUsersInfo).length > 0) {
-          val = roomUsersInfo[item];
-        }
-        let newVal;
-        let role = val && val.ext && JSON.parse(val.ext).role;
-        switch (role) {
-          case 1:
-            newVal = assign(val, { id: item });
-            _speakerTeacher.push(newVal);
-            break;
-          case 2:
-            newVal = assign(val, { id: item });
-            _student.push(newVal);
-            break;
-          case 3:
-            newVal = assign(val, { id: item });
-            _assistant.push(newVal);
-            break;
-          default:
-            break;
-        }
-      });
-      setRoomUserList(concat(_speakerTeacher, _student));
-    }
-  }, [roomUsers, roomUsersInfo]);
+  // useEffect(() => {
+  //   // 加载成员信息
+  //   let _speakerTeacher = [];
+  //   let _assistant = [];
+  //   let _student = [];
+  //   if (isLogin) {
+  //     let val;
+  //     roomUsers.map((item) => {
+  //       if (item === '系统管理员') return;
+  //       if (Object.keys(roomUsersInfo).length > 0) {
+  //         val = roomUsersInfo[item];
+  //       }
+  //       let newVal;
+  //       let role = val && val.ext && JSON.parse(val.ext).role;
+  //       switch (role) {
+  //         case 1:
+  //           newVal = assign(val, { id: item });
+  //           _speakerTeacher.push(newVal);
+  //           break;
+  //         case 2:
+  //           newVal = assign(val, { id: item });
+  //           _student.push(newVal);
+  //           break;
+  //         case 3:
+  //           newVal = assign(val, { id: item });
+  //           _assistant.push(newVal);
+  //           break;
+  //         default:
+  //           break;
+  //       }
+  //     });
+  //     // setRoomUserList(concat(_speakerTeacher, _student));
+  //   }
+  // }, [roomUsers, roomUsersInfo]);
+  // useEffect(() => {
+  //   setRoomMemberCount(memberCount);
+  //   // eslint-disable-next-line react/prop-types
+  //   if (userList.length == 0) {
+  //     fetchNextUsersList(null, true);
+  //   }
+  // }, [memberCount]);
+  // useEffect(() => {
+  //   setRoomUserList(userList);
+  // }, [userList]);
 
   const hideChatModal = () => {
     store.dispatch(isShowChat(false));
@@ -109,6 +131,13 @@ export const Chat = () => {
       default:
         break;
     }
+
+    if (key === 'USER') {
+      fetchNextUsersList({}, true);
+      startAutoFetch();
+    } else {
+      stopAutoFetch();
+    }
   };
 
   // 点击聊天Tab中的公告，跳转到公告Tab
@@ -116,6 +145,11 @@ export const Chat = () => {
     setTabKey(CHAT_TABS_KEYS.notice);
     store.dispatch(announcementNotice(false));
   };
+
+  const onScroll = () => {
+    stopAutoFetch();
+  };
+
   return (
     <div>
       <Tabs onChange={onTabChange} activeKey={tabKey} className={'chat-widget'}>
@@ -141,14 +175,14 @@ export const Chat = () => {
           <InputBox />
         </TabPane>
         {configUIVisible.memebers && isTeacher && (
-          <TabPane
-            tab={
-              roomUserList.length > 0
-                ? `${transI18n('chat.members')}(${roomUserList.length})`
-                : `${transI18n('chat.members')}`
-            }
-            key={CHAT_TABS_KEYS.user}>
-            <UserList roomUserList={roomUserList} />
+          <TabPane tab={<MemberCount />} key={CHAT_TABS_KEYS.user}>
+            <UserList
+              roomUserList={userList}
+              keyword={searchKeyword}
+              onKeywordChange={keyWordChangeHandle}
+              hasMoreUsers={hasMoreUsers}
+              fetchNextUsersList={fetchNextUsersList}
+              onScroll={onScroll}></UserList>
           </TabPane>
         )}
         {configUIVisible.announcement && (
@@ -177,4 +211,19 @@ export const Chat = () => {
       )}
     </div>
   );
+};
+
+const MemberCount = () => {
+  const { memberCount } = useShallowEqualSelector((state) => {
+    return {
+      memberCount: _.get(state, 'room.memberCount', 0),
+    };
+  });
+
+  const textContent =
+    memberCount > 0
+      ? `${transI18n('chat.members')}(${memberCount})`
+      : `${transI18n('chat.members')}`;
+
+  return <Fragment>{textContent}</Fragment>;
 };

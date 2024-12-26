@@ -18,7 +18,7 @@ import { createListener } from './utils/listeners';
 import './App.css';
 import 'antd/dist/antd.css';
 import { addResourceBundle } from 'agora-common-libs';
-import { useShallowEqualSelector } from './utils'
+import { useShallowEqualSelector } from './utils';
 
 const App = function (props) {
   const store = useStore();
@@ -30,16 +30,26 @@ const App = function (props) {
   } = props.pluginStore.globalContext;
 
   // get token config
-  const { agoraTokenData } = props;
-  const { apis, showChat, showRed, showAnnouncementNotice, configUIVisible } = useShallowEqualSelector((state) => {
-    return {
-      apis: state?.apis,
-      showChat: state?.showChat,
-      showRed: state?.showRed,
-      showAnnouncementNotice: state?.showAnnouncementNotice,
-      configUIVisible: state?.configUIVisible
-    }
-  });
+  const {
+    agoraTokenData,
+    searchKeyword,
+    keyWordChangeHandle,
+    userList,
+    hasMoreUsers,
+    fetchNextUsersList,
+    startAutoFetch,
+    stopAutoFetch,
+  } = props;
+  const { apis, showChat, showRed, showAnnouncementNotice, configUIVisible } =
+    useShallowEqualSelector((state) => {
+      return {
+        apis: state?.apis,
+        showChat: state?.showChat,
+        showRed: state?.showRed,
+        showAnnouncementNotice: state?.showAnnouncementNotice,
+        configUIVisible: state?.configUIVisible,
+      };
+    });
   const { createListen } = useMemo(() => {
     return createListener(store);
   }, [store]);
@@ -89,7 +99,15 @@ const App = function (props) {
             width: configUIVisible.isFullSize ? '100%' : '300px',
             height: configUIVisible.isFullSize ? '100%' : '530px',
           }}>
-          <Chat />
+          <Chat
+            searchKeyword={searchKeyword}
+            userList={userList}
+            keyWordChangeHandle={keyWordChangeHandle}
+            hasMoreUsers={hasMoreUsers}
+            fetchNextUsersList={fetchNextUsersList}
+            startAutoFetch={startAutoFetch}
+            stopAutoFetch={stopAutoFetch}
+          />
         </div>
       ) : (
         <div className="fcr-hx-chat">

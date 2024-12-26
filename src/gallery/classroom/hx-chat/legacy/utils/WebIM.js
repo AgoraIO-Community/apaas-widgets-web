@@ -24,6 +24,12 @@ export const initIMSDK = (appkey) => {
   };
 
   WebIM.conn = new websdk.connection(options);
+
+  // WebIM.logger.setDefaultLevel('INFO');
+
+  // WebIM.logger.setLevel('INFO');
+
+  WebIM.logger.disableAll();
 };
 
 export const WebIM = window.WebIM || {};

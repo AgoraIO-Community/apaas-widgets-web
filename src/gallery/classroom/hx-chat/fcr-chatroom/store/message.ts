@@ -1,5 +1,5 @@
 import { bound, Lodash, Scheduler, transI18n } from 'agora-common-libs';
-import { observable, action, runInAction, reaction } from 'mobx';
+import { observable, action, runInAction } from 'mobx';
 import { AgoraHXChatWidget } from '../..';
 import {
   AgoraIMBase,

@@ -3,7 +3,7 @@ import { statusAction, clearStore } from '../redux/actions/userAction';
 import { messageAction, showRedNotification } from '../redux/actions/messageAction';
 import {
   roomAllMute,
-  roomUsers,
+  roomUsersBatch,
   isUserMute,
   announcementNotice,
   roomUserMute,
@@ -14,12 +14,13 @@ import cloneDeep from 'lodash/cloneDeep';
 import { message } from 'antd';
 import { CHAT_TABS_KEYS, MUTE_CONFIG } from '../contants';
 import { WebIM } from './WebIM';
-import { ROLE, TEXT_MESSAGE_THROTTLE_TIME_MS } from '../contants';
+import { ROLE, TEXT_MESSAGE_THROTTLE_TIME_MS, MEMBER_LIST_THROTTLE_TIME_MS } from '../contants';
 
 export const createListener = (store) => {
   let messageFromArr = [];
   let intervalId;
   let messageArr = [];
+  let memberInOut = [];
 
   const createListen = (new_IM_Data, appkey) => {
     const { apis } = store.getState();
@@ -30,11 +31,25 @@ export const createListener = (store) => {
       store.dispatch(messageAction(temp, { isHistory: false }));
       const showChat = store.getState().showChat;
       const isShowRed = store.getState().isTabKey !== CHAT_TABS_KEYS.chat;
-      store.dispatch(showRedNotification(isShowRed));
-      if (!showChat) {
+
+      const showRedChanged = store.getState().showRed !== isShowRed;
+
+      if (showRedChanged) {
+        store.dispatch(showRedNotification(isShowRed));
+      }
+
+      if (!showChat && showRedChanged) {
         store.dispatch(showRedNotification(true));
       }
     }, TEXT_MESSAGE_THROTTLE_TIME_MS);
+
+    const dispatchRoomUserAction = throttle(() => {
+      console.log('[chat] execute member list batch', memberInOut);
+
+      store.dispatch(roomUsersBatch(memberInOut));
+
+      memberInOut = [];
+    }, MEMBER_LIST_THROTTLE_TIME_MS);
 
     const listener = {
       onOpened: () => {
@@ -122,18 +137,23 @@ export const createListener = (store) => {
               messageFromArr = [];
               apis.userInfoAPI.getUserInfo({ member: users });
             }, 500);
-            let ary = [];
-            roomUserList.map((v, k) => {
-              ary.push(v);
-            });
-            if (!ary.includes(message.from)) {
-              store.dispatch(roomUsers(message.from, 'addMember'));
+
+            if (!roomUserList.includes(message.from)) {
+              memberInOut.push({ type: 'addMember', user: message.from });
+
+              console.log('[chat] member in', memberInOut);
+
+              dispatchRoomUserAction();
             }
             break;
           case 'leaveChatRoom':
             // 成员数 - 1
             // 移除成员
-            store.dispatch(roomUsers(message.from, 'removeMember'));
+            memberInOut.push({ type: 'removeMember', user: message.from });
+
+            console.log('[chat] member out', memberInOut);
+
+            dispatchRoomUserAction();
             break;
           case 'updateAnnouncement':
             apis.chatRoomAPI.getAnnouncement(message.gid);
@@ -183,7 +203,9 @@ export const createListener = (store) => {
         // 移除成员
         message.forEach((item) => {
           if (!item.statusDetails.length) {
-            store.dispatch(roomUsers(item.userId, 'removeMember'));
+            memberInOut.push({ type: 'removeMember', user: item.userId });
+
+            dispatchRoomUserAction();
           }
         });
       },
