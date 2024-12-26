@@ -74,6 +74,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   protected _mounted = false;
   protected _isInitialUser = false;
   protected _joined = false;
+  protected _loadAttributesIsCalled = false;
   protected _initArgs?: {
     appId: string;
     region: FcrBoardRegion;
@@ -225,6 +226,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
 
   onCreate(props: any, userProps: any) {
+    this.logger.info('FcrBoardWidget onCreate', props, userProps);
     this._isInitialUser = userProps.initial;
     this.widgetController.broadcast(AgoraExtensionWidgetEvent.SetVisible, {
       widgetId: this.widgetId,
@@ -471,6 +473,7 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   @bound
   private async _loadAttributes() {
+    this._loadAttributesIsCalled = true;
     if (!this._isInitialUser) {
       return;
     }
@@ -649,12 +652,17 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
 
   onPropertiesUpdate(props: any) {
+    this.logger.info('FcrBoardWidget onPropertiesUpdate', props);
     this._checkBoard(props);
     this._checkPrivilege(props);
   }
 
   onUserPropertiesUpdate(userProps: any) {
+    this.logger.info('FcrBoardWidget onUserPropertiesUpdate', userProps);
     this._isInitialUser = userProps.initial;
+    if(this._loadAttributesIsCalled) {
+      this._loadAttributes();  
+    }
   }
 
   onUninstall(controller: AgoraWidgetController) {
