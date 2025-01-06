@@ -9,6 +9,24 @@ ci_script_version=v1
 . ../apaas-cicd-web/build/$ci_script_version/dependency.sh
 . ../apaas-cicd-web/build/$ci_script_version/build.sh
 
+
+lib_dependencies=(
+    agora-rte-sdk
+    agora-edu-core
+    agora-common-libs
+)
+lib_versions=(
+    2.9.48
+    2.9.46
+    2.9.41
+)
+lib_branches=(
+    release/2.9.48
+    release/2.9.46
+    release/2.9.41
+)
+
+
 # pick up agora-rte-sdk agora-edu-core agora-common-libs
 lib_dependencies=(${lib_dependencies[@]:0:3})
 lib_versions=(${lib_versions[@]:0:3})
