@@ -91,6 +91,8 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     strokeColor: '#fed130',
     strokeWidth: 2,
   };
+  private _retrySchedule: NodeJS.Timeout | undefined;
+
   get resizable(): boolean {
     return true;
   }
@@ -313,6 +315,9 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   }
 
   onDestroy() {
+    clearTimeout(this._retrySchedule);
+    this._retrySchedule = undefined;
+
     this._leave();
     this.unmount();
 
@@ -479,12 +484,36 @@ export class FcrBoardWidget extends FcrUISceneWidget {
     }
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
-    if (mainWindow) {
-      const attributes = await this.classroomStore.api.getWindowManagerAttributes(
-        sessionInfo.roomUuid,
-      );
 
-      mainWindow.setAttributes(attributes);
+    const retry = () => {
+      this.logger.info('start a retry schedule for loading attributes');
+      clearTimeout(this._retrySchedule);
+      this._retrySchedule = setTimeout(() => {
+        this.logger.info('retry loading attributes');
+        this._loadAttributes();
+      }, 2000);
+    };
+
+    if (mainWindow) {
+      let success = false;
+      try {
+        const attributes = await this.classroomStore.api.getWindowManagerAttributes(
+          sessionInfo.roomUuid,
+        );
+
+        success = mainWindow.setAttributes(attributes);
+        this.logger.info('load attributes success');
+      } catch (e) {
+        success = false;
+        this.logger.error('load attributes failure', e);
+      } finally {
+        if (!success) {
+          retry();
+        }
+      }
+    } else {
+      this.logger.info('main window is not created, skip loading attributes, retry later');
+      retry();
     }
   }
   @action.bound

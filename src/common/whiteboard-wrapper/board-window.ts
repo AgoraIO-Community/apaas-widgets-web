@@ -94,6 +94,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
 
   @Log.trace
   async mount(view: HTMLElement, options: MountOptions) {
+    this.logger.info('start mount window manager');
     this._whiteView = view;
     this.preCheck({ wm: false });
     if (this._whiteRoom) {
@@ -130,7 +131,9 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         containerSizeRatio: options.containerSizeRatio,
       })
         .then(async (wm) => {
+          this.logger.info('success mount window manager');
           if (this._destroyed) {
+            this.logger.info('BoardMainWindow is destroyed, destroy window manager');
             wm.destroy();
             return;
           }
@@ -142,6 +145,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
           this._eventBus.emit(FcrBoardMainWindowEvent.MountSuccess, wm);
         })
         .catch((e) => {
+          this.logger.error('failed mount window manager');
           this._eventBus.emit(
             FcrBoardMainWindowEvent.Failure,
             FcrBoardMainWindowFailureReason.MountFailure,
@@ -444,8 +448,15 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   setAttributes(attributes: WindowMangerAttributes) {
     this.preCheck();
     const windowManager = this._windowManager;
-    windowManager?.safeSetAttributes(attributes);
-    windowManager?.refresh();
+    if (windowManager) {
+      windowManager.safeSetAttributes(attributes);
+      windowManager.refresh();
+      this.logger.info('set window manager attributes success');
+      return true;
+    } else {
+      this.logger.info('set window manager attributes failed');
+      return false;
+    }
   }
 
   @bound
@@ -592,8 +603,11 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
 
   private async _setBoardWritable(granted: boolean) {
     const room = this._whiteRoom;
+
     if (granted && !room.isWritable) {
+      this.logger.info('set board writable: true');
       await room.setWritable(true);
+      this.logger.info('set board writable: true, finished');
       room.disableDeviceInputs = false;
       room.disableSerialization = false;
     }
@@ -601,7 +615,9 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
     if (!granted && room.isWritable) {
       room.disableDeviceInputs = true;
       room.disableSerialization = true;
+      this.logger.info('set board writable: false');
       await room.setWritable(false);
+      this.logger.info('set board writable: false, finished');
     }
   }
 

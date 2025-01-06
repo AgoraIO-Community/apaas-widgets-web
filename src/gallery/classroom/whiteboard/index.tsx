@@ -39,12 +39,15 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   protected _mounted = false;
   protected _isInitialUser = false;
   protected _joined = false;
+  protected _loadAttributesIsCalled = false;
   protected _initArgs?: {
     appId: string;
     region: FcrBoardRegion;
   };
   protected _grantedUsers = new Set<string>();
   protected _disposers: IReactionDisposer[] = [];
+  private _retrySchedule: NodeJS.Timeout | undefined;
+
 
   get widgetName() {
     return 'netlessBoard';
@@ -219,6 +222,9 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
    * 组件销毁
    */
   onDestroy() {
+    clearTimeout(this._retrySchedule);
+    this._retrySchedule = undefined;
+
     this._leave();
 
     if (this._listenerDisposer) {
@@ -374,17 +380,43 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   @bound
   private async _loadAttributes() {
+    this._loadAttributesIsCalled = true;
     if (!this._isInitialUser) {
       return;
     }
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
-    if (mainWindow) {
-      const attributes = await this.classroomStore.api.getWindowManagerAttributes(
-        sessionInfo.roomUuid,
-      );
 
-      mainWindow.setAttributes(attributes);
+    const retry = () => {
+      this.logger.info('start a retry schedule for loading attributes');
+      clearTimeout(this._retrySchedule);
+      this._retrySchedule = setTimeout(() => {
+        this.logger.info('retry loading attributes');
+        this._loadAttributes();
+      }, 2000);
+    };
+
+    if (mainWindow) {
+      let success = false;
+      try {
+        const attributes = await this.classroomStore.api.getWindowManagerAttributes(
+          sessionInfo.roomUuid,
+        );
+
+        success = mainWindow.setAttributes(attributes);
+
+        this.logger.info('load attributes success');
+      } catch (e) {
+        success = false;
+        this.logger.error('load attributes failure', e);
+      } finally {
+        if (!success) {
+          retry();
+        }
+      }
+    } else {
+      this.logger.info('main window is not created, skip loading attributes, retry later');
+      retry();
     }
   }
 
@@ -530,6 +562,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
    * @param props
    */
   onPropertiesUpdate(props: any) {
+    this.logger.info('FcrBoardWidget onPropertiesUpdate', props);
     // 处理
     this._checkBoard(props);
     // 处理授权列表变更
@@ -540,7 +573,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
    * @param props
    */
   onUserPropertiesUpdate(userProps: any) {
+    this.logger.info('FcrBoardWidget onUserPropertiesUpdate', userProps);
     this._isInitialUser = userProps.initial;
+    if (this._loadAttributesIsCalled) {
+      this._loadAttributes();
+    }
   }
 
   onUninstall(controller: AgoraWidgetController) {
