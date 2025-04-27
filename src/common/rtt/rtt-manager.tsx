@@ -349,7 +349,6 @@ class FcrRttManager {
      * 房间属性变更监听
      */
     onRoomWidgetPropertiesChange(properties: never | null, operator: IAgoraUserSessionInfo | null) {
-        debugger
         //这条是系统的，跳过
         if(operator && "server" === operator.userName){
             return
@@ -710,10 +709,12 @@ class FcrRttManager {
             sessionInfo:{roomUuid}
             //@ts-ignore
         } = window.EduClassroomConfig;
+        // 可读性较差的reduce版本（不推荐）
+        const result = this.getUniqueLanguageValues(config)
         const data = {
             languages: {
                 source: config.getSourceLan().value,
-                target: config.getTargetLanList().filter((item, index) => config.getTargetLanList().indexOf(item) === index && item.value !== undefined && item.value !== null && "" !== item.value).map(item => item.value),
+                target: result,
             },
             transcribe: config.isOpenTranscribe() ? 1 : 0,
             subtitle: config.isOpenSubtitle() ? 1 : 0
@@ -733,6 +734,21 @@ class FcrRttManager {
                 fcrRttManager.rttConfigInfo.initRoomeConfigInfo(map, false)
             }
         }).finally(() => { this.loadingRequest = false })
+    }
+
+    getUniqueLanguageValues(config:any) {
+        const lanList = config.getTargetLanList();
+        if (!Array.isArray(lanList)) return []; // 非数组直接返回空
+
+        // 统一提取值：处理字符串数组和对象数组
+        const values = lanList.map(item => {
+            if (typeof item === 'string') return item; // 字符串直接保留
+            if (item?.value && typeof item.value === 'string') return item.value; // 提取对象中的value
+            return null; // 无效项标记为null
+        });
+
+        // 过滤空值 + 去重
+        return [...new Set(values.filter(Boolean))];
     }
 
     /**
