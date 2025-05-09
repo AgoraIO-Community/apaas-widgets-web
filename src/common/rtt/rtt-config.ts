@@ -48,6 +48,11 @@ export class FcrRttConfig {
      * 剩余体验时间
      */
     experienceReduceTime = this.experienceDefTime
+    /**
+     * 房间属性
+     */
+    roomProperties:any|undefined;
+
 
     constructor(roomUuid: string, controller: AgoraWidgetController | undefined) {
         this.currentSourceLan = this.getDefaultLanguage()
@@ -81,6 +86,7 @@ export class FcrRttConfig {
      * @param properties 房间配置信息
      */
     initRoomeConfigInfo(properties: any | null, notify: boolean) {
+        this.roomProperties = properties;
         if (properties && Object.keys(properties).length > 0) {
             const config = properties["extra"]
             const lanConfig = config["languages"]

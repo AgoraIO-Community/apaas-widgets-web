@@ -47,14 +47,14 @@ export const RttSettings = ({
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttSourceLanChangeFinish,
       onMessage: (message: { config: unknown, value: FcrRttLanguageData }) => {
-        setSourceLan(message.value)
+        setSourceLan(message?.value)
       }
     });
     //源语言改变完成
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttTargetLanChangeFinish,
       onMessage: (message: { config: unknown, value: FcrRttLanguageData }) => {
-        setTargetLan(message.value)
+        setTargetLan(message?.value)
       }
     });
     //文本大小改变完成

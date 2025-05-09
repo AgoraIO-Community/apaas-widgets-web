@@ -35,7 +35,7 @@ class FcrRttManager {
      */
     private widgetController: AgoraWidgetController | undefined;
     private classroomStore: EduClassroomStore | undefined;
-
+    
     /**
      * 配置信息
      */
@@ -663,6 +663,7 @@ class FcrRttManager {
         return !!fcrRttManager.classroomStore?.groupStore.currentSubRoom
     }
 
+    
     /**
      * 获取显示的源文本信息
      * @param current 当前item元素
@@ -703,6 +704,10 @@ class FcrRttManager {
         }
         this.loadingRequest = true
         const config = tartgetConfig ? tartgetConfig : fcrRttManager.rttConfigInfo
+        let transcribe = config.isOpenTranscribe() ? 1 : 0
+        if(1 === this.rttConfigInfo.roomProperties?.extra?.transcribe && 1 !== transcribe){
+            transcribe = 1
+        }
         const {
             rteEngineConfig: { ignoreUrlRegionPrefix, region },
             appId,
@@ -716,7 +721,7 @@ class FcrRttManager {
                 source: config.getSourceLan().value,
                 target: result,
             },
-            transcribe: config.isOpenTranscribe() ? 1 : 0,
+            transcribe,
             subtitle: config.isOpenSubtitle() ? 1 : 0
         };
         const pathPrefix = `${ignoreUrlRegionPrefix ? '' : '/' + region.toLowerCase()
@@ -761,11 +766,13 @@ class FcrRttManager {
     /**
      * 重置所有变量数据
      */
-    private resetData(properties: never | null) {
+    private resetData(properties: any | null) {
         //@ts-ignore
         fcrRttManager.rttConfigInfo = new FcrRttConfig(window.EduClassroomConfig.sessionInfo.roomUuid, this.widgetController)
         fcrRttManager.rttConfigInfo.initRoomeConfigInfo(properties, true)
-
+        if (1 === properties?.extra?.transcribe) {
+            this.widgetController?.broadcast(AgoraExtensionRoomEvent.RttChangeToConversionOpenState)
+        }
         //做监听判断
         this.addMessageListener()
     }
