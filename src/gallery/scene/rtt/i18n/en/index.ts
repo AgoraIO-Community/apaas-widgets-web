@@ -47,6 +47,6 @@ export default {
   fcr_dialog_rtt_text_change_source_language: 'changed the source language for captions and transcription to',
   fcr_dialog_rtt_subtitles_dialog_time_limit_reduce_ellipsis: 'remaining experience time {reason2}',
   fcr_dialog_rtt_subtitles_dialog_time_limit_reduce: 'Each room has a {reason1} minute limit to experience subtitles and transcription features, with {reason2} minutes remaining.',
-  fcr_dialog_rtt_subtitles_dialog_time_limit_end: 'Each room has a {0} minute limit to experience subtitles and transcription features, and the experience time has run out.',
+  fcr_dialog_rtt_subtitles_dialog_time_limit_end: 'Each room has a {reason1} minute limit to experience subtitles and transcription features, and the experience time has run out.',
   fcr_dialog_rtt_subtitles_dialog_time_limit_end_ellipsis: '{reason1} minutes of experience time have been used up.',
 };

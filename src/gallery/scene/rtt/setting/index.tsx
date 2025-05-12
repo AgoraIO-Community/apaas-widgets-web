@@ -43,27 +43,37 @@ export const RttSettings = ({
 
   //监听处理
   useEffect(() => {
+    let isMounted = true;
     //源语言改变完成
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttSourceLanChangeFinish,
       onMessage: (message: { config: unknown, value: FcrRttLanguageData }) => {
-        setSourceLan(message?.value)
+        if (isMounted) {
+          setSourceLan(message?.value)
+        }
       }
     });
     //源语言改变完成
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttTargetLanChangeFinish,
       onMessage: (message: { config: unknown, value: FcrRttLanguageData }) => {
-        setTargetLan(message?.value)
+        if (isMounted) {
+          setSourceLan(message?.value)
+        }
       }
     });
     //文本大小改变完成
     widget.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttTextSizeChagneFinish,
       onMessage: (message: { config: unknown, value: number }) => {
-        setHorizontalValue(message.value);
+        if (isMounted) {
+          setHorizontalValue(message.value);
+        }
       }
     });
+    return () => {
+      isMounted = false;
+    };
   }, [])
 
   //隐藏所有弹窗

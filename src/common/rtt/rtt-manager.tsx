@@ -751,9 +751,11 @@ class FcrRttManager {
             if (item?.value && typeof item.value === 'string') return item.value; // 提取对象中的value
             return null; // 无效项标记为null
         });
+        const sourceLanValue = config.getSourceLan()?.value;
 
-        // 过滤空值 + 去重
-        return [...new Set(values.filter(Boolean))];
+
+        // 过滤空值 + 去重 + 移除 sourceLanValue
+        return [...new Set(values.filter(v => v && v !== sourceLanValue))];
     }
 
     /**

@@ -231,7 +231,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttHideSubtitle,
       onMessage: () => {
-        this.setVisible(false)
+        // this.setVisible(false)
         runInAction(() => {
           this.visibleView = false
           this.starting = false
@@ -291,7 +291,7 @@ export class FcrRTTWidget extends FcrUISceneWidget {
     this.addBroadcastListener({
       messageType: AgoraExtensionRoomEvent.RttSubtitleCloseSuccess,
       onMessage: () => {
-        this.setVisible(false)
+        // this.setVisible(false)
         this.registerWidget(this.widgetController)
         runInAction(() => {
           this.visibleView = false

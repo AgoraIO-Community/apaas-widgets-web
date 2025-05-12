@@ -196,7 +196,7 @@ export const RttBoxComponet = observer(({ widget }: { widget: FcrRttboxWidget })
           })}
         </div>}
         <div >
-          {!widget.isRunoutTime && <div ref={textContainerRef} className="rtt-list" style={{ paddingBottom: '30px' }} >
+          {<div ref={textContainerRef} className="rtt-list" style={{ paddingBottom: '30px' }} >
             {filteredRttList.map((item, index) => {
               const userInfo = widget.classroomStore.streamStore.streamByStreamUuid.get(String(item.uid));
               return <div key={index}>
