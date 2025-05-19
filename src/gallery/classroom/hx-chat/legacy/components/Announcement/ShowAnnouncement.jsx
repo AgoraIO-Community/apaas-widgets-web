@@ -25,7 +25,7 @@ export const ShowAnnouncement = () => {
   const store = useStore();
   const { apis, roomId, Announcement, roleType } = useShallowEqualSelector((state) => {
     return {
-      apis: state?.api,
+      apis: state?.apis,
       roomId: state?.room.info.id,
       Announcement: state?.room.announcement,
       roleType: state?.propsData.roleType
