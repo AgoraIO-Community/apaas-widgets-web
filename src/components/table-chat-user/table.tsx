@@ -149,6 +149,7 @@ export const InfiniteScrollRosterTable: React.FC<InfiniteScrollRosterTableProps>
             const showMuteIcon = muteList && muteList.includes(item.id);
             const isTeacher = item?.ext && JSON.parse(item?.ext).role === ROLE.teacher.id;
             const isAssistant = item?.ext && JSON.parse(item?.ext).role === ROLE.assistant.id;
+
             return (
               <div className="fcr-hx-user-list" key={key} style={{ width: '100%' }}>
                 <div className="fcr-hx-user-info" style={{ width: '100%', display: 'flex' }}>

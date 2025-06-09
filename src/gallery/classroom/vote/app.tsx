@@ -147,7 +147,7 @@ const VoteBtns = observer(() => {
             }}></span>
         </div>
       )}
-      {pluginStore.stagePanel === 1 && pluginStore.isController && (
+      {pluginStore.stagePanel === 1 && pluginStore.isController && (pluginStore.isBigClass ? pluginStore.isTeacher : true) && (
         <Button type="primary" onClick={pluginStore.handleStopVote}>
           {transI18n('widget_polling.over')}
         </Button>

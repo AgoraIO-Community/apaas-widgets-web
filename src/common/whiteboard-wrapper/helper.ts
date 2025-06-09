@@ -134,7 +134,6 @@ export const src2DataURL = (src: string) => {
   return new Promise<string>((resolve, reject) => {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d');
-
     const image = new Image();
     image.onload = () => {
       canvas.setAttribute('width', `${image.width}`);

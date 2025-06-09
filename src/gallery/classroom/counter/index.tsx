@@ -88,7 +88,6 @@ export class AgoraCountdown extends AgoraEduToolWidget {
   render(dom: HTMLElement) {
     this._dom = dom;
     const { platform } = this.classroomConfig;
-
     ReactDOM.render(
       <Provider store={this._store}>
         <ThemeProvider value={this.theme}>

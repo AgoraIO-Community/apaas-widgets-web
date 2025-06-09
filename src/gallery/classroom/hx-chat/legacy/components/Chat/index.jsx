@@ -149,7 +149,6 @@ export const Chat = ({
   const onScroll = () => {
     stopAutoFetch();
   };
-
   return (
     <div>
       <Tabs onChange={onTabChange} activeKey={tabKey} className={'chat-widget'}>
