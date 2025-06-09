@@ -11,6 +11,9 @@ import {
   RoomPhase,
   RoomState,
 } from 'white-web-sdk';
+import '@netless/appliance-plugin/dist/style.css';
+import { ApplianceMultiPlugin } from '@netless/appliance-plugin';
+
 import * as netlessVideoPlugin from '@netless/video-js-plugin';
 import { WindowManager } from '@netless/window-manager';
 import { FcrBoardMainWindow } from './board-window';
@@ -91,7 +94,7 @@ export class FcrBoardRoom implements FcrBoardRoomEventEmitter {
       disableNewPencil: false,
       disableEraseImage: false,
       wrappedComponents: [],
-      invisiblePlugins: [WindowManager],
+      invisiblePlugins: [WindowManager, ApplianceMultiPlugin],
       useMultiViews: true,
       disableMagixEventDispatchLimit: true,
       userPayload: {

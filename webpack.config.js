@@ -46,6 +46,12 @@ const config = {
         dynamicImportMode: 'eager',
       },
     },
+    rules: [
+      {
+        resourceQuery: /raw/,
+        type: 'asset/source',
+      }
+    ]
   },
   resolve: {
     alias: {

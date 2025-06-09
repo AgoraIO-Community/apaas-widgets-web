@@ -27,11 +27,24 @@ import {
   FcrBoardH5WindowConfig,
   FcrBoardMaterialWindowConfig,
   FcrBoardMediaWindowConfig,
+  SlideError,
 } from './type';
 import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
 import isEqual from 'lodash/isEqual';
 import { BoardMountManager } from './mount-manager';
 import { when } from 'mobx';
+
+import fullWorkerString from '@netless/appliance-plugin/dist/fullWorker.js?raw';
+import subWorkerString from '@netless/appliance-plugin/dist/subWorker.js?raw';
+
+import { ApplianceMultiPlugin } from '@netless/appliance-plugin';
+import { DevicePlatform, getPlatform } from 'agora-edu-core';
+import { isElectron } from '../../utils/isElectron';
+const fullWorkerBlob = new Blob([fullWorkerString], {type: 'text/javascript'});
+const fullWorkerUrl = URL.createObjectURL(fullWorkerBlob);
+const subWorkerBlob = new Blob([subWorkerString], {type: 'text/javascript'});
+const subWorkerUrl = URL.createObjectURL(subWorkerBlob);
+
 @Log.attach({ proxyMethods: false })
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   logger!: Logger;
@@ -76,6 +89,9 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         autoFPS,
         maxResolutionLevel,
         forceCanvas,
+        onRenderError: (error: SlideError, pageIndex: number) => {
+          this._eventBus.emit(FcrBoardMainWindowEvent.SlideError, error, pageIndex);
+        }
       },
     });
 
@@ -120,41 +136,67 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         );
         return;
       }
-      BoardMountManager.setIsMounting(true);
-      await WindowManager.mount({
-        room: this._whiteRoom,
-        container: view,
-        cursor: true,
-        chessboard: false,
-        collectorContainer: options.collectorContainer,
-        containerSizeRatio: options.containerSizeRatio,
-      })
-        .then(async (wm) => {
+      try{
+        BoardMountManager.setIsMounting(true);
+        const wm = await WindowManager.mount({
+          room: this._whiteRoom,
+          container: view,
+          cursor: true,
+          chessboard: false,
+          supportAppliancePlugin: true,
+          collectorContainer: options.collectorContainer,
+          containerSizeRatio: options.containerSizeRatio,
+        });
+
+        if(wm){
           if (this._destroyed) {
             wm.destroy();
             return;
           }
+        
+          const canvasOpt = isElectron() ? {
+            contextType: '2d'
+          } : undefined
+          const params = {
+            options: {
+              cdn: {
+                fullWorkerUrl,
+                subWorkerUrl,
+              },
+              canvasOpt
+            },
+          }
+          this.logger.info("[board window] appliance plugin init: ", params)
+          const appliancePlugin = await ApplianceMultiPlugin.getInstance(wm, params);
+
+          if(process.env.NODE_ENV == "development"){
+            setTimeout(()=>{appliancePlugin.currentManager?.consoleWorkerInfo()},20000)
+          }
+         
+
           //@ts-ignore
           window._wm = wm;
+          //@ts-ignore
+          window._appliancePlugin = appliancePlugin;
           this._windowManager = wm;
           this._windowManager.mainView.disableCameraTransform = true;
           this._addWindowManagerEventListeners();
           this._eventBus.emit(FcrBoardMainWindowEvent.MountSuccess, wm);
-        })
-        .catch((e) => {
-          this._eventBus.emit(
-            FcrBoardMainWindowEvent.Failure,
-            FcrBoardMainWindowFailureReason.MountFailure,
-            e,
-          );
-        })
-        .finally(() => {
-          this.logger.info(
-            '[FcrBoardMainWindow] finish mount board window, white room id:',
-            this._whiteRoom.uuid,
-          );
-          BoardMountManager.setIsMounting(false);
-        });
+        }
+      }catch(e){
+        this._eventBus.emit(
+          FcrBoardMainWindowEvent.Failure,
+          FcrBoardMainWindowFailureReason.MountFailure,
+          e,
+        );
+      }finally{
+        this.logger.info(
+          '[FcrBoardMainWindow] finish mount board window, white room id:',
+          this._whiteRoom.uuid,
+        );
+        BoardMountManager.setIsMounting(false);
+      }
+
     }
   }
 
@@ -227,6 +269,16 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
 
   @bound
   @Log.trace
+  refresh() {
+    this.preCheck({ wm: false });
+    const windowManager = this._windowManager;
+    if (windowManager) {
+      windowManager?.refresh()
+    }
+  }
+
+  @bound
+  @Log.trace
   async putImageResource(
     resourceUrl: string,
     options?: { x: number; y: number; width: number; height: number },
@@ -267,6 +319,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
       };
 
       windowManager.switchMainViewToWriter();
+
       room.insertImage(imageInfo);
       room.completeImageUpload(uuid, resourceUrl);
     }
@@ -299,8 +352,8 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         attributes: {
           taskId: config.taskUuid,
           url: config.urlPrefix,
-        },
-      });
+        }
+      })
     } else {
       windowManager?.addApp({
         kind: BuiltinApps.DocsViewer,
@@ -592,6 +645,7 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
 
   private async _setBoardWritable(granted: boolean) {
     const room = this._whiteRoom;
+
     if (granted && !room.isWritable) {
       await room.setWritable(true);
       room.disableDeviceInputs = false;
@@ -604,7 +658,10 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
       await room.setWritable(false);
     }
   }
-
+  on(
+    eventName: FcrBoardMainWindowEvent.SlideError,
+    cb: (error: SlideError, pageIndex: number) => void,
+  ): void;
   on(
     eventName: FcrBoardMainWindowEvent.OpenedCoursewareListChanged,
     cb: (coursewareList: string[]) => void,

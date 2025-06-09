@@ -16,6 +16,7 @@ import {
   FcrBoardMainWindowEvent,
   BoardMountState,
   FcrBoardMainWindowFailureReason,
+  SlideError,
 } from '../../../common/whiteboard-wrapper/type';
 import { downloadCanvasImage } from '../../../common/whiteboard-wrapper/utils';
 import { BoardUIContext } from './ui-context';
@@ -23,6 +24,7 @@ import { App } from './app';
 import { DialogProgressApi } from '../../../components/progress';
 import isNumber from 'lodash/isNumber';
 import { addResource } from './i18n/config';
+import { ErrorType } from '@netless/slide';
 
 @Log.attach({ proxyMethods: false })
 export class FcrBoardWidget extends AgoraCloudClassWidget {
@@ -39,6 +41,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   protected _mounted = false;
   protected _isInitialUser = false;
   protected _joined = false;
+  protected _retryTime = 0;
   protected _initArgs?: {
     appId: string;
     region: FcrBoardRegion;
@@ -390,6 +393,7 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   private _join(config: FcrBoardRoomJoinConfig) {
     this._joined = true;
+    this._retryTime = 0;
 
     const { roomId, roomToken, userId, userName, hasOperationPrivilege } = config;
 
@@ -451,13 +455,41 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   private _leave() {
     this._joined = false;
+    this._retryTime = 0;
     if (this._boardRoom) {
       this._boardRoom.leave();
       this._boardRoom = undefined;
     }
   }
 
+  private _retry() {
+    this._retryTime += 1
+    this._boardMainWindow?.refresh()
+    this.logger.debug("retry refresh slide: ", this._retryTime)
+    this.ui.addToast(`${transI18n("fcr_board_slide_retry")} ${this._retryTime}/5`, "error")
+  }
+ 
   private _deliverWindowEvents(mainWindow: FcrBoardMainWindow) {
+    mainWindow.on(FcrBoardMainWindowEvent.SlideError, (error: SlideError, pageIndex: number) => {
+      if (error.errorType == ErrorType.ResourceError || error.errorType == ErrorType.CanvasCrash){
+        this.logger.info(`reload page: ${pageIndex}, try times: ${this._retryTime}`)
+        if(this._retryTime == 0){
+          // retry now first time
+          this._retry()
+        }else if(this._retryTime < 5){
+          // retry after 5 seconds
+          setTimeout(this._retry.bind(this), 5000)
+        }else{
+          // retry failure
+          this._retryTime = 0
+          this.ui.addToast(transI18n("fcr_board_slide_retry_failure"), "error")
+        }
+      } else if(error.errorType == ErrorType.RuntimeError) {
+        this._boardMainWindow?.setPageIndex(1)
+      } else if (error.errorType == ErrorType.RuntimeWarn) {
+        this.logger.warn(`slide page: ${pageIndex}, error`, error);
+      }
+    })
     mainWindow.on(FcrBoardMainWindowEvent.MountSuccess, () => {
       if (this._boardMainWindow) {
         this._boardMainWindow.emitPageInfo();
