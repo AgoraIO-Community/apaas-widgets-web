@@ -23,5 +23,6 @@ export default {
   fcr_rtt_stop_transcription:'End Transcript',
   fcr_rtt_notification_view:'View',
   fcr_rtt_notification_ignore:'Ignore',
-  fcr_rtt_tips_title:'Transcribing'
+  fcr_rtt_tips_title:'Transcribing',
+  fcr_dialog_rtt_search: 'Search',
 };
