@@ -100,7 +100,9 @@ export class FcrRttConfig {
                     }
                 }
                 const targetLanValueList = Object.keys(lanConfig).indexOf("target") >= 0 ? lanConfig["target"] : []
-                this.currentTargetLanList = fcrRttManager.targetLanguageList.filter(item=>targetLanValueList.indexOf(item.value) >= 0)
+                fcrRttManager.targetLanguageList.filter(item=>targetLanValueList.indexOf(item.value) >= 0).forEach(item=>{
+                    this.currentTargetLanList.push(item)
+                })
             }
             //剩余体验时间
             this.experienceReduceTime = Math.max(this.experienceDefTime - (config["duration"] ? Number(config["duration"]) : 0), 0)

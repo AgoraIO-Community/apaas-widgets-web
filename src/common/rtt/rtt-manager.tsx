@@ -216,6 +216,8 @@ class FcrRttManager {
         return fcrRttManager.lastRecord
     }
 
+    private reSendRequestTimeId:NodeJS.Timeout|null = null;
+    private haveSendResult = false;//是否有发送结果
     /**
      * 消息数据处理,所有的this都要使用fcrRttManager，因为没有做变量化
      */
@@ -233,6 +235,15 @@ class FcrRttManager {
         //数据处理
         const pb = protoRoot.lookup('Text');
         if (pb) {
+            if(this.reSendRequestTimeId){
+                clearTimeout(this.reSendRequestTimeId)
+            }
+            this.reSendRequestTimeId = setTimeout(() => {
+                if(!this.haveSendResult){
+                    this.sendRequest(null)
+                    this.haveSendResult = true
+                }
+            }, 30000);
             //@ts-ignore
             const textstream = pb.decode(data);
             const lastItemByUid = fcrRttManager.allRecordList.findLast((item) => item.uid === textstream.uid);
@@ -349,13 +360,14 @@ class FcrRttManager {
      * 房间属性变更监听
      */
     onRoomWidgetPropertiesChange(properties: never | null, operator: IAgoraUserSessionInfo | null) {
+        console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：", properties,operator)
+        console.log("FcrRttRoomPropertiesChange:", "房间属性是否是系统的：", operator && "server" === operator.userName)
         //这条是系统的，跳过
         if(operator && "server" === operator.userName){
             return
         }
         if (properties && Object.keys(properties).length > 0 ) {
             const config = properties["extra"]
-            console.log("FcrRttRoomPropertiesChange:", "房间属性发生更新：" , config)
             const localUser = fcrRttManager.classroomStore?.userStore.localUser
             const currentInfo = JSON.stringify(config);
             if(currentInfo === fcrRttManager.lastPropInfo || "" === currentInfo){
@@ -403,6 +415,12 @@ class FcrRttManager {
                         fcrRttManager.showConversion()
                     }else{
                         fcrRttManager.closeConversion()
+                    }
+                    fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionOpenSuccess)
+                    if(toOpen){
+                        setTimeout(() => {
+                            fcrRttManager.sendBroadcat(AgoraExtensionRoomEvent.RttConversionCloseSuccess)
+                        }, 2000);
                     }
                     // fcrRttManager.sendBroadcat(toOpen ? AgoraExtensionRoomEvent.RttConversionOpenSuccess : AgoraExtensionRoomEvent.RttConversionCloseSuccess)
                 }
@@ -702,6 +720,7 @@ class FcrRttManager {
         if (this.loadingRequest) {
             return
         }
+        this.haveSendResult = false
         this.loadingRequest = true
         const config = tartgetConfig ? tartgetConfig : fcrRttManager.rttConfigInfo
         let transcribe = config.isOpenTranscribe() ? 1 : 0
@@ -742,7 +761,8 @@ class FcrRttManager {
     }
 
     getUniqueLanguageValues(config:any) {
-        const lanList = config.getTargetLanList();
+        // const lanList = config.getTargetLanList();
+        const lanList = this.targetLanguageList;
         if (!Array.isArray(lanList)) return []; // 非数组直接返回空
 
         // 统一提取值：处理字符串数组和对象数组
