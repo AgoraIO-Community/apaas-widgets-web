@@ -319,6 +319,7 @@ export class PluginStore {
   @computed
   get visibleVote() {
     const { pollId } = this._widget.userProperties;
-    return this.isShowVote && pollId;
+    const { extra } = this._widget.roomProperties;
+    return this.isShowVote && pollId && pollId === extra?.pollId;
   }
 }
