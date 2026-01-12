@@ -329,8 +329,12 @@ export class PluginStore {
 
   @computed
   get myAnswer() {
-    const { selectedItems } = this._widget.userProperties;
-    return selectedItems;
+    const { extra } = this._widget.roomProperties;
+    const { popupQuizId, selectedItems } = this._widget.userProperties;
+    if (extra?.popupQuizId === popupQuizId) {
+      return selectedItems;
+    }
+    return [];
   }
 
   isSelectedAnswer = computedFn((value: string): boolean => {
