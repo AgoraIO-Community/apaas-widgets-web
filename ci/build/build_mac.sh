@@ -15,13 +15,13 @@ lib_dependencies=(
     agora-common-libs
 )
 lib_versions=(
-    2.9.48
-    2.9.46
+    2.9.50
+    2.9.50
     2.9.41
 )
 lib_branches=(
-    release/2.9.48
-    release/2.9.46
+    release/2.9.50
+    release/2.9.50
     release/2.9.41
 )
 
