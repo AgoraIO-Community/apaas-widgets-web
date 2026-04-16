@@ -413,13 +413,13 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
   @bound
   mount() {
-    const { _boardMainWindow, _boardDom } = this;
+    const { _boardMainWindow, _boardDom, _boardRoom } = this;
 
     if (_boardDom && _boardMainWindow && !this._mounted) {
       this._mounted = true;
       const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
       _boardMainWindow
-        .mount(_boardDom, {
+        .mount(_boardDom, _boardRoom!, {
           containerSizeRatio: aspectRatio,
           collectorContainer: this._collectorDom ?? undefined,
         })
@@ -480,8 +480,10 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   private async _loadAttributes() {
     this._loadAttributesIsCalled = true;
     if (!this._isInitialUser) {
+      this.logger.info('not initial user, skip loading attributes');
       return;
     }
+    this.logger.info('initial user, loading attributes from snapshot');
     const mainWindow = this._boardMainWindow;
     const { sessionInfo } = this.classroomConfig;
 
@@ -553,10 +555,14 @@ export class FcrBoardWidget extends FcrUISceneWidget {
 
     boardRoom.on(FcrBoardRoomEvent.JoinSuccess, async (mainWindow) => {
       this.logger.info('Fcr board join success');
+      this.unmount();
+
       await mainWindow.updateOperationPrivilege(this.hasPrivilege);
       this._deliverWindowEvents(mainWindow);
+
       this._boardMainWindow = mainWindow;
       this._connectObservables();
+
       this.mount();
     });
 
@@ -604,15 +610,14 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   private _deliverWindowEvents(mainWindow: FcrBoardMainWindow) {
     mainWindow.on(FcrBoardMainWindowEvent.MountSuccess, async () => {
       const hasPrivilege = this.hasPrivilege;
-      const boardMainWindow = this._boardMainWindow;
       try {
         await mainWindow.updateOperationPrivilege(hasPrivilege);
         this._resetToolIfNeed(hasPrivilege);
       } catch (e) {
         this.logger.error('Fcr board update operation privilege failure', e);
       }
-      if (boardMainWindow) {
-        boardMainWindow.emitPageInfo();
+      if (mainWindow) {
+        mainWindow.emitPageInfo();
       }
       this.broadcast(AgoraExtensionWidgetEvent.BoardMountStateChanged, BoardMountState.Mounted);
     });
@@ -699,9 +704,10 @@ export class FcrBoardWidget extends FcrUISceneWidget {
   onUserPropertiesUpdate(userProps: any) {
     this.logger.info('FcrBoardWidget onUserPropertiesUpdate', userProps);
     this._isInitialUser = userProps.initial;
-    if (this._loadAttributesIsCalled) {
-      this._loadAttributes();
-    }
+    // Note: Do not call _loadAttributes() here. The initial load is already handled
+    // by _copyRoomContent() in the reaction watcher when the board is mounted.
+    // Calling _loadAttributes() again would re-load the snapshot state and overwrite
+    // any modifications the user made in the breakout room.
   }
 
   onUninstall(controller: AgoraWidgetController) {

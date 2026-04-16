@@ -48,7 +48,6 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
   protected _disposers: IReactionDisposer[] = [];
   private _retrySchedule: NodeJS.Timeout | undefined;
 
-
   get widgetName() {
     return 'netlessBoard';
   }
@@ -319,12 +318,12 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
   @bound
   mount() {
-    const { _boardMainWindow, _boardDom } = this;
+    const { _boardMainWindow, _boardDom, _boardRoom } = this;
 
     if (_boardDom && _boardMainWindow) {
       this._mounted = true;
       const aspectRatio = _boardDom.clientHeight / _boardDom.clientWidth;
-      _boardMainWindow.mount(_boardDom, {
+      _boardMainWindow.mount(_boardDom, _boardRoom!, {
         containerSizeRatio: aspectRatio,
         collectorContainer: this._collectorDom ?? undefined,
       });
@@ -445,9 +444,11 @@ export class FcrBoardWidget extends AgoraCloudClassWidget {
 
     boardRoom.on(FcrBoardRoomEvent.JoinSuccess, async (mainWindow) => {
       this.logger.info('Fcr board join success');
+      this.unmount();
+
       await mainWindow.updateOperationPrivilege(this.hasPrivilege);
       this._deliverWindowEvents(mainWindow);
-      // this.unmount();
+
       this._boardMainWindow = mainWindow;
       this.mount();
     });

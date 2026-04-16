@@ -32,6 +32,7 @@ import { fetchImageInfoByUrl, mergeCanvasImage } from './utils';
 import isEqual from 'lodash/isEqual';
 import { BoardMountManager } from './mount-manager';
 import { when } from 'mobx';
+import { FcrBoardRoom } from './board-room';
 @Log.attach({ proxyMethods: false })
 export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   logger!: Logger;
@@ -93,9 +94,13 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
   }
 
   @Log.trace
-  async mount(view: HTMLElement, options: MountOptions) {
+  async mount(view: HTMLElement, room: FcrBoardRoom, options: MountOptions) {
     this.logger.info('start mount window manager');
     this._whiteView = view;
+    const oldRoom =this._whiteRoom;
+    // @ts-ignore
+    this._whiteRoom = room._room!;
+
     this.preCheck({ wm: false });
     if (this._whiteRoom) {
       this._destroyed = false;
@@ -122,6 +127,11 @@ export class FcrBoardMainWindow implements FcrBoardMainWindowEventEmitter {
         return;
       }
       BoardMountManager.setIsMounting(true);
+      if (this._windowManager) {
+        this.logger.info('[FcrBoardMainWindow] destroy existing window manager before remount');
+        this._windowManager.destroy();
+        this._windowManager = undefined;
+      }
       await WindowManager.mount({
         room: this._whiteRoom,
         container: view,
