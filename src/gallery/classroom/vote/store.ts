@@ -110,17 +110,20 @@ export class PluginStore {
   }
 
   @action.bound
-  handleStartVote() {
+  async handleStartVote() {
     const { x, y } = this._widget.track.ratioVal.ratioPosition;
     const body = {
       mode: this.type === 'radio' ? 1 : 2,
       pollItems: this.options,
       pollTitle: this.title,
-      position: { xaxis: x, yaxis: y },
+      position: { xaxis: x, yaxis: y, zIndex: this._widget.zIndex + 1 },
     };
 
     const roomId = this._widget.classroomStore.connectionStore.sceneId;
-    this._widget.classroomStore.api.startPolling(roomId, body);
+    await this._widget.classroomStore.api.startPolling(roomId, body);
+    await this._widget.updateWidgetProperties({
+      position: { xaxis: x, yaxis: y, zIndex: this._widget.zIndex + 1 },
+    });
   }
   @bound
   addSubmitToast() {

@@ -16,15 +16,19 @@ const App = observer(({ widget }: { widget: AgoraCountdown }) => {
   const [caution, setCaution] = React.useState(false);
   const transI18n = useI18n();
 
-  const handleSetting = () => {
+  const handleSetting = async () => {
     const { x, y } = widget.track.ratioVal.ratioPosition;
-    widget.setActive({
+    await widget.setActive({
       extra: {
         state: 1,
         startTime: Date.now() + pluginStore.getTimestampGap,
         duration: pluginStore.number !== null ? pluginStore.number : 0,
       },
       position: { xaxis: x, yaxis: y },
+    });
+
+    await widget.updateWidgetProperties({
+      position: { xaxis: x, yaxis: y, zIndex: widget.zIndex + 1 },
     });
 
     pluginStore.handleSetting(false);

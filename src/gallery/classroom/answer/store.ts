@@ -100,15 +100,18 @@ export class PluginStore {
   }
 
   @action.bound
-  handleStart() {
+  async handleStart() {
     const { x, y } = this._widget.track.ratioVal.ratioPosition;
     const body = {
       correctItems: this.selectedAnswers,
       items: this.answerList,
-      position: { xaxis: x, yaxis: y },
+      position: { xaxis: x, yaxis: y, zIndex: this._widget.zIndex + 1 },
     };
     const roomId = this._widget.classroomStore.connectionStore.sceneId;
-    this._widget.classroomStore.api.startAnswer(roomId, body);
+    await this._widget.classroomStore.api.startAnswer(roomId, body);
+    await this._widget.updateWidgetProperties({
+      position: { xaxis: x, yaxis: y, zIndex: this._widget.zIndex + 1 },
+    });
   }
 
   @action.bound
